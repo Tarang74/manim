@@ -10,7 +10,6 @@ class ValueTracker(Mobject):
     uses for its update function, and by treating it as a mobject it can
     still be animated and manipulated just like anything else.
     """
-
     def __init__(self, value=0, **kwargs):
         Mobject.__init__(self, **kwargs)
         self.points = np.zeros((1, 3))
@@ -33,7 +32,6 @@ class ExponentialValueTracker(ValueTracker):
     exponential of a position coordinate, which changes how interpolation
     behaves
     """
-
     def get_value(self):
         return np.exp(ValueTracker.get_value(self))
 

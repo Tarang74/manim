@@ -19,10 +19,7 @@ def matrix_to_tex_string(matrix):
     n_rows, n_cols = matrix.shape
     prefix = "\\left[ \\begin{array}{%s}" % ("c" * n_cols)
     suffix = "\\end{array} \\right]"
-    rows = [
-        " & ".join(row)
-        for row in matrix
-    ]
+    rows = [" & ".join(row) for row in matrix]
     return prefix + " \\\\ ".join(rows) + suffix
 
 
@@ -30,8 +27,10 @@ def matrix_to_mobject(matrix):
     return TexMobject(matrix_to_tex_string(matrix))
 
 
-def vector_coordinate_label(vector_mob, integer_labels=True,
-                            n_dim=2, color=WHITE):
+def vector_coordinate_label(vector_mob,
+                            integer_labels=True,
+                            n_dim=2,
+                            color=WHITE):
     vect = np.array(vector_mob.get_end())
     if integer_labels:
         vect = np.round(vect).astype(int)
@@ -42,9 +41,11 @@ def vector_coordinate_label(vector_mob, integer_labels=True,
 
     shift_dir = np.array(vector_mob.get_end())
     if shift_dir[0] >= 0:  # Pointing right
-        shift_dir -= label.get_left() + DEFAULT_MOBJECT_TO_MOBJECT_BUFFER * LEFT
+        shift_dir -= label.get_left(
+        ) + DEFAULT_MOBJECT_TO_MOBJECT_BUFFER * LEFT
     else:  # Pointing left
-        shift_dir -= label.get_right() + DEFAULT_MOBJECT_TO_MOBJECT_BUFFER * RIGHT
+        shift_dir -= label.get_right(
+        ) + DEFAULT_MOBJECT_TO_MOBJECT_BUFFER * RIGHT
     label.shift(shift_dir)
     label.set_color(color)
     label.rect = BackgroundRectangle(label)
@@ -87,25 +88,21 @@ class Matrix(VMobject):
 
     def matrix_to_mob_matrix(self, matrix):
         return np.vectorize(self.element_to_mobject)(
-            matrix, **self.element_to_mobject_config
-        )
+            matrix, **self.element_to_mobject_config)
 
     def organize_mob_matrix(self, matrix):
         for i, row in enumerate(matrix):
             for j, elem in enumerate(row):
                 mob = matrix[i][j]
-                mob.move_to(
-                    i * self.v_buff * DOWN + j * self.h_buff * RIGHT,
-                    self.element_alignment_corner
-                )
+                mob.move_to(i * self.v_buff * DOWN + j * self.h_buff * RIGHT,
+                            self.element_alignment_corner)
         return self
 
     def add_brackets(self):
         bracket_pair = TexMobject("\\big[", "\\big]")
         bracket_pair.scale(2)
-        bracket_pair.stretch_to_fit_height(
-            self.get_height() + 2 * self.bracket_v_buff
-        )
+        bracket_pair.stretch_to_fit_height(self.get_height() +
+                                           2 * self.bracket_v_buff)
         l_bracket, r_bracket = bracket_pair.split()
         l_bracket.next_to(self, LEFT, self.bracket_h_buff)
         r_bracket.next_to(self, RIGHT, self.bracket_h_buff)
@@ -143,7 +140,9 @@ class Matrix(VMobject):
 class DecimalMatrix(Matrix):
     CONFIG = {
         "element_to_mobject": DecimalNumber,
-        "element_to_mobject_config": {"num_decimal_places": 1}
+        "element_to_mobject_config": {
+            "num_decimal_places": 1
+        }
     }
 
 
@@ -159,7 +158,10 @@ class MobjectMatrix(Matrix):
     }
 
 
-def get_det_text(matrix, determinant=None, background_rect=False, initial_scale_factor=2):
+def get_det_text(matrix,
+                 determinant=None,
+                 background_rect=False,
+                 initial_scale_factor=2):
     parens = TexMobject("(", ")")
     parens.scale(initial_scale_factor)
     parens.stretch_to_fit_height(matrix.get_height())

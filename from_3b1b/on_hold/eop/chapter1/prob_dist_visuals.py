@@ -6,8 +6,8 @@ class ProbabilityDistributions(PiCreatureScene):
 
     CONFIG = {
         "default_pi_creature_kwargs": {
-        "color": MAROON_E,
-        "flip_at_start": False,
+            "color": MAROON_E,
+            "flip_at_start": False,
         },
     }
 
@@ -15,14 +15,10 @@ class ProbabilityDistributions(PiCreatureScene):
 
         lag_ratio = 0.2
         run_time = 3
-        
 
-# WEATHER FORECAST
+        # WEATHER FORECAST
 
-    
-        unit_rect = Rectangle(
-            height = 3, width = 3
-        ).shift(DOWN)
+        unit_rect = Rectangle(height=3, width=3).shift(DOWN)
 
         p_rain = 0.23
         p_sun = 1 - p_rain
@@ -30,26 +26,24 @@ class ProbabilityDistributions(PiCreatureScene):
 
         rain_rect = unit_rect.copy().stretch(p_rain, 0)
         rain_rect.align_to(unit_rect, LEFT)
-        rain_rect.set_fill(color = BLUE, opacity = opacity)
-        rain_rect.set_stroke(width = 0)
+        rain_rect.set_fill(color=BLUE, opacity=opacity)
+        rain_rect.set_stroke(width=0)
 
         sun_rect = unit_rect.copy().stretch(p_sun, 0)
-        sun_rect.next_to(rain_rect, RIGHT, buff = 0)
-        sun_rect.set_fill(color = YELLOW, opacity = opacity)
-        sun_rect.set_stroke(width = 0)
+        sun_rect.next_to(rain_rect, RIGHT, buff=0)
+        sun_rect.set_fill(color=YELLOW, opacity=opacity)
+        sun_rect.set_stroke(width=0)
 
         self.add(unit_rect, rain_rect, sun_rect)
 
-        rain = SVGMobject(file_name = "rain").scale(0.25)
-        sun = SVGMobject(file_name = "sun").scale(0.35)
+        rain = SVGMobject(file_name="rain").scale(0.25)
+        sun = SVGMobject(file_name="sun").scale(0.35)
 
         rain.flip().move_to(rain_rect)
         sun.move_to(sun_rect)
 
         self.add(rain, sun)
-
-
-        text_scale =  0.7
+        text_scale = 0.7
 
         brace_rain = Brace(rain_rect, UP)
         p_rain_label = TextMobject("$P($rain$)=$").scale(text_scale)
@@ -68,8 +62,6 @@ class ProbabilityDistributions(PiCreatureScene):
         self.add(brace_rain, p_rain_whole_label, brace_sun, p_sun_whole_label)
 
         self.wait(6)
-
-
 
         # new_p_rain = 0.68
         # new_p_sun = 1 - new_p_rain
@@ -97,7 +89,6 @@ class ProbabilityDistributions(PiCreatureScene):
         # new_p_rain_whole_label = VGroup(new_p_rain_label, new_p_rain_decimal)
         # new_p_rain_whole_label.next_to(new_brace_rain, UP)
 
-        
         # new_brace_sun = Brace(new_sun_rect, DOWN)
         # new_p_sun_label = TextMobject("$P($sunshine$)=$").scale(text_scale)
         # new_p_sun_decimal = DecimalNumber(new_p_sun).scale(text_scale)
@@ -135,14 +126,11 @@ class ProbabilityDistributions(PiCreatureScene):
         #     update_p_sun
         # )
 
-
-
         # move the forecast into a corner
 
-        forecast = VGroup(
-            rain_rect, sun_rect, rain, sun, brace_rain, brace_sun,
-            p_rain_whole_label, p_sun_whole_label, unit_rect
-        )
+        forecast = VGroup(rain_rect, sun_rect, rain, sun, brace_rain,
+                          brace_sun, p_rain_whole_label, p_sun_whole_label,
+                          unit_rect)
 
         forecast.target = forecast.copy().scale(0.5)
         forecast.target.to_corner(UL)
@@ -157,37 +145,34 @@ class ProbabilityDistributions(PiCreatureScene):
         )
 
         self.wait(3)
-
-
-# DOUBLE DICE THROW
+        # DOUBLE DICE THROW
 
         cell_size = 0.5
-        dice_table = TwoDiceTable(cell_size = cell_size, label_scale = 0.7)
+        dice_table = TwoDiceTable(cell_size=cell_size, label_scale=0.7)
         dice_table.shift(0.8 * DOWN)
-        dice_unit_rect = SurroundingRectangle(
-            dice_table.cells, buff = 0,
-            stroke_color=WHITE
-        )
+        dice_unit_rect = SurroundingRectangle(dice_table.cells,
+                                              buff=0,
+                                              stroke_color=WHITE)
 
         dice_table_grouped_cells = VGroup()
 
         for i in range(6):
-            dice_table_grouped_cells.add(VGroup(*[
-                VGroup(
-                    dice_table.cells[6 * i - 5 * k],
-                    dice_table.labels[6 * i - 5 * k],
-                )
-                for k in range(i + 1)
-            ]))
+            dice_table_grouped_cells.add(
+                VGroup(*[
+                    VGroup(
+                        dice_table.cells[6 * i - 5 * k],
+                        dice_table.labels[6 * i - 5 * k],
+                    ) for k in range(i + 1)
+                ]))
 
         for i in range(5):
-            dice_table_grouped_cells.add(VGroup(*[
-                VGroup(
-                    dice_table.cells[31 + i - 5 * k],
-                    dice_table.labels[31 + i - 5 * k],
-                )
-                for k in range(5 - i)
-            ]))
+            dice_table_grouped_cells.add(
+                VGroup(*[
+                    VGroup(
+                        dice_table.cells[31 + i - 5 * k],
+                        dice_table.labels[31 + i - 5 * k],
+                    ) for k in range(5 - i)
+                ]))
 
         # self.play(
         #     FadeIn(dice_unit_rect),
@@ -201,20 +186,15 @@ class ProbabilityDistributions(PiCreatureScene):
         #     LaggedStartMap(FadeIn, dice_table_grouped_cells,
         #         lag_ratio = lag_ratio, run_time = run_time)
         # )
-        self.play(
-            FadeIn(dice_table_grouped_cells),
-            FadeIn(dice_unit_rect),
-            FadeIn(dice_table.rows)
-        )
+        self.play(FadeIn(dice_table_grouped_cells), FadeIn(dice_unit_rect),
+                  FadeIn(dice_table.rows))
 
         self.wait(3)
 
-
-        self.play(
-            dice_table_grouped_cells.space_out_submobjects, {"factor" : 1.5},
-            rate_func=there_and_back_with_pause,
-            run_time=run_time
-        )
+        self.play(dice_table_grouped_cells.space_out_submobjects,
+                  {"factor": 1.5},
+                  rate_func=there_and_back_with_pause,
+                  run_time=run_time)
 
         dice_table.add(dice_unit_rect)
         dice_table_target = dice_table.deepcopy()
@@ -231,25 +211,20 @@ class ProbabilityDistributions(PiCreatureScene):
 
         self.wait(3)
 
-# TITLE
+        # TITLE
 
         text = TextMobject("Probability distributions")
         text.to_edge(UP)
         text_rect = SurroundingRectangle(text, buff=MED_SMALL_BUFF)
         text_rect.match_color(text)
 
-        self.play(
-            FadeIn(text),
-            ShowCreation(text_rect)
-        )
+        self.play(FadeIn(text), ShowCreation(text_rect))
 
         self.wait(3)
 
+        # COIN FLIP
 
-# COIN FLIP
-
-
-        brick_row = BrickRow(3, height = 2, width = 10)
+        brick_row = BrickRow(3, height=2, width=10)
         coin_flip_rect = VGroup(brick_row)
 
         tallies = VGroup()
@@ -272,50 +247,26 @@ class ProbabilityDistributions(PiCreatureScene):
             braces.add(brace)
             labels.add(label)
 
-        self.play(
-            FadeIn(braces),
-            FadeIn(labels)
-        )
+        self.play(FadeIn(braces), FadeIn(labels))
 
         coin_flip_rect.add(braces, labels)
 
-
         self.wait(6)
 
-        outcomes = brick_row.get_outcome_rects_for_level(3, with_labels = True,
-            inset = True)
+        outcomes = brick_row.get_outcome_rects_for_level(3,
+                                                         with_labels=True,
+                                                         inset=True)
         outcomes.scale(0.65)
         outcomes.move_to(brick_row.get_center())
-        outcome_braces = VGroup(*[
-            Brace(outcome, DOWN) for outcome in outcomes
-        ])
+        outcome_braces = VGroup(
+            *[Brace(outcome, DOWN) for outcome in outcomes])
         outcome_labels = VGroup(*[
             TexMobject("{1\over 8}").scale(0.5).next_to(brace, DOWN)
             for brace in outcome_braces
         ])
 
-        self.play(
-            FadeOut(tallies),
-            FadeIn(outcomes),
-            FadeOut(braces),
-            FadeOut(labels),
-            FadeIn(outcome_braces),
-            FadeIn(outcome_labels)
-        )
-
+        self.play(FadeOut(tallies), FadeIn(outcomes), FadeOut(braces),
+                  FadeOut(labels), FadeIn(outcome_braces),
+                  FadeIn(outcome_labels))
 
         self.wait(10)
-
-
-
-
-
-
-
-
-
-
-
-
-
-

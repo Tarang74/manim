@@ -14,14 +14,14 @@ from manimlib.imports import *
 # Use -r <number> to specify a resolution (for example, -r 1080
 # for a 1920x1080 video)
 
+print("helloworld")
+
 
 class OpeningManimExample(Scene):
     def construct(self):
         title = TextMobject("This is some \\LaTeX")
-        basel = TexMobject(
-            "\\sum_{n=1}^\\infty "
-            "\\frac{1}{n^2} = \\frac{\\pi^2}{6}"
-        )
+        basel = TexMobject("\\sum_{n=1}^\\infty "
+                           "\\frac{1}{n^2} = \\frac{\\pi^2}{6}")
         VGroup(title, basel).arrange(DOWN)
         self.play(
             Write(title),
@@ -52,8 +52,7 @@ class OpeningManimExample(Scene):
 
         grid_transform_title = TextMobject(
             "That was a non-linear function \\\\"
-            "applied to the grid"
-        )
+            "applied to the grid")
         grid_transform_title.move_to(grid_title, UL)
         grid.prepare_for_nonlinear_transform()
         self.play(
@@ -66,9 +65,7 @@ class OpeningManimExample(Scene):
             run_time=3,
         )
         self.wait()
-        self.play(
-            Transform(grid_title, grid_transform_title)
-        )
+        self.play(Transform(grid_title, grid_transform_title))
         self.wait()
 
 
@@ -88,22 +85,19 @@ class SquareToCircle(Scene):
 class WarpSquare(Scene):
     def construct(self):
         square = Square()
-        self.play(ApplyPointwiseFunction(
-            lambda point: complex_to_R3(np.exp(R3_to_complex(point))),
-            square
-        ))
+        self.play(
+            ApplyPointwiseFunction(
+                lambda point: complex_to_R3(np.exp(R3_to_complex(point))),
+                square))
         self.wait()
 
 
 class WriteStuff(Scene):
     def construct(self):
-        example_text = TextMobject(
-            "This is a some text",
-            tex_to_color_map={"text": YELLOW}
-        )
+        example_text = TextMobject("This is a some text",
+                                   tex_to_color_map={"text": YELLOW})
         example_tex = TexMobject(
-            "\\sum_{k=1}^\\infty {1 \\over k^2} = {\\pi^2 \\over 6}",
-        )
+            "\\sum_{k=1}^\\infty {1 \\over k^2} = {\\pi^2 \\over 6}", )
         group = VGroup(example_text, example_tex)
         group.arrange(DOWN)
         group.set_width(FRAME_WIDTH - 2 * LARGE_BUFF)
@@ -127,10 +121,23 @@ class UpdatersExample(Scene):
         decimal.add_updater(lambda d: d.set_value(square.get_center()[1]))
         self.add(square, decimal)
         self.play(
-            square.to_edge, DOWN,
+            square.to_edge,
+            DOWN,
             rate_func=there_and_back,
             run_time=5,
         )
         self.wait()
+
+
+class ConfigExample(Scene):
+    CONFIG = {
+        "text_1": "Text 1",
+        "text_2": "Text 2",
+    }
+
+    def construct(self):
+        t1 = TextMobject(self.text_1)
+        self.play(Write(t1))
+
 
 # See old_projects folder for many, many more

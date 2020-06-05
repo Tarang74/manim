@@ -4,10 +4,7 @@ from manimlib.mobject.types.vectorized_mobject import VGroup
 
 
 class PiCreatureClass(VGroup):
-    CONFIG = {
-        "width": 3,
-        "height": 2
-    }
+    CONFIG = {"width": 3, "height": 2}
 
     def __init__(self, **kwargs):
         VGroup.__init__(self, **kwargs)

@@ -14,17 +14,16 @@ SICKLY_GREEN = "#9BBD37"
 
 
 def get_bayes_formula():
-    return TexMobject(
-        "P(A|B) = {P(A)P(B|A) \\over P(B)}",
-        tex_to_color_map={
-            "A": YELLOW,
-            "B": BLUE,
-        },
-        substrings_to_isolate=list("P(|)")
-    )
+    return TexMobject("P(A|B) = {P(A)P(B|A) \\over P(B)}",
+                      tex_to_color_map={
+                          "A": YELLOW,
+                          "B": BLUE,
+                      },
+                      substrings_to_isolate=list("P(|)"))
 
 
 # Scenes
+
 
 class ThisIsAFootnote(TeacherStudentsScene):
     def construct(self):
@@ -57,31 +56,29 @@ class ThisIsAFootnote(TeacherStudentsScene):
         # Show main video
         self.play(
             FadeInFromDown(image_group),
-            self.get_student_changes(
-                "pondering", "hooray", "tease",
-                look_at_arg=image
-            )
-        )
+            self.get_student_changes("pondering",
+                                     "hooray",
+                                     "tease",
+                                     look_at_arg=image))
         self.play(
             Write(asterisk),
-            self.teacher.change, "speaking",
+            self.teacher.change,
+            "speaking",
         )
-        self.play(
-            self.get_student_changes(
-                "thinking", "erm", "thinking"
-            )
-        )
+        self.play(self.get_student_changes("thinking", "erm", "thinking"))
         self.wait(3)
-        self.play(
-            self.teacher.change, "raise_right_hand",
-            FadeInFromDown(formula),
-            self.get_student_changes(*3 * ["pondering"])
-        )
+        self.play(self.teacher.change, "raise_right_hand",
+                  FadeInFromDown(formula),
+                  self.get_student_changes(*3 * ["pondering"]))
         self.wait()
 
         # Rearrange
         parts = VGroup(
-            pb, pab, eq, pa, pba,
+            pb,
+            pab,
+            eq,
+            pa,
+            pba,
         )
         parts.generate_target()
         parts.target.arrange(RIGHT, buff=SMALL_BUFF)
@@ -90,19 +87,21 @@ class ThisIsAFootnote(TeacherStudentsScene):
         self.play(
             MoveToTarget(parts, path_arc=-30 * DEGREES),
             FadeOut(over),
-            self.teacher.change, "pondering",
+            self.teacher.change,
+            "pondering",
         )
         self.wait()
 
         # Move to top
         p_both = TexMobject(
             "P(A \\text{ and } B)",
-            tex_to_color_map={"A": YELLOW, "B": BLUE},
+            tex_to_color_map={
+                "A": YELLOW,
+                "B": BLUE
+            },
         )
         eq2 = TexMobject("=")
-        full_equation = VGroup(
-            pb, pab, eq, p_both, eq2, pa, pba
-        )
+        full_equation = VGroup(pb, pab, eq, p_both, eq2, pa, pba)
         full_equation.generate_target()
         full_equation.target.arrange(RIGHT, buff=SMALL_BUFF)
         full_equation.target.set_width(FRAME_WIDTH - 1)
@@ -117,13 +116,11 @@ class ThisIsAFootnote(TeacherStudentsScene):
         self.play(
             MoveToTarget(full_equation),
             FadeOutAndShift(image_group, 2 * LEFT),
-            FadeOutAndShift(asterisk, 2 * LEFT),
-            self.teacher.look_at, 4 * UP,
-            self.get_student_changes(
-                "thinking", "erm", "confused",
-                look_at_arg=4 * UP
-            )
-        )
+            FadeOutAndShift(asterisk, 2 * LEFT), self.teacher.look_at, 4 * UP,
+            self.get_student_changes("thinking",
+                                     "erm",
+                                     "confused",
+                                     look_at_arg=4 * UP))
         self.wait(2)
 
 
@@ -149,8 +146,10 @@ class ShowTwoPerspectives(Scene):
 
         self.add(formula)
         self.play(
-            formula[:3].set_opacity, 0.2,
-            formula[-3:].set_opacity, 0.2,
+            formula[:3].set_opacity,
+            0.2,
+            formula[-3:].set_opacity,
+            0.2,
         )
         for i in (0, 1):
             self.play(
@@ -174,9 +173,7 @@ class ShowTwoPerspectives(Scene):
         )
         d1_line.set_stroke(BLACK, 2)
 
-        space_words = TextMobject(
-            "Space of all\\\\possibilities"
-        )
+        space_words = TextMobject("Space of all\\\\possibilities")
         space_words.match_width(diagram1.square)
         space_words.scale(0.9)
         space_words.move_to(diagram1.square)
@@ -188,7 +185,8 @@ class ShowTwoPerspectives(Scene):
             FadeOut(venn_diagram[0][1]),
             FadeOut(venn_diagram[1][1]),
             FadeOut(arrow),
-            formula[4:6].set_opacity, 1,
+            formula[4:6].set_opacity,
+            1,
         )
         diagram1.pa_label.update()
         self.play(
@@ -237,7 +235,8 @@ class ShowTwoPerspectives(Scene):
             Restore(diagram1.he_brace),
             VFadeIn(diagram1.he_brace),
             VFadeIn(diagram1.pba_label),
-            formula.pba.set_opacity, 1,
+            formula.pba.set_opacity,
+            1,
         )
         self.wait()
 
@@ -255,12 +254,16 @@ class ShowTwoPerspectives(Scene):
             rect.stretch(0.001, 0, about_edge=LEFT)
 
         self.play(
-            diagram1_copy.move_to, diagram2,
-            formula.pb.set_opacity, 1,
+            diagram1_copy.move_to,
+            diagram2,
+            formula.pb.set_opacity,
+            1,
         )
         self.play(
-            diagram1_copy.set_likelihood, self.pb,
-            diagram1_copy.set_antilikelihood, self.pb,
+            diagram1_copy.set_likelihood,
+            self.pb,
+            diagram1_copy.set_antilikelihood,
+            self.pb,
             VFadeOut(diagram1_copy),
             FadeIn(diagram2),
             TransformFromCopy(formula.pb, diagram2.pb_label),
@@ -269,8 +272,10 @@ class ShowTwoPerspectives(Scene):
         )
         self.wait()
         self.play(
-            formula.pab.set_opacity, 1,
-            formula.eq1.set_opacity, 1,
+            formula.pab.set_opacity,
+            1,
+            formula.eq1.set_opacity,
+            1,
         )
         self.play(
             TransformFromCopy(formula.pab, diagram2.pab_label),
@@ -288,16 +293,17 @@ class ShowTwoPerspectives(Scene):
             }
         }
         parts = VGroup(*[
-            TexMobject(tex, **kw)
-            for tex in [
-                "P(B)", "P(A|B)", "=",
+            TexMobject(tex, **kw) for tex in [
+                "P(B)",
+                "P(A|B)",
+                "=",
                 "P(A \\text{ and } B)",
-                "=", "P(A)", "P(B|A)",
+                "=",
+                "P(A)",
+                "P(B|A)",
             ]
         ])
-        attrs = [
-            "pb", "pab", "eq1", "p_both", "eq2", "pa", "pba"
-        ]
+        attrs = ["pb", "pab", "eq1", "p_both", "eq2", "pa", "pba"]
         for attr, part in zip(attrs, parts):
             setattr(parts, attr, part)
 
@@ -329,11 +335,9 @@ class ShowTwoPerspectives(Scene):
         for title, circle, vect in zip(titles, circles, [UL, UR]):
             title.match_color(circle)
             title.scale(2)
-            title.next_to(
-                circle.get_boundary_point(vect),
-                vect,
-                buff=SMALL_BUFF
-            )
+            title.next_to(circle.get_boundary_point(vect),
+                          vect,
+                          buff=SMALL_BUFF)
 
         return VGroup(circles, titles)
 
@@ -348,11 +352,9 @@ class ShowTwoPerspectives(Scene):
         diagram.pa_label = TexMobject("P(A)", **kw)
         diagram.pba_label = TexMobject("P(B|A)", **kw)
         diagram.pa_label.add_updater(
-            lambda m: m.next_to(diagram.h_brace, DOWN, SMALL_BUFF),
-        )
+            lambda m: m.next_to(diagram.h_brace, DOWN, SMALL_BUFF), )
         diagram.pba_label.add_updater(
-            lambda m: m.next_to(diagram.he_brace, LEFT, SMALL_BUFF),
-        )
+            lambda m: m.next_to(diagram.he_brace, LEFT, SMALL_BUFF), )
 
         return diagram
 
@@ -383,8 +385,10 @@ class ShowTwoPerspectives(Scene):
 
         result = VGroup(
             square.set_opacity(0),
-            b_rect, nb_rect,
-            ba_rect, nba_rect,
+            b_rect,
+            nb_rect,
+            ba_rect,
+            nba_rect,
         )
         result.b_rect = b_rect
         result.nb_rect = nb_rect
@@ -406,8 +410,10 @@ class ShowTwoPerspectives(Scene):
 
         VGroup(
             result,
-            pb_brace, pab_brace,
-            pb_label, pab_label,
+            pb_brace,
+            pab_brace,
+            pb_label,
+            pab_label,
         ).to_edge(LEFT)
 
         return result
@@ -437,16 +443,12 @@ class Rearrange(ShowTwoPerspectives):
 
         eq1.generate_target()
         eq1.target.rotate(PI / 3)
-        eq1.target.move_to(midpoint(
-            p_both.get_corner(DL),
-            new_line.target[0].get_corner(UR)
-        ))
+        eq1.target.move_to(
+            midpoint(p_both.get_corner(DL), new_line.target[0].get_corner(UR)))
         eq2.generate_target()
         eq2.target.rotate(-PI / 3)
-        eq2.target.move_to(midpoint(
-            p_both.get_corner(DR),
-            new_line.target[4].get_corner(UL)
-        ))
+        eq2.target.move_to(
+            midpoint(p_both.get_corner(DR), new_line.target[4].get_corner(UL)))
 
         self.add(formula)
         self.play(
@@ -457,15 +459,14 @@ class Rearrange(ShowTwoPerspectives):
         self.wait()
 
         over.move_to(VGroup(pa, pba))
-        self.play(
-            ApplyMethod(
-                pb.next_to, over, DOWN,
-                path_arc=30 * DEGREES,
-            ),
-            VGroup(pa, pba).next_to, over, UP,
-            ShowCreation(over),
-            FadeOut(VGroup(eq1, eq2))
-        )
+        self.play(ApplyMethod(
+            pb.next_to,
+            over,
+            DOWN,
+            path_arc=30 * DEGREES,
+        ),
+                  VGroup(pa, pba).next_to, over, UP, ShowCreation(over),
+                  FadeOut(VGroup(eq1, eq2)))
         self.wait(2)
         over.generate_target()
         over.target.next_to(eq3, LEFT)
@@ -473,13 +474,14 @@ class Rearrange(ShowTwoPerspectives):
         numer.generate_target()
         numer.target.arrange(RIGHT, buff=SMALL_BUFF)
         numer.target.next_to(over.target, UP)
-        self.play(LaggedStart(
-            MoveToTarget(over, path_arc=-30 * DEGREES),
-            MoveToTarget(numer, path_arc=-30 * DEGREES),
-            ApplyMethod(pa.next_to, over.target, DOWN),
-            ApplyMethod(pba.next_to, eq3, RIGHT),
-            lag_ratio=0.3,
-        ))
+        self.play(
+            LaggedStart(
+                MoveToTarget(over, path_arc=-30 * DEGREES),
+                MoveToTarget(numer, path_arc=-30 * DEGREES),
+                ApplyMethod(pa.next_to, over.target, DOWN),
+                ApplyMethod(pba.next_to, eq3, RIGHT),
+                lag_ratio=0.3,
+            ))
         self.wait(2)
 
         # Numbers
@@ -507,55 +509,51 @@ class Rearrange(ShowTwoPerspectives):
         mag.set_fill(GREY, 1)
         mag.set_sheen(1, UL)
 
-        Bs = VGroup(*[
-            mob.get_part_by_tex("B")
-            for mob in [pb, pab, pba]
-        ])
-        As = VGroup(*[
-            mob.get_part_by_tex("A")
-            for mob in [pab, pa, pba]
-        ])
-        books = VGroup(*[
-            LibrarianIcon().replace(B, dim_to_match=0)
-            for B in Bs
-        ])
+        Bs = VGroup(*[mob.get_part_by_tex("B") for mob in [pb, pab, pba]])
+        As = VGroup(*[mob.get_part_by_tex("A") for mob in [pab, pa, pba]])
+        books = VGroup(
+            *[LibrarianIcon().replace(B, dim_to_match=0) for B in Bs])
         books.set_color(YELLOW)
 
-        mags = VGroup(*[
-            mag.copy().replace(A)
-            for A in As
-        ])
+        mags = VGroup(*[mag.copy().replace(A) for A in As])
 
-        self.play(LaggedStart(*[
-            ReplacementTransform(A, mag, path_arc=PI)
-            for A, mag in zip(As, mags)
-        ]))
-        self.play(LaggedStart(*[
-            ReplacementTransform(B, book, path_arc=PI)
-            for B, book in zip(Bs, books)
-        ]))
+        self.play(
+            LaggedStart(*[
+                ReplacementTransform(A, mag, path_arc=PI)
+                for A, mag in zip(As, mags)
+            ]))
+        self.play(
+            LaggedStart(*[
+                ReplacementTransform(B, book, path_arc=PI)
+                for B, book in zip(Bs, books)
+            ]))
         self.wait()
 
 
 class ClassLooking(TeacherStudentsScene):
     def construct(self):
         self.play(
-            self.teacher.change, "pondering",
+            self.teacher.change,
+            "pondering",
             self.get_student_changes(
-                "pondering", "confused", "sassy",
+                "pondering",
+                "confused",
+                "sassy",
                 look_at_arg=self.screen,
             ),
         )
         self.wait(5)
         self.play(
-            self.teacher.change, "raise_right_hand",
+            self.teacher.change,
+            "raise_right_hand",
         )
         self.play(
             self.get_student_changes(
-                "thinking", "pondering", "pondering",
+                "thinking",
+                "pondering",
+                "pondering",
                 look_at_arg=self.hold_up_spot + 2 * UP,
-            )
-        )
+            ))
         self.wait(3)
 
 
@@ -565,7 +563,8 @@ class LandscapeOfTools(TeacherStudentsScene):
         bayes = group[0].copy()
 
         self.play(
-            self.teacher.change, "raise_right_hand",
+            self.teacher.change,
+            "raise_right_hand",
             self.get_student_changes(
                 *3 * ["confused"],
                 look_at_arg=group,
@@ -573,10 +572,7 @@ class LandscapeOfTools(TeacherStudentsScene):
             FadeInFromDown(bayes),
         )
         self.remove(bayes)
-        self.play(
-            ShowSubmobjectsOneByOne(group, remover=True),
-            run_time=5
-        )
+        self.play(ShowSubmobjectsOneByOne(group, remover=True), run_time=5)
         self.add(bayes)
         self.wait(2)
 
@@ -584,76 +580,69 @@ class LandscapeOfTools(TeacherStudentsScene):
         self.add(bubble, bayes)
         self.play(
             bayes.move_to, bubble.get_bubble_center(),
-            DrawBorderThenFill(bubble),
-            self.teacher.change, "happy",
+            DrawBorderThenFill(bubble), self.teacher.change, "happy",
             self.get_student_changes(
-                "pondering", "erm", "erm",
+                "pondering",
+                "erm",
+                "erm",
                 look_at_arg=bubble,
-            )
-        )
+            ))
         self.change_all_student_modes(
-            "thinking", look_at_arg=bayes,
+            "thinking",
+            look_at_arg=bayes,
         )
         self.wait()
-        self.play(
-            FadeOut(bayes),
-            bubble.set_fill, BLACK, 0.2,
-            bubble.set_stroke, WHITE, 1,
-            self.get_student_changes(
-                "pleading", "guilty", "guilty",
-            ),
-            self.teacher.change, "hesitant"
-        )
+        self.play(FadeOut(bayes), bubble.set_fill, BLACK, 0.2,
+                  bubble.set_stroke, WHITE, 1,
+                  self.get_student_changes(
+                      "pleading",
+                      "guilty",
+                      "guilty",
+                  ), self.teacher.change, "hesitant")
         self.wait(2)
 
     def get_formulas(self):
         group = VGroup(
             get_bayes_formula(),
-            TexMobject(
-                "P(X = k) = {\\lambda^k \\over k!}", "e^{-\\lambda}",
-                tex_to_color_map={
-                    "k": YELLOW,
-                    "\\lambda": GREEN,
-                }
-            ),
+            TexMobject("P(X = k) = {\\lambda^k \\over k!}",
+                       "e^{-\\lambda}",
+                       tex_to_color_map={
+                           "k": YELLOW,
+                           "\\lambda": GREEN,
+                       }),
             TexMobject(
                 "{1 \\over \\sigma\\sqrt{2\\pi}}",
                 "e^{\\frac{1}{2}\\left({(x - \\mu) \\over \\sigma}\\right)^2}",
                 tex_to_color_map={
                     "\\sigma": GREEN,
                     "\\mu": BLUE,
-                }
-            ),
-            TexMobject(
-                "P(X = k) =", "\\left({n \\over k}\\right)", "p^k(1-p)^{n-k}",
-                tex_to_color_map={
-                    "\\over": BLACK,
-                    "p": WHITE,
-                    "k": YELLOW,
-                    "n": BLUE,
-                    "k": GREEN
-                }
-            ),
-            TexMobject(
-                "E[X + Y] = E[x] + E[y]"
-            ),
+                }),
+            TexMobject("P(X = k) =",
+                       "\\left({n \\over k}\\right)",
+                       "p^k(1-p)^{n-k}",
+                       tex_to_color_map={
+                           "\\over": BLACK,
+                           "p": WHITE,
+                           "k": YELLOW,
+                           "n": BLUE,
+                           "k": GREEN
+                       }),
+            TexMobject("E[X + Y] = E[x] + E[y]"),
             TexMobject(
                 "\\text{Var}(X + Y) = \\text{Var}(x) + \\text{Var}(y) + 2\\text{Cov}(X, Y)"
             ),
-            TexMobject(
-                "H = \\sum_{i} -p_i \\log", "(p_i)",
-                tex_to_color_map={
-                    "p_i": YELLOW,
-                }
-            ),
+            TexMobject("H = \\sum_{i} -p_i \\log",
+                       "(p_i)",
+                       tex_to_color_map={
+                           "p_i": YELLOW,
+                       }),
             TexMobject(
                 "{n \\choose k}",
                 "{B(k + \\alpha, n -k + \\beta) \\over B(\\alpha, \\beta)}",
                 tex_to_color_map={
                     "\\alpha": BLUE,
                     "\\beta": YELLOW,
-                }
-            ),
+                }),
             TexMobject(
                 "P(d) = \\log_{10}\\left(1 + {1 \\over d}\\right)",
                 tex_to_color_map={"d": BLUE},
@@ -663,8 +652,7 @@ class LandscapeOfTools(TeacherStudentsScene):
                 tex_to_color_map={
                     "{x}": BLUE,
                     "{y}": RED,
-                }
-            ),
+                }),
         )
 
         group.move_to(self.hold_up_spot, DOWN)
@@ -709,8 +697,10 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
                 FadeIn(venn[1][i]),
             )
         self.play(
-            and_part.scale, 0.5,
-            and_part.move_to, venn,
+            and_part.scale,
+            0.5,
+            and_part.move_to,
+            venn,
         )
         self.remove(and_part)
         venn.add(and_part)
@@ -746,7 +736,10 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
 
         pair = pairs[0].target.copy()
         prob = TexMobject(
-            "P(", "OO", ")", "= \\frac{1}{4} \\cdot \\frac{1}{4} = \\frac{1}{16}",
+            "P(",
+            "OO",
+            ")",
+            "= \\frac{1}{4} \\cdot \\frac{1}{4} = \\frac{1}{16}",
         )
         pair.move_to(prob[1])
         prob.submobjects[1] = pair
@@ -769,8 +762,12 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
         self.add(both_square, pairs)
         self.play(
             LaggedStartMap(MoveToTarget, pairs, path_arc=30 * DEGREES),
-            both_square.set_stroke, YELLOW, 5,
-            both_square.set_fill, YELLOW, 0.25,
+            both_square.set_stroke,
+            YELLOW,
+            5,
+            both_square.set_fill,
+            YELLOW,
+            0.25,
         )
         self.play(FadeIn(prob[3:]))
         self.wait()
@@ -793,14 +790,16 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
 
         ht_prob = TexMobject(
             "P(\\text{TT}) = \\frac{1}{2} \\cdot \\frac{1}{2} = \\frac{1}{4}",
-            tex_to_color_map={"\\text{TT}": RED}
-        )
+            tex_to_color_map={"\\text{TT}": RED})
         ht_prob.scale(1.5)
         ht_prob.next_to(ht_grid, RIGHT, LARGE_BUFF)
 
         ht_grid_group = VGroup(
-            ht_grid, ht_labels, left_ht_labels,
-            ht_both_square, ht_pairs,
+            ht_grid,
+            ht_labels,
+            left_ht_labels,
+            ht_both_square,
+            ht_pairs,
         )
 
         self.play(
@@ -819,7 +818,8 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
         dice_labels.set_height(0.5)
         left_dice_labels = dice_labels.copy()
         self.label_grid(dice_grid, left_dice_labels, dice_labels)
-        dice_pairs = self.get_grid_entries(dice_grid, left_dice_labels, dice_labels)
+        dice_pairs = self.get_grid_entries(dice_grid, left_dice_labels,
+                                           dice_labels)
         for pair in dice_pairs:
             pair.space_out_submobjects(0.9)
             pair.scale(0.75)
@@ -829,7 +829,9 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
         dice_both_square.set_fill(YELLOW, 0.25)
 
         dice_prob = TexMobject(
-            "P(", "OO", ") = \\frac{1}{6} \\cdot \\frac{1}{6} = \\frac{1}{36}",
+            "P(",
+            "OO",
+            ") = \\frac{1}{6} \\cdot \\frac{1}{6} = \\frac{1}{36}",
         )
         pair = dice_pairs[0].copy()
         pair.scale(1.5)
@@ -839,8 +841,11 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
         dice_prob.next_to(dice_grid, RIGHT, LARGE_BUFF)
 
         dice_grid_group = VGroup(
-            dice_grid, dice_labels, left_dice_labels,
-            dice_both_square, dice_pairs,
+            dice_grid,
+            dice_labels,
+            left_dice_labels,
+            dice_both_square,
+            dice_pairs,
         )
 
         self.play(
@@ -868,10 +873,8 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
             person.square = square
             person.add_updater(lambda m: m.next_to(m.square, UP))
 
-        row_rect = SurroundingRectangle(
-            VGroup(grid[0], left_people[0]),
-            buff=SMALL_BUFF
-        )
+        row_rect = SurroundingRectangle(VGroup(grid[0], left_people[0]),
+                                        buff=SMALL_BUFF)
         row_rect.set_stroke(RED, 3)
 
         self.play(ShowCreation(cross))
@@ -879,21 +882,28 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
             FadeOut(prob),
             FadeOut(cross),
         )
-        self.play(
-            ShowCreation(row_rect)
-        )
+        self.play(ShowCreation(row_rect))
         self.wait()
         self.play(
-            grid[0][0].stretch, 2, 0, {"about_edge": LEFT},
-            grid[0][1:].stretch, 2 / 3, 0, {"about_edge": RIGHT},
-            both_square.stretch, 2, 0, {"about_edge": LEFT},
+            grid[0][0].stretch,
+            2,
+            0,
+            {"about_edge": LEFT},
+            grid[0][1:].stretch,
+            2 / 3,
+            0,
+            {"about_edge": RIGHT},
+            both_square.stretch,
+            2,
+            0,
+            {"about_edge": LEFT},
             *[
                 ApplyMethod(grid[i][0].stretch, 2 / 3, 0, {"about_edge": LEFT})
                 for i in range(1, 4)
             ],
             *[
-                ApplyMethod(grid[i][1:].stretch, 10 / 9, 0, {"about_edge": RIGHT})
-                for i in range(1, 4)
+                ApplyMethod(grid[i][1:].stretch, 10 / 9, 0,
+                            {"about_edge": RIGHT}) for i in range(1, 4)
             ],
         )
         self.wait()
@@ -928,8 +938,10 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
         self.wait()
         self.play(
             TransformFromCopy(formula, real_formula),
-            grid_group.scale, 0.7,
-            grid_group.to_corner, DL,
+            grid_group.scale,
+            0.7,
+            grid_group.to_corner,
+            DL,
         )
         self.play(
             FadeIn(real_rect),
@@ -979,9 +991,7 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
 
     def get_grid(self, n, m, height=4):
         grid = VGroup(*[
-            VGroup(
-                *[Square() for x in range(m)]
-            ).arrange(RIGHT, buff=0)
+            VGroup(*[Square() for x in range(m)]).arrange(RIGHT, buff=0)
             for y in range(n)
         ]).arrange(DOWN, buff=0)
         grid.set_height(height)
@@ -1011,14 +1021,12 @@ class TemptingFormula(ShowTwoPerspectives, RandomnessVsProportions):
 
 class DiseaseBayes(Scene):
     def construct(self):
-        formula = TexMobject(
-            "P(D | +) = {P(D) P(+ | D) \\over P(+)}",
-            tex_to_color_map={
-                "D": YELLOW,
-                "+": BLUE,
-            },
-            substrings_to_isolate=list("P(|)=")
-        )
+        formula = TexMobject("P(D | +) = {P(D) P(+ | D) \\over P(+)}",
+                             tex_to_color_map={
+                                 "D": YELLOW,
+                                 "+": BLUE,
+                             },
+                             substrings_to_isolate=list("P(|)="))
         formula.scale(2.5)
 
         Ds = formula.get_parts_by_tex("D")
@@ -1054,8 +1062,10 @@ class DiseaseBayes(Scene):
         positive_arrow = Arrow(lhs[4].get_bottom(), positive_words.get_top())
 
         arrow_groups = VGroup(
-            sick_words, sick_arrow,
-            positive_words, positive_arrow,
+            sick_words,
+            sick_arrow,
+            positive_words,
+            positive_arrow,
         )
 
         sicky.save_state()
@@ -1087,15 +1097,16 @@ class DiseaseBayes(Scene):
             TransformFromCopy(
                 get_formula_slice(0, 1, 2, 5),
                 get_formula_slice(8, 9, 10, 11),
-            ),
-        )
+            ), )
 
         # Likelihood
         lhs_copy = formula[:6].copy()
         likelihood = formula[12:18]
         run_time = 1
         self.play(
-            lhs_copy.next_to, likelihood, UP,
+            lhs_copy.next_to,
+            likelihood,
+            UP,
             run_time=run_time,
         )
         self.play(
@@ -1103,7 +1114,8 @@ class DiseaseBayes(Scene):
             run_time=run_time,
         )
         self.play(
-            lhs_copy.move_to, likelihood,
+            lhs_copy.move_to,
+            likelihood,
             run_time=run_time,
         )
 
@@ -1119,11 +1131,7 @@ class DiseaseBayes(Scene):
 
 
 class EndScreen(Scene):
-    CONFIG = {
-        "camera_config": {
-            "background_color": DARKER_GREY
-        }
-    }
+    CONFIG = {"camera_config": {"background_color": DARKER_GREY}}
 
     def construct(self):
         width = (475 / 1280) * FRAME_WIDTH
@@ -1138,7 +1146,8 @@ class EndScreen(Scene):
 
         date = TextMobject(
             "Solution will be\\\\"
-            "posted", "1/20/19",
+            "posted",
+            "1/20/19",
         )
         date[1].set_color(YELLOW)
         date.set_width(video_rect.get_width() - 2 * MED_SMALL_BUFF)

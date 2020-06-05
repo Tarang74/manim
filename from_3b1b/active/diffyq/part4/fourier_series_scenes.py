@@ -20,7 +20,9 @@ class ComplexFourierSeriesExample(FourierOfTrebleClef):
         "top_row_copy_scale_factor": 0.9,
         "start_drawn": False,
         "plane_config": {
-            "axis_config": {"unit_size": 2},
+            "axis_config": {
+                "unit_size": 2
+            },
             "y_min": -1.25,
             "y_max": 1.25,
             "x_min": -2.5,
@@ -64,14 +66,17 @@ class ComplexFourierSeriesExample(FourierOfTrebleClef):
             rect = SurroundingRectangle(label, color=PINK)
             self.play(
                 # vector.set_color, PINK,
-                circle.set_stroke, RED, 3,
+                circle.set_stroke,
+                RED,
+                3,
                 FadeIn(rect),
-                *next_anims
-            )
+                *next_anims)
             self.wait()
             next_anims = [
                 # vector.set_color, v_color,
-                circle.set_stroke, c_color, c_stroke_width,
+                circle.set_stroke,
+                c_color,
+                c_stroke_width,
                 FadeOut(rect),
             ]
         self.play(*next_anims)
@@ -90,9 +95,7 @@ class ComplexFourierSeriesExample(FourierOfTrebleClef):
 
     def transition_to_alt_path(self, new_path, morph_path=False):
         new_coefs = self.get_coefficients_of_path(new_path)
-        new_vectors = self.get_rotating_vectors(
-            coefficients=new_coefs
-        )
+        new_vectors = self.get_rotating_vectors(coefficients=new_coefs)
         new_drawn_path = self.get_drawn_path(new_vectors)
 
         self.vector_clock.suspend_updating()
@@ -106,30 +109,19 @@ class ComplexFourierSeriesExample(FourierOfTrebleClef):
 
             line = Line(stroke_width=0)
             line.put_start_and_end_on(*vect.get_start_and_end())
-            anims.append(ApplyMethod(
-                line.put_start_and_end_on,
-                *new_vect.get_start_and_end()
-            ))
+            anims.append(
+                ApplyMethod(line.put_start_and_end_on,
+                            *new_vect.get_start_and_end()))
             vect.freq = new_vect.freq
             vect.coefficient = new_vect.coefficient
 
             vect.line = line
             vect.add_updater(
-                lambda v: v.put_start_and_end_on(
-                    *v.line.get_start_and_end()
-                )
-            )
+                lambda v: v.put_start_and_end_on(*v.line.get_start_and_end()))
         if morph_path:
-            anims.append(
-                ReplacementTransform(
-                    self.drawn_path,
-                    new_drawn_path
-                )
-            )
+            anims.append(ReplacementTransform(self.drawn_path, new_drawn_path))
         else:
-            anims.append(
-                FadeOut(self.drawn_path)
-            )
+            anims.append(FadeOut(self.drawn_path))
 
         self.play(*anims, run_time=3)
         for vect in self.vectors:
@@ -150,9 +142,7 @@ class ComplexFourierSeriesExample(FourierOfTrebleClef):
         return path
 
     def add_top_row(self, vectors, circles, max_freq=3):
-        self.top_row = self.get_top_row(
-            vectors, circles, max_freq
-        )
+        self.top_row = self.get_top_row(vectors, circles, max_freq)
         self.add(self.top_row)
 
     def get_top_row(self, vectors, circles, max_freq=3):
@@ -180,10 +170,10 @@ class ComplexFourierSeriesExample(FourierOfTrebleClef):
 
         dots = VGroup(*[
             TexMobject("\\dots").next_to(
-                circle_copies, direction,
+                circle_copies,
+                direction,
                 MED_LARGE_BUFF,
-            )
-            for direction in [LEFT, RIGHT]
+            ) for direction in [LEFT, RIGHT]
         ])
         labels = self.get_top_row_labels(vector_copies)
         return VGroup(
@@ -210,11 +200,9 @@ class ComplexFourierSeriesExample(FourierOfTrebleClef):
         for vector_copy in vector_copies:
             freq = vector_copy.freq
             label = Integer(freq)
-            label.move_to(np.array([
-                freq * self.top_row_x_spacing,
-                self.top_row_label_y,
-                0
-            ]))
+            label.move_to(
+                np.array(
+                    [freq * self.top_row_x_spacing, self.top_row_label_y, 0]))
             labels.add(label)
         return labels
 
@@ -241,10 +229,7 @@ class ComplexFourierSeriesExample(FourierOfTrebleClef):
             stroke_width = self.drawn_path_st
         full_path = self.get_vector_sum_path(vectors, **kwargs)
         path = VMobject()
-        path.set_stroke(
-            self.drawn_path_color,
-            stroke_width
-        )
+        path.set_stroke(self.drawn_path_color, stroke_width)
 
         def update_path(p):
             alpha = self.get_vector_time() % 1
@@ -268,7 +253,11 @@ class ComplexFourierSeriesExample(FourierOfTrebleClef):
             self.get_path_end(vectors, stroke_width, **kwargs),
         )
 
-    def get_vertically_falling_tracing(self, vector, color, stroke_width=3, rate=0.25):
+    def get_vertically_falling_tracing(self,
+                                       vector,
+                                       color,
+                                       stroke_width=3,
+                                       rate=0.25):
         path = VMobject()
         path.set_stroke(color, stroke_width)
         path.start_new_path(vector.get_end())
@@ -277,6 +266,7 @@ class ComplexFourierSeriesExample(FourierOfTrebleClef):
         def update_path(p, dt):
             p.shift(rate * dt * DOWN)
             p.add_smooth_curve_to(p.vector.get_end())
+
         path.add_updater(update_path)
         return path
 
@@ -341,10 +331,8 @@ class RealValuedFunctionFourierSeries(PiFourierSeries):
                 SurroundingRectangle(VGroup(
                     top_circles[i],
                     labels[i],
-                ))
-                for i in pair
-            ]).set_stroke(LIGHT_GREY, 2)
-            for pair in [(1, 2), (3, 4), (5, 6)]
+                )) for i in pair
+            ]).set_stroke(LIGHT_GREY, 2) for pair in [(1, 2), (3, 4), (5, 6)]
         ]
 
         def get_opacity_animation(i1, i2, alpha_func):
@@ -353,22 +341,18 @@ class RealValuedFunctionFourierSeries(PiFourierSeries):
             return AnimationGroup(
                 UpdateFromAlphaFunc(
                     VectorizedPoint(),
-                    lambda m, a: v_group.set_opacity(
-                        alpha_func(a)
-                    )
-                ),
+                    lambda m, a: v_group.set_opacity(alpha_func(a))),
                 UpdateFromAlphaFunc(
                     VectorizedPoint(),
-                    lambda m, a: c_group.set_stroke(
-                        opacity=alpha_func(a)
-                    )
-                ),
+                    lambda m, a: c_group.set_stroke(opacity=alpha_func(a))),
             )
 
         self.remove(self.path, self.drawn_path)
         self.play(
             get_opacity_animation(
-                3, len(vectors), lambda a: smooth(1 - a),
+                3,
+                len(vectors),
+                lambda a: smooth(1 - a),
             ),
             ShowCreation(rects1, lag_ratio=0.3),
         )
@@ -379,10 +363,7 @@ class RealValuedFunctionFourierSeries(PiFourierSeries):
 
         self.play(
             get_opacity_animation(3, 5, smooth),
-            get_opacity_animation(
-                0, 3,
-                lambda a: 1 - 0.75 * smooth(a)
-            ),
+            get_opacity_animation(0, 3, lambda a: 1 - 0.75 * smooth(a)),
             ReplacementTransform(rects1, rects2),
         )
         traced_path2.set_stroke(width=1)
@@ -391,10 +372,7 @@ class RealValuedFunctionFourierSeries(PiFourierSeries):
         self.run_one_cycle()
         self.play(
             get_opacity_animation(5, 7, smooth),
-            get_opacity_animation(
-                3, 5,
-                lambda a: 1 - 0.75 * smooth(a)
-            ),
+            get_opacity_animation(3, 5, lambda a: 1 - 0.75 * smooth(a)),
             ReplacementTransform(rects2, rects3),
         )
         traced_path2.set_stroke(width=1)
@@ -420,17 +398,13 @@ class DemonstrateAddingArrows(PiFourierSeries):
         circles = self.circles
         original_vectors = self.vectors
         vectors = VGroup(*[
-            Vector(
-                **self.vector_config
-            ).put_start_and_end_on(*v.get_start_and_end())
-            for v in original_vectors
+            Vector(**self.vector_config).put_start_and_end_on(
+                *v.get_start_and_end()) for v in original_vectors
         ])
         original_top_vectors = self.top_row[0]
         top_vectors = VGroup(*[
-            Vector(
-                **self.vector_config
-            ).put_start_and_end_on(*v.get_start_and_end())
-            for v in original_top_vectors
+            Vector(**self.vector_config).put_start_and_end_on(
+                *v.get_start_and_end()) for v in original_top_vectors
         ])
 
         self.plane.axes.set_stroke(LIGHT_GREY, 1)
@@ -439,13 +413,9 @@ class DemonstrateAddingArrows(PiFourierSeries):
         self.remove(circles, original_vectors)
         self.remove(self.path, self.drawn_path)
         anims1 = [
-            TransformFromCopy(tv, v)
-            for tv, v in zip(top_vectors, vectors)
+            TransformFromCopy(tv, v) for tv, v in zip(top_vectors, vectors)
         ]
-        anims2 = [
-            ShowCreation(v)
-            for v in vectors[len(top_vectors):25]
-        ]
+        anims2 = [ShowCreation(v) for v in vectors[len(top_vectors):25]]
         self.play(
             LaggedStart(*anims1),
             run_time=3,
@@ -486,9 +456,8 @@ class LabelRotatingVectors(PiFourierSeries):
         self.constant_examples()
 
     def setup_top_row(self):
-        vectors = self.get_rotating_vectors(
-            coefficients=0.5 * np.ones(self.n_vectors)
-        )
+        vectors = self.get_rotating_vectors(coefficients=0.5 *
+                                            np.ones(self.n_vectors))
         circles = self.get_circles(vectors)
 
         top_row = self.get_top_row(vectors, circles)
@@ -504,9 +473,7 @@ class LabelRotatingVectors(PiFourierSeries):
             return lambda: const
 
         for vector, v_copy in zip(vectors, v_copies):
-            vector.center_func = get_constant_func(
-                v_copy.get_start()
-            )
+            vector.center_func = get_constant_func(v_copy.get_start())
         vectors.update(0)
         circles.update(0)
 
@@ -534,12 +501,14 @@ class LabelRotatingVectors(PiFourierSeries):
         ])
 
         self.play(FadeInFrom(formulas, DOWN))
-        self.play(LaggedStartMap(
-            FadeInFrom, q_marks,
-            lambda m: (m, UP),
-            lag_ratio=0.2,
-            run_time=3,
-        ))
+        self.play(
+            LaggedStartMap(
+                FadeInFrom,
+                q_marks,
+                lambda m: (m, UP),
+                lag_ratio=0.2,
+                run_time=3,
+            ))
         self.wait(3)
 
         self.q_marks = q_marks
@@ -555,7 +524,8 @@ class LabelRotatingVectors(PiFourierSeries):
         # Why so nuclear?
         vc_updater = vector_clock.updaters.pop()
         self.play(
-            vector_clock.set_value, 0,
+            vector_clock.set_value,
+            0,
             run_time=2,
         )
 
@@ -570,7 +540,8 @@ class LabelRotatingVectors(PiFourierSeries):
 
         self.play(
             zero_vect.put_start_and_end_on,
-            plane.n2p(0), plane.n2p(1),
+            plane.n2p(0),
+            plane.n2p(1),
         )
         vector_clock.add_updater(vc_updater)
         self.wait()
@@ -601,14 +572,12 @@ class LabelRotatingVectors(PiFourierSeries):
         f1_exp = self.get_exp_tex()
         f1_exp.move_to(q_marks[1], DOWN)
 
-        self.play(
-            FadeOut(self.zero_vect),
-            FadeOut(self.zero_circle),
-            FadeIn(v1_rect)
-        )
+        self.play(FadeOut(self.zero_vect), FadeOut(self.zero_circle),
+                  FadeIn(v1_rect))
 
         vg1 = self.get_vector_in_plane_group(
-            vectors[1], circles[1],
+            vectors[1],
+            circles[1],
         )
         vg1_copy = vg1.copy()
         vg1_copy.clear_updaters()
@@ -624,15 +593,14 @@ class LabelRotatingVectors(PiFourierSeries):
         )
         arclen_tracker = ValueTracker(0)
         arclen_decimal.add_updater(lambda m: m.next_to(
-            circle_copy.get_end(), UR, SMALL_BUFF,
+            circle_copy.get_end(),
+            UR,
+            SMALL_BUFF,
         ))
-        arclen_decimal.add_updater(lambda m: m.set_value(
-            arclen_tracker.get_value()
-        ))
+        arclen_decimal.add_updater(
+            lambda m: m.set_value(arclen_tracker.get_value()))
 
-        self.play(
-            ReplacementTransform(vg1_copy, vg1),
-        )
+        self.play(ReplacementTransform(vg1_copy, vg1), )
         self.play(FadeInFrom(cps_1, DOWN))
         self.wait(2)
         self.play(
@@ -640,13 +608,12 @@ class LabelRotatingVectors(PiFourierSeries):
             FadeInFrom(f1_exp, DOWN),
         )
         self.wait(2)
-        self.play(ShowCreationThenFadeAround(
-            f1_exp.get_part_by_tex("2\\pi")
-        ))
+        self.play(ShowCreationThenFadeAround(f1_exp.get_part_by_tex("2\\pi")))
         self.add(arclen_decimal),
         self.play(
             ShowCreation(circle_copy),
-            arclen_tracker.set_value, TAU,
+            arclen_tracker.set_value,
+            TAU,
             run_time=3,
         )
         self.wait()
@@ -656,15 +623,18 @@ class LabelRotatingVectors(PiFourierSeries):
         )
         self.wait(8)
         self.play(
-            v1_rect.move_to, circles[2],
-            v1_rect.match_y, v1_rect,
+            v1_rect.move_to,
+            circles[2],
+            v1_rect.match_y,
+            v1_rect,
             FadeOut(vg1),
             FadeOut(cps_1),
         )
 
         # Vector -1
         vgm1 = self.get_vector_in_plane_group(
-            vectors[2], circles[2],
+            vectors[2],
+            circles[2],
         )
         vgm1_copy = vgm1.copy()
         vgm1_copy.clear_updaters()
@@ -673,20 +643,22 @@ class LabelRotatingVectors(PiFourierSeries):
         fm1_exp = self.get_exp_tex(-1)
         fm1_exp.move_to(q_marks[2], DOWN)
 
-        self.play(
-            ReplacementTransform(vgm1_copy, vgm1),
-            FadeInFromDown(cps_m1)
-        )
+        self.play(ReplacementTransform(vgm1_copy, vgm1),
+                  FadeInFromDown(cps_m1))
         self.wait(2)
         self.play(
             FadeOutAndShift(q_marks[2], UP),
             FadeInFromDown(fm1_exp),
-            v1_rect.stretch, 1.4, 0,
+            v1_rect.stretch,
+            1.4,
+            0,
         )
         self.wait(5)
         self.play(
-            v1_rect.move_to, circles[3],
-            v1_rect.match_y, v1_rect,
+            v1_rect.move_to,
+            circles[3],
+            v1_rect.match_y,
+            v1_rect,
             FadeOut(vgm1),
             FadeOut(cps_m1),
         )
@@ -694,7 +666,8 @@ class LabelRotatingVectors(PiFourierSeries):
         # Vector 2
         # (Lots of copy-pasting here)
         vg2 = self.get_vector_in_plane_group(
-            vectors[3], circles[3],
+            vectors[3],
+            circles[3],
         )
         vg2_copy = vg2.copy()
         vg2_copy.clear_updaters()
@@ -704,10 +677,7 @@ class LabelRotatingVectors(PiFourierSeries):
         f2_exp.move_to(q_marks[3], DOWN)
         circle_copy.append_vectorized_mobject(circle_copy)
 
-        self.play(
-            ReplacementTransform(vg2_copy, vg2),
-            FadeInFromDown(cps_2)
-        )
+        self.play(ReplacementTransform(vg2_copy, vg2), FadeInFromDown(cps_2))
         self.wait()
         self.play(
             FadeOutAndShift(q_marks[3], UP),
@@ -715,16 +685,13 @@ class LabelRotatingVectors(PiFourierSeries):
         )
         self.wait(3)
 
-        self.play(ShowCreationThenFadeAround(
-            f2_exp.get_parts_by_tex("2"),
-        ))
+        self.play(ShowCreationThenFadeAround(f2_exp.get_parts_by_tex("2"), ))
         self.add(arclen_decimal)
         arclen_tracker.set_value(0)
-        self.play(
-            ShowCreation(circle_copy),
-            arclen_tracker.set_value, 2 * TAU,
-            run_time=5
-        )
+        self.play(ShowCreation(circle_copy),
+                  arclen_tracker.set_value,
+                  2 * TAU,
+                  run_time=5)
         self.wait(3)
         self.play(
             FadeOut(circle_copy),
@@ -748,17 +715,10 @@ class LabelRotatingVectors(PiFourierSeries):
         f_exp_general = self.get_exp_tex("n")
         f_exp_general.next_to(self.formulas_word, DOWN)
 
-        self.play(
-            FadeOut(q_marks[4:]),
-            FadeOut(f1_exp),
-            FadeIn(f1_exp_new),
-            FadeInFromDown(fm2_exp),
-            FadeInFromDown(f3_exp),
-            FadeIn(v_lines, lag_ratio=0.2)
-        )
-        self.play(
-            FadeInFrom(f_exp_general, UP)
-        )
+        self.play(FadeOut(q_marks[4:]), FadeOut(f1_exp), FadeIn(f1_exp_new),
+                  FadeInFromDown(fm2_exp), FadeInFromDown(f3_exp),
+                  FadeIn(v_lines, lag_ratio=0.2))
+        self.play(FadeInFrom(f_exp_general, UP))
         self.play(ShowCreationThenFadeAround(f_exp_general))
         self.wait(3)
         self.play(
@@ -768,15 +728,18 @@ class LabelRotatingVectors(PiFourierSeries):
         self.wait(5)
 
         self.f_exp_labels = VGroup(
-            f0_exp, f1_exp_new, fm1_exp,
-            f2_exp, fm2_exp, f3_exp,
+            f0_exp,
+            f1_exp_new,
+            fm1_exp,
+            f2_exp,
+            fm2_exp,
+            f3_exp,
         )
         self.f_exp_general = f_exp_general
 
     def show_complex_exponents_temp(self):
         self.f_exp_labels = VGroup(*[
-            self.get_exp_tex(n).move_to(qm, DOWN)
-            for n, qm in zip(
+            self.get_exp_tex(n).move_to(qm, DOWN) for n, qm in zip(
                 [0, 1, -1, 2, -2, 3],
                 self.q_marks,
             )
@@ -813,30 +776,21 @@ class LabelRotatingVectors(PiFourierSeries):
 
         def update_vectors(alpha):
             for vect, new_coef in zip(vectors, new_coefs):
-                vect.coefficient = 0.5 * interpolate(
-                    1, new_coef, alpha
-                )
+                vect.coefficient = 0.5 * interpolate(1, new_coef, alpha)
 
         vector_clock.incrementer = vector_clock.updaters.pop()
-        self.play(
-            vector_clock.set_value,
-            int(vector_clock.get_value())
-        )
-        self.play(
-            LaggedStartMap(
-                MoveToTarget,
-                VGroup(f_exp_general, *f_exp_labels),
-            ),
-            LaggedStartMap(
-                FadeInFromDown,
-                VGroup(cn_general, *cn_terms),
-            ),
-            UpdateFromAlphaFunc(
-                VectorizedPoint(),
-                lambda m, a: update_vectors(a)
-            ),
-            run_time=2
-        )
+        self.play(vector_clock.set_value, int(vector_clock.get_value()))
+        self.play(LaggedStartMap(
+            MoveToTarget,
+            VGroup(f_exp_general, *f_exp_labels),
+        ),
+                  LaggedStartMap(
+                      FadeInFromDown,
+                      VGroup(cn_general, *cn_terms),
+                  ),
+                  UpdateFromAlphaFunc(VectorizedPoint(),
+                                      lambda m, a: update_vectors(a)),
+                  run_time=2)
         self.wait()
         self.play(
             LaggedStart(*[
@@ -846,10 +800,8 @@ class LabelRotatingVectors(PiFourierSeries):
                         "buff": 0.05,
                         "stroke_width": 2,
                     },
-                )
-                for cn_term in cn_terms
-            ])
-        )
+                ) for cn_term in cn_terms
+            ]))
 
         self.cn_terms = cn_terms
         self.cn_general = cn_general
@@ -864,20 +816,17 @@ class LabelRotatingVectors(PiFourierSeries):
         c0_label = TexMobject("0.5")
         c0_label.next_to(c0_brace, DOWN, SMALL_BUFF)
         c0_label.add_background_rectangle()
-        vip_group0 = self.get_vector_in_plane_group(
-            vectors[0], circles[0]
-        )
+        vip_group0 = self.get_vector_in_plane_group(vectors[0], circles[0])
         vip_group0_copy = vip_group0.copy()
         vip_group0_copy.clear_updaters()
         vip_group0_copy.replace(circles[0])
 
-        self.play(
-            Transform(vip_group0_copy, vip_group0)
-        )
+        self.play(Transform(vip_group0_copy, vip_group0))
         self.wait()
         self.play(vip_group0_copy.scale, 2)
         self.play(
-            vip_group0_copy.scale, 0.5,
+            vip_group0_copy.scale,
+            0.5,
             GrowFromCenter(c0_brace),
             GrowFromCenter(c0_label),
         )
@@ -901,22 +850,20 @@ class LabelRotatingVectors(PiFourierSeries):
         c1_decimal.next_to(approx, RIGHT, MED_SMALL_BUFF)
         scalar = DecimalNumber(0.3)
         scalar.next_to(
-            c1_label, LEFT, SMALL_BUFF,
+            c1_label,
+            LEFT,
+            SMALL_BUFF,
             aligned_edge=DOWN,
         )
 
-        vip_group1 = self.get_vector_in_plane_group(
-            vectors[1], circles[1]
-        )
+        vip_group1 = self.get_vector_in_plane_group(vectors[1], circles[1])
         vip_group1_copy = vip_group1.copy()
         vip_group1_copy[0].stroke_width = 3
         vip_group1_copy.clear_updaters()
         vip_group1_copy.save_state()
         vip_group1_copy.replace(circles[1])
 
-        self.play(
-            Restore(vip_group1_copy)
-        )
+        self.play(Restore(vip_group1_copy))
         self.play(Rotate(vip_group1_copy, -PI / 4))
         self.play(Rotate(vip_group1_copy, PI / 4))
         self.play(
@@ -932,21 +879,13 @@ class LabelRotatingVectors(PiFourierSeries):
 
         def update_v1(alpha):
             vectors[1].coefficient = 0.5 * interpolate(
-                np.exp(complex(0, PI / 4)),
-                0.3 * np.exp(complex(0, PI / 4)),
-                alpha
-            )
+                np.exp(complex(0, PI / 4)), 0.3 * np.exp(complex(0, PI / 4)),
+                alpha)
 
-        self.play(
-            FadeIn(scalar),
-            c1_decimal.set_value,
-            scalar.get_value() * c1_decimal.get_value(),
-            vip_group1_copy.scale, scalar.get_value(),
-            UpdateFromAlphaFunc(
-                VMobject(),
-                lambda m, a: update_v1(a)
-            )
-        )
+        self.play(FadeIn(scalar), c1_decimal.set_value,
+                  scalar.get_value() * c1_decimal.get_value(),
+                  vip_group1_copy.scale, scalar.get_value(),
+                  UpdateFromAlphaFunc(VMobject(), lambda m, a: update_v1(a)))
         self.wait()
         self.play(
             FadeOut(c1_brace),
@@ -967,11 +906,7 @@ class LabelRotatingVectors(PiFourierSeries):
             if cn_term is cn_terms[4]:
                 decimal.shift(0.7 * RIGHT)
 
-            self.play(
-                ShowCreation(rect),
-                FadeIn(decimal),
-                *fade_anims
-            )
+            self.play(ShowCreation(rect), FadeIn(decimal), *fade_anims)
             self.wait()
             fade_anims = [FadeOut(rect), FadeOut(decimal)]
         self.play(*fade_anims)
@@ -982,12 +917,9 @@ class LabelRotatingVectors(PiFourierSeries):
         origin = plane.n2p(0)
 
         vector = Vector()
-        vector.add_updater(
-            lambda v: v.put_start_and_end_on(
-                origin,
-                plane.n2p(2 * top_vector.coefficient)
-            ).set_angle(top_vector.get_angle())
-        )
+        vector.add_updater(lambda v: v.put_start_and_end_on(
+            origin, plane.n2p(2 * top_vector.coefficient)).set_angle(
+                top_vector.get_angle()))
         circle = Circle()
         circle.match_style(top_circle)
         circle.set_width(2 * vector.get_length())
@@ -1001,14 +933,14 @@ class LabelRotatingVectors(PiFourierSeries):
         else:
             freq_str = "{" + str(freq) + "}" + "\\cdot"
 
-        result = TexMobject(
-            "e^{", freq_str, "2\\pi i {t}}",
-            tex_to_color_map={
-                "2\\pi": WHITE,
-                "{t}": PINK,
-                freq_str: YELLOW,
-            }
-        )
+        result = TexMobject("e^{",
+                            freq_str,
+                            "2\\pi i {t}}",
+                            tex_to_color_map={
+                                "2\\pi": WHITE,
+                                "{t}": PINK,
+                                freq_str: YELLOW,
+                            })
         result.scale(0.9)
         return result
 
@@ -1031,19 +963,12 @@ class LabelRotatingVectors(PiFourierSeries):
         else:
             term[1].shift(0.05 * RIGHT)
         term.scale(0.9)
-        term.shift(
-            exp_label.target[0].get_corner(LEFT) -
-            term[0].get_corner(RIGHT) +
-            0.2 * LEFT
-        )
-        VGroup(exp_label.target, term).move_to(
-            exp_label, DOWN
-        )
+        term.shift(exp_label.target[0].get_corner(LEFT) -
+                   term[0].get_corner(RIGHT) + 0.2 * LEFT)
+        VGroup(exp_label.target, term).move_to(exp_label, DOWN)
 
         if isinstance(n, str):
-            VGroup(term, exp_label.target).scale(
-                1.3, about_edge=UP
-            )
+            VGroup(term, exp_label.target).scale(1.3, about_edge=UP)
 
         return term
 
@@ -1055,10 +980,9 @@ class LabelRotatingVectors(PiFourierSeries):
             frac_tex = "\\frac{\\text{cycles}}{\\text{second}}"
 
         result = TexMobject(
-            n_str, frac_tex,
-            tex_to_color_map={
-                n_str: YELLOW
-            },
+            n_str,
+            frac_tex,
+            tex_to_color_map={n_str: YELLOW},
         )
         result[1].scale(0.7, about_edge=LEFT)
         result[0].scale(1.2, about_edge=RIGHT)
@@ -1073,7 +997,8 @@ class LabelRotatingVectors(PiFourierSeries):
             line = DashedLine(3 * UP, ORIGIN)
             line.set_stroke(WHITE, 1)
             line.move_to(midpoint(
-                c1.get_center(), c2.get_center(),
+                c1.get_center(),
+                c2.get_center(),
             ))
             lines.add(line)
         return lines
@@ -1131,7 +1056,8 @@ class IntegralTrick(LabelRotatingVectors, TRangingFrom0To1):
 
     def setup_top_row(self):
         top_row = self.get_top_row(
-            self.vectors, self.circles,
+            self.vectors,
+            self.circles,
             max_freq=2,
         )
         self.top_vectors, self.top_circles, dots, labels = top_row
@@ -1205,23 +1131,19 @@ class IntegralTrick(LabelRotatingVectors, TRangingFrom0To1):
 
         self.play(ShowCreation(rect))
         self.wait()
-        self.play(
-            ReplacementTransform(rect, dot)
-        )
+        self.play(ReplacementTransform(rect, dot))
         path.set_stroke(YELLOW, 2)
         self.play(
             ShowCreation(path),
-            input_tracker.set_value, 1,
+            input_tracker.set_value,
+            1,
             run_time=3,
             rate_func=lambda t: smooth(t, 1),
         )
         self.wait()
 
         input_tracker.add_updater(
-            lambda m: m.set_value(
-                self.vector_clock.get_value() % 1
-            )
-        )
+            lambda m: m.set_value(self.vector_clock.get_value() % 1))
         self.add(
             self.vector_clock,
             self.vectors,
@@ -1255,56 +1177,45 @@ class IntegralTrick(LabelRotatingVectors, TRangingFrom0To1):
 
         path.set_stroke(YELLOW, 1)
 
-        c0_rect = SurroundingRectangle(
-            VGroup(top_circles[0], terms[0])
-        )
+        c0_rect = SurroundingRectangle(VGroup(top_circles[0], terms[0]))
         c0_rect.set_stroke(WHITE, 1)
 
         opacity_tracker = ValueTracker(1)
         for vect in vectors[1:]:
             vect.add_updater(
-                lambda v: v.set_opacity(
-                    opacity_tracker.get_value()
-                )
-            )
+                lambda v: v.set_opacity(opacity_tracker.get_value()))
         for circle in circles[0:]:
             circle.add_updater(
-                lambda c: c.set_stroke(
-                    opacity=opacity_tracker.get_value()
-                )
-            )
+                lambda c: c.set_stroke(opacity=opacity_tracker.get_value()))
 
         self.play(ShowCreation(c0_rect))
-        self.play(
-            opacity_tracker.set_value, 0.2,
-            FadeOut(self.drawn_path),
-            FadeIn(path)
-        )
+        self.play(opacity_tracker.set_value, 0.2, FadeOut(self.drawn_path),
+                  FadeIn(path))
 
         v0 = vectors[0]
         v0_point = VectorizedPoint(v0.get_end())
         origin = self.plane.n2p(0)
         v0.add_updater(lambda v: v.put_start_and_end_on(
-            origin, v0_point.get_location(),
+            origin,
+            v0_point.get_location(),
         ))
 
         self.play(
             MaintainPositionRelativeTo(path, v0_point),
             ApplyMethod(
-                v0_point.shift, 1.5 * LEFT,
+                v0_point.shift,
+                1.5 * LEFT,
                 run_time=4,
                 rate_func=there_and_back,
                 path_arc=60 * DEGREES,
-            )
-        )
+            ))
         v0.updaters.pop()
 
         self.opacity_tracker = opacity_tracker
 
     def show_center_of_mass(self):
         dot_sets = VGroup(*[
-            self.get_sample_dots(dt=dt, radius=radius)
-            for dt, radius in [
+            self.get_sample_dots(dt=dt, radius=radius) for dt, radius in [
                 (0.05, 0.04),
                 (0.01, 0.03),
                 (0.0025, 0.02),
@@ -1312,32 +1223,22 @@ class IntegralTrick(LabelRotatingVectors, TRangingFrom0To1):
         ])
         input_dots, output_dots = dot_sets[0]
         v0_dot = input_dots[0].deepcopy()
-        v0_dot.move_to(center_of_mass([
-            od.get_center()
-            for od in output_dots
-        ]))
+        v0_dot.move_to(center_of_mass([od.get_center() for od in output_dots]))
         v0_dot.set_color(RED)
 
-        self.play(LaggedStartMap(
-            FadeInFromLarge, input_dots,
-            lambda m: (m, 5),
-            run_time=2,
-            lag_ratio=0.5,
-        ))
-        self.wait()
         self.play(
-            TransformFromCopy(
+            LaggedStartMap(
+                FadeInFromLarge,
                 input_dots,
-                output_dots,
-                run_time=3
-            )
-        )
+                lambda m: (m, 5),
+                run_time=2,
+                lag_ratio=0.5,
+            ))
+        self.wait()
+        self.play(TransformFromCopy(input_dots, output_dots, run_time=3))
         self.wait()
         self.play(*[
-            Transform(
-                od.copy(), v0_dot.copy(),
-                remover=True
-            )
+            Transform(od.copy(), v0_dot.copy(), remover=True)
             for od in output_dots
         ])
         self.add(v0_dot)
@@ -1347,34 +1248,27 @@ class IntegralTrick(LabelRotatingVectors, TRangingFrom0To1):
             ind1, outd1 = ds1
             ind2, outd2 = ds2
             new_v0_dot = v0_dot.copy()
-            new_v0_dot.move_to(center_of_mass([
-                od.get_center()
-                for od in outd2
-            ]))
+            new_v0_dot.move_to(
+                center_of_mass([od.get_center() for od in outd2]))
             self.play(
                 FadeOut(ind1),
                 LaggedStartMap(
-                    FadeInFrom, ind2,
+                    FadeInFrom,
+                    ind2,
                     lambda m: (m, UP),
                     lag_ratio=4 / len(ind2),
                     run_time=2,
-                )
-            )
+                ))
             self.play(
                 TransformFromCopy(ind2, outd2),
                 FadeOut(outd1),
                 run_time=2,
             )
             self.play(
-                FadeOut(v0_dot),
-                *[
-                    Transform(
-                        od.copy(), v0_dot.copy(),
-                        remover=True
-                    )
+                FadeOut(v0_dot), *[
+                    Transform(od.copy(), v0_dot.copy(), remover=True)
                     for od in outd2
-                ]
-            )
+                ])
             v0_dot = new_v0_dot
             self.add(v0_dot)
         self.wait()
@@ -1387,7 +1281,8 @@ class IntegralTrick(LabelRotatingVectors, TRangingFrom0To1):
         path = self.path
 
         expression = TexMobject(
-            "c_{0}", "="
+            "c_{0}",
+            "="
             "\\int_0^1 f({t}) d{t}",
             tex_to_color_map={
                 "{t}": PINK,
@@ -1407,7 +1302,8 @@ class IntegralTrick(LabelRotatingVectors, TRangingFrom0To1):
         t_tracker.set_value(0)
         self.add(path)
         self.play(
-            t_tracker.set_value, 0.999,
+            t_tracker.set_value,
+            0.999,
             ShowCreation(path),
             run_time=8,
             rate_func=lambda t: smooth(t, 1),
@@ -1432,7 +1328,8 @@ class IntegralTrick(LabelRotatingVectors, TRangingFrom0To1):
         t_values = np.arange(0, 1 + dt, dt)
         dot = Dot(color=PINK, radius=radius)
         dot.set_stroke(
-            RED, 1,
+            RED,
+            1,
             opacity=0.8,
             background=True,
         )
@@ -1467,24 +1364,20 @@ class IncreaseOrderOfApproximation(ComplexFourierSeriesExample):
         path.set_stroke(YELLOW, 2)
         freqs = self.get_freqs()
         coefs = self.get_coefficients_of_path(
-            path, freqs=freqs,
+            path,
+            freqs=freqs,
         )
         vectors = self.get_rotating_vectors(freqs, coefs)
         circles = self.get_circles(vectors)
 
         n_tracker = ValueTracker(2)
-        n_label = VGroup(
-            TextMobject("Approximation using"),
-            Integer(100).set_color(YELLOW),
-            TextMobject("vectors")
-        )
+        n_label = VGroup(TextMobject("Approximation using"),
+                         Integer(100).set_color(YELLOW),
+                         TextMobject("vectors"))
         n_label.arrange(RIGHT)
         n_label.to_corner(UL)
-        n_label.add_updater(
-            lambda n: n[1].set_value(
-                n_tracker.get_value()
-            ).align_to(n[2], DOWN)
-        )
+        n_label.add_updater(lambda n: n[1].set_value(n_tracker.get_value()).
+                            align_to(n[2], DOWN))
 
         changing_path = VMobject()
         vector_copies = VGroup()
@@ -1503,14 +1396,16 @@ class IncreaseOrderOfApproximation(ComplexFourierSeriesExample):
         self.add(n_label, n_tracker, changing_path)
         self.add(vector_copies, circle_copies)
         self.play(
-            n_tracker.set_value, self.n_vectors,
+            n_tracker.set_value,
+            self.n_vectors,
             rate_func=smooth,
             run_time=self.run_time,
         )
         self.wait(5)
 
 
-class ShowStepFunctionIn2dView(SimpleComplexExponentExample, ComplexFourierSeriesExample):
+class ShowStepFunctionIn2dView(SimpleComplexExponentExample,
+                               ComplexFourierSeriesExample):
     CONFIG = {
         "input_space_rect_config": {
             "width": 5,
@@ -1588,7 +1483,9 @@ class ShowStepFunctionIn2dView(SimpleComplexExponentExample, ComplexFourierSerie
         y_axis.rotate(90 * DEGREES)
         y_axis.shift(x_axis.n2p(0) - y_axis.n2p(0))
         y_axis.add_numbers(
-            -1, 0, 1,
+            -1,
+            0,
+            1,
             direction=LEFT,
         )
         axes = Axes()
@@ -1620,16 +1517,19 @@ class ShowStepFunctionIn2dView(SimpleComplexExponentExample, ComplexFourierSerie
         self.add(input_tip)
         self.add(input_label)
 
-        self.play(
-            self.input_tracker.set_value, 1,
-            ShowCreation(graph),
-            run_time=3,
-            rate_func=lambda t: smooth(t, 1)
-        )
+        self.play(self.input_tracker.set_value,
+                  1,
+                  ShowCreation(graph),
+                  run_time=3,
+                  rate_func=lambda t: smooth(t, 1))
         self.wait()
         self.add(
-            plane, input_rect, input_space_label,
-            x_axis, input_tip, input_label,
+            plane,
+            input_rect,
+            input_space_label,
+            x_axis,
+            input_tip,
+            input_label,
         )
         self.play(
             FadeIn(input_rect),
@@ -1641,9 +1541,7 @@ class ShowStepFunctionIn2dView(SimpleComplexExponentExample, ComplexFourierSerie
         # Rotate y-axis, fade in plane
         y_axis.generate_target(use_deepcopy=True)
         y_axis.target.rotate(-TAU / 4)
-        y_axis.target.shift(
-            plane.n2p(0) - y_axis.target.n2p(0)
-        )
+        y_axis.target.shift(plane.n2p(0) - y_axis.target.n2p(0))
         y_axis.target.numbers.set_opacity(0)
 
         plane.set_opacity(1)
@@ -1667,12 +1565,15 @@ class ShowStepFunctionIn2dView(SimpleComplexExponentExample, ComplexFourierSerie
         tip.set_fill(YELLOW)
         tip.match_height(self.input_tip)
         tip.add_updater(lambda m: m.move_to(
-            get_output_point(), DOWN,
+            get_output_point(),
+            DOWN,
         ))
         output_label = TextMobject("Output")
         output_label.add_background_rectangle()
         output_label.add_updater(lambda m: m.next_to(
-            tip, UP, SMALL_BUFF,
+            tip,
+            UP,
+            SMALL_BUFF,
         ))
 
         self.play(
@@ -1680,11 +1581,7 @@ class ShowStepFunctionIn2dView(SimpleComplexExponentExample, ComplexFourierSerie
             FadeIn(output_label),
         )
 
-        self.play(
-            input_tracker.set_value, 1,
-            run_time=8,
-            rate_func=linear
-        )
+        self.play(input_tracker.set_value, 1, run_time=8, rate_func=linear)
         self.wait()
         self.play(input_tracker.set_value, 0)
 
@@ -1696,27 +1593,34 @@ class ShowStepFunctionIn2dView(SimpleComplexExponentExample, ComplexFourierSerie
         output_tip = self.output_tip
 
         self.play(
-            plane.axes.set_stroke, WHITE, 1,
-            plane.background_lines.set_stroke, LIGHT_GREY, 0.5,
-            plane.faded_lines.set_stroke, LIGHT_GREY, 0.25, 0.5,
+            plane.axes.set_stroke,
+            WHITE,
+            1,
+            plane.background_lines.set_stroke,
+            LIGHT_GREY,
+            0.5,
+            plane.faded_lines.set_stroke,
+            LIGHT_GREY,
+            0.25,
+            0.5,
         )
 
         self.vector_clock.set_value(0)
         self.add(self.vector_clock)
-        input_tracker.add_updater(lambda m: m.set_value(
-            self.vector_clock.get_value() % 1
-        ))
+        input_tracker.add_updater(
+            lambda m: m.set_value(self.vector_clock.get_value() % 1))
         self.add_vectors_circles_path()
         self.remove(self.drawn_path)
         self.add(self.vectors)
         output_tip.clear_updaters()
-        output_tip.add_updater(lambda m: m.move_to(
-            self.vectors[-1].get_end(), DOWN
-        ))
+        output_tip.add_updater(
+            lambda m: m.move_to(self.vectors[-1].get_end(), DOWN))
 
         self.run_one_cycle()
         path = self.get_vertically_falling_tracing(
-            self.vectors[1], GREEN, rate=0.5,
+            self.vectors[1],
+            GREEN,
+            rate=0.5,
         )
         self.add(path)
         for x in range(3):
@@ -1734,10 +1638,7 @@ class ShowStepFunctionIn2dView(SimpleComplexExponentExample, ComplexFourierSerie
 
     def get_path(self):
         path = VMobject()
-        p0, p1 = [
-            self.get_output_point(x)
-            for x in [0, 1]
-        ]
+        p0, p1 = [self.get_output_point(x) for x in [0, 1]]
         for p in p0, p1:
             path.start_new_path(p)
             path.add_line_to(p)
@@ -1782,33 +1683,22 @@ class AddVectorsOneByOne(IntegralTrick):
         coef_tracker = ValueTracker(0)
 
         def update_vector(vector):
-            vector.coefficient = interpolate(
-                1, vector.original_coefficient,
-                coef_tracker.get_value()
-            )
+            vector.coefficient = interpolate(1, vector.original_coefficient,
+                                             coef_tracker.get_value())
 
         for vector in vectors:
             vector.original_coefficient = vector.coefficient
             vector.add_updater(update_vector)
 
-        rects = VGroup(*[
-            SurroundingRectangle(t[0])
-            for t in terms[:5]
-        ])
+        rects = VGroup(*[SurroundingRectangle(t[0]) for t in terms[:5]])
 
         self.remove(self.drawn_path)
-        self.play(LaggedStartMap(
-            VFadeInThenOut, rects
-        ))
-        self.play(
-            coef_tracker.set_value, 1,
-            run_time=3
-        )
+        self.play(LaggedStartMap(VFadeInThenOut, rects))
+        self.play(coef_tracker.set_value, 1, run_time=3)
         self.wait()
         vector_clock.resume_updating()
         self.input_tracker.add_updater(
-            lambda m: m.set_value(vector_clock.get_value() % 1)
-        )
+            lambda m: m.set_value(vector_clock.get_value() % 1))
         self.add(self.drawn_path, self.input_tracker)
         self.wait(10)
 
@@ -1854,10 +1744,7 @@ class DE4Thumbnail(ComplexFourierSeriesExample):
         # circles = self.get_circles(vectors)
 
         ns = [10, 50, 250]
-        approxs = VGroup(*[
-            self.get_vector_sum_path(vectors[:n])
-            for n in ns
-        ])
+        approxs = VGroup(*[self.get_vector_sum_path(vectors[:n]) for n in ns])
         approxs.arrange(RIGHT, buff=2.5)
         approxs.set_height(3.75)
         approxs.to_edge(UP, buff=1.25)

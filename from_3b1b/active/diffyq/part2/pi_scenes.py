@@ -16,14 +16,15 @@ class ReactionsToInitialHeatEquation(PiCreatureScene):
         self.play(randy.change, "pondering")
         self.wait()
         self.play(
-            randy.change, "confused",
-            point.next_to, randy, UR, LARGE_BUFF,
+            randy.change,
+            "confused",
+            point.next_to,
+            randy,
+            UR,
+            LARGE_BUFF,
         )
         self.wait(2)
-        self.play(
-            point.shift, 2 * DOWN,
-            randy.change, "horrified"
-        )
+        self.play(point.shift, 2 * DOWN, randy.change, "horrified")
         self.wait(4)
 
 
@@ -35,11 +36,7 @@ class ContrastPDEToODE(TeacherStudentsScene):
     def construct(self):
         student = self.students[2]
         pde, ode = words = VGroup(*[
-            TextMobject(
-                text + "\\\\",
-                "Differential\\\\",
-                "Equation"
-            )
+            TextMobject(text + "\\\\", "Differential\\\\", "Equation")
             for text in ("Partial", "Ordinary")
         ])
         pde[0].set_color(YELLOW)
@@ -59,36 +56,31 @@ class ContrastPDEToODE(TeacherStudentsScene):
 
         self.play(
             FadeInFromDown(VGroup(words, lt)),
-            student.change, "raise_right_hand",
+            student.change,
+            "raise_right_hand",
         )
-        self.play(
-            self.get_student_changes("pondering", "pondering", "hooray"),
-            self.teacher.change, "happy"
-        )
+        self.play(self.get_student_changes("pondering", "pondering", "hooray"),
+                  self.teacher.change, "happy")
         self.wait(3)
-        self.play(
-            Swap(ode, pde),
-            self.teacher.change, "raise_right_hand",
-            self.get_student_changes(
-                "erm", "sassy", "confused"
-            )
-        )
+        self.play(Swap(ode, pde), self.teacher.change, "raise_right_hand",
+                  self.get_student_changes("erm", "sassy", "confused"))
         self.look_at(words)
         self.change_student_modes(
-            "thinking", "thinking", "tease",
+            "thinking",
+            "thinking",
+            "tease",
         )
         self.wait(3)
 
 
-class AskAboutWhereEquationComesFrom(TeacherStudentsScene, WriteHeatEquationTemplate):
+class AskAboutWhereEquationComesFrom(TeacherStudentsScene,
+                                     WriteHeatEquationTemplate):
     def construct(self):
         equation = self.get_d1_equation()
         equation.move_to(self.hold_up_spot, DOWN)
 
-        self.play(
-            FadeInFromDown(equation),
-            self.teacher.change, "raise_right_hand"
-        )
+        self.play(FadeInFromDown(equation), self.teacher.change,
+                  "raise_right_hand")
         self.student_says(
             "Um...why?",
             target_mode="sassy",
@@ -96,11 +88,14 @@ class AskAboutWhereEquationComesFrom(TeacherStudentsScene, WriteHeatEquationTemp
             bubble_kwargs={"direction": RIGHT},
         )
         self.change_student_modes(
-            "confused", "confused", "sassy",
+            "confused",
+            "confused",
+            "sassy",
         )
         self.wait()
         self.play(
-            self.teacher.change, "pondering",
+            self.teacher.change,
+            "pondering",
         )
         self.wait(2)
 
@@ -108,17 +103,19 @@ class AskAboutWhereEquationComesFrom(TeacherStudentsScene, WriteHeatEquationTemp
 class AskWhyRewriteIt(TeacherStudentsScene):
     def construct(self):
         self.student_says(
-            "Why?", student_index=1,
-            bubble_kwargs={"height": 2, "width": 2},
+            "Why?",
+            student_index=1,
+            bubble_kwargs={
+                "height": 2,
+                "width": 2
+            },
         )
         self.students[1].bubble = None
-        self.teacher_says(
-            "One step closer\\\\to derivatives"
-        )
-        self.change_student_modes(
-            "thinking", "thinking", "thinking",
-            look_at_arg=4 * LEFT + 2 * UP
-        )
+        self.teacher_says("One step closer\\\\to derivatives")
+        self.change_student_modes("thinking",
+                                  "thinking",
+                                  "thinking",
+                                  look_at_arg=4 * LEFT + 2 * UP)
         self.wait(2)
 
 
@@ -130,12 +127,13 @@ class ReferenceKhanVideo(TeacherStudentsScene):
         khan_logo.shift(2 * LEFT)
 
         self.play(
-            self.teacher.change, "raise_right_hand",
+            self.teacher.change,
+            "raise_right_hand",
         )
-        self.change_student_modes(
-            "thinking", "pondering", "thinking",
-            look_at_arg=self.screen
-        )
+        self.change_student_modes("thinking",
+                                  "pondering",
+                                  "thinking",
+                                  look_at_arg=self.screen)
         self.wait()
         self.play(FadeInFromDown(khan_logo))
         self.look_at(self.screen)

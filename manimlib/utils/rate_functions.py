@@ -12,7 +12,8 @@ def smooth(t, inflection=10.0):
     error = sigmoid(-inflection / 2)
     return np.clip(
         (sigmoid(inflection * (t - 0.5)) - error) / (1 - 2 * error),
-        0, 1,
+        0,
+        1,
     )
 
 
@@ -57,6 +58,7 @@ def running_start(t, pull_factor=-0.5):
 def not_quite_there(func=smooth, proportion=0.7):
     def result(t):
         return proportion * func(t)
+
     return result
 
 
@@ -77,6 +79,7 @@ def squish_rate_func(func, a=0.4, b=0.6):
             return func((t - a) / (b - a))
 
     return result
+
 
 # Stylistically, should this take parameters (with default values)?
 # Ultimately, the functionality is entirely subsumed by squish_rate_func,

@@ -7,9 +7,8 @@ class EnumerableSaveScene(Scene):
 
     def save_enumerated_image(self):
         file_path = self.file_writer.get_image_file_path()
-        file_path = file_path.replace(
-            ".png", "{:02}.png".format(self.save_count)
-        )
+        file_path = file_path.replace(".png",
+                                      "{:02}.png".format(self.save_count))
         self.update_frame(ignore_skipping=True)
         image = self.get_image()
         image.save(file_path)
@@ -83,10 +82,8 @@ class LayersOfAbstraction(EnumerableSaveScene):
     #
 
     def get_layers(self):
-        layers = VGroup(*[
-            VGroup(Rectangle(height=1, width=5))
-            for x in range(6)
-        ])
+        layers = VGroup(
+            *[VGroup(Rectangle(height=1, width=5)) for x in range(6)])
         layers.arrange_submobjects(UP, buff=0)
         layers.set_stroke(GREY, 2)
         layers.set_sheen(1, UL)
@@ -120,9 +117,7 @@ class LayersOfAbstraction(EnumerableSaveScene):
             number.move_to(quantity)
 
         # Layer 2: Algebra
-        algebra = VGroup(
-            TexMobject("x^2 - 1 = (x + 1)(x - 1)")
-        )
+        algebra = VGroup(TexMobject("x^2 - 1 = (x + 1)(x - 1)"))
         algebra.set_width(layers.get_width() - MED_LARGE_BUFF)
 
         # Layer 3: Functions
@@ -164,10 +159,8 @@ class LayersOfAbstraction(EnumerableSaveScene):
         vectors.set_stroke(width=2)
         # vector_spaces.add(vectors)
 
-        inner_product = TexMobject(
-            "\\langle f, g \\rangle ="
-            "\\int f(x)g(x)dx"
-        )
+        inner_product = TexMobject("\\langle f, g \\rangle ="
+                                   "\\int f(x)g(x)dx")
         inner_product.match_height(vector_spaces)
         inner_product.next_to(vector_spaces, RIGHT)
         vector_spaces.add(inner_product)
@@ -184,16 +177,18 @@ class LayersOfAbstraction(EnumerableSaveScene):
             TexMobject("m_1").next_to(arrows[0], UP, SMALL_BUFF),
             TexMobject("m_2").next_to(arrows[1], RIGHT, SMALL_BUFF),
             TexMobject("m_2 \\circ m_1").rotate(-45 * DEGREES).move_to(
-                arrows[2]
-            ).shift(MED_SMALL_BUFF * DL)
-        )
+                arrows[2]).shift(MED_SMALL_BUFF * DL))
         categories = VGroup(dots, arrows, arrow_labels)
         categories.set_height(layers[0].get_height() - MED_SMALL_BUFF)
 
         # Put it all together
         all_content = [
-            quantities, numbers, algebra,
-            functions, vector_spaces, categories,
+            quantities,
+            numbers,
+            algebra,
+            functions,
+            vector_spaces,
+            categories,
         ]
 
         for layer, content in zip(layers, all_content):
@@ -224,10 +219,7 @@ class LayersOfAbstraction(EnumerableSaveScene):
 class DifferenceOfSquares(Scene):
     def construct(self):
         squares = VGroup(*[
-            VGroup(*[
-                Square()
-                for x in range(8)
-            ]).arrange(RIGHT, buff=0)
+            VGroup(*[Square() for x in range(8)]).arrange(RIGHT, buff=0)
             for y in range(8)
         ]).arrange(DOWN, buff=0)
         squares.set_height(4)
@@ -270,10 +262,8 @@ class DifferenceOfSquares(Scene):
 
         self.add(squares, x1, x2, y1, y2)
         self.play(
-            ReplacementTransform(
-                squares[:-3].copy().set_fill(opacity=0),
-                new_squares
-            ),
+            ReplacementTransform(squares[:-3].copy().set_fill(opacity=0),
+                                 new_squares),
             ShowCreation(arrow),
             lag_ratio=0,
         )
@@ -282,8 +272,12 @@ class DifferenceOfSquares(Scene):
         last_row_parts.set_fill(opacity=0)
         self.play(
             last_row_parts.restore,
-            last_row_parts.rotate, -90 * DEGREES,
-            last_row_parts.next_to, new_squares, RIGHT, {"buff": 0},
+            last_row_parts.rotate,
+            -90 * DEGREES,
+            last_row_parts.next_to,
+            new_squares,
+            RIGHT,
+            {"buff": 0},
             lag_ratio=0,
         )
         self.play(Write(xmy), Write(xpy))
@@ -374,9 +368,7 @@ class LayersOfLightbulbs(Scene):
         lines = VGroup()
         for l1, l2 in zip(layers, layers[1:]):
             for d1, d2 in it.product(l1, l2):
-                color = interpolate_color(
-                    YELLOW, GREEN, np.random.random()
-                )
+                color = interpolate_color(YELLOW, GREEN, np.random.random())
                 line = Line(
                     d1.get_center(),
                     d2.get_center(),

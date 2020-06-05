@@ -69,15 +69,12 @@ class StepFunctionExample(BringTwoRodsTogether, FourierSeriesIllustraiton):
                 fill_color=BLACK,
                 fill_opacity=1,
                 stroke_width=0,
-            ).move_to(self.axes.c2p(0, u))
-            for u in [1, -1]
+            ).move_to(self.axes.c2p(0, u)) for u in [1, -1]
         ])
         black_rects[0].add_updater(
-            lambda m: m.align_to(rods[0].get_right(), LEFT)
-        )
+            lambda m: m.align_to(rods[0].get_right(), LEFT))
         black_rects[1].add_updater(
-            lambda m: m.align_to(rods[1].get_left(), RIGHT)
-        )
+            lambda m: m.align_to(rods[1].get_left(), RIGHT))
 
         self.add(
             self.axes,
@@ -91,11 +88,8 @@ class StepFunctionExample(BringTwoRodsTogether, FourierSeriesIllustraiton):
             "run_time": 2,
             "rate_func": rush_into,
         }
-        self.play(
-            Restore(rods, **kw),
-            Restore(words, **kw),
-            *map(ShowCreation, arrows)
-        )
+        self.play(Restore(rods, **kw), Restore(words, **kw),
+                  *map(ShowCreation, arrows))
         self.remove(black_rects)
 
         self.to_fade = VGroup(words, arrows)
@@ -110,16 +104,11 @@ class StepFunctionExample(BringTwoRodsTogether, FourierSeriesIllustraiton):
 
         graph.add_updater(self.update_graph)
         time_label.next_to(self.clock, DOWN)
-        time_label.add_updater(
-            lambda d, dt: d.increment_value(dt)
-        )
+        time_label.add_updater(lambda d, dt: d.increment_value(dt))
         rods.add_updater(self.update_rods)
 
         self.add(time_label)
-        self.play(
-            FadeOut(self.to_fade),
-            self.get_clock_anim(1)
-        )
+        self.play(FadeOut(self.to_fade), self.get_clock_anim(1))
         self.play(self.get_clock_anim(3))
 
         time_label.clear_updaters()
@@ -131,7 +120,8 @@ class StepFunctionExample(BringTwoRodsTogether, FourierSeriesIllustraiton):
                 rate_func=smooth,
             ),
             graph.restore,
-            time_label.set_value, 0,
+            time_label.set_value,
+            0,
         )
         rods.clear_updaters()
         self.wait()
@@ -140,13 +130,11 @@ class StepFunctionExample(BringTwoRodsTogether, FourierSeriesIllustraiton):
         axes = self.axes
         y_axis = axes.y_axis
         x_axis = axes.x_axis
-        y_numbers = y_axis.get_number_mobjects(
-            *np.arange(-1, 1.5, 0.5),
-            number_config={
-                "unit": "^\\circ",
-                "num_decimal_places": 1,
-            }
-        )
+        y_numbers = y_axis.get_number_mobjects(*np.arange(-1, 1.5, 0.5),
+                                               number_config={
+                                                   "unit": "^\\circ",
+                                                   "num_decimal_places": 1,
+                                               })
         x_numbers = x_axis.get_number_mobjects(
             *np.arange(0.2, 1.2, 0.2),
             number_config={
@@ -158,11 +146,9 @@ class StepFunctionExample(BringTwoRodsTogether, FourierSeriesIllustraiton):
         self.play(ShowCreationThenFadeAround(y_numbers[-1]))
         self.play(ShowCreationThenFadeAround(y_numbers[0]))
         self.play(
-            LaggedStartMap(
-                FadeInFrom, x_numbers,
-                lambda m: (m, UP)
-            ),
-            self.rods.set_opacity, 0.8,
+            LaggedStartMap(FadeInFrom, x_numbers, lambda m: (m, UP)),
+            self.rods.set_opacity,
+            0.8,
         )
         self.wait()
 
@@ -175,9 +161,7 @@ class StepFunctionExample(BringTwoRodsTogether, FourierSeriesIllustraiton):
         get_A = A_tracker.get_value
 
         sine_wave = always_redraw(lambda: self.axes.get_graph(
-            lambda x: get_A() * np.sin(
-                get_k() * x - get_phi()
-            ),
+            lambda x: get_A() * np.sin(get_k() * x - get_phi()),
             x_min=self.graph_x_min,
             x_max=self.graph_x_max,
         ).color_using_background_image("VerticalTempGradient"))
@@ -189,11 +173,11 @@ class StepFunctionExample(BringTwoRodsTogether, FourierSeriesIllustraiton):
         self.play(phi_tracker.set_value, -PI / 2)
         self.play(k_tracker.set_value, 3 * TAU)
         self.play(k_tracker.set_value, 2 * TAU)
-        self.play(
-            k_tracker.set_value, PI,
-            A_tracker.set_value, 4 / PI,
-            run_time=3
-        )
+        self.play(k_tracker.set_value,
+                  PI,
+                  A_tracker.set_value,
+                  4 / PI,
+                  run_time=3)
         self.wait()
 
         self.sine_wave = sine_wave
@@ -216,19 +200,20 @@ class StepFunctionExample(BringTwoRodsTogether, FourierSeriesIllustraiton):
         # this should be better abstracted, but eh.
         pairs = list(zip(sine_graphs, partial_sums))[1:]
         for sine_graph, partial_sum in pairs:
-            anims1 = [
-                ShowCreation(sine_graph)
-            ]
+            anims1 = [ShowCreation(sine_graph)]
             partial_sum.set_stroke(BLACK, 4, background=True)
             anims2 = [
                 curr_partial_sum.set_stroke,
-                {"width": 1, "opacity": 0.25},
+                {
+                    "width": 1,
+                    "opacity": 0.25
+                },
                 curr_partial_sum.set_stroke,
-                {"width": 0, "background": True},
-                ReplacementTransform(
-                    sine_graph, partial_sum,
-                    remover=True
-                ),
+                {
+                    "width": 0,
+                    "background": True
+                },
+                ReplacementTransform(sine_graph, partial_sum, remover=True),
             ]
             self.play(*anims1)
             self.play(*anims2)
@@ -237,9 +222,7 @@ class StepFunctionExample(BringTwoRodsTogether, FourierSeriesIllustraiton):
     #
     def setup_axes(self):
         super().setup_axes()
-        self.axes.shift(
-            self.axes.c2p(0, 0)[1] * DOWN
-        )
+        self.axes.shift(self.axes.c2p(0, 0)[1] * DOWN)
 
 
 class BreakDownStepFunction(StepFunctionExample):
@@ -267,19 +250,14 @@ class BreakDownStepFunction(StepFunctionExample):
 
         self.wait()
         self.init_updaters()
-        self.play(
-            self.get_clock_anim(self.wait_time)
-        )
+        self.play(self.get_clock_anim(self.wait_time))
 
     def setup_axes(self):
         super().setup_axes()
         axes = self.axes
         axes.to_edge(LEFT)
 
-        mini_axes = VGroup(*[
-            axes.deepcopy()
-            for x in range(4)
-        ])
+        mini_axes = VGroup(*[axes.deepcopy() for x in range(4)])
         for n, ma in zip(it.count(1, 2), mini_axes):
             if n == 1:
                 t1 = TexMobject("1")
@@ -327,8 +305,7 @@ class BreakDownStepFunction(StepFunctionExample):
         mini_graphs = VGroup()
         for axes, u, n in zip(mini_axes, it.cycle([1, -1]), it.count(1, 2)):
             mini_graph = axes.get_graph(
-                lambda x: (4 / PI) * (u / 1) * np.cos(PI * n * x),
-            )
+                lambda x: (4 / PI) * (u / 1) * np.cos(PI * n * x), )
             mini_graph.set_stroke(WHITE, width=2)
             mini_graphs.add(mini_graph)
         # mini_graphs.set_color_by_gradient(
@@ -357,15 +334,7 @@ class BreakDownStepFunction(StepFunctionExample):
     def init_updaters(self):
         self.graph.add_updater(self.update_graph)
         for mg in self.mini_graphs:
-            mg.add_updater(
-                lambda m, dt: self.update_graph(
-                    m, dt,
-                    alpha=self.scale_factor * self.alpha
-                )
-            )
-        self.time_label.add_updater(
-            lambda d, dt: d.increment_value(dt)
-        )
-        self.rod.add_updater(
-            lambda r: self.update_rods([r])
-        )
+            mg.add_updater(lambda m, dt: self.update_graph(
+                m, dt, alpha=self.scale_factor * self.alpha))
+        self.time_label.add_updater(lambda d, dt: d.increment_value(dt))
+        self.rod.add_updater(lambda r: self.update_rods([r]))

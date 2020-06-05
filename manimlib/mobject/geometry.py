@@ -18,7 +18,6 @@ from manimlib.utils.space_ops import get_norm
 from manimlib.utils.space_ops import normalize
 from manimlib.utils.space_ops import rotate_vector
 
-
 DEFAULT_DOT_RADIUS = 0.08
 DEFAULT_SMALL_DOT_RADIUS = 0.04
 DEFAULT_DASH_LENGTH = 0.05
@@ -53,7 +52,7 @@ class TipableVMobject(VMobject):
             "stroke_width": 0,
         }
     }
-    
+
     # Adding, Creating, Modifying tips
 
     def add_tip(self, tip_length=None, at_start=False):
@@ -85,10 +84,7 @@ class TipableVMobject(VMobject):
         if tip_length is None:
             tip_length = self.get_default_tip_length()
         color = self.get_color()
-        style = {
-            "fill_color": color,
-            "stroke_color": color
-        }
+        style = {"fill_color": color, "stroke_color": color}
         style.update(self.tip_style)
         tip = ArrowTip(length=tip_length, **style)
         return tip
@@ -102,10 +98,7 @@ class TipableVMobject(VMobject):
         else:
             handle = self.get_last_handle()
             anchor = self.get_end()
-        tip.rotate(
-            angle_of_vector(handle - anchor) -
-            PI - tip.get_angle()
-        )
+        tip.rotate(angle_of_vector(handle - anchor) - PI - tip.get_angle())
         tip.shift(anchor - tip.get_tip_point())
         return tip
 
@@ -116,12 +109,11 @@ class TipableVMobject(VMobject):
             return self
 
         if at_start:
-            self.put_start_and_end_on(
-                tip.get_base(), self.get_end()
-            )
+            self.put_start_and_end_on(tip.get_base(), self.get_end())
         else:
             self.put_start_and_end_on(
-                self.get_start(), tip.get_base(),
+                self.get_start(),
+                tip.get_base(),
             )
         return self
 
@@ -139,7 +131,6 @@ class TipableVMobject(VMobject):
 
     def has_start_tip(self):
         return hasattr(self, "start_tip") and self.start_tip in self
-
 
     # Getters
 
@@ -222,8 +213,7 @@ class Arc(TipableVMobject):
 
     def set_pre_positioned_points(self):
         anchors = np.array([
-            np.cos(a) * RIGHT + np.sin(a) * UP
-            for a in np.linspace(
+            np.cos(a) * RIGHT + np.sin(a) * UP for a in np.linspace(
                 self.start_angle,
                 self.start_angle + self.angle,
                 self.num_components,
@@ -241,7 +231,8 @@ class Arc(TipableVMobject):
         handles2 = anchors[1:] - (d_theta / 3) * tangent_vectors[1:]
         self.set_anchors_and_handles(
             anchors[:-1],
-            handles1, handles2,
+            handles1,
+            handles2,
             anchors[1:],
         )
 
@@ -272,9 +263,7 @@ class Arc(TipableVMobject):
         return self
 
     def stop_angle(self):
-        return angle_of_vector(
-            self.points[-1] - self.get_arc_center()
-        ) % TAU
+        return angle_of_vector(self.points[-1] - self.get_arc_center()) % TAU
 
 
 class ArcBetweenPoints(Arc):
@@ -297,9 +286,7 @@ class CurvedArrow(ArcBetweenPoints):
 
 class CurvedDoubleArrow(CurvedArrow):
     def __init__(self, start_point, end_point, **kwargs):
-        CurvedArrow.__init__(
-            self, start_point, end_point, **kwargs
-        )
+        CurvedArrow.__init__(self, start_point, end_point, **kwargs)
         self.add_tip(at_start=True)
 
 
@@ -313,7 +300,11 @@ class Circle(Arc):
     def __init__(self, **kwargs):
         Arc.__init__(self, 0, TAU, **kwargs)
 
-    def surround(self, mobject, dim_to_match=0, stretch=False, buffer_factor=1.2):
+    def surround(self,
+                 mobject,
+                 dim_to_match=0,
+                 stretch=False,
+                 buffer_factor=1.2):
         # Ignores dim_to_match and stretch; result will always be a circle
         # TODO: Perhaps create an ellipse class to handle singele-dimension stretching
 
@@ -322,17 +313,12 @@ class Circle(Arc):
         self.replace(mobject, dim_to_match, stretch)
 
         self.set_width(
-            np.sqrt(mobject.get_width()**2 + mobject.get_height()**2)
-        )
+            np.sqrt(mobject.get_width()**2 + mobject.get_height()**2))
         self.scale(buffer_factor)
 
     def point_at_angle(self, angle):
-        start_angle = angle_of_vector(
-            self.points[0] - self.get_center()
-        )
-        return self.point_from_proportion(
-            (angle - start_angle) / TAU
-        )
+        start_angle = angle_of_vector(self.points[0] - self.get_center())
+        return self.point_from_proportion((angle - start_angle) / TAU)
 
 
 class Dot(Circle):
@@ -354,10 +340,7 @@ class SmallDot(Dot):
 
 
 class Ellipse(Circle):
-    CONFIG = {
-        "width": 2,
-        "height": 1
-    }
+    CONFIG = {"width": 2, "height": 1}
 
     def __init__(self, **kwargs):
         Circle.__init__(self, **kwargs)
@@ -383,8 +366,7 @@ class AnnularSector(Arc):
                 angle=self.angle,
                 radius=radius,
                 arc_center=self.arc_center,
-            )
-            for radius in (self.inner_radius, self.outer_radius)
+            ) for radius in (self.inner_radius, self.outer_radius)
         ]
         outer_arc.reverse_points()
         self.append_points(inner_arc.points)
@@ -394,10 +376,7 @@ class AnnularSector(Arc):
 
 
 class Sector(AnnularSector):
-    CONFIG = {
-        "outer_radius": 1,
-        "inner_radius": 0
-    }
+    CONFIG = {"outer_radius": 1, "inner_radius": 0}
 
 
 class Annulus(Circle):
@@ -433,10 +412,7 @@ class Line(TipableVMobject):
 
     def generate_points(self):
         if self.path_arc:
-            arc = ArcBetweenPoints(
-                self.start, self.end,
-                angle=self.path_arc
-            )
+            arc = ArcBetweenPoints(self.start, self.end, angle=self.path_arc)
             self.set_points(arc.points)
         else:
             self.set_points_as_corners([self.start, self.end])
@@ -458,9 +434,8 @@ class Line(TipableVMobject):
         if length < 2 * self.buff:
             return
         buff_proportion = self.buff / length
-        self.pointwise_become_partial(
-            self, buff_proportion, 1 - buff_proportion
-        )
+        self.pointwise_become_partial(self, buff_proportion,
+                                      1 - buff_proportion)
         return self
 
     def set_start_and_end_attrs(self, start, end):
@@ -536,20 +511,16 @@ class DashedLine(Line):
         Line.__init__(self, *args, **kwargs)
         ps_ratio = self.positive_space_ratio
         num_dashes = self.calculate_num_dashes(ps_ratio)
-        dashes = DashedVMobject(
-            self,
-            num_dashes=num_dashes,
-            positive_space_ratio=ps_ratio
-        )
+        dashes = DashedVMobject(self,
+                                num_dashes=num_dashes,
+                                positive_space_ratio=ps_ratio)
         self.clear_points()
         self.add(*dashes)
 
     def calculate_num_dashes(self, positive_space_ratio):
         try:
             full_length = self.dash_length / positive_space_ratio
-            return int(np.ceil(
-                self.get_length() / full_length
-            ))
+            return int(np.ceil(self.get_length() / full_length))
         except ZeroDivisionError:
             return 1
 
@@ -579,21 +550,15 @@ class DashedLine(Line):
 
 
 class TangentLine(Line):
-    CONFIG = {
-        "length": 1,
-        "d_alpha": 1e-6
-    }
+    CONFIG = {"length": 1, "d_alpha": 1e-6}
 
     def __init__(self, vmob, alpha, **kwargs):
         digest_config(self, kwargs)
         da = self.d_alpha
         a1 = np.clip(alpha - da, 0, 1)
         a2 = np.clip(alpha + da, 0, 1)
-        super().__init__(
-            vmob.point_from_proportion(a1),
-            vmob.point_from_proportion(a2),
-            **kwargs
-        )
+        super().__init__(vmob.point_from_proportion(a1),
+                         vmob.point_from_proportion(a2), **kwargs)
         self.scale(self.length / self.get_length())
 
 
@@ -715,9 +680,7 @@ class Polygon(VMobject):
 
     def __init__(self, *vertices, **kwargs):
         VMobject.__init__(self, **kwargs)
-        self.set_points_as_corners(
-            [*vertices, vertices[0]]
-        )
+        self.set_points_as_corners([*vertices, vertices[0]])
 
     def get_vertices(self):
         return self.get_start_anchors()
@@ -737,11 +700,9 @@ class Polygon(VMobject):
             cut_off_length = radius * np.tan(angle / 2)
             # Determines counterclockwise vs. clockwise
             sign = np.sign(np.cross(vect1, vect2)[2])
-            arc = ArcBetweenPoints(
-                v2 - unit_vect1 * cut_off_length,
-                v2 + unit_vect2 * cut_off_length,
-                angle=sign * angle
-            )
+            arc = ArcBetweenPoints(v2 - unit_vect1 * cut_off_length,
+                                   v2 + unit_vect2 * cut_off_length,
+                                   angle=sign * angle)
             arcs.append(arc)
 
         self.clear_points()
@@ -752,9 +713,7 @@ class Polygon(VMobject):
             line = Line(arc1.get_end(), arc2.get_start())
             # Make sure anchors are evenly distributed
             len_ratio = line.get_length() / arc1.get_arc_length()
-            line.insert_n_curves(
-                int(arc1.get_num_curves() * len_ratio)
-            )
+            line.insert_n_curves(int(arc1.get_num_curves() * len_ratio))
             self.append_points(line.get_points())
         return self
 
@@ -832,12 +791,10 @@ class Square(Rectangle):
 
     def __init__(self, **kwargs):
         digest_config(self, kwargs)
-        Rectangle.__init__(
-            self,
-            height=self.side_length,
-            width=self.side_length,
-            **kwargs
-        )
+        Rectangle.__init__(self,
+                           height=self.side_length,
+                           width=self.side_length,
+                           **kwargs)
 
 
 class RoundedRectangle(Rectangle):

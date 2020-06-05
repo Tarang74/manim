@@ -5,10 +5,7 @@ from from_3b1b.old.clacks.question import Thumbnail
 
 
 class WrapperScene(Scene):
-    CONFIG = {
-        "title": "Title",
-        "shade_of_grey": "#333333"
-    }
+    CONFIG = {"title": "Title", "shade_of_grey": "#333333"}
 
     def construct(self):
         title = TextMobject(self.title)
@@ -57,10 +54,7 @@ class LeftEdge(Scene):
         arrow.match_width(words)
         arrow.next_to(words, DOWN)
 
-        self.play(
-            FadeInFromDown(words),
-            GrowArrow(arrow)
-        )
+        self.play(FadeInFromDown(words), GrowArrow(arrow))
         self.wait()
 
 
@@ -73,13 +67,14 @@ class RightEdge(LeftEdge):
 
 class NoteOnEnergyLostToSound(Scene):
     def construct(self):
-        self.add(TextMobject(
-            "Yeah yeah, the clack sound\\\\"
-            "would require energy, but\\\\"
-            "don't let accuracy get in the\\\\"
-            "way of delight!",
-            alignment="",
-        ))
+        self.add(
+            TextMobject(
+                "Yeah yeah, the clack sound\\\\"
+                "would require energy, but\\\\"
+                "don't let accuracy get in the\\\\"
+                "way of delight!",
+                alignment="",
+            ))
 
 
 class DotProductVideoWrapper(WrapperScene):
@@ -135,17 +130,11 @@ class ShowDotProductMeaning(Scene):
         v_label.add_updater(update_label)
         w_label.add_updater(update_label)
 
-        title = TexMobject(
-            "\\vec{\\textbf{w}}",
-            "\\cdot",
-            "\\vec{\\textbf{v}}",
-            "=",
-            "||", "\\vec{\\textbf{w}}", "||",
-            "\\cdot",
-            "||", "\\vec{\\textbf{v}}", "||",
-            "\\cdot",
-            "\\cos(\\theta)"
-        )
+        title = TexMobject("\\vec{\\textbf{w}}", "\\cdot",
+                           "\\vec{\\textbf{v}}", "=", "||",
+                           "\\vec{\\textbf{w}}", "||", "\\cdot", "||",
+                           "\\vec{\\textbf{v}}", "||", "\\cdot",
+                           "\\cos(\\theta)")
         title.set_color_by_tex_to_color_map({
             "textbf{v}": v_vect.get_color(),
             "textbf{w}": w_vect.get_color(),
@@ -161,6 +150,7 @@ class ShowDotProductMeaning(Scene):
                 stroke_color=LIGHT_GREY,
                 stroke_width=1,
             )
+
         w_line = always_redraw(get_w_line)
 
         def get_proj_v():
@@ -172,6 +162,7 @@ class ShowDotProductMeaning(Scene):
             result.set_fill(v_vect.get_color(), 0.5)
             result.shift(center - result.get_start())
             return result
+
         proj_v = always_redraw(get_proj_v)
 
         def get_proj_line():
@@ -181,6 +172,7 @@ class ShowDotProductMeaning(Scene):
                 stroke_width=1,
                 dash_length=0.025,
             )
+
         proj_line = always_redraw(get_proj_line)
 
         template_line = Line(LEFT, RIGHT)
@@ -194,12 +186,9 @@ class ShowDotProductMeaning(Scene):
             brace.rotate(angle, about_point=ORIGIN)
             brace.shift(vect.get_center())
             return brace
-        w_brace = always_redraw(
-            lambda: get_vect_brace(w_vect)
-        )
-        proj_v_brace = always_redraw(
-            lambda: get_vect_brace(proj_v)
-        )
+
+        w_brace = always_redraw(lambda: get_vect_brace(w_vect))
+        proj_v_brace = always_redraw(lambda: get_vect_brace(proj_v))
 
         def get_arc():
             center = dot.get_center()
@@ -213,28 +202,29 @@ class ShowDotProductMeaning(Scene):
             )
             theta = TexMobject("\\theta")
             p = arc.point_from_proportion(0.5)
-            theta.move_to(
-                center + 1.5 * (p - center)
-            )
+            theta.move_to(center + 1.5 * (p - center))
             return VGroup(arc, theta)
+
         arc = always_redraw(get_arc)
 
         self.add(
             title[:3],
-            w_vect, v_vect, dot,
-            w_label, v_label,
+            w_vect,
+            v_vect,
+            dot,
+            w_label,
+            v_label,
         )
         self.play(
-            v_vect.angle_tracker.set_value, 170 * DEGREES,
-            w_vect.angle_tracker.set_value, 45 * DEGREES,
+            v_vect.angle_tracker.set_value,
+            170 * DEGREES,
+            w_vect.angle_tracker.set_value,
+            45 * DEGREES,
             run_time=2,
         )
         self.wait()
         w_brace.update()
-        self.play(
-            GrowFromCenter(w_brace),
-            Write(title[3:7])
-        )
+        self.play(GrowFromCenter(w_brace), Write(title[3:7]))
 
         self.add(w_line, w_vect, w_label, dot)
         self.play(ShowCreation(w_line))
@@ -245,28 +235,23 @@ class ShowDotProductMeaning(Scene):
         )
         self.add(proj_v, proj_line, dot)
         proj_v_brace.update()
-        self.play(
-            GrowFromCenter(proj_v_brace),
-            FadeInFromDown(title[7:])
-        )
+        self.play(GrowFromCenter(proj_v_brace), FadeInFromDown(title[7:]))
         arc.update()
         self.play(Write(arc))
         self.wait()
 
         for angle in [135, 225, 270, 90, 150]:
-            self.play(
-                v_vect.angle_tracker.set_value, angle * DEGREES,
-                run_time=2
-            )
+            self.play(v_vect.angle_tracker.set_value,
+                      angle * DEGREES,
+                      run_time=2)
             self.wait()
 
 
 class FinalComment(Scene):
     def construct(self):
-        self.add(TextMobject(
-            "Thoughts on what ending should go here?\\\\"
-            "See the Patreon post."
-        ))
+        self.add(
+            TextMobject("Thoughts on what ending should go here?\\\\"
+                        "See the Patreon post."))
 
 
 class FourtyFiveDegreeLine(Scene):
@@ -296,11 +281,8 @@ class FourtyFiveDegreeLine(Scene):
             target_value = angle
 
         self.add(line1, label)
-        self.play(
-            ChangeDecimalToValue(label, target_value),
-            ShowCreation(arc),
-            Rotate(line2, angle, about_point=ORIGIN)
-        )
+        self.play(ChangeDecimalToValue(label, target_value), ShowCreation(arc),
+                  Rotate(line2, angle, about_point=ORIGIN))
         self.wait()
 
 
@@ -356,9 +338,8 @@ class AskAboutAddingThetaToItself(Scene):
         wedge_radius = self.wedge_radius
         wedge = VGroup(
             Line(ORIGIN, wedge_radius * RIGHT),
-            Line(ORIGIN, wedge_radius * RIGHT).rotate(
-                theta, about_point=ORIGIN
-            ),
+            Line(ORIGIN, wedge_radius * RIGHT).rotate(theta,
+                                                      about_point=ORIGIN),
         )
         wedge.set_stroke((WHITE, GREY), 2)
         arc = Arc(theta, radius=1)
@@ -374,8 +355,7 @@ class AskAboutAddingThetaToItself(Scene):
         group = self.get_group(theta)
         angles = [k * theta for k in range(int(PI / theta) + 1)]
         groups = VGroup(*[
-            group.copy().rotate(angle, about_point=ORIGIN)
-            for angle in angles
+            group.copy().rotate(angle, about_point=ORIGIN) for angle in angles
         ])
         # colors = it.cycle([BLUE_D, BLUE_B, BLUE_C, GREY_BROWN])
         colors = it.cycle([BLUE_D, GREY_BROWN])
@@ -385,10 +365,11 @@ class AskAboutAddingThetaToItself(Scene):
             arc.set_color(color)
             number = Integer(n)
             number.set_height(self.number_height)
-            number.move_to(center_of_mass([
-                wedge[0].get_end(),
-                wedge[1].get_end(),
-            ]))
+            number.move_to(
+                center_of_mass([
+                    wedge[0].get_end(),
+                    wedge[1].get_end(),
+                ]))
             group.add(number)
         groups[-1][-1].set_color(RED)
 
@@ -409,10 +390,8 @@ class AskAboutAddingThetaToItself(Scene):
         )
 
     def get_inequality(self):
-        ineq = TexMobject(
-            "N", "\\cdot", "\\theta", "<",
-            "\\pi", "=", "3.1415926\\dots"
-        )
+        ineq = TexMobject("N", "\\cdot", "\\theta", "<", "\\pi", "=",
+                          "3.1415926\\dots")
         N = ineq.get_part_by_tex("N")
         self.pi_symbol = ineq.get_part_by_tex("\\pi")
         N.set_color(YELLOW)
@@ -433,16 +412,13 @@ class AskAboutAddingThetaToItself(Scene):
         ineq = TexMobject("<")
         pi = TexMobject("\\pi", "=", "3.1415926\\dots")
         # pi.set_color(BLUE)
-        group = VGroup(
-            multiple, dot, theta_tex,
-            eq, value,
-            ineq, pi
-        )
+        group = VGroup(multiple, dot, theta_tex, eq, value, ineq, pi)
         group.arrange(RIGHT, buff=0.2)
         group.next_to(ORIGIN, DOWN, buff=LARGE_BUFF)
         theta_brace = Brace(group[2], DOWN, buff=SMALL_BUFF)
         theta_symbol = theta_brace.get_tex("\\theta")
         group.add(theta_brace, theta_symbol)
+
         # group.align_to(self.pi_symbol, RIGHT)
 
         def get_count():
@@ -458,12 +434,11 @@ class AskAboutAddingThetaToItself(Scene):
             return RED if is_greater_than_pi() else YELLOW
 
         def get_ineq():
-            result = TexMobject(
-                ">" if is_greater_than_pi() else "<"
-            )
+            result = TexMobject(">" if is_greater_than_pi() else "<")
             result.set_color(get_color())
             result.move_to(ineq)
             return result
+
         dynamic_ineq = always_redraw(get_ineq)
         group.remove(ineq)
         group.add(dynamic_ineq)
@@ -501,11 +476,8 @@ class FinalFormula(Scene):
             "m_2": RED,
         }
 
-        formula = TexMobject(
-            "\\left\\lfloor",
-            "{\\pi", "\\over", "\\theta}",
-            "\\right\\rfloor"
-        )
+        formula = TexMobject("\\left\\lfloor", "{\\pi", "\\over", "\\theta}",
+                             "\\right\\rfloor")
         formula.set_color_by_tex_to_color_map(t2c_map)
         group = VGroup(text, formula)
         group.arrange(RIGHT)
@@ -517,20 +489,17 @@ class FinalFormula(Scene):
         self.play(ShowCreationThenFadeAround(formula))
         self.wait()
 
-        theta_eq = TexMobject(
-            "\\theta", "=", "\\arctan", "\\left(",
-            "\\sqrt",
-            "{{m_2", "\\over", "m_1}}",
-            "\\right)"
-        )
+        theta_eq = TexMobject("\\theta", "=", "\\arctan", "\\left(", "\\sqrt",
+                              "{{m_2", "\\over", "m_1}}", "\\right)")
         theta_eq.set_color_by_tex_to_color_map(t2c_map)
         theta_eq.scale(1.5)
         theta_eq.next_to(group, DOWN, MED_LARGE_BUFF)
 
-        self.play(TransformFromCopy(
-            formula.get_part_by_tex("\\theta"),
-            theta_eq.get_part_by_tex("\\theta"),
-        ))
+        self.play(
+            TransformFromCopy(
+                formula.get_part_by_tex("\\theta"),
+                theta_eq.get_part_by_tex("\\theta"),
+            ))
         self.play(Write(theta_eq[1:]))
         self.wait()
 
@@ -552,10 +521,8 @@ class SurprisedRandy(Scene):
 class TwoSolutionsWrapper(WrapperScene):
     def construct(self):
         big_rect = self.get_big_rect()
-        screen_rects = VGroup(*[
-            self.get_screen_rect(height=3)
-            for x in range(2)
-        ])
+        screen_rects = VGroup(
+            *[self.get_screen_rect(height=3) for x in range(2)])
         screen_rects.arrange(RIGHT, buff=LARGE_BUFF)
         title = TextMobject("Two solutions")
         title.scale(1.5)
@@ -563,36 +530,27 @@ class TwoSolutionsWrapper(WrapperScene):
         screen_rects.next_to(title, DOWN, LARGE_BUFF)
 
         # pi creatures
-        pis = VGroup(
-            Randolph(color=BLUE_D),
-            Randolph(color=BLUE_E),
-            Randolph(color=BLUE_B),
-            Mortimer().scale(1.2)
-        )
+        pis = VGroup(Randolph(color=BLUE_D), Randolph(color=BLUE_E),
+                     Randolph(color=BLUE_B),
+                     Mortimer().scale(1.2))
         pis.set_height(2)
         pis.arrange(RIGHT, buff=MED_LARGE_BUFF)
         pis.to_edge(DOWN, buff=SMALL_BUFF)
 
         self.add(big_rect, title, pis)
         self.play(
+            LaggedStartMap(ShowCreation,
+                           screen_rects.copy().set_fill(opacity=0),
+                           lag_ratio=0.8),
+            LaggedStartMap(FadeIn, screen_rects, lag_ratio=0.8),
             LaggedStartMap(
-                ShowCreation, screen_rects.copy().set_fill(opacity=0),
-                lag_ratio=0.8
-            ),
-            LaggedStartMap(
-                FadeIn, screen_rects,
-                lag_ratio=0.8
-            ),
-            LaggedStartMap(
-                ApplyMethod, pis,
-                lambda pi: (pi.change, "pondering", screen_rects[0])
-            ),
+                ApplyMethod, pis, lambda pi:
+                (pi.change, "pondering", screen_rects[0])),
         )
         self.play(Blink(random.choice(pis)))
-        self.play(LaggedStartMap(
-            ApplyMethod, pis,
-            lambda pi: (pi.change, "thinking", screen_rects[1])
-        ))
+        self.play(
+            LaggedStartMap(ApplyMethod, pis, lambda pi:
+                           (pi.change, "thinking", screen_rects[1])))
         self.play(Blink(random.choice(pis)))
         self.wait()
 
@@ -604,9 +562,7 @@ class FinalQuote(Scene):
             is worth 80 IQ points.
         """
         quote_parts = [s for s in quote_text.split(" ") if s]
-        quote = TextMobject(
-            *quote_parts,
-        )
+        quote = TextMobject(*quote_parts, )
         quote.scale(1.2)
         quote.shift(2 * RIGHT + UP)
 
@@ -789,14 +745,12 @@ class ClacksSolution2Thumbnail(Scene):
         self.add(arrow)
 
     def add_scene1(self):
-        scene1 = Thumbnail(
-            sliding_blocks_config={
-                "block1_config": {
-                    "label_text": "$100^{d}$ kg",
-                    "distance": 8,
-                },
-            }
-        )
+        scene1 = Thumbnail(sliding_blocks_config={
+            "block1_config": {
+                "label_text": "$100^{d}$ kg",
+                "distance": 8,
+            },
+        })
         group = Group(*scene1.mobjects)
         group.scale(0.75, about_point=ORIGIN)
         group.shift(1.5 * DOWN + 3 * LEFT)
@@ -829,10 +783,8 @@ class ClacksSolution2Thumbnail(Scene):
         mirrors = VGroup(*[rw[1] for rw in worlds])
         mirrors.set_stroke(width=5)
         triangles = VGroup(*[rw[0] for rw in worlds])
-        trajectories = VGroup(
-            scene2.trajectory,
-            *scene2.reflected_trajectories
-        )
+        trajectories = VGroup(scene2.trajectory,
+                              *scene2.reflected_trajectories)
         trajectories.set_stroke(YELLOW, 1)
 
         beams1, beams2 = [
@@ -841,8 +793,7 @@ class ClacksSolution2Thumbnail(Scene):
                 max_stroke_width=20,
                 max_time_width=1,
                 num_flashes=50,
-            )
-            for path in [
+            ) for path in [
                 scene2.trajectory,
                 scene2.ghost_trajectory,
             ]
@@ -868,7 +819,8 @@ class ClacksSolution2Thumbnail(Scene):
         word.set_color(YELLOW)
         # word.set_stroke(BLACK, 25, background=True)
         word.add_to_back(word.copy().set_stroke(
-            BLACK, 25,
+            BLACK,
+            25,
         ))
         word.next_to(dot, UR)
         word.shift(-word.get_center()[0] * RIGHT)

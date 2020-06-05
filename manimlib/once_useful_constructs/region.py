@@ -9,9 +9,7 @@ from manimlib.utils.iterables import adjacent_pairs
 
 
 class Region(Mobject):
-    CONFIG = {
-        "display_mode": "region"
-    }
+    CONFIG = {"display_mode": "region"}
 
     def __init__(self, condition=(lambda x, y: True), **kwargs):
         """
@@ -25,10 +23,8 @@ class Region(Mobject):
         self.condition = condition
 
     def _combine(self, region, op):
-        self.condition = lambda x, y: op(
-            self.condition(x, y),
-            region.condition(x, y)
-        )
+        self.condition = lambda x, y: op(self.condition(x, y),
+                                         region.condition(x, y))
 
     def union(self, region):
         self._combine(region, lambda bg1, bg2: bg1 | bg2)
@@ -59,6 +55,7 @@ class HalfPlane(Region):
 
         def condition(x, y):
             return (x1 - x0) * (y - y0) > (y1 - y0) * (x - x0)
+
         Region.__init__(self, condition, *args, **kwargs)
 
 

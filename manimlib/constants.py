@@ -23,20 +23,15 @@ def initialize_directories(config):
         else:
             MEDIA_DIR = os.path.join(
                 os.path.expanduser('~'),
-                "Dropbox (3Blue1Brown)/3Blue1Brown Team Folder"
-            )
+                "Dropbox (3Blue1Brown)/3Blue1Brown Team Folder")
         if not os.path.isdir(MEDIA_DIR):
             MEDIA_DIR = "./media"
-        print(
-            f"Media will be written to {MEDIA_DIR + os.sep}. You can change "
-            "this behavior with the --media_dir flag."
-        )
+        print(f"Media will be written to {MEDIA_DIR + os.sep}. You can change "
+              "this behavior with the --media_dir flag.")
     else:
         if config["media_dir"]:
-            print(
-                "Ignoring --media_dir, since both --tex_dir and a video "
-                "directory were both passed"
-            )
+            print("Ignoring --media_dir, since both --tex_dir and a video "
+                  "directory were both passed")
 
     TEX_DIR = config["tex_dir"] or os.path.join(MEDIA_DIR, "Tex")
     TEXT_DIR = os.path.join(MEDIA_DIR, "texts")
@@ -52,7 +47,8 @@ def initialize_directories(config):
         if folder != "" and not os.path.exists(folder):
             os.makedirs(folder)
 
-NOT_SETTING_FONT_MSG='''
+
+NOT_SETTING_FONT_MSG = '''
 Warning:
 You haven't set font.
 If you are not using English, this may cause text rendering problem.
@@ -75,8 +71,7 @@ TEX_USE_CTEX = False
 TEX_TEXT_TO_REPLACE = "YourTextHere"
 TEMPLATE_TEX_FILE = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
-    "tex_template.tex" if not TEX_USE_CTEX else "ctex_template.tex"
-)
+    "tex_template.tex" if not TEX_USE_CTEX else "ctex_template.tex")
 with open(TEMPLATE_TEX_FILE, "r") as infile:
     TEMPLATE_TEXT_FILE_BODY = infile.read()
     TEMPLATE_TEX_FILE_BODY = TEMPLATE_TEXT_FILE_BODY.replace(
@@ -161,11 +156,9 @@ LARGE_BUFF = 1
 DEFAULT_MOBJECT_TO_EDGE_BUFFER = MED_LARGE_BUFF
 DEFAULT_MOBJECT_TO_MOBJECT_BUFFER = MED_SMALL_BUFF
 
-
 # All in seconds
 DEFAULT_POINTWISE_FUNCTION_RUN_TIME = 3.0
 DEFAULT_WAIT_TIME = 1.0
-
 
 ORIGIN = np.array((0., 0., 0.))
 UP = np.array((0., 1., 0.))

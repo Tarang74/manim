@@ -19,9 +19,7 @@ class RearrangeEquation(Scene):
         transform_kwargs={},
     ):
         transform_kwargs["path_func"] = path
-        start_mobs, end_mobs = self.get_mobs_from_terms(
-            start_terms, end_terms
-        )
+        start_mobs, end_mobs = self.get_mobs_from_terms(start_terms, end_terms)
         if start_transform:
             start_mobs = start_transform(Mobject(*start_mobs)).split()
         if end_transform:
@@ -29,32 +27,24 @@ class RearrangeEquation(Scene):
         unmatched_start_indices = set(range(len(start_mobs)))
         unmatched_end_indices = set(range(len(end_mobs)))
         unmatched_start_indices.difference_update(
-            [n % len(start_mobs) for n in index_map]
-        )
+            [n % len(start_mobs) for n in index_map])
         unmatched_end_indices.difference_update(
-            [n % len(end_mobs) for n in list(index_map.values())]
-        )
+            [n % len(end_mobs) for n in list(index_map.values())])
         mobject_pairs = [
-            (start_mobs[a], end_mobs[b])
-            for a, b in index_map.items()
-        ] + [
-            (Point(end_mobs[b].get_center()), end_mobs[b])
-            for b in unmatched_end_indices
-        ]
+            (start_mobs[a], end_mobs[b]) for a, b in index_map.items()
+        ] + [(Point(end_mobs[b].get_center()), end_mobs[b])
+             for b in unmatched_end_indices]
         if not leave_start_terms:
-            mobject_pairs += [
-                (start_mobs[a], Point(start_mobs[a].get_center()))
-                for a in unmatched_start_indices
-            ]
+            mobject_pairs += [(start_mobs[a],
+                               Point(start_mobs[a].get_center()))
+                              for a in unmatched_start_indices]
 
         self.add(*start_mobs)
         if leave_start_terms:
             self.add(Mobject(*start_mobs))
         self.wait()
-        self.play(*[
-            Transform(*pair, **transform_kwargs)
-            for pair in mobject_pairs
-        ])
+        self.play(
+            *[Transform(*pair, **transform_kwargs) for pair in mobject_pairs])
         self.wait()
 
     def get_mobs_from_terms(self, start_terms, end_terms):
@@ -96,6 +86,5 @@ class FlipThroughSymbols(Animation):
             self.curr_tex = new_tex
             self.mobject = TexMobject(new_tex).shift(self.start_center)
         if not all(self.start_center == self.end_center):
-            self.mobject.center().shift(
-                (1 - alpha) * self.start_center + alpha * self.end_center
-            )
+            self.mobject.center().shift((1 - alpha) * self.start_center +
+                                        alpha * self.end_center)

@@ -91,10 +91,7 @@ class ShowLinearity(WriteHeatEquationTemplate, TemperatureGraphScene):
 
         self.add(group)
         self.wait()
-        self.play(
-            ShowCreation(arrow),
-            group.next_to, arrow, LEFT
-        )
+        self.play(ShowCreation(arrow), group.next_to, arrow, LEFT)
         self.play(FadeInFrom(linear_word, LEFT))
         self.wait()
 
@@ -118,9 +115,7 @@ class ShowLinearity(WriteHeatEquationTemplate, TemperatureGraphScene):
         T1 = TexMobject("a", "T_1", **kw)
         T2 = TexMobject("b", "T_2", **kw)
         T_sum = TexMobject("T_1", "+", "T_2", **kw)
-        T_sum_with_scalars = TexMobject(
-            "a", "T_1", "+", "b", "T_2", **kw
-        )
+        T_sum_with_scalars = TexMobject("a", "T_1", "+", "b", "T_2", **kw)
 
         T1.next_to(graphs[0], UP)
         T2.next_to(graphs[1], UP)
@@ -133,15 +128,13 @@ class ShowLinearity(WriteHeatEquationTemplate, TemperatureGraphScene):
         s1_decimal = DecimalNumber()
         s1_decimal.match_color(T1[1])
         s1_decimal.next_to(a_brace, UP, SMALL_BUFF)
-        s1_decimal.add_updater(lambda m: m.set_value(
-            self.scalar_trackers[0].get_value()
-        ))
+        s1_decimal.add_updater(
+            lambda m: m.set_value(self.scalar_trackers[0].get_value()))
         s2_decimal = DecimalNumber()
         s2_decimal.match_color(T2[1])
         s2_decimal.next_to(b_brace, UP, SMALL_BUFF)
-        s2_decimal.add_updater(lambda m: m.set_value(
-            self.scalar_trackers[1].get_value()
-        ))
+        s2_decimal.add_updater(
+            lambda m: m.set_value(self.scalar_trackers[1].get_value()))
 
         self.play(
             FadeInFrom(T1[1], DOWN),
@@ -155,16 +148,11 @@ class ShowLinearity(WriteHeatEquationTemplate, TemperatureGraphScene):
         self.play(
             TransformFromCopy(T1[1], T_sum[0]),
             TransformFromCopy(T2[1], T_sum[2]),
-            TransformFromCopy(self.plus, T_sum[1]),
-            *[
-                Transform(
-                    graph.copy().set_fill(opacity=0),
-                    graphs[2].copy().set_fill(opacity=0),
-                    remover=True
-                )
-                for graph in graphs[:2]
-            ]
-        )
+            TransformFromCopy(self.plus, T_sum[1]), *[
+                Transform(graph.copy().set_fill(opacity=0),
+                          graphs[2].copy().set_fill(opacity=0),
+                          remover=True) for graph in graphs[:2]
+            ])
         self.wait()
         self.play(FadeInFrom(solution_labels[2], UP))
         self.wait()
@@ -198,10 +186,7 @@ class ShowLinearity(WriteHeatEquationTemplate, TemperatureGraphScene):
 
     #
     def get_axes_group(self):
-        axes_group = VGroup(*[
-            self.get_axes()
-            for x in range(3)
-        ])
+        axes_group = VGroup(*[self.get_axes() for x in range(3)])
         axes_group.arrange(RIGHT, buff=2)
         axes_group.set_width(FRAME_WIDTH - 1)
         axes_group.to_edge(DOWN, buff=1)
@@ -215,10 +200,9 @@ class ShowLinearity(WriteHeatEquationTemplate, TemperatureGraphScene):
         self.orient_three_d_mobject(axes)
         axes.rotate(-5 * DEGREES, UP)
         axes.set_width(4)
-        axes.x_axis.label.next_to(
-            axes.x_axis.get_end(), DOWN,
-            buff=2 * SMALL_BUFF
-        )
+        axes.x_axis.label.next_to(axes.x_axis.get_end(),
+                                  DOWN,
+                                  buff=2 * SMALL_BUFF)
         return axes
 
     def get_graph(self, axes, freqs, scalar_trackers):
@@ -229,8 +213,7 @@ class ShowLinearity(WriteHeatEquationTemplate, TemperatureGraphScene):
             scalars = [st.get_value() for st in scalar_trackers]
             return np.sum([
                 s * np.cos(k * x) * np.exp(-a * (k**2) * t)
-                for freq, s in zip(freqs, scalars)
-                for k in [freq * PI / L]
+                for freq, s in zip(freqs, scalars) for k in [freq * PI / L]
             ])
 
         def get_surface_graph_group():
@@ -255,9 +238,7 @@ class CombineSeveralSolutions(ShowLinearity):
         "axes_config": {
             "y_max": 15,
         },
-        "target_scalars": [
-            0.81, -0.53, 0.41, 0.62, -0.95
-        ],
+        "target_scalars": [0.81, -0.53, 0.41, 0.62, -0.95],
         "final_run_time": 14,
     }
 
@@ -278,8 +259,7 @@ class CombineSeveralSolutions(ShowLinearity):
                     "unit_size": 2,
                     "tick_frequency": 0.5,
                 },
-            )
-            for x in range(self.n_top_graphs)
+            ) for x in range(self.n_top_graphs)
         ])
         top_axes_group.arrange(RIGHT, buff=2)
         top_axes_group.set_width(FRAME_WIDTH - 1.5)
@@ -300,23 +280,18 @@ class CombineSeveralSolutions(ShowLinearity):
         self.low_axes = low_axes
 
     def setup_all_graphs(self):
-        scalar_trackers = Group(*[
-            ValueTracker(1)
-            for x in range(self.n_top_graphs)
-        ])
+        scalar_trackers = Group(
+            *[ValueTracker(1) for x in range(self.n_top_graphs)])
         freqs = np.arange(self.n_top_graphs)
         freqs += 1
         self.top_graphs = VGroup(*[
-            self.get_graph(axes, [n], [st])
-            for axes, n, st in zip(
+            self.get_graph(axes, [n], [st]) for axes, n, st in zip(
                 self.top_axes_group,
                 freqs,
                 scalar_trackers,
             )
         ])
-        self.low_graph = self.get_graph(
-            self.low_axes, freqs, scalar_trackers
-        )
+        self.low_graph = self.get_graph(self.low_axes, freqs, scalar_trackers)
 
         self.scalar_trackers = scalar_trackers
 
@@ -325,29 +300,27 @@ class CombineSeveralSolutions(ShowLinearity):
         top_graphs = self.top_graphs
         scalar_trackers = self.scalar_trackers
 
-        decimals = self.get_decimals(
-            top_axes_group, scalar_trackers
-        )
+        decimals = self.get_decimals(top_axes_group, scalar_trackers)
 
-        self.play(LaggedStart(*[
-            AnimationGroup(
-                Write(graph[0]),
-                FadeIn(graph[1]),
-            )
-            for graph in top_graphs
-        ]))
+        self.play(
+            LaggedStart(*[
+                AnimationGroup(
+                    Write(graph[0]),
+                    FadeIn(graph[1]),
+                ) for graph in top_graphs
+            ]))
         self.wait()
         self.play(FadeIn(decimals))
         for graph in top_graphs:
             graph.resume_updating()
 
         self.play(LaggedStart(*[
-            ApplyMethod(st.set_value, value)
-            for st, value in zip(
+            ApplyMethod(st.set_value, value) for st, value in zip(
                 scalar_trackers,
                 self.target_scalars,
             )
-        ]), run_time=3)
+        ]),
+                  run_time=3)
         self.wait()
 
     def show_sum(self):
@@ -362,13 +335,9 @@ class CombineSeveralSolutions(ShowLinearity):
                     top_graph.copy().set_fill(opacity=0),
                     low_graph.copy().set_fill(opacity=0),
                     remover=True,
-                )
-                for top_graph in top_graphs
+                ) for top_graph in top_graphs
             ]),
-            FadeIn(
-                low_graph,
-                rate_func=squish_rate_func(smooth, 0.7, 1)
-            ),
+            FadeIn(low_graph, rate_func=squish_rate_func(smooth, 0.7, 1)),
             run_time=3,
         )
         self.wait()
@@ -381,27 +350,21 @@ class CombineSeveralSolutions(ShowLinearity):
         get_t = time_tracker.get_value
 
         anims = [
-            ApplyMethod(
-                time_tracker.set_value, 1,
-                run_time=1,
-                rate_func=linear
-            )
+            ApplyMethod(time_tracker.set_value,
+                        1,
+                        run_time=1,
+                        rate_func=linear)
         ]
 
         for axes, graph_group in zip(all_axes, all_graphs):
             graph_group.clear_updaters()
             surface, gslice = graph_group
             plane = self.get_const_time_plane(axes)
-            plane.t_tracker.add_updater(
-                lambda m: m.set_value(get_t())
-            )
+            plane.t_tracker.add_updater(lambda m: m.set_value(get_t()))
             gslice.axes = axes
             gslice.func = graph_group.func
             gslice.add_updater(lambda m: m.become(
-                self.get_time_slice_graph(
-                    m.axes, m.func, t=get_t()
-                )
-            ))
+                self.get_time_slice_graph(m.axes, m.func, t=get_t())))
             self.add(gslice)
             self.add(plane.t_tracker)
             anims.append(FadeIn(plane))
@@ -409,7 +372,8 @@ class CombineSeveralSolutions(ShowLinearity):
         self.play(*anims)
         run_time = self.final_run_time
         self.play(
-            time_tracker.increment_value, run_time,
+            time_tracker.increment_value,
+            run_time,
             run_time=run_time,
             rate_func=linear,
         )
@@ -425,9 +389,8 @@ class CombineSeveralSolutions(ShowLinearity):
             decimal.scalar_tracker = st
             times = TexMobject("\\times")
             times.next_to(decimal, LEFT, SMALL_BUFF)
-            decimal.add_updater(lambda d: d.set_value(
-                d.scalar_tracker.get_value()
-            ))
+            decimal.add_updater(
+                lambda d: d.set_value(d.scalar_tracker.get_value()))
             group = VGroup(times, decimal)
             group.scale(0.7)
             result.add(group)
@@ -454,9 +417,7 @@ class CycleThroughManyLinearCombinations(CombineSeveralSolutions):
         top_graphs = self.top_graphs
         low_graph = self.low_graph
         scalar_trackers = self.scalar_trackers
-        self.add(self.get_decimals(
-            self.top_axes_group, scalar_trackers
-        ))
+        self.add(self.get_decimals(self.top_axes_group, scalar_trackers))
 
         for graph in [low_graph, *top_graphs]:
             graph.resume_updating()
@@ -466,9 +427,8 @@ class CycleThroughManyLinearCombinations(CombineSeveralSolutions):
         for x in range(self.n_cycles):
             self.play(LaggedStart(*[
                 ApplyMethod(st.set_value, value)
-                for st, value in zip(
-                    scalar_trackers,
-                    3 * np.random.random(nst) - 1.5
-                )
-            ]), run_time=3)
+                for st, value in zip(scalar_trackers, 3 *
+                                     np.random.random(nst) - 1.5)
+            ]),
+                      run_time=3)
             self.wait()

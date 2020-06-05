@@ -1,6 +1,5 @@
 from manimlib.imports import *
 
-
 OUTPUT_DIRECTORY = "hyperdarts"
 BROWN_PAPER = "#958166"
 
@@ -44,10 +43,7 @@ class HyperdartScene(MovingCameraScene):
         self.add(self.circle_center_dot)
 
     def get_square(self):
-        return Square(
-            side_length=self.square_width,
-            **self.square_style
-        )
+        return Square(side_length=self.square_width, **self.square_style)
 
     def get_circle(self, square=None):
         square = square or self.square
@@ -66,11 +62,9 @@ class HyperdartScene(MovingCameraScene):
     def get_number_plane(self):
         square = self.square
         unit_size = square.get_width() / 2
-        plane = NumberPlane(
-            axis_config={
-                "unit_size": unit_size,
-            }
-        )
+        plane = NumberPlane(axis_config={
+            "unit_size": unit_size,
+        })
         plane.add_coordinates()
         plane.shift(square.get_center() - plane.c2p(0, 0))
         return plane
@@ -106,10 +100,7 @@ class HyperdartScene(MovingCameraScene):
     def get_hit_distance_line(self, point, circle=None):
         circle = circle or self.circle
 
-        line = Line(
-            circle.get_center(), point,
-            **self.default_line_style
-        )
+        line = Line(circle.get_center(), point, **self.default_line_style)
         return line
 
     def get_chord(self, point, circle=None):
@@ -129,10 +120,9 @@ class HyperdartScene(MovingCameraScene):
         circle = circle or self.circle
 
         center = circle.get_center()
-        radii = VGroup(*[
-            DashedLine(center, point)
-            for point in chord.get_start_and_end()
-        ])
+        radii = VGroup(
+            *
+            [DashedLine(center, point) for point in chord.get_start_and_end()])
         radii.set_style(**self.default_line_style)
         return radii
 
@@ -192,7 +182,7 @@ class HyperdartScene(MovingCameraScene):
 
     # Animations
     def show_full_hit_process(self, point, pace="slow", with_dart=True):
-        assert(pace in ["slow", "fast"])
+        assert (pace in ["slow", "fast"])
 
         to_fade = VGroup()
 
@@ -213,23 +203,15 @@ class HyperdartScene(MovingCameraScene):
 
         to_fade.add_to_back(chord_and_shadow, lines)
 
-        self.play(
-            FadeOut(to_fade),
-            run_time=(1 if pace == "slow" else 0.5)
-        )
+        self.play(FadeOut(to_fade), run_time=(1 if pace == "slow" else 0.5))
 
     def show_hits_with_darts(self, points, run_time=0.5, added_anims=None):
         if added_anims is None:
             added_anims = []
 
-        darts = VGroup(*[
-            self.get_dart().move_to(point, DR)
-            for point in points
-        ])
-        dots = VGroup(*[
-            self.get_dot(point)
-            for point in points
-        ])
+        darts = VGroup(
+            *[self.get_dart().move_to(point, DR) for point in points])
+        dots = VGroup(*[self.get_dot(point) for point in points])
 
         for dart in darts:
             dart.save_state()
@@ -237,27 +219,23 @@ class HyperdartScene(MovingCameraScene):
             dart.rotate(20 * DEGREES)
 
         n_points = len(points)
-        self.play(
-            ShowIncreasingSubsets(
-                dots,
-                rate_func=squish_rate_func(linear, 0.5, 1),
-            ),
-            LaggedStart(*[
-                Restore(
-                    dart,
-                    path_arc=-20 * DEGREES,
-                    rate_func=linear,
-                    run_time=run_time,
-                )
-                for dart in darts
-            ], lag_ratio=(1 / n_points)),
-            *added_anims,
-            run_time=run_time
-        )
+        self.play(ShowIncreasingSubsets(
+            dots,
+            rate_func=squish_rate_func(linear, 0.5, 1),
+        ),
+                  LaggedStart(*[
+                      Restore(
+                          dart,
+                          path_arc=-20 * DEGREES,
+                          rate_func=linear,
+                          run_time=run_time,
+                      ) for dart in darts
+                  ],
+                              lag_ratio=(1 / n_points)),
+                  *added_anims,
+                  run_time=run_time)
         for n in range(n_points):
-            self.add_dart_sound(
-                time_offset=(-n / (2 * n_points))
-            )
+            self.add_dart_sound(time_offset=(-n / (2 * n_points)))
 
         return darts, dots
 
@@ -266,7 +244,7 @@ class HyperdartScene(MovingCameraScene):
         return darts[0], dots[0]
 
     def show_hit(self, point, pace="slow", added_anims=None):
-        assert(pace in ["slow", "fast"])
+        assert (pace in ["slow", "fast"])
         if added_anims is None:
             added_anims = []
 
@@ -283,7 +261,7 @@ class HyperdartScene(MovingCameraScene):
         return dot
 
     def show_geometry(self, point, pace="slow"):
-        assert(pace in ["slow", "fast"])
+        assert (pace in ["slow", "fast"])
 
         lines = self.get_all_hit_lines(point, self.circle)
         h_line, chord, elbow = lines
@@ -296,12 +274,10 @@ class HyperdartScene(MovingCameraScene):
             )
             self.play(ShowCreation(elbow))
         elif pace == "fast":
-            self.play(
-                ShowCreation(h_line),
-                GrowFromCenter(chord),
-                ShowCreation(elbow),
-                run_time=0.5
-            )
+            self.play(ShowCreation(h_line),
+                      GrowFromCenter(chord),
+                      ShowCreation(elbow),
+                      run_time=0.5)
         # return VGroup(h_line, chord)
         return lines
 
@@ -331,22 +307,21 @@ class HyperdartScene(MovingCameraScene):
         outline.set_fill(opacity=0)
         outline.set_stroke(YELLOW, 2)
 
-        assert(pace in ["slow", "fast"])
+        assert (pace in ["slow", "fast"])
 
         if pace == "slow":
             self.play(
-                chord_copy.move_to, circle.get_center(),
-                circle.set_opacity, 0.5,
+                chord_copy.move_to,
+                circle.get_center(),
+                circle.set_opacity,
+                0.5,
             )
             self.play(
                 Rotating(
                     chord_copy,
                     radians=PI,
                 ),
-                ShowCreation(
-                    outline,
-                    lag_ratio=0
-                ),
+                ShowCreation(outline, lag_ratio=0),
                 run_time=1,
                 rate_func=smooth,
             )
@@ -362,7 +337,8 @@ class HyperdartScene(MovingCameraScene):
             outline.generate_target()
             outline.target.move_to(circle)
             self.play(
-                chord_copy.move_to, circle,
+                chord_copy.move_to,
+                circle,
                 Transform(circle, new_circle),
                 # MoveToTarget(
                 #     outline,
@@ -386,14 +362,13 @@ class HyperdartScene(MovingCameraScene):
         else:
             dot = self.show_hit(point)
             to_fade.add(dot)
-        self.play(
-            ApplyMethod(
-                square.set_color, YELLOW,
-                rate_func=lambda t: (1 - t),
-            ),
-            GrowFromCenter(miss),
-            run_time=0.25
-        )
+        self.play(ApplyMethod(
+            square.set_color,
+            YELLOW,
+            rate_func=lambda t: (1 - t),
+        ),
+                  GrowFromCenter(miss),
+                  run_time=0.25)
         return to_fade
 
     def show_game_over(self):
@@ -427,23 +402,15 @@ class Dartboard(VGroup):
                     start_angle=n * angle,
                     angle=angle,
                     color=color,
-                )
-                for n, color in zip(
-                    range(n_sectors),
-                    it.cycle(colors)
-                )
-            ])
-            for colors, in_r, out_r in [
+                ) for n, color in zip(range(n_sectors), it.cycle(colors))
+            ]) for colors, in_r, out_r in [
                 ([LIGHT_GREY, DARKER_GREY], 0, 1),
                 ([GREEN_E, RED_E], 0.5, 0.55),
                 ([GREEN_E, RED_E], 0.95, 1),
             ]
         ])
         segments.rotate(-angle / 2)
-        bullseyes = VGroup(*[
-            Circle(radius=r)
-            for r in [0.07, 0.035]
-        ])
+        bullseyes = VGroup(*[Circle(radius=r) for r in [0.07, 0.035]])
         bullseyes.set_fill(opacity=1)
         bullseyes.set_stroke(width=0)
         bullseyes[0].set_color(GREEN_E)
@@ -455,6 +422,7 @@ class Dartboard(VGroup):
 
 
 # Scenes to overlay on Numerphile
+
 
 class TableOfContents(Scene):
     def construct(self):
@@ -486,11 +454,8 @@ class TableOfContents(Scene):
 
         for part in parts:
             part.save_state()
-            self.play(
-                part.scale, 1.5, {"about_edge": LEFT},
-                part.set_opacity, 1,
-                Restore(last_part)
-            )
+            self.play(part.scale, 1.5, {"about_edge": LEFT}, part.set_opacity,
+                      1, Restore(last_part))
             self.wait()
             last_part = part
 
@@ -515,21 +480,16 @@ class ShowGiantBullseye(HyperdartScene):
         label.scale(1.5)
         label.next_to(square, LEFT, aligned_edge=UP)
         label.set_color(RED)
-        arrow = Arrow(
-            label.get_bottom(),
-            bullseye.get_corner(DR)
-        )
+        arrow = Arrow(label.get_bottom(), bullseye.get_corner(DR))
 
         self.play(
             FadeInFromDown(label[1]),
             ShowCreation(arrow),
         )
         self.play(
-            bullseye.match_width, board,
-            ApplyMethod(
-                arrow.scale, 0.4,
-                {"about_point": arrow.get_start()}
-            ),
+            bullseye.match_width,
+            board,
+            ApplyMethod(arrow.scale, 0.4, {"about_point": arrow.get_start()}),
             run_time=2,
         )
         self.play(Write(label[::2]))
@@ -565,11 +525,8 @@ class ShowExampleHit(HyperdartScene):
         self.play(ShowCreation(h_line))
         self.play(Write(h_label))
         self.wait()
-        self.play(
-            ShowCreation(chord),
-            ShowCreation(elbow),
-            Write(chord_word, run_time=1)
-        )
+        self.play(ShowCreation(chord), ShowCreation(elbow),
+                  Write(chord_word, run_time=1))
         self.wait()
 
         # Show shrinkage
@@ -591,11 +548,9 @@ class ShowExampleHit(HyperdartScene):
         outline.set_fill(opacity=0)
         outline.replace(new_circle)
 
-        self.play(
-            circle.set_color, DARK_GREY,
-            TransformFromCopy(chord, chord_copy),
-            FadeInFrom(new_diam_word, UP)
-        )
+        self.play(circle.set_color, DARK_GREY,
+                  TransformFromCopy(chord, chord_copy),
+                  FadeInFrom(new_diam_word, UP))
         self.play(
             Rotate(chord_copy, PI),
             ShowCreation(outline, lag_ratio=0),
@@ -607,33 +562,30 @@ class ShowExampleHit(HyperdartScene):
         point_tracker = VectorizedPoint(point)
         self.remove(lines, *lines)
         lines = always_redraw(
-            lambda: self.get_all_hit_lines(point_tracker.get_location())
-        )
+            lambda: self.get_all_hit_lines(point_tracker.get_location()))
         dot.add_updater(lambda m: m.move_to(point_tracker))
         dart.add_updater(lambda m: m.move_to(point_tracker, DR))
         chord_copy.add_updater(
-            lambda m: m.match_width(lines[1]).move_to(ORIGIN)
-        )
-        new_circle.add_updater(lambda m: m.match_width(chord_copy).move_to(ORIGIN))
+            lambda m: m.match_width(lines[1]).move_to(ORIGIN))
+        new_circle.add_updater(
+            lambda m: m.match_width(chord_copy).move_to(ORIGIN))
         h_label.add_updater(lambda m: m.next_to(lines[0], LEFT, SMALL_BUFF))
 
-        chord_word.add_updater(lambda m: m.next_to(lines[1].get_center(), UR, SMALL_BUFF))
+        chord_word.add_updater(
+            lambda m: m.next_to(lines[1].get_center(), UR, SMALL_BUFF))
         ndw_width = new_diam_word.get_width()
         new_diam_word.add_updater(
-            lambda m: m.set_width(
-                min(ndw_width, chord_copy.get_width())
-            ).next_to(chord_copy, DOWN, SMALL_BUFF)
-        )
+            lambda m: m.set_width(min(ndw_width, chord_copy.get_width())
+                                  ).next_to(chord_copy, DOWN, SMALL_BUFF))
 
-        self.add(new_circle, chord_copy, lines, h_label, dart, dot, chord_word, new_diam_word)
-        self.play(
-            FadeOut(outline),
-            FadeIn(new_circle)
-        )
+        self.add(new_circle, chord_copy, lines, h_label, dart, dot, chord_word,
+                 new_diam_word)
+        self.play(FadeOut(outline), FadeIn(new_circle))
         self.wait()
 
         self.play(
-            point_tracker.shift, 2.1 * UP,
+            point_tracker.shift,
+            2.1 * UP,
             run_time=9,
             rate_func=there_and_back_with_pause,
         )
@@ -733,13 +685,10 @@ class ContrastDistributions(HyperdartScene):
         right_points = np.random.multivariate_normal(
             mean=board_copy.get_center(),
             cov=0.6 * np.identity(3),
-            size=n_points
-        )
+            size=n_points)
 
         left_dots, right_dots = [
-            VGroup(*[
-                Dot(p, radius=0.02) for p in points
-            ])
+            VGroup(*[Dot(p, radius=0.02) for p in points])
             for points in [left_points, right_points]
         ]
 
@@ -753,19 +702,13 @@ class ContrastDistributions(HyperdartScene):
         self.add(v_line)
         self.add(left_rect)
 
-        self.play(
-            LaggedStartMap(FadeInFromLarge, right_dots),
-            run_time=5
-        )
+        self.play(LaggedStartMap(FadeInFromLarge, right_dots), run_time=5)
         self.wait()
         self.play(
             FadeOut(left_rect),
             FadeIn(right_rect),
         )
-        self.play(
-            LaggedStartMap(FadeInFromLarge, left_dots),
-            run_time=5
-        )
+        self.play(LaggedStartMap(FadeInFromLarge, left_dots), run_time=5)
         self.wait()
 
 
@@ -845,11 +788,13 @@ class ChooseXThenYUniformly(Scene):
 
         # Choose x
         self.play(
-            x_tracker.set_value, 1,
+            x_tracker.set_value,
+            1,
             run_time=2,
         )
         self.play(
-            x_tracker.set_value, np.random.random(),
+            x_tracker.set_value,
+            np.random.random(),
             run_time=1,
         )
 
@@ -859,11 +804,13 @@ class ChooseXThenYUniformly(Scene):
             FadeIn(y_eq),
         )
         self.play(
-            y_tracker.set_value, 1,
+            y_tracker.set_value,
+            1,
             run_time=2,
         )
         self.play(
-            y_tracker.set_value, np.random.random(),
+            y_tracker.set_value,
+            np.random.random(),
             run_time=1,
         )
 
@@ -879,13 +826,9 @@ class ChooseXThenYUniformly(Scene):
         self.wait()
 
         points = [
-            axes.c2p(*np.random.uniform(-1, 1, size=2))
-            for n in range(2000)
+            axes.c2p(*np.random.uniform(-1, 1, size=2)) for n in range(2000)
         ]
-        dots = VGroup(*[
-            Dot(point, radius=0.02)
-            for point in points
-        ])
+        dots = VGroup(*[Dot(point, radius=0.02) for point in points])
         self.play(
             LaggedStartMap(FadeInFromLarge, dots),
             run_time=3,
@@ -930,27 +873,19 @@ class ShowDistributionOfScores(Scene):
         # Setup histogram
         bars = self.get_histogram_bars(axes)
         bars.add_updater(
-            lambda b: self.set_histogram_bars(
-                b, scores[:get_index()], axes
-            )
-        )
+            lambda b: self.set_histogram_bars(b, scores[:get_index()], axes))
         self.add(bars)
 
         # Add score label
-        score_label = VGroup(
-            TextMobject("Last score: "),
-            Integer(1)
-        )
+        score_label = VGroup(TextMobject("Last score: "), Integer(1))
         score_label.scale(1.5)
         score_label.arrange(RIGHT)
         score_label[1].align_to(score_label[0][0][-1], DOWN)
 
         score_label[1].add_updater(
-            lambda m: m.set_value(scores[get_index() - 1])
-        )
-        score_label[1].add_updater(
-            lambda m: m.set_fill(bars[scores[get_index() - 1]].get_fill_color())
-        )
+            lambda m: m.set_value(scores[get_index() - 1]))
+        score_label[1].add_updater(lambda m: m.set_fill(bars[scores[get_index(
+        ) - 1]].get_fill_color()))
 
         n_trials_label = VGroup(
             TextMobject("\\# Games: "),
@@ -958,13 +893,12 @@ class ShowDistributionOfScores(Scene):
         )
         n_trials_label.scale(1.5)
         n_trials_label.arrange(RIGHT, aligned_edge=UP)
-        n_trials_label[1].add_updater(
-            lambda m: m.set_value(get_index())
-        )
+        n_trials_label[1].add_updater(lambda m: m.set_value(get_index()))
 
         n_trials_label.to_corner(UR, buff=LARGE_BUFF)
         score_label.next_to(
-            n_trials_label, DOWN,
+            n_trials_label,
+            DOWN,
             buff=LARGE_BUFF,
             aligned_edge=LEFT,
         )
@@ -975,9 +909,8 @@ class ShowDistributionOfScores(Scene):
         # Add curr_score_arrow
         curr_score_arrow = Arrow(0.25 * UP, ORIGIN, buff=0)
         curr_score_arrow.set_stroke(WHITE, 5)
-        curr_score_arrow.add_updater(
-            lambda m: m.next_to(bars[scores[get_index() - 1] - 1], UP, SMALL_BUFF)
-        )
+        curr_score_arrow.add_updater(lambda m: m.next_to(
+            bars[scores[get_index() - 1] - 1], UP, SMALL_BUFF))
         self.add(curr_score_arrow)
 
         # Add mean bar
@@ -988,8 +921,7 @@ class ShowDistributionOfScores(Scene):
             return np.mean(scores[:get_index()])
 
         mean_line.add_updater(
-            lambda m: m.move_to(axes.c2p(get_mean(), 0), DOWN)
-        )
+            lambda m: m.move_to(axes.c2p(get_mean(), 0), DOWN))
         mean_label = VGroup(
             TextMobject("Mean = "),
             DecimalNumber(num_decimal_places=3),
@@ -1004,7 +936,8 @@ class ShowDistributionOfScores(Scene):
         for value in [10, 100, 1000, 10000]:
             anims = [
                 ApplyMethod(
-                    index_tracker.set_value, value,
+                    index_tracker.set_value,
+                    value,
                     rate_func=linear,
                     run_time=5,
                 ),
@@ -1015,8 +948,7 @@ class ShowDistributionOfScores(Scene):
                         VGroup(mean_line, mean_label),
                         rate_func=squish_rate_func(smooth, 0.5, 1),
                         run_time=2,
-                    ),
-                )
+                    ), )
             self.play(*anims)
         self.wait()
 
@@ -1026,12 +958,8 @@ class ShowDistributionOfScores(Scene):
         axes.to_corner(DL)
 
         axes.x_axis.add_numbers(*range(1, 12))
-        axes.y_axis.add_numbers(
-            *range(20, 120, 20),
-            number_config={
-                "unit": "\\%"
-            }
-        )
+        axes.y_axis.add_numbers(*range(20, 120, 20),
+                                number_config={"unit": "\\%"})
         x_label = TextMobject("Score")
         x_label.next_to(axes.x_axis.get_right(), UR, buff=0.5)
         x_label.shift_onto_screen()
@@ -1059,10 +987,8 @@ class ShowDistributionOfScores(Scene):
     def get_relative_proportion_map(self, all_scores):
         scores = set(all_scores)
         n_scores = len(all_scores)
-        return dict([
-            (s, np.sum(all_scores == s) / n_scores)
-            for s in set(scores)
-        ])
+        return dict([(s, np.sum(all_scores == s) / n_scores)
+                     for s in set(scores)])
 
     def set_histogram_bars(self, bars, scores, axes):
         prop_map = self.get_relative_proportion_map(scores)
@@ -1122,11 +1048,9 @@ class ShowProbabilityForFirstShot(HyperdartScene):
         dots.set_fill(WHITE, 0.5)
 
         p_label = TexMobject("P", "(S > 1)", "= ")
-        square_frac = VGroup(
-            circle.copy().set_height(0.5),
-            Line(LEFT, RIGHT).set_width(0.7),
-            square.copy().set_height(0.5).set_stroke(width=0)
-        )
+        square_frac = VGroup(circle.copy().set_height(0.5),
+                             Line(LEFT, RIGHT).set_width(0.7),
+                             square.copy().set_height(0.5).set_stroke(width=0))
         square_frac.arrange(DOWN, buff=SMALL_BUFF)
         result = TexMobject("=", "{\\pi \\over 4}")
 
@@ -1146,15 +1070,10 @@ class ShowProbabilityForFirstShot(HyperdartScene):
         self.play(
             ReplacementTransform(
                 circle.copy().set_fill(opacity=0).set_stroke(WHITE, 1),
-                square_frac[0]
-            ),
-        )
+                square_frac[0]), )
         self.play(
-            ReplacementTransform(
-                square.copy().set_fill(opacity=0),
-                square_frac[2]
-            ),
-        )
+            ReplacementTransform(square.copy().set_fill(opacity=0),
+                                 square_frac[2]), )
         self.wait(2)
 
         # Dar on the line
@@ -1168,8 +1087,10 @@ class ShowProbabilityForFirstShot(HyperdartScene):
         dart, dot = self.show_hit_with_dart(point)
         self.remove(dot)
         self.play(
-            frame.scale, 0.05,
-            frame.move_to, point,
+            frame.scale,
+            0.05,
+            frame.move_to,
+            point,
             run_time=5,
         )
 
@@ -1177,7 +1098,8 @@ class ShowProbabilityForFirstShot(HyperdartScene):
 class SamplingFourRandomNumbers(Scene):
     CONFIG = {
         "n_terms": 4,
-        "title_tex": "P\\left(x_0{}^2 + y_0{}^2 + x_1{}^2 + y_1{}^2 < 1\\right) = \\, ???",
+        "title_tex":
+        "P\\left(x_0{}^2 + y_0{}^2 + x_1{}^2 + y_1{}^2 < 1\\right) = \\, ???",
         "nl_to_nl_buff": 0.75,
         "to_floor_buff": 0.5,
         "tip_scale_factor": 0.75,
@@ -1187,15 +1109,13 @@ class SamplingFourRandomNumbers(Scene):
 
     def construct(self):
         texs = ["x_0", "y_0", "x_1", "y_1", "x_2", "y_2"][:self.n_terms]
-        colors = [BLUE, YELLOW, BLUE_B, YELLOW_B, BLUE_A, YELLOW_A][:self.n_terms]
+        colors = [BLUE, YELLOW, BLUE_B, YELLOW_B, BLUE_A,
+                  YELLOW_A][:self.n_terms]
         t2c = dict([(t, c) for t, c in zip(texs, colors)])
 
         # Title
         if self.include_title:
-            title = TexMobject(
-                self.title_tex,
-                tex_to_color_map=t2c
-            )
+            title = TexMobject(self.title_tex, tex_to_color_map=t2c)
             title.scale(1.5)
             title.to_edge(UP)
 
@@ -1211,14 +1131,14 @@ class SamplingFourRandomNumbers(Scene):
                 x_max=1,
                 tick_frequency=0.25,
                 unit_size=3,
-            )
-            for x in range(self.n_terms)
+            ) for x in range(self.n_terms)
         ])
         for line in number_lines:
             line.add_numbers(-1, 0, 1)
             if self.include_half_labels:
                 line.add_numbers(
-                    -0.5, 0.5,
+                    -0.5,
+                    0.5,
                     number_config={"num_decimal_places": 1},
                 )
         number_lines.arrange(DOWN, buff=self.nl_to_nl_buff)
@@ -1230,23 +1150,18 @@ class SamplingFourRandomNumbers(Scene):
         # Trackers
         trackers = Group(*[ValueTracker(0) for x in range(self.n_terms)])
         tips = VGroup(*[
-            ArrowTip(
-                start_angle=-PI / 2,
-                color=color
-            ).scale(self.tip_scale_factor)
+            ArrowTip(start_angle=-PI /
+                     2, color=color).scale(self.tip_scale_factor)
             for color in colors
         ])
-        labels = VGroup(*[
-            TexMobject(tex)
-            for tex in texs
-        ])
+        labels = VGroup(*[TexMobject(tex) for tex in texs])
 
-        for tip, tracker, line, label in zip(tips, trackers, number_lines, labels):
+        for tip, tracker, line, label in zip(tips, trackers, number_lines,
+                                             labels):
             tip.line = line
             tip.tracker = tracker
-            tip.add_updater(lambda t: t.move_to(
-                t.line.n2p(t.tracker.get_value()), DOWN
-            ))
+            tip.add_updater(
+                lambda t: t.move_to(t.line.n2p(t.tracker.get_value()), DOWN))
 
             label.tip = tip
             label.match_color(tip)
@@ -1282,9 +1197,8 @@ class SamplingFourRandomNumbers(Scene):
         total.scale(1.5)
         total.next_to(h_line, DOWN)
         total.match_x(summands)
-        total.add_updater(lambda d: d.set_value(np.sum([
-            t.get_value()**2 for t in trackers
-        ])))
+        total.add_updater(lambda d: d.set_value(
+            np.sum([t.get_value()**2 for t in trackers])))
 
         VGroup(summands, h_line, total).shift_onto_screen()
         self.add(summands, h_line, total)
@@ -1331,10 +1245,8 @@ class SamplingFourRandomNumbers(Scene):
         rect.set_stroke(width=0)
         rect.set_fill(GREEN, 0.5)
         rect.match_width(line, stretch=True)
-        rects = VGroup(*[
-            rect.copy().move_to(line.n2p(0))
-            for line in number_lines
-        ])
+        rects = VGroup(
+            *[rect.copy().move_to(line.n2p(0)) for line in number_lines])
 
         self.play(LaggedStartMap(GrowFromCenter, rects))
         self.wait()
@@ -1344,14 +1256,12 @@ class SamplingFourRandomNumbers(Scene):
         self.play(trackers[0].set_value, 0.9)
         self.play(ShowCreationThenFadeAround(summands[0]))
         self.wait()
-        self.play(LaggedStart(*[
-            ShowCreationThenFadeAround(summand)
-            for summand in summands[1:]
-        ]))
-        self.play(*[
-            ApplyMethod(tracker.set_value, 0.1)
-            for tracker in trackers[1:]
-        ])
+        self.play(
+            LaggedStart(*[
+                ShowCreationThenFadeAround(summand) for summand in summands[1:]
+            ]))
+        self.play(
+            *[ApplyMethod(tracker.set_value, 0.1) for tracker in trackers[1:]])
         self.wait(10)
 
 
@@ -1406,10 +1316,7 @@ class SamplePointIn3d(SpecialThreeDScene):
         self.add(cube)
 
         for line, label in zip(lines, labels):
-            self.play(
-                ShowCreation(line),
-                FadeIn(label)
-            )
+            self.play(ShowCreation(line), FadeIn(label))
         self.add(lines, labels)
         self.play(GrowFromCenter(dot))
         self.play(DrawBorderThenFill(sphere, stroke_width=1))
@@ -1417,18 +1324,15 @@ class SamplePointIn3d(SpecialThreeDScene):
 
         n_points = 3000
         points = [
-            axes.c2p(*np.random.uniform(-1, 1, 3))
-            for x in range(n_points)
+            axes.c2p(*np.random.uniform(-1, 1, 3)) for x in range(n_points)
         ]
         # point_cloud = PMobject().add_points(points)
-        dots = VGroup(*[
-            Dot(
+        dots = VGroup(
+            *[Dot(
                 point,
                 radius=0.01,
                 shade_in_3d=True,
-            )
-            for point in points
-        ])
+            ) for point in points])
         dots.set_stroke(WHITE, 2)
         dots.set_opacity(0.5)
         self.play(ShowIncreasingSubsets(dots, run_time=9))
@@ -1437,10 +1341,8 @@ class SamplePointIn3d(SpecialThreeDScene):
         return
 
         for x in range(6):
-            self.play(
-                point.move_to,
-                axes.c2p(*np.random.uniform(-1, 1, size=3))
-            )
+            self.play(point.move_to,
+                      axes.c2p(*np.random.uniform(-1, 1, size=3)))
             self.wait(2)
         self.wait(7)
 
@@ -1498,10 +1400,8 @@ class OverlayToPointIn3d(Scene):
         equiv.scale(2)
         equiv.match_y(ineq)
 
-        rhs = TextMobject(
-            "$({x}, {y}, {z})$",
-            " lies within a\\\\sphere with radius 1"
-        )
+        rhs = TextMobject("$({x}, {y}, {z})$",
+                          " lies within a\\\\sphere with radius 1")
         rhs[0][1].set_color(GREEN)
         rhs[0][3].set_color(RED)
         rhs[0][5].set_color(BLUE)
@@ -1522,17 +1422,15 @@ class TwoDPlusTwoDEqualsFourD(HyperdartScene):
         board = VGroup(*self.mobjects)
 
         unit_size = 1.5
-        axes = Axes(
-            x_min=-1.25,
-            x_max=1.25,
-            y_min=-1.25,
-            y_max=1.25,
-            axis_config={
-                "unit_size": unit_size,
-                "tick_frequency": 0.5,
-                "include_tip": False,
-            }
-        )
+        axes = Axes(x_min=-1.25,
+                    x_max=1.25,
+                    y_min=-1.25,
+                    y_max=1.25,
+                    axis_config={
+                        "unit_size": unit_size,
+                        "tick_frequency": 0.5,
+                        "include_tip": False,
+                    })
         board.set_height(2 * unit_size)
         axes.move_to(board)
         axes.set_stroke(width=1)
@@ -1558,10 +1456,8 @@ class TwoDPlusTwoDEqualsFourD(HyperdartScene):
             TextMobject("Second shot"),
             TexMobject("(x_1, y_1)", **kw),
         )
-        title3 = VGroup(
-            TextMobject("Point in 4d space"),
-            TexMobject("(x_0, y_0, x_1, y_1)", **kw)
-        )
+        title3 = VGroup(TextMobject("Point in 4d space"),
+                        TexMobject("(x_0, y_0, x_1, y_1)", **kw))
         titles = VGroup(title1, title2, title3)
         for title in titles:
             title.arrange(DOWN)
@@ -1610,26 +1506,18 @@ class TwoDPlusTwoDEqualsFourD(HyperdartScene):
         self.play(
             LaggedStart(
                 *[
-                    TransformFromCopy(
-                        title1[1].get_part_by_tex(tex),
-                        title3[1].get_part_by_tex(tex),
-                        **kw
-                    )
+                    TransformFromCopy(title1[1].get_part_by_tex(tex),
+                                      title3[1].get_part_by_tex(tex), **kw)
                     for tex in ["(", "x_0", ",", "y_0"]
                 ],
                 *[
-                    TransformFromCopy(
-                        title2[1].get_part_by_tex(tex),
-                        title3[1].get_parts_by_tex(tex)[-1],
-                        **kw
-                    )
+                    TransformFromCopy(title2[1].get_part_by_tex(tex),
+                                      title3[1].get_parts_by_tex(tex)[-1],
+                                      **kw)
                     for tex in ["x_1", ",", "y_1", ")"]
                 ],
-                TransformFromCopy(
-                    title2[1].get_part_by_tex(","),
-                    title3[1].get_parts_by_tex(",")[1],
-                    **kw
-                ),
+                TransformFromCopy(title2[1].get_part_by_tex(","),
+                                  title3[1].get_parts_by_tex(",")[1], **kw),
                 lag_ratio=0.01,
             ),
             Write(equals),
@@ -1656,29 +1544,54 @@ class ExpectedValueComputation(Scene):
             "4": RED,
         }
 
-        line1 = TexMobject(
-            "E[S]", "=",
-            "1 \\cdot", "P(S = 1)", "+",
-            "2 \\cdot", "P(S = 2)", "+",
-            "3 \\cdot", "P(S = 3)", "+",
-            "\\cdots",
-            tex_to_color_map=t2c
-        )
-        line2 = TexMobject(
-            "=&\\phantom{-}",
-            "1 \\cdot", "\\big(", "P(S > 0)", "-", "P(S > 1)", "\\big)", "\\\\&+",
-            "2 \\cdot", "\\big(", "P(S > 1)", "-", "P(S > 2)", "\\big)", "\\\\&+",
-            "3 \\cdot", "\\big(", "P(S > 2)", "-", "P(S > 3)", "\\big)", "\\\\&+",
-            "\\cdots",
-            tex_to_color_map=t2c
-        )
+        line1 = TexMobject("E[S]",
+                           "=",
+                           "1 \\cdot",
+                           "P(S = 1)",
+                           "+",
+                           "2 \\cdot",
+                           "P(S = 2)",
+                           "+",
+                           "3 \\cdot",
+                           "P(S = 3)",
+                           "+",
+                           "\\cdots",
+                           tex_to_color_map=t2c)
+        line2 = TexMobject("=&\\phantom{-}",
+                           "1 \\cdot",
+                           "\\big(",
+                           "P(S > 0)",
+                           "-",
+                           "P(S > 1)",
+                           "\\big)",
+                           "\\\\&+",
+                           "2 \\cdot",
+                           "\\big(",
+                           "P(S > 1)",
+                           "-",
+                           "P(S > 2)",
+                           "\\big)",
+                           "\\\\&+",
+                           "3 \\cdot",
+                           "\\big(",
+                           "P(S > 2)",
+                           "-",
+                           "P(S > 3)",
+                           "\\big)",
+                           "\\\\&+",
+                           "\\cdots",
+                           tex_to_color_map=t2c)
         line2[1:12].align_to(line2[13], LEFT)
         line3 = TexMobject(
             "=",
-            "P(S > 0)", "+",
-            "P(S > 1)", "+",
-            "P(S > 2)", "+",
-            "P(S > 3)", "+",
+            "P(S > 0)",
+            "+",
+            "P(S > 1)",
+            "+",
+            "P(S > 2)",
+            "+",
+            "P(S > 3)",
+            "+",
             "\\cdots",
             tex_to_color_map=t2c,
         )
@@ -1703,50 +1616,28 @@ class ExpectedValueComputation(Scene):
         self.wait()
 
         # line 2 scaffold
-        kw = {
-            "path_arc": 90 * DEGREES
-        }
+        kw = {"path_arc": 90 * DEGREES}
         bigs = line2.get_parts_by_tex("big")
         self.play(
             LaggedStart(
-                TransformFromCopy(
-                    line1.get_part_by_tex("="),
-                    line2.get_part_by_tex("="),
-                    **kw
-                ),
-                TransformFromCopy(
-                    line1.get_parts_by_tex("\\cdot"),
-                    line2.get_parts_by_tex("\\cdot"),
-                    **kw
-                ),
-                TransformFromCopy(
-                    line1.get_parts_by_tex("+"),
-                    line2.get_parts_by_tex("+"),
-                    **kw
-                ),
-                TransformFromCopy(
-                    line1.get_part_by_tex("1"),
-                    line2.get_part_by_tex("1"),
-                    **kw
-                ),
-                TransformFromCopy(
-                    line1.get_part_by_tex("2"),
-                    line2.get_part_by_tex("2"),
-                    **kw
-                ),
-                TransformFromCopy(
-                    line1.get_part_by_tex("3"),
-                    line2.get_part_by_tex("3"),
-                    **kw
-                ),
+                TransformFromCopy(line1.get_part_by_tex("="),
+                                  line2.get_part_by_tex("="), **kw),
+                TransformFromCopy(line1.get_parts_by_tex("\\cdot"),
+                                  line2.get_parts_by_tex("\\cdot"), **kw),
+                TransformFromCopy(line1.get_parts_by_tex("+"),
+                                  line2.get_parts_by_tex("+"), **kw),
+                TransformFromCopy(line1.get_part_by_tex("1"),
+                                  line2.get_part_by_tex("1"), **kw),
+                TransformFromCopy(line1.get_part_by_tex("2"),
+                                  line2.get_part_by_tex("2"), **kw),
+                TransformFromCopy(line1.get_part_by_tex("3"),
+                                  line2.get_part_by_tex("3"), **kw),
                 run_time=3,
                 lag_ratio=0,
             ),
             LaggedStart(*[
-                GrowFromCenter(bigs[i:i + 2])
-                for i in range(0, len(bigs), 2)
-            ])
-        )
+                GrowFromCenter(bigs[i:i + 2]) for i in range(0, len(bigs), 2)
+            ]))
         self.wait()
 
         # Expand out sum
@@ -1860,8 +1751,10 @@ class SubtractHistogramParts(ShowDistributionOfScores):
         self.play(
             GrowFromPoint(p2_arrow, p2_arrow.get_top()),
             FadeInFromDown(p2_label),
-            bars[0].set_opacity, 0.1,
-            bars[2:].set_opacity, 0.1,
+            bars[0].set_opacity,
+            0.1,
+            bars[2:].set_opacity,
+            0.1,
         )
         self.wait()
 
@@ -1891,29 +1784,39 @@ class SubtractHistogramParts(ShowDistributionOfScores):
         self.add(brace1, p2_arrow)
         self.play(
             FadeIn(rhs),
-            bars[2:].set_opacity, 1,
+            bars[2:].set_opacity,
+            1,
             GrowFromPoint(brace1, rhs[1].get_bottom()),
-            p2_arrow.set_opacity, 0.5,
+            p2_arrow.set_opacity,
+            0.5,
         )
         self.wait()
         self.play(
-            rhs[:2].set_opacity, 0.2,
-            brace1.set_opacity, 0.2,
-            rhs[2:].set_opacity, 1,
-            bars[1].set_opacity, 0.1,
+            rhs[:2].set_opacity,
+            0.2,
+            brace1.set_opacity,
+            0.2,
+            rhs[2:].set_opacity,
+            1,
+            bars[1].set_opacity,
+            0.1,
             GrowFromCenter(brace2),
         )
         self.wait()
 
         self.play(
-            bars[2:].set_opacity, 0.1,
-            bars[1].set_opacity, 1,
-            rhs.set_opacity, 1,
-            brace1.set_opacity, 1,
-            p2_arrow.set_opacity, 1,
+            bars[2:].set_opacity,
+            0.1,
+            bars[1].set_opacity,
+            1,
+            rhs.set_opacity,
+            1,
+            brace1.set_opacity,
+            1,
+            p2_arrow.set_opacity,
+            1,
         )
         self.wait()
-
 
         # for i, part in enumerate(brace1):
         #     self.add(Integer(i).scale(0.5).move_to(part))
@@ -1929,10 +1832,7 @@ class GameWithSpecifiedScore(HyperdartScene):
         board = VGroup(self.square, self.circle, self.circle_center_dot)
         board.to_edge(DOWN, buff=0.5)
 
-        score_label = VGroup(
-            TextMobject("Score: "),
-            Integer(1)
-        )
+        score_label = VGroup(TextMobject("Score: "), Integer(1))
         score_label.scale(2)
         score_label.arrange(RIGHT, aligned_edge=DOWN)
         score_label.to_edge(UP, buff=0.25)
@@ -1998,10 +1898,8 @@ class HistogramScene(ShowDistributionOfScores):
     }
 
     def setup(self):
-        self.scores = np.array([
-            self.get_random_score()
-            for x in range(self.n_scores)
-        ])
+        self.scores = np.array(
+            [self.get_random_score() for x in range(self.n_scores)])
         self.axes = self.get_axes()
         self.bars = self.get_histogram_bars(self.axes)
         self.set_histogram_bars(self.bars, self.scores, self.axes)
@@ -2022,7 +1920,9 @@ class HistogramScene(ShowDistributionOfScores):
         mean_label.arrange(RIGHT)
         mean_label.match_color(mean_line)
         mean_label.next_to(
-            mean_line.get_end(), UP, SMALL_BUFF,
+            mean_line.get_end(),
+            UP,
+            SMALL_BUFF,
             index_of_submobject_to_align=0,
         )
 
@@ -2036,28 +1936,20 @@ class ExpectedValueFromBars(HistogramScene):
         mean_label = self.get_mean_label()
         mean_label.remove(mean_label[-1])
 
-        equation = TexMobject(
-            "P(S = 1)", "\\cdot", "1", "+",
-            "P(S = 2)", "\\cdot", "2", "+",
-            "P(S = 3)", "\\cdot", "3", "+",
-            "\\cdots"
-        )
+        equation = TexMobject("P(S = 1)", "\\cdot", "1", "+", "P(S = 2)",
+                              "\\cdot", "2", "+", "P(S = 3)", "\\cdot", "3",
+                              "+", "\\cdots")
         equation.scale(0.9)
         equation.next_to(mean_label[-1], RIGHT)
         equation.shift(LEFT)
 
         for i in range(3):
-            equation.set_color_by_tex(
-                str(i + 1), bars[i].get_fill_color()
-            )
+            equation.set_color_by_tex(str(i + 1), bars[i].get_fill_color())
 
         equation[4:].set_opacity(0.2)
 
         self.add(mean_label)
-        self.play(
-            mean_label[1:].shift, LEFT,
-            FadeInFrom(equation, LEFT)
-        )
+        self.play(mean_label[1:].shift, LEFT, FadeInFrom(equation, LEFT))
 
         p_parts = VGroup()
         p_part_copies = VGroup()
@@ -2074,9 +1966,12 @@ class ExpectedValueFromBars(HistogramScene):
 
             self.remove(mean_label[0])
             self.play(
-                bars[:i + 1].set_opacity, 1,
-                bars[i + 1:].set_opacity, 0.2,
-                equation[:4 * (i + 1)].set_opacity, 1,
+                bars[:i + 1].set_opacity,
+                1,
+                bars[i + 1:].set_opacity,
+                0.2,
+                equation[:4 * (i + 1)].set_opacity,
+                1,
                 FadeInFromDown(p_part_copy),
                 Animation(mean_label[0]),
             )
@@ -2097,23 +1992,16 @@ class ExpectedValueFromBars(HistogramScene):
                         ShowCreationThenFadeAround(num, **kw),
                     ),
                     lag_ratio=0.5,
-                )
-            )
+                ))
             self.wait()
             p_parts.add(p_part)
             p_part_copies.add(p_part_copy)
 
         self.add(bars, mean_label)
-        self.play(
-            bars.set_opacity, 1,
-            equation.set_opacity, 1,
-            FadeOut(p_part_copies)
-        )
+        self.play(bars.set_opacity, 1, equation.set_opacity, 1,
+                  FadeOut(p_part_copies))
 
-        braces = VGroup(*[
-            Brace(p_part, UP)
-            for p_part in p_parts
-        ])
+        braces = VGroup(*[Brace(p_part, UP) for p_part in p_parts])
         for brace in braces:
             brace.add(brace.get_text("???"))
 
@@ -2137,8 +2025,10 @@ class ProbabilitySGtOne(HistogramScene):
 
         self.play(
             GrowFromEdge(brace, LEFT),
-            bars[0].set_opacity, 0.2,
-            bars[1:].set_opacity, 0.8,
+            bars[0].set_opacity,
+            0.2,
+            bars[1:].set_opacity,
+            0.8,
             ShowCreationThenFadeOut(outlines),
             FadeInFrom(label, LEFT),
         )
@@ -2161,52 +2051,43 @@ class ProbabilitySGtOne(HistogramScene):
         geo_frac = VGroup(circle, bar, square)
         geo_frac.arrange(DOWN, SMALL_BUFF, buff=SMALL_BUFF)
 
-        rhs = VGroup(
-            TexMobject("="),
-            geo_frac,
-            TexMobject("= \\frac{\\pi}{4}")
-        )
+        rhs = VGroup(TexMobject("="), geo_frac,
+                     TexMobject("= \\frac{\\pi}{4}"))
         rhs.arrange(RIGHT)
         rhs.next_to(label)
 
         shift_val = 2.05 * LEFT + 0.25 * UP
         rhs.shift(shift_val)
 
-        self.play(
-            label.shift, shift_val,
-            FadeInFrom(rhs, LEFT)
-        )
+        self.play(label.shift, shift_val, FadeInFrom(rhs, LEFT))
         self.wait()
 
         # P(S > 2)
         new_brace = brace.copy()
         new_brace.next_to(
-            bars[2], UP,
+            bars[2],
+            UP,
             buff=SMALL_BUFF,
             aligned_edge=LEFT,
         )
         self.add(new_brace)
 
-        new_label = TexMobject(
-            "P(S > 2)", "=", "\\,???"
-        )
+        new_label = TexMobject("P(S > 2)", "=", "\\,???")
         new_label.next_to(new_brace[0][2], UP)
 
         self.play(
-            bars[1].set_opacity, 0.2,
-            label.set_opacity, 0.5,
-            rhs.set_opacity, 0.5,
-            brace.set_opacity, 0.5,
-            GrowFromEdge(new_brace, LEFT),
+            bars[1].set_opacity, 0.2, label.set_opacity, 0.5, rhs.set_opacity,
+            0.5, brace.set_opacity, 0.5, GrowFromEdge(new_brace, LEFT),
             ReplacementTransform(
                 new_label.copy().fade(1).move_to(label, LEFT),
                 new_label,
-            )
-        )
+            ))
         self.wait()
 
         new_rhs = TexMobject(
-            "{\\text{4d ball}", " \\over", " \\text{4d cube}}",
+            "{\\text{4d ball}",
+            " \\over",
+            " \\text{4d cube}}",
             # "=",
             # "{\\pi^2 / 2", "\\over", "2^4}"
         )
@@ -2221,17 +2102,15 @@ class ProbabilitySGtOne(HistogramScene):
         new_label.target.shift(shift_val)
         new_label.target[-1].set_opacity(0)
 
-        self.play(
-            MoveToTarget(new_label),
-            FadeInFrom(new_rhs, LEFT)
-        )
+        self.play(MoveToTarget(new_label), FadeInFrom(new_rhs, LEFT))
         self.wait()
 
         # P(S > 3)
         final_brace = brace.copy()
         final_brace.set_opacity(1)
         final_brace.next_to(
-            bars[3], UP,
+            bars[3],
+            UP,
             buff=SMALL_BUFF,
             aligned_edge=LEFT,
         )
@@ -2241,16 +2120,21 @@ class ProbabilitySGtOne(HistogramScene):
         final_label.next_to(final_brace[0][2], UP, SMALL_BUFF)
 
         self.play(
-            bars[2].set_opacity, 0.2,
-            new_label[:-1].set_opacity, 0.5,
-            new_rhs.set_opacity, 0.5,
-            new_brace.set_opacity, 0.5,
+            bars[2].set_opacity,
+            0.2,
+            new_label[:-1].set_opacity,
+            0.5,
+            new_rhs.set_opacity,
+            0.5,
+            new_brace.set_opacity,
+            0.5,
             GrowFromEdge(final_brace, LEFT),
             ReplacementTransform(
                 final_label.copy().fade(1).move_to(new_label, LEFT),
                 final_label,
             ),
-            axes.x_axis[-1].set_opacity, 0,
+            axes.x_axis[-1].set_opacity,
+            0,
         )
         self.wait()
 
@@ -2261,19 +2145,14 @@ class VolumsOfNBalls(Scene):
             TextMobject(
                 "Volumes of " + tex + "-dimensional balls",
                 tex_to_color_map={tex: YELLOW},
-            )
-            for tex in ["$N$", "$2n$"]
+            ) for tex in ["$N$", "$2n$"]
         ]
         for mob in [title, alt_title]:
             mob.scale(1.5)
             mob.to_edge(UP)
 
         formulas = VGroup(*[
-            TexMobject(
-                tex,
-                tex_to_color_map={"R": WHITE}
-            )
-            for tex in [
+            TexMobject(tex, tex_to_color_map={"R": WHITE}) for tex in [
                 "2R",
                 "\\pi R^2",
                 "\\frac{4}{3} \\pi R^3",
@@ -2324,7 +2203,9 @@ class VolumsOfNBalls(Scene):
         self.add(d_labels)
         self.add(lines)
 
-        self.play(LaggedStartMap(FadeInFromDown, formulas, run_time=3, lag_ratio=0.1))
+        self.play(
+            LaggedStartMap(FadeInFromDown, formulas, run_time=3,
+                           lag_ratio=0.1))
         self.play(chart.to_edge, RIGHT, {"buff": MED_SMALL_BUFF}, run_time=5)
         self.wait()
         self.play(Restore(chart))
@@ -2341,8 +2222,7 @@ class VolumsOfNBalls(Scene):
                 formulas[i].get_bottom(),
                 formulas[i + 1].get_bottom(),
                 path_arc=150 * DEGREES,
-            )
-            for i in (1, 2)
+            ) for i in (1, 2)
         ])
 
         for arrow in arrows:
@@ -2354,19 +2234,14 @@ class VolumsOfNBalls(Scene):
         )
 
         # General formula for even dimensions
-        braces = VGroup(*[
-            Brace(formula, DOWN)
-            for formula in formulas[1::2]
-        ])
+        braces = VGroup(*[Brace(formula, DOWN) for formula in formulas[1::2]])
         gen_form = TexMobject("{\\pi^n \\over n!}", "R^{2n}")
         gen_form[0].set_color(BLUE_B)
         gen_form.scale(1.5)
         gen_form.to_edge(DOWN)
 
-        self.play(
-            formulas[::2].set_opacity, 0.25,
-            ReplacementTransform(title, alt_title)
-        )
+        self.play(formulas[::2].set_opacity, 0.25,
+                  ReplacementTransform(title, alt_title))
         for brace in braces[:3]:
             self.play(GrowFromCenter(brace))
         self.wait()
@@ -2421,9 +2296,7 @@ class IntroduceGame(HyperdartScene):
         self.add(board)
 
         darts, dots = self.show_hits_with_darts(
-            points,
-            added_anims=[FadeInFromDown(title)]
-        )
+            points, added_anims=[FadeInFromDown(title)])
         self.wait()
 
         def func(p):
@@ -2437,12 +2310,10 @@ class IntroduceGame(HyperdartScene):
             *[
                 ApplyPointwiseFunction(func, pieces, run_time=1)
                 for pieces in [*board[:3], *dots]
-            ],
-            *[
+            ], *[
                 MaintainPositionRelativeTo(dart, dot)
                 for dart, dot in zip(darts, dots)
-            ]
-        )
+            ])
 
         self.flurry_dots = dots
         self.darts = darts
@@ -2454,9 +2325,9 @@ class IntroduceGame(HyperdartScene):
 
         labels = VGroup(*[
             TextMobject("2 ft").next_to(
-                square.get_edge_center(vect), vect,
-            )
-            for vect in [DOWN, RIGHT]
+                square.get_edge_center(vect),
+                vect,
+            ) for vect in [DOWN, RIGHT]
         ])
         labels.set_color(YELLOW)
 
@@ -2469,11 +2340,9 @@ class IntroduceGame(HyperdartScene):
         ])
         lines.match_color(labels)
 
-        self.play(
-            LaggedStartMap(ShowCreation, lines),
-            LaggedStartMap(FadeInFromDown, labels),
-            lag_ratio=0.5
-        )
+        self.play(LaggedStartMap(ShowCreation, lines),
+                  LaggedStartMap(FadeInFromDown, labels),
+                  lag_ratio=0.5)
         self.wait()
 
         self.square_dimensions = VGroup(lines, labels)
@@ -2489,10 +2358,7 @@ class IntroduceGame(HyperdartScene):
         label.scale(1.5)
         label.next_to(square, LEFT, aligned_edge=UP)
         label.set_color(RED)
-        arrow = Arrow(
-            label.get_bottom(),
-            circle.get_corner(DR)
-        )
+        arrow = Arrow(label.get_bottom(), circle.get_corner(DR))
 
         radius = DashedLine(
             square.get_center(),
@@ -2514,10 +2380,7 @@ class IntroduceGame(HyperdartScene):
         self.add(square, board, arrow, circle)
         self.play(
             Restore(circle),
-            ApplyMethod(
-                arrow.scale, 0.4,
-                {"about_point": arrow.get_start()}
-            ),
+            ApplyMethod(arrow.scale, 0.4, {"about_point": arrow.get_start()}),
         )
         self.add(radius, self.circle_center_dot)
         self.play(
@@ -2525,11 +2388,7 @@ class IntroduceGame(HyperdartScene):
             FadeInFrom(radius_label, RIGHT),
             FadeIn(self.circle_center_dot),
         )
-        self.play(
-            FadeOut(label),
-            Uncreate(arrow),
-            FadeOut(board)
-        )
+        self.play(FadeOut(label), Uncreate(arrow), FadeOut(board))
         self.wait()
 
         s_lines, s_labels = self.square_dimensions
@@ -2541,7 +2400,8 @@ class IntroduceGame(HyperdartScene):
         )
 
         self.circle_dimensions = VGroup(
-            radius, radius_label,
+            radius,
+            radius_label,
         )
 
     def show_miss_example(self):
@@ -2557,9 +2417,7 @@ class IntroduceGame(HyperdartScene):
         self.wait()
         game_over = self.show_game_over()
         self.wait()
-        self.play(
-            *map(FadeOut, [dart, dot, miss_word, game_over])
-        )
+        self.play(*map(FadeOut, [dart, dot, miss_word, game_over]))
 
     def show_shrink_rule(self):
         circle = self.circle
@@ -2648,10 +2506,7 @@ class ShowScoring(HyperdartScene):
     #
     def add_score_counter(self):
         score = Integer(0)
-        score_label = VGroup(
-            TextMobject("Score: "),
-            score
-        )
+        score_label = VGroup(TextMobject("Score: "), score)
         score_label.arrange(RIGHT, aligned_edge=DOWN)
         score_label.scale(1.5)
         score_label.to_corner(UL)
@@ -2706,10 +2561,8 @@ class ShowSeveralRounds(ShowScoring):
             else:
                 to_fade = self.show_miss(point)
                 self.wait(0.5)
-                self.play(
-                    ShowCreationThenFadeAround(self.score_label),
-                    FadeOut(to_fade)
-                )
+                self.play(ShowCreationThenFadeAround(self.score_label),
+                          FadeOut(to_fade))
                 return
 
     def reset_board(self):
@@ -2717,7 +2570,8 @@ class ShowSeveralRounds(ShowScoring):
         new_score = score.copy()
         new_score.set_value(0)
         self.play(
-            self.circle.match_width, self.square,
+            self.circle.match_width,
+            self.square,
             FadeOutAndShift(score, UP),
             FadeInFrom(new_score, DOWN),
         )
@@ -2782,15 +2636,13 @@ class ShowUniformDistribution(HyperdartScene):
 
     def show_random_points(self):
         points = self.get_random_points(self.n_points)
-        dots = VGroup(*[
-            Dot(point, radius=0.02)
-            for point in points
-        ])
+        dots = VGroup(*[Dot(point, radius=0.02) for point in points])
         dots.set_fill(opacity=0.75)
 
         run_time = 5
         self.play(LaggedStartMap(
-            FadeInFromLarge, dots,
+            FadeInFromLarge,
+            dots,
             run_time=run_time,
         ))
         for x in range(1000):
@@ -2810,12 +2662,10 @@ class ShowUniformDistribution(HyperdartScene):
 
 class ExpectedScoreEqualsQMark(Scene):
     def construct(self):
-        equation = TextMobject(
-            "\\textbf{E}[Score] = ???",
-            tex_to_color_map={
-                "???": YELLOW,
-            }
-        )
+        equation = TextMobject("\\textbf{E}[Score] = ???",
+                               tex_to_color_map={
+                                   "???": YELLOW,
+                               })
         aka = TextMobject("a.k.a. Long-term average")
         aka.next_to(equation, DOWN)
 
@@ -2823,4 +2673,3 @@ class ExpectedScoreEqualsQMark(Scene):
         self.wait(2)
         self.play(FadeInFrom(aka, UP))
         self.wait()
-

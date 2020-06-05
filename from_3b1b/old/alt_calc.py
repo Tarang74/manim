@@ -1,4 +1,4 @@
- # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from manimlib.imports import *
 
 
@@ -29,6 +29,7 @@ def get_nested_f(n_terms, arg="x"):
 
 
 # Scene types
+
 
 class NumberlineTransformationScene(ZoomedScene):
     CONFIG = {
@@ -76,9 +77,7 @@ class NumberlineTransformationScene(ZoomedScene):
             full_config = dict(self.number_line_config)
             full_config.update(added_config)
             number_line = NumberLine(**full_config)
-            number_line.insert_n_curves(
-                self.num_inserted_number_line_curves
-            )
+            number_line.insert_n_curves(self.num_inserted_number_line_curves)
             number_line.shift(zero_point - number_line.number_to_point(0))
             number_lines.add(number_line)
         self.input_line, self.output_line = number_lines
@@ -86,10 +85,8 @@ class NumberlineTransformationScene(ZoomedScene):
         self.add(number_lines)
 
     def setup_titles(self):
-        input_title, output_title = self.titles = VGroup(*[
-            TextMobject(word)
-            for word in ("Inputs", "Outputs")
-        ])
+        input_title, output_title = self.titles = VGroup(
+            *[TextMobject(word) for word in ("Inputs", "Outputs")])
         vects = [UP, DOWN]
         for title, line, vect in zip(self.titles, self.number_lines, vects):
             title.next_to(line, vect, aligned_edge=LEFT)
@@ -101,15 +98,13 @@ class NumberlineTransformationScene(ZoomedScene):
         frame = self.zoomed_camera.frame
         frame.next_to(self.camera.frame, UL)
         self.zoomed_camera_background_rectangle = BackgroundRectangle(
-            frame, fill_opacity=self.zoomed_camera_background_rectangle_fill_opacity
-        )
+            frame,
+            fill_opacity=self.zoomed_camera_background_rectangle_fill_opacity)
         self.zoomed_camera_background_rectangle_anim = UpdateFromFunc(
             self.zoomed_camera_background_rectangle,
-            lambda m: m.replace(frame, stretch=True)
-        )
+            lambda m: m.replace(frame, stretch=True))
         self.zoomed_camera_background_rectangle_group = VGroup(
-            self.zoomed_camera_background_rectangle,
-        )
+            self.zoomed_camera_background_rectangle, )
 
     def get_sample_input_points(self, x_min=None, x_max=None, delta_x=None):
         x_min = x_min or self.input_line.x_min
@@ -120,8 +115,12 @@ class NumberlineTransformationScene(ZoomedScene):
             for x in np.arange(x_min, x_max + delta_x, delta_x)
         ]
 
-    def get_sample_dots(self, x_min=None, x_max=None,
-                        delta_x=None, dot_radius=None, colors=None):
+    def get_sample_dots(self,
+                        x_min=None,
+                        x_max=None,
+                        delta_x=None,
+                        dot_radius=None,
+                        colors=None):
         dot_radius = dot_radius or self.default_sample_dot_radius
         colors = colors or self.default_sample_dot_colors
 
@@ -135,7 +134,8 @@ class NumberlineTransformationScene(ZoomedScene):
     def get_local_sample_dots(self, x, sample_radius=None, **kwargs):
         zoom_factor = self.get_zoom_factor()
         delta_x = kwargs.get("delta_x", self.default_delta_x * zoom_factor)
-        dot_radius = kwargs.get("dot_radius", self.default_sample_dot_radius * zoom_factor)
+        dot_radius = kwargs.get("dot_radius",
+                                self.default_sample_dot_radius * zoom_factor)
 
         if sample_radius is None:
             unrounded_radius = self.zoomed_camera.frame.get_width() / 2
@@ -156,13 +156,12 @@ class NumberlineTransformationScene(ZoomedScene):
 
     def get_local_coordinate_values(self, x, dx=None, n_neighbors=1):
         dx = dx or self.default_coordinate_value_dx
-        return [
-            x + n * dx
-            for n in range(-n_neighbors, n_neighbors + 1)
-        ]
+        return [x + n * dx for n in range(-n_neighbors, n_neighbors + 1)]
 
     # Mapping animations
-    def get_mapping_animation(self, func, mobject,
+    def get_mapping_animation(self,
+                              func,
+                              mobject,
                               how_to_apply_func=apply_function_to_center,
                               **kwargs):
         anim_config = dict(self.default_mapping_animation_config)
@@ -179,26 +178,22 @@ class NumberlineTransformationScene(ZoomedScene):
         self.moving_input_line = input_line_copy
         input_line_copy.remove(input_line_copy.numbers)
         # input_line_copy.set_stroke(width=2)
-        input_line_copy.insert_n_curves(
-            self.num_inserted_number_line_curves
-        )
+        input_line_copy.insert_n_curves(self.num_inserted_number_line_curves)
         return AnimationGroup(
-            self.get_mapping_animation(
-                func, input_line_copy,
-                apply_function_to_points
-            ),
-            self.get_mapping_animation(
-                func, input_line_copy.tick_marks,
-                apply_function_to_submobjects
-            ),
+            self.get_mapping_animation(func, input_line_copy,
+                                       apply_function_to_points),
+            self.get_mapping_animation(func, input_line_copy.tick_marks,
+                                       apply_function_to_submobjects),
         )
 
     def get_sample_dots_mapping_animation(self, func, dots, **kwargs):
         return self.get_mapping_animation(
-            func, dots, how_to_apply_func=apply_function_to_submobjects
-        )
+            func, dots, how_to_apply_func=apply_function_to_submobjects)
 
-    def get_zoomed_camera_frame_mapping_animation(self, func, x=None, **kwargs):
+    def get_zoomed_camera_frame_mapping_animation(self,
+                                                  func,
+                                                  x=None,
+                                                  **kwargs):
         frame = self.zoomed_camera.frame
         if x is None:
             point = frame.get_center()
@@ -210,14 +205,14 @@ class NumberlineTransformationScene(ZoomedScene):
             UpdateFromFunc(frame, lambda m: m.move_to(point_mob)),
         )
 
-    def apply_function(self, func,
+    def apply_function(self,
+                       func,
                        apply_function_to_number_line=True,
                        sample_dots=None,
                        local_sample_dots=None,
                        target_coordinate_values=None,
                        added_anims=None,
-                       **kwargs
-                       ):
+                       **kwargs):
         zcbr_group = self.zoomed_camera_background_rectangle_group
         zcbr_anim = self.zoomed_camera_background_rectangle_anim
         frame = self.zoomed_camera.frame
@@ -226,14 +221,14 @@ class NumberlineTransformationScene(ZoomedScene):
         if apply_function_to_number_line:
             anims.append(self.get_line_mapping_animation(func))
         if hasattr(self, "mini_line"):  # Test for if mini_line is in self?
-            anims.append(self.get_mapping_animation(
-                func, self.mini_line,
-                how_to_apply_func=apply_function_to_center
-            ))
+            anims.append(
+                self.get_mapping_animation(
+                    func,
+                    self.mini_line,
+                    how_to_apply_func=apply_function_to_center))
         if sample_dots:
             anims.append(
-                self.get_sample_dots_mapping_animation(func, sample_dots)
-            )
+                self.get_sample_dots_mapping_animation(func, sample_dots))
         if self.zoom_activated:
             zoom_anim = self.get_zoomed_camera_frame_mapping_animation(func)
             anims.append(zoom_anim)
@@ -246,17 +241,15 @@ class NumberlineTransformationScene(ZoomedScene):
             zoom_anim.update(0)
             zcbr_group.submobjects.insert(1, target_mini_line)
         if target_coordinate_values:
-            coordinates = self.get_local_coordinates(
-                self.output_line,
-                *target_coordinate_values
-            )
+            coordinates = self.get_local_coordinates(self.output_line,
+                                                     *target_coordinate_values)
             anims.append(FadeIn(coordinates))
             zcbr_group.add(coordinates)
             self.local_target_coordinates = coordinates
         if local_sample_dots:
             anims.append(
-                self.get_sample_dots_mapping_animation(func, local_sample_dots)
-            )
+                self.get_sample_dots_mapping_animation(func,
+                                                       local_sample_dots))
             zcbr_group.add(local_sample_dots)
         if added_anims:
             anims += added_anims
@@ -265,16 +258,18 @@ class NumberlineTransformationScene(ZoomedScene):
         self.play(*anims, **kwargs)
 
     # Zooming
-    def zoom_in_on_input(self, x,
-                         local_sample_dots=None,
-                         local_coordinate_values=None,
-                         pop_out=True,
-                         first_added_anims=None,
-                         first_anim_kwargs=None,
-                         second_added_anims=None,
-                         second_anim_kwargs=None,
-                         zoom_factor=None,
-                         ):
+    def zoom_in_on_input(
+        self,
+        x,
+        local_sample_dots=None,
+        local_coordinate_values=None,
+        pop_out=True,
+        first_added_anims=None,
+        first_anim_kwargs=None,
+        second_added_anims=None,
+        second_anim_kwargs=None,
+        zoom_factor=None,
+    ):
 
         first_added_anims = first_added_anims or []
         first_anim_kwargs = first_anim_kwargs or {}
@@ -287,9 +282,8 @@ class NumberlineTransformationScene(ZoomedScene):
         frame.generate_target()
         frame.target.move_to(input_point)
         if zoom_factor:
-            frame.target.set_height(
-                self.zoomed_display.get_height() * zoom_factor
-            )
+            frame.target.set_height(self.zoomed_display.get_height() *
+                                    zoom_factor)
         movement = MoveToTarget(frame)
         zcbr = self.zoomed_camera_background_rectangle
         zcbr_group = self.zoomed_camera_background_rectangle_group
@@ -321,9 +315,7 @@ class NumberlineTransformationScene(ZoomedScene):
         if local_coordinate_values is None:
             local_coordinate_values = [x]
         local_coordinates = self.get_local_coordinates(
-            self.input_line,
-            *local_coordinate_values
-        )
+            self.input_line, *local_coordinate_values)
         anims.append(FadeIn(local_coordinates))
         zcbr_group.add(local_coordinates)
         self.local_coordinates = local_coordinates
@@ -344,25 +336,19 @@ class NumberlineTransformationScene(ZoomedScene):
         if not self.zoom_activated and pop_out:
             self.activate_zooming(animate=False)
             added_anims = second_added_anims or []
-            self.play(
-                self.get_zoomed_display_pop_out_animation(),
-                *added_anims,
-                **second_anim_kwargs
-            )
+            self.play(self.get_zoomed_display_pop_out_animation(),
+                      *added_anims, **second_anim_kwargs)
 
     def get_local_coordinates(self, line, *x_values, **kwargs):
         num_decimal_places = kwargs.get(
-            "num_decimal_places", self.local_coordinate_num_decimal_places
-        )
+            "num_decimal_places", self.local_coordinate_num_decimal_places)
         result = VGroup()
         result.tick_marks = VGroup()
         result.numbers = VGroup()
         result.add(result.tick_marks, result.numbers)
         for x in x_values:
             tick_mark = Line(UP, DOWN)
-            tick_mark.set_height(
-                0.15 * self.zoomed_camera.frame.get_height()
-            )
+            tick_mark.set_height(0.15 * self.zoomed_camera.frame.get_height())
             tick_mark.move_to(line.number_to_point(x))
             result.tick_marks.add(tick_mark)
 
@@ -401,6 +387,7 @@ class NumberlineTransformationScene(ZoomedScene):
             input_number = input_line.point_to_number(point)
             output_number = number_func(input_number)
             return output_line.number_to_point(output_number)
+
         return point_func
 
 
@@ -435,7 +422,9 @@ class ExampleNumberlineTransformationScene(NumberlineTransformationScene):
             func,
             sample_dots=sample_dots,
             local_sample_dots=local_sample_dots,
-            target_coordinate_values=[func(x) - dx, func(x), func(x) + dx],
+            target_coordinate_values=[func(x) - dx,
+                                      func(x),
+                                      func(x) + dx],
         )
         self.wait()
 
@@ -461,11 +450,11 @@ class WriteOpeningWords(Scene):
         word_wait = 2 * letter_wait
         comma_wait = 5 * letter_wait
         for word in words:
-            self.play(LaggedStartMap(
-                FadeIn, word,
-                run_time=len(word) * letter_wait,
-                lag_ratio=1.5 / len(word)
-            ))
+            self.play(
+                LaggedStartMap(FadeIn,
+                               word,
+                               run_time=len(word) * letter_wait,
+                               lag_ratio=1.5 / len(word)))
             self.wait(word_wait)
             if word.get_tex_string()[-1] == ",":
                 self.wait(comma_wait)
@@ -473,7 +462,9 @@ class WriteOpeningWords(Scene):
 
 class StartingCalc101(PiCreatureScene):
     CONFIG = {
-        "camera_config": {"background_opacity": 1},
+        "camera_config": {
+            "background_opacity": 1
+        },
         "image_frame_width": 3.5,
         "image_frame_height": 2.5,
     }
@@ -491,11 +482,7 @@ class StartingCalc101(PiCreatureScene):
         arrow.next_to(randy, UR)
         you.next_to(arrow.get_start(), UP)
 
-        self.play(
-            Write(you),
-            GrowArrow(arrow),
-            randy.change, "erm", title
-        )
+        self.play(Write(you), GrowArrow(arrow), randy.change, "erm", title)
         self.wait()
         self.play(Write(title, run_time=1))
         self.play(FadeOut(VGroup(arrow, you)))
@@ -561,7 +548,8 @@ class StartingCalc101(PiCreatureScene):
         rects.center()
         rects.set_height(FRAME_HEIGHT - 1)
         # image = rects.get_image()
-        open_cv_image = cv2.imread(get_full_raster_image_path("alt_calc_hidden_image"))
+        open_cv_image = cv2.imread(
+            get_full_raster_image_path("alt_calc_hidden_image"))
         blurry_iamge = cv2.blur(open_cv_image, (50, 50))
         array = np.array(blurry_iamge)[:, :, ::-1]
         im_mob = ImageMobject(array)
@@ -577,18 +565,16 @@ class StartingCalc101(PiCreatureScene):
         for image in images:
             if hasattr(image, "continual_animations"):
                 self.remove(*image.continual_animations)
-            self.play(
-                image.shift, DOWN,
-                image.fade, 1,
-                randy.change, "erm",
-                run_time=1.5
-            )
+            self.play(image.shift,
+                      DOWN,
+                      image.fade,
+                      1,
+                      randy.change,
+                      "erm",
+                      run_time=1.5)
             self.remove(image)
         self.wait()
-        self.play(
-            FadeInFromDown(mystery_box),
-            randy.change, "confused"
-        )
+        self.play(FadeInFromDown(mystery_box), randy.change, "confused")
         self.wait(5)
 
     # Helpers
@@ -624,14 +610,12 @@ class StartingCalc101(PiCreatureScene):
         return images
 
     def adjust_size(self, group):
-        group.set_width(min(
-            group.get_width(),
-            self.image_frame_width - 2 * MED_SMALL_BUFF
-        ))
-        group.set_height(min(
-            group.get_height(),
-            self.image_frame_height - 2 * MED_SMALL_BUFF
-        ))
+        group.set_width(
+            min(group.get_width(),
+                self.image_frame_width - 2 * MED_SMALL_BUFF))
+        group.set_height(
+            min(group.get_height(),
+                self.image_frame_height - 2 * MED_SMALL_BUFF))
         return group
 
     def get_hard_work_image(self):
@@ -644,11 +628,9 @@ class StartingCalc101(PiCreatureScene):
         return VGroup(new_randy, bubble)
 
     def get_neat_example_image(self):
-        filled_circle = Circle(
-            stroke_width=0,
-            fill_color=BLUE_E,
-            fill_opacity=1
-        )
+        filled_circle = Circle(stroke_width=0,
+                               fill_color=BLUE_E,
+                               fill_opacity=1)
         area = TexMobject("\\pi r^2")
         area.move_to(filled_circle)
         unfilled_circle = Circle(
@@ -660,20 +642,15 @@ class StartingCalc101(PiCreatureScene):
         circles = VGroup(filled_circle, unfilled_circle)
         circumference = TexMobject("2\\pi r")
         circumference.move_to(unfilled_circle)
-        equation = TexMobject(
-            "{d (\\pi r^2) \\over dr}  = 2\\pi r",
-            tex_to_color_map={
-                "\\pi r^2": BLUE_D,
-                "2\\pi r": YELLOW,
-            }
-        )
+        equation = TexMobject("{d (\\pi r^2) \\over dr}  = 2\\pi r",
+                              tex_to_color_map={
+                                  "\\pi r^2": BLUE_D,
+                                  "2\\pi r": YELLOW,
+                              })
         equation.next_to(circles, UP)
 
-        return VGroup(
-            filled_circle, area,
-            unfilled_circle, circumference,
-            equation
-        )
+        return VGroup(filled_circle, area, unfilled_circle, circumference,
+                      equation)
 
     def get_not_so_neat_example_image(self):
         return TexMobject("\\int x \\cos(x) \\, dx")
@@ -686,7 +663,8 @@ class StartingCalc101(PiCreatureScene):
                 r * (np.sin(TAU * t) * RIGHT + np.cos(TAU * t) * UP),
                 t * DOWN,
             ),
-            t_min=0, t_max=t_max,
+            t_min=0,
+            t_max=t_max,
             color=WHITE,
             stroke_width=2,
         )
@@ -701,20 +679,11 @@ class StartingCalc101(PiCreatureScene):
         t_tracker = ValueTracker(0)
         group = VGroup(spring, weight)
         group.continual_animations = [
-            t_tracker.add_udpater(
-                lambda tracker, dt: tracker.set_value(
-                    tracker.get_value() + dt
-                )
-            ),
-            spring.add_updater(
-                lambda s: s.stretch_to_fit_height(
-                    1.5 + 0.5 * np.cos(3 * t_tracker.get_value()),
-                    about_edge=UP
-                )
-            ),
-            weight.add_updater(
-                lambda w: w.move_to(spring.points[-1])
-            )
+            t_tracker.add_udpater(lambda tracker, dt: tracker.set_value(
+                tracker.get_value() + dt)),
+            spring.add_updater(lambda s: s.stretch_to_fit_height(
+                1.5 + 0.5 * np.cos(3 * t_tracker.get_value()), about_edge=UP)),
+            weight.add_updater(lambda w: w.move_to(spring.points[-1]))
         ]
 
         def update_group_style(alpha):
@@ -722,13 +691,9 @@ class StartingCalc101(PiCreatureScene):
             weight.set_fill(opacity=alpha)
 
         group.fade_in_anim = UpdateFromAlphaFunc(
-            group,
-            lambda g, a: update_group_style(a)
-        )
+            group, lambda g, a: update_group_style(a))
         group.fade_out_anim = UpdateFromAlphaFunc(
-            group,
-            lambda g, a: update_group_style(1 - a)
-        )
+            group, lambda g, a: update_group_style(1 - a))
         return group
 
     def get_piles_of_formulas_image(self):
@@ -747,13 +712,13 @@ class StartingCalc101(PiCreatureScene):
         creature = self.pi_creature.copy()
         creature.change_mode("hooray")
         from from_3b1b.old.eoc.chapter3 import NudgeSideLengthOfCube
-        scene = NudgeSideLengthOfCube(
-            end_at_animation_number=7,
-            skip_animations=True
-        )
+        scene = NudgeSideLengthOfCube(end_at_animation_number=7,
+                                      skip_animations=True)
         group = VGroup(
-            scene.cube, scene.faces,
-            scene.bars, scene.corner_cube,
+            scene.cube,
+            scene.faces,
+            scene.bars,
+            scene.corner_cube,
         )
         group.set_height(0.75 * creature.get_height())
         group.next_to(creature, RIGHT)
@@ -765,13 +730,14 @@ class StartingCalc101(PiCreatureScene):
         gs.setup_axes()
         graph = gs.get_graph(
             lambda x: 0.2 * (x - 3) * (x - 5) * (x - 6) + 4,
-            x_min=2, x_max=8,
+            x_min=2,
+            x_max=8,
         )
-        rects = gs.get_riemann_rectangles(
-            graph, x_min=2, x_max=8,
-            stroke_width=0.5,
-            dx=0.25
-        )
+        rects = gs.get_riemann_rectangles(graph,
+                                          x_min=2,
+                                          x_max=8,
+                                          stroke_width=0.5,
+                                          dx=0.25)
         gs.add(graph, rects, gs.axes)
         group = VGroup(*gs.mobjects)
         self.adjust_size(group)
@@ -798,45 +764,43 @@ class GraphicalIntuitions(GraphScene):
         graph = self.get_graph(self.func)
 
         ss_group = self.get_secant_slope_group(
-            x=8, graph=graph, dx=0.01,
+            x=8,
+            graph=graph,
+            dx=0.01,
             secant_line_length=6,
             secant_line_color=RED,
         )
-        rects = self.get_riemann_rectangles(
-            graph, x_min=2, x_max=8, dx=0.01, stroke_width=0
-        )
+        rects = self.get_riemann_rectangles(graph,
+                                            x_min=2,
+                                            x_max=8,
+                                            dx=0.01,
+                                            stroke_width=0)
 
         deriv_text = TextMobject(
             "Derivative $\\rightarrow$ slope",
-            tex_to_color_map={"slope": ss_group.secant_line.get_color()}
-        )
+            tex_to_color_map={"slope": ss_group.secant_line.get_color()})
         deriv_text.to_edge(UP)
         integral_text = TextMobject(
             "Integral $\\rightarrow$ area",
-            tex_to_color_map={"area": rects[0].get_color()}
-        )
+            tex_to_color_map={"area": rects[0].get_color()})
         integral_text.next_to(deriv_text, DOWN)
 
         self.play(
             Succession(Write(axes), ShowCreation(graph, run_time=2)),
             self.get_graph_words_anim(),
         )
-        self.animate_secant_slope_group_change(
-            ss_group,
-            target_x=2,
-            rate_func=smooth,
-            run_time=2.5,
-            added_anims=[
-                Write(deriv_text),
-                VFadeIn(ss_group, run_time=2),
-            ]
-        )
+        self.animate_secant_slope_group_change(ss_group,
+                                               target_x=2,
+                                               rate_func=smooth,
+                                               run_time=2.5,
+                                               added_anims=[
+                                                   Write(deriv_text),
+                                                   VFadeIn(ss_group,
+                                                           run_time=2),
+                                               ])
         self.play(FadeIn(integral_text))
         self.play(
-            LaggedStartMap(
-                GrowFromEdge, rects,
-                lambda r: (r, DOWN)
-            ),
+            LaggedStartMap(GrowFromEdge, rects, lambda r: (r, DOWN)),
             Animation(axes),
             Animation(graph),
         )
@@ -855,13 +819,12 @@ class GraphicalIntuitions(GraphScene):
             word.add_background_rectangle()
         words.arrange(DOWN)
         words.to_edge(UP)
-        return LaggedStartMap(
-            FadeIn, words,
-            rate_func=there_and_back,
-            run_time=len(words) - 1,
-            lag_ratio=0.6,
-            remover=True
-        )
+        return LaggedStartMap(FadeIn,
+                              words,
+                              rate_func=there_and_back,
+                              run_time=len(words) - 1,
+                              lag_ratio=0.6,
+                              remover=True)
 
 
 class Wrapper(Scene):
@@ -902,11 +865,8 @@ class ExampleMultivariableFunction(LinearTransformationScene):
     def construct(self):
         def example_function(point):
             x, y, z = point
-            return np.array([
-                x + np.sin(y),
-                y + np.sin(x),
-                0
-            ])
+            return np.array([x + np.sin(y), y + np.sin(x), 0])
+
         self.wait()
         self.apply_nonlinear_transformation(example_function, run_time=5)
         self.wait()
@@ -932,9 +892,7 @@ class ChangingVectorField(Scene):
         # completely break in spots which used to have
         # Continual animations
         time_tracker = self.time_tracker = ValueTracker(0)
-        time_tracker.add_updater(
-            lambda t: t.set_value(self.get_time())
-        )
+        time_tracker.add_updater(lambda t: t.set_value(self.get_time()))
 
         vectors = self.get_vectors()
         vectors.add_updater(self.update_vectors)
@@ -968,17 +926,14 @@ class ChangingVectorField(Scene):
                 vector.set_fill(color, opacity=1)
                 vector.set_stroke(BLACK, width=1)
             new_x, new_y = out_point[:2]
-            vector.put_start_and_end_on(
-                point, point + new_x * RIGHT + new_y * UP
-            )
+            vector.put_start_and_end_on(point,
+                                        point + new_x * RIGHT + new_y * UP)
 
     def func(self, point, time):
         x, y, z = point
-        return np.array([
-            np.sin(time + 0.5 * x + y),
-            np.cos(time + 0.2 * x * y + 0.7),
-            0
-        ])
+        return np.array(
+            [np.sin(time + 0.5 * x + y),
+             np.cos(time + 0.2 * x * y + 0.7), 0])
 
 
 class MoreTopics(Scene):
@@ -987,16 +942,16 @@ class MoreTopics(Scene):
         calculus.next_to(LEFT, LEFT)
         calculus.set_color(YELLOW)
         calculus.add_background_rectangle()
-        others = VGroup(
-            TextMobject("Multivariable calculus"),
-            TextMobject("Complex analysis"),
-            TextMobject("Differential geometry"),
-            TextMobject("$\\vdots$")
-        )
+        others = VGroup(TextMobject("Multivariable calculus"),
+                        TextMobject("Complex analysis"),
+                        TextMobject("Differential geometry"),
+                        TextMobject("$\\vdots$"))
         for word in others:
             word.add_background_rectangle()
         others.arrange(
-            DOWN, buff=MED_LARGE_BUFF, aligned_edge=LEFT,
+            DOWN,
+            buff=MED_LARGE_BUFF,
+            aligned_edge=LEFT,
         )
         others.next_to(RIGHT, RIGHT)
         lines = VGroup(*[
@@ -1021,9 +976,7 @@ class MoreTopics(Scene):
 
 
 class TransformationalViewWrapper(Wrapper):
-    CONFIG = {
-        "title": "Transformational view"
-    }
+    CONFIG = {"title": "Transformational view"}
 
 
 class SetTheStage(TeacherStudentsScene):
@@ -1037,16 +990,11 @@ class SetTheStage(TeacherStudentsScene):
         self.screen.scale(1.25, about_edge=UL)
         self.add(self.screen)
         self.teacher_holds_up(
-            ordinary,
-            added_anims=[self.get_student_changes(*3 * ["sassy"])]
-        )
+            ordinary, added_anims=[self.get_student_changes(*3 * ["sassy"])])
         self.wait()
-        self.play(
-            ordinary.shift, UP,
-            FadeInFromDown(transformational),
-            self.teacher.change, "hooray",
-            self.get_student_changes(*3 * ["erm"])
-        )
+        self.play(ordinary.shift, UP, FadeInFromDown(transformational),
+                  self.teacher.change, "hooray",
+                  self.get_student_changes(*3 * ["erm"]))
         self.wait(3)
         self.change_all_student_modes("pondering", look_at_arg=self.screen)
 
@@ -1079,6 +1027,7 @@ class StandardDerivativeVisual(GraphScene):
         def func(x):
             x -= 5
             return 0.1 * (x + 3) * (x - 3) * x + 3
+
         graph = self.get_graph(func)
         graph_label = self.get_graph_label(graph, x_val=9.5)
 
@@ -1113,37 +1062,30 @@ class StandardDerivativeVisual(GraphScene):
             triangle.scale(0.1)
 
         input_triangle_update = input_tracker.add_updater(
-            lambda m: m.move_to(get_x_point(), UP)
-        )
+            lambda m: m.move_to(get_x_point(), UP))
         output_triangle_update = output_triangle.add_updater(
-            lambda m: m.move_to(get_y_point(), RIGHT)
-        )
+            lambda m: m.move_to(get_y_point(), RIGHT))
 
         x_label = TexMobject("x")
         x_label_update = Mobject.add_updater(
-            x_label, lambda m: m.next_to(input_triangle, DOWN, SMALL_BUFF)
-        )
+            x_label, lambda m: m.next_to(input_triangle, DOWN, SMALL_BUFF))
 
         output_label = TexMobject("f(x)")
         output_label_update = Mobject.add_updater(
-            output_label, lambda m: m.next_to(
-                output_triangle, LEFT, SMALL_BUFF)
-        )
+            output_label,
+            lambda m: m.next_to(output_triangle, LEFT, SMALL_BUFF))
 
         v_line = get_v_line()
         v_line_update = Mobject.add_updater(
-            v_line, lambda vl: Transform(vl, get_v_line()).update(1)
-        )
+            v_line, lambda vl: Transform(vl, get_v_line()).update(1))
 
         h_line = get_h_line()
         h_line_update = Mobject.add_updater(
-            h_line, lambda hl: Transform(hl, get_h_line()).update(1)
-        )
+            h_line, lambda hl: Transform(hl, get_h_line()).update(1))
 
         graph_dot = Dot(color=YELLOW)
         graph_dot_update = Mobject.add_updater(
-            graph_dot, lambda m: m.move_to(get_graph_point())
-        )
+            graph_dot, lambda m: m.move_to(get_graph_point()))
 
         self.play(
             ShowCreation(graph),
@@ -1156,11 +1098,8 @@ class StandardDerivativeVisual(GraphScene):
             GrowFromCenter(graph_dot),
         )
         self.add_foreground_mobject(graph_dot)
-        self.play(
-            ShowCreation(h_line),
-            Write(output_label),
-            DrawBorderThenFill(output_triangle, run_time=1)
-        )
+        self.play(ShowCreation(h_line), Write(output_label),
+                  DrawBorderThenFill(output_triangle, run_time=1))
         self.add(
             input_triangle_update,
             x_label_update,
@@ -1170,11 +1109,10 @@ class StandardDerivativeVisual(GraphScene):
             output_triangle_update,
             output_label_update,
         )
-        self.play(
-            input_tracker.set_value, 8,
-            run_time=6,
-            rate_func=there_and_back
-        )
+        self.play(input_tracker.set_value,
+                  8,
+                  run_time=6,
+                  rate_func=there_and_back)
 
         self.input_tracker = input_tracker
         self.graph = graph
@@ -1189,53 +1127,42 @@ class StandardDerivativeVisual(GraphScene):
                 x=deriv_input_tracker.get_value(),
                 graph=self.graph,
                 dx=0.01,
-                secant_line_length=4
-            ).secant_line
+                secant_line_length=4).secant_line
 
         slope_line = get_slope_line()
         slope_line_update = Mobject.add_updater(
-            slope_line, lambda sg: Transform(sg, get_slope_line()).update(1)
-        )
+            slope_line, lambda sg: Transform(sg, get_slope_line()).update(1))
 
         def position_deriv_label(deriv_label):
             deriv_label.next_to(slope_line, UP)
             return deriv_label
-        deriv_label = TexMobject(
-            "\\frac{df}{dx}(x) =", "\\text{Slope}", "="
-        )
+
+        deriv_label = TexMobject("\\frac{df}{dx}(x) =", "\\text{Slope}", "=")
         deriv_label.get_part_by_tex("Slope").match_color(slope_line)
-        deriv_label_update = Mobject.add_updater(
-            deriv_label, position_deriv_label
-        )
+        deriv_label_update = Mobject.add_updater(deriv_label,
+                                                 position_deriv_label)
 
         slope_decimal = DecimalNumber(slope_line.get_slope())
         slope_decimal.match_color(slope_line)
         slope_decimal.add_updater(
-            lambda d: d.set_value(slope_line.get_slope())
-        )
-        slope_decimal.add_upater(
-            lambda d: d.next_to(
-                deriv_label, RIGHT, SMALL_BUFF
-            ).shift(0.2 * SMALL_BUFF * DOWN)
-        )
+            lambda d: d.set_value(slope_line.get_slope()))
+        slope_decimal.add_upater(lambda d: d.next_to(
+            deriv_label, RIGHT, SMALL_BUFF).shift(0.2 * SMALL_BUFF * DOWN))
 
-        self.play(
-            ShowCreation(slope_line),
-            Write(deriv_label),
-            Write(slope_decimal),
-            run_time=1
-        )
+        self.play(ShowCreation(slope_line),
+                  Write(deriv_label),
+                  Write(slope_decimal),
+                  run_time=1)
         self.wait()
-        self.add(
-            slope_line_update,
-            # deriv_label_update,
-        )
+        self.add(slope_line_update,
+                 # deriv_label_update,
+                 )
         for x in 9, 2, 4:
-            self.play(
-                input_tracker.set_value, x,
-                deriv_input_tracker.set_value, x,
-                run_time=3
-            )
+            self.play(input_tracker.set_value,
+                      x,
+                      deriv_input_tracker.set_value,
+                      x,
+                      run_time=3)
             self.wait()
 
         self.deriv_input_tracker = deriv_input_tracker
@@ -1245,19 +1172,20 @@ class StandardDerivativeVisual(GraphScene):
         morty.to_corner(DR)
 
         self.play(FadeIn(morty))
-        self.play(PiCreatureSays(
-            morty, "Don't think of \\\\ this as the definition",
-            bubble_kwargs={"height": 2, "width": 4}
-        ))
+        self.play(
+            PiCreatureSays(morty,
+                           "Don't think of \\\\ this as the definition",
+                           bubble_kwargs={
+                               "height": 2,
+                               "width": 4
+                           }))
         self.play(Blink(morty))
         self.wait()
         self.play(
             RemovePiCreatureBubble(morty),
-            UpdateFromAlphaFunc(
-                morty, lambda m, a: m.set_fill(opacity=1 - a),
-                remover=True
-            )
-        )
+            UpdateFromAlphaFunc(morty,
+                                lambda m, a: m.set_fill(opacity=1 - a),
+                                remover=True))
 
     def show_sensitivity(self):
         input_tracker = self.input_tracker
@@ -1265,11 +1193,11 @@ class StandardDerivativeVisual(GraphScene):
 
         self.wiggle_input()
         for x in 9, 7, 2:
-            self.play(
-                input_tracker.set_value, x,
-                deriv_input_tracker.set_value, x,
-                run_time=3
-            )
+            self.play(input_tracker.set_value,
+                      x,
+                      deriv_input_tracker.set_value,
+                      x,
+                      run_time=3)
             self.wiggle_input()
 
     ###
@@ -1279,10 +1207,8 @@ class StandardDerivativeVisual(GraphScene):
         x = input_tracker.get_value()
         x_min = x - dx
         x_max = x + dx
-        y, y_min, y_max = list(map(
-            self.graph.underlying_function,
-            [x, x_min, x_max]
-        ))
+        y, y_min, y_max = list(
+            map(self.graph.underlying_function, [x, x_min, x_max]))
         x_line = Line(
             self.coords_to_point(x_min, 0),
             self.coords_to_point(x_max, 0),
@@ -1303,10 +1229,9 @@ class StandardDerivativeVisual(GraphScene):
         y_rect.move_to(y_line)
 
         self.play(
-            ApplyMethod(
-                input_tracker.set_value, input_tracker.get_value() + dx,
-                rate_func=lambda t: wiggle(t, 6)
-            ),
+            ApplyMethod(input_tracker.set_value,
+                        input_tracker.get_value() + dx,
+                        rate_func=lambda t: wiggle(t, 6)),
             FadeIn(
                 rects,
                 rate_func=squish_rate_func(smooth, 0, 0.33),
@@ -1347,10 +1272,8 @@ class IntroduceTransformationView(NumberlineTransformationScene):
 
     def show_animation_preview(self):
         input_points = self.get_sample_input_points()
-        output_points = list(map(
-            self.number_func_to_point_func(self.func),
-            input_points
-        ))
+        output_points = list(
+            map(self.number_func_to_point_func(self.func), input_points))
         sample_dots = self.get_sample_dots()
         sample_dot_ghosts = sample_dots.copy().fade(0.5)
         arrows = VGroup(*[
@@ -1364,21 +1287,20 @@ class IntroduceTransformationView(NumberlineTransformationScene):
             sd.save_state()
             sd.scale(2)
             sd.fade(1)
-        self.play(LaggedStartMap(
-            ApplyMethod, sample_dots,
-            lambda sd: (sd.restore,),
-            run_time=2
-        ))
-        self.play(LaggedStartMap(
-            GrowArrow, arrows,
-            run_time=6,
-            lag_ratio=0.3,
-        ))
+        self.play(
+            LaggedStartMap(ApplyMethod,
+                           sample_dots,
+                           lambda sd: (sd.restore, ),
+                           run_time=2))
+        self.play(
+            LaggedStartMap(
+                GrowArrow,
+                arrows,
+                run_time=6,
+                lag_ratio=0.3,
+            ))
         self.add(sample_dot_ghosts)
-        self.apply_function(
-            self.func, sample_dots=sample_dots,
-            run_time=3
-        )
+        self.apply_function(self.func, sample_dots=sample_dots, run_time=3)
         self.wait()
         self.play(LaggedStartMap(FadeOut, arrows, run_time=1))
 
@@ -1415,43 +1337,43 @@ class IntroduceTransformationView(NumberlineTransformationScene):
         upper_brace_anim = UpdateFromFunc(upper_brace, update_upper_brace)
 
         new_title = TextMobject(
-            "$\\frac{df}{dx}(x)$ measures stretch/squishing"
-        )
+            "$\\frac{df}{dx}(x)$ measures stretch/squishing")
         new_title.move_to(self.title, UP)
 
         stretch_factor = DecimalNumber(0, color=YELLOW)
         stretch_factor_anim = ChangingDecimal(
-            stretch_factor, lambda a: lower_brace.get_width() / upper_brace.get_width(),
-            position_update_func=lambda m: m.next_to(lower_brace, UP, SMALL_BUFF)
-        )
+            stretch_factor,
+            lambda a: lower_brace.get_width() / upper_brace.get_width(),
+            position_update_func=lambda m: m.next_to(lower_brace, UP,
+                                                     SMALL_BUFF))
 
         self.play(
             GrowFromCenter(upper_brace),
             FadeOut(self.title),
             # FadeIn(new_title)
-            Write(new_title, run_time=2)
-        )
+            Write(new_title, run_time=2))
         self.title = new_title
-        self.play(
-            ReplacementTransform(upper_brace.copy(), lower_brace),
-            GrowFromPoint(stretch_factor, upper_brace.get_center())
-        )
-        self.play(
-            input_tracker.set_value, self.input_line.x_max - dx,
-            lower_brace_anim,
-            upper_brace_anim,
-            stretch_factor_anim,
-            run_time=8,
-            rate_func=bezier([0, 0, 1, 1])
-        )
+        self.play(ReplacementTransform(upper_brace.copy(), lower_brace),
+                  GrowFromPoint(stretch_factor, upper_brace.get_center()))
+        self.play(input_tracker.set_value,
+                  self.input_line.x_max - dx,
+                  lower_brace_anim,
+                  upper_brace_anim,
+                  stretch_factor_anim,
+                  run_time=8,
+                  rate_func=bezier([0, 0, 1, 1]))
         self.wait()
 
         new_sample_dots = self.get_sample_dots()
         self.play(
-            FadeOut(VGroup(
-                upper_brace, lower_brace, stretch_factor,
-                self.sample_dots, self.moving_input_line,
-            )),
+            FadeOut(
+                VGroup(
+                    upper_brace,
+                    lower_brace,
+                    stretch_factor,
+                    self.sample_dots,
+                    self.moving_input_line,
+                )),
             FadeIn(new_sample_dots),
         )
         self.sample_dots = new_sample_dots
@@ -1470,8 +1392,8 @@ class IntroduceTransformationView(NumberlineTransformationScene):
             self.func,
             sample_dots=self.sample_dots,
             local_sample_dots=local_sample_dots,
-            target_coordinate_values=self.get_local_coordinate_values(self.func(x))
-        )
+            target_coordinate_values=self.get_local_coordinate_values(
+                self.func(x)))
         self.wait()
 
 
@@ -1514,8 +1436,7 @@ class TalkThroughXSquaredExample(IntroduceTransformationView):
                 # num.get_bottom(),
                 self.get_input_point(x),
                 self.get_output_point(self.func(x)),
-                buff=MED_SMALL_BUFF
-            )
+                buff=MED_SMALL_BUFF)
             for x, num in zip(list(range(1, 6)), self.input_line.numbers[1:])
         ])
         point_func = self.number_func_to_point_func(self.func)
@@ -1530,10 +1451,8 @@ class TalkThroughXSquaredExample(IntroduceTransformationView):
             arrow.match_color(dot)
             self.play(DrawBorderThenFill(dot, run_time=1))
             self.add(dot_ghost)
-            self.play(
-                GrowArrow(arrow),
-                dot.apply_function_to_position, point_func
-            )
+            self.play(GrowArrow(arrow), dot.apply_function_to_position,
+                      point_func)
         self.wait()
 
         # Show more sample_dots
@@ -1555,10 +1474,9 @@ class TalkThroughXSquaredExample(IntroduceTransformationView):
 
     def get_stretch_words(self, factor, color=RED, less_than_one=False):
         factor_str = "$%s$" % str(factor)
-        result = TextMobject(
-            "Scale \\\\ by", factor_str,
-            tex_to_color_map={factor_str: color}
-        )
+        result = TextMobject("Scale \\\\ by",
+                             factor_str,
+                             tex_to_color_map={factor_str: color})
         result.scale(0.7)
         la, ra = TexMobject("\\leftarrow \\rightarrow")
         if less_than_one:
@@ -1576,16 +1494,19 @@ class TalkThroughXSquaredExample(IntroduceTransformationView):
         la.next_to(result, LEFT)
         ra.next_to(result, RIGHT)
         result.add(la, ra)
-        result.next_to(
-            self.zoomed_display.get_top(), DOWN, SMALL_BUFF
-        )
+        result.next_to(self.zoomed_display.get_top(), DOWN, SMALL_BUFF)
         return result
 
     def get_deriv_equation(self, x, rhs, color=RED):
-        deriv_equation = self.deriv_equation = TexMobject(
-            "\\frac{df}{dx}(", str(x), ")", "=", str(rhs),
-            tex_to_color_map={str(x): color, str(rhs): color}
-        )
+        deriv_equation = self.deriv_equation = TexMobject("\\frac{df}{dx}(",
+                                                          str(x),
+                                                          ")",
+                                                          "=",
+                                                          str(rhs),
+                                                          tex_to_color_map={
+                                                              str(x): color,
+                                                              str(rhs): color
+                                                          })
         deriv_equation.next_to(self.title, DOWN, MED_LARGE_BUFF)
         return deriv_equation
 
@@ -1618,24 +1539,17 @@ class ZoomInOnXSquaredNearOne(TalkThroughXSquaredExample):
         local_sample_dots.save_state()
         frame.save_state()
         self.mini_line.save_state()
-        self.apply_function(
-            self.func,
-            apply_function_to_number_line=False,
-            sample_dots=sample_dot_ghost_copies,
-            local_sample_dots=local_sample_dots,
-            target_coordinate_values=local_coords
-        )
+        self.apply_function(self.func,
+                            apply_function_to_number_line=False,
+                            sample_dots=sample_dot_ghost_copies,
+                            local_sample_dots=local_sample_dots,
+                            target_coordinate_values=local_coords)
         self.remove(sample_dot_ghost_copies)
         self.wait()
 
         # Go back
-        self.play(
-            frame.restore,
-            self.mini_line.restore,
-            local_sample_dots.restore,
-            zcbr_anim,
-            Animation(zcbr_group)
-        )
+        self.play(frame.restore, self.mini_line.restore,
+                  local_sample_dots.restore, zcbr_anim, Animation(zcbr_group))
         self.wait()
 
         # Zoom in even more
@@ -1653,37 +1567,30 @@ class ZoomInOnXSquaredNearOne(TalkThroughXSquaredExample):
         new_local_sample_dots = self.get_local_sample_dots(x, delta_x=0.005)
         new_coordinate_values = self.get_local_coordinate_values(x, dx=0.02)
         new_local_coordinates = self.get_local_coordinates(
-            self.input_line, *new_coordinate_values
-        )
+            self.input_line, *new_coordinate_values)
 
         self.play(
-            Write(new_local_coordinates),
-            Write(new_local_sample_dots),
-            one_group.scale, extra_zoom_factor, {"about_point": self.get_input_point(1)},
-            FadeOut(all_other_coordinates),
-            *[
+            Write(new_local_coordinates), Write(new_local_sample_dots),
+            one_group.scale, extra_zoom_factor,
+            {"about_point": self.get_input_point(1)},
+            FadeOut(all_other_coordinates), *[
                 ApplyMethod(dot.scale, extra_zoom_factor)
                 for dot in local_sample_dots
-            ]
-        )
+            ])
         self.remove(one_group, local_sample_dots)
-        zcbr_group.remove(
-            self.local_coordinates, self.local_target_coordinates,
-            local_sample_dots
-        )
+        zcbr_group.remove(self.local_coordinates,
+                          self.local_target_coordinates, local_sample_dots)
 
         # Transform new zoomed view
         stretch_by_two_words = self.get_stretch_words(2)
         self.add_foreground_mobject(stretch_by_two_words)
         sample_dot_ghost_copies = self.sample_dot_ghosts.copy()
-        self.apply_function(
-            self.func,
-            apply_function_to_number_line=False,
-            sample_dots=sample_dot_ghost_copies,
-            local_sample_dots=new_local_sample_dots,
-            target_coordinate_values=new_coordinate_values,
-            added_anims=[FadeIn(stretch_by_two_words)]
-        )
+        self.apply_function(self.func,
+                            apply_function_to_number_line=False,
+                            sample_dots=sample_dot_ghost_copies,
+                            local_sample_dots=new_local_sample_dots,
+                            target_coordinate_values=new_coordinate_values,
+                            added_anims=[FadeIn(stretch_by_two_words)])
         self.remove(sample_dot_ghost_copies)
         self.wait()
 
@@ -1705,7 +1612,8 @@ class ZoomInOnXSquaredNearThree(ZoomInOnXSquaredNearOne):
         x = 3
         local_sample_dots = self.get_local_sample_dots(x)
         local_coordinate_values = self.get_local_coordinate_values(x, dx=0.1)
-        target_coordinate_values = self.get_local_coordinate_values(self.func(x), dx=0.1)
+        target_coordinate_values = self.get_local_coordinate_values(
+            self.func(x), dx=0.1)
 
         color = self.sample_dots[len(self.sample_dots) / 2].get_color()
         sample_dot_ghost_copies = self.sample_dot_ghosts.copy()
@@ -1713,23 +1621,19 @@ class ZoomInOnXSquaredNearThree(ZoomInOnXSquaredNearOne):
         deriv_equation = self.get_deriv_equation(x, 2 * x, color)
 
         self.add(deriv_equation)
-        self.zoom_in_on_input(
-            x,
-            pop_out=False,
-            local_sample_dots=local_sample_dots,
-            local_coordinate_values=local_coordinate_values
-        )
+        self.zoom_in_on_input(x,
+                              pop_out=False,
+                              local_sample_dots=local_sample_dots,
+                              local_coordinate_values=local_coordinate_values)
         self.play(Write(zoom_words, run_time=1))
         self.wait()
         self.add_foreground_mobject(stretch_words)
-        self.apply_function(
-            self.func,
-            apply_function_to_number_line=False,
-            sample_dots=sample_dot_ghost_copies,
-            local_sample_dots=local_sample_dots,
-            target_coordinate_values=target_coordinate_values,
-            added_anims=[Write(stretch_words)]
-        )
+        self.apply_function(self.func,
+                            apply_function_to_number_line=False,
+                            sample_dots=sample_dot_ghost_copies,
+                            local_sample_dots=local_sample_dots,
+                            target_coordinate_values=target_coordinate_values,
+                            added_anims=[Write(stretch_words)])
         self.wait(2)
 
 
@@ -1749,18 +1653,23 @@ class ZoomInOnXSquaredNearOneFourth(ZoomInOnXSquaredNearOne):
 
         x = 0.25
         local_sample_dots = self.get_local_sample_dots(
-            x, sample_radius=2.5 * self.zoomed_camera.frame.get_width(),
+            x,
+            sample_radius=2.5 * self.zoomed_camera.frame.get_width(),
         )
         local_coordinate_values = self.get_local_coordinate_values(
-            x, dx=0.01,
+            x,
+            dx=0.01,
         )
         target_coordinate_values = self.get_local_coordinate_values(
-            self.func(x), dx=0.01,
+            self.func(x),
+            dx=0.01,
         )
 
         color = RED
         sample_dot_ghost_copies = self.sample_dot_ghosts.copy()
-        stretch_words = self.get_stretch_words("1/2", color, less_than_one=True)
+        stretch_words = self.get_stretch_words("1/2",
+                                               color,
+                                               less_than_one=True)
         deriv_equation = self.get_deriv_equation("1/4", "1/2", color)
 
         one_fourth_point = self.get_input_point(x)
@@ -1773,27 +1682,23 @@ class ZoomInOnXSquaredNearOneFourth(ZoomInOnXSquaredNearOne):
         one_fourth_label.next_to(one_fourth_arrow, DOWN, SMALL_BUFF)
 
         self.add(deriv_equation)
-        self.zoom_in_on_input(
-            x,
-            local_sample_dots=local_sample_dots,
-            local_coordinate_values=local_coordinate_values,
-            pop_out=False,
-            first_added_anims=[
-                FadeIn(one_fourth_label),
-                GrowArrow(one_fourth_arrow),
-            ]
-        )
+        self.zoom_in_on_input(x,
+                              local_sample_dots=local_sample_dots,
+                              local_coordinate_values=local_coordinate_values,
+                              pop_out=False,
+                              first_added_anims=[
+                                  FadeIn(one_fourth_label),
+                                  GrowArrow(one_fourth_arrow),
+                              ])
         self.play(Write(zoom_words, run_time=1))
         self.wait()
         self.add_foreground_mobject(stretch_words)
-        self.apply_function(
-            self.func,
-            apply_function_to_number_line=False,
-            sample_dots=sample_dot_ghost_copies,
-            local_sample_dots=local_sample_dots,
-            target_coordinate_values=target_coordinate_values,
-            added_anims=[Write(stretch_words)]
-        )
+        self.apply_function(self.func,
+                            apply_function_to_number_line=False,
+                            sample_dots=sample_dot_ghost_copies,
+                            local_sample_dots=local_sample_dots,
+                            target_coordinate_values=target_coordinate_values,
+                            added_anims=[Write(stretch_words)])
         self.wait(2)
 
 
@@ -1805,36 +1710,31 @@ class ZoomInOnXSquaredNearZero(ZoomInOnXSquaredNearOne):
     }
 
     def construct(self):
-        zoom_words = TextMobject(
-            "Zoomed %sx \\\\ near 0" % "{:,}".format(int(1.0 / self.zoom_factor))
-        )
+        zoom_words = TextMobject("Zoomed %sx \\\\ near 0" %
+                                 "{:,}".format(int(1.0 / self.zoom_factor)))
         zoom_words.next_to(self.zoomed_display, DOWN)
 
         x = 0
         local_sample_dots = self.get_local_sample_dots(
-            x, sample_radius=2 * self.zoomed_camera.frame.get_width()
-        )
+            x, sample_radius=2 * self.zoomed_camera.frame.get_width())
         local_coordinate_values = self.get_local_coordinate_values(
-            x, dx=self.zoom_factor
-        )
+            x, dx=self.zoom_factor)
         # target_coordinate_values = self.get_local_coordinate_values(
         #     self.func(x), dx=self.zoom_factor
         # )
 
         color = self.sample_dots[len(self.sample_dots) / 2].get_color()
         sample_dot_ghost_copies = self.sample_dot_ghosts.copy()
-        stretch_words = self.get_stretch_words(
-            self.scale_by_term, color, less_than_one=True
-        )
+        stretch_words = self.get_stretch_words(self.scale_by_term,
+                                               color,
+                                               less_than_one=True)
         deriv_equation = self.get_deriv_equation(x, 2 * x, color)
 
         self.add(deriv_equation)
-        self.zoom_in_on_input(
-            x,
-            pop_out=False,
-            local_sample_dots=local_sample_dots,
-            local_coordinate_values=local_coordinate_values
-        )
+        self.zoom_in_on_input(x,
+                              pop_out=False,
+                              local_sample_dots=local_sample_dots,
+                              local_coordinate_values=local_coordinate_values)
         self.play(Write(zoom_words, run_time=1))
         self.wait()
         self.add_foreground_mobject(stretch_words)
@@ -1846,12 +1746,9 @@ class ZoomInOnXSquaredNearZero(ZoomInOnXSquaredNearOne):
             # target_coordinate_values=target_coordinate_values,
             added_anims=[
                 Write(stretch_words),
-                MaintainPositionRelativeTo(
-                    self.local_coordinates,
-                    self.zoomed_camera.frame
-                )
-            ]
-        )
+                MaintainPositionRelativeTo(self.local_coordinates,
+                                           self.zoomed_camera.frame)
+            ])
         self.wait(2)
 
 
@@ -1873,7 +1770,8 @@ class ZoomInMoreAndMoreToZero(ZoomInOnXSquaredNearZero):
             frame.set_height(factor * zoomed_display_height)
             self.local_coordinate_num_decimal_places = int(-np.log10(factor))
             zoom_words = TextMobject(
-                "Zoomed", "{:,}x \\\\".format(int(1.0 / factor)),
+                "Zoomed",
+                "{:,}x \\\\".format(int(1.0 / factor)),
                 "near 0",
             )
             zoom_words.next_to(self.zoomed_display, DOWN)
@@ -1887,19 +1785,16 @@ class ZoomInMoreAndMoreToZero(ZoomInOnXSquaredNearZero):
                 ApplyMethod(last_coords.fade, 1),
             ]
             if last_zoom_words is not None:
-                added_anims.append(ReplacementTransform(
-                    last_zoom_words, zoom_words
-                ))
+                added_anims.append(
+                    ReplacementTransform(last_zoom_words, zoom_words))
             else:
                 added_anims.append(FadeIn(zoom_words))
-            self.zoom_in_on_input(
-                x,
-                local_sample_dots=sample_dots,
-                local_coordinate_values=coords,
-                pop_out=False,
-                zoom_factor=factor,
-                first_added_anims=added_anims
-            )
+            self.zoom_in_on_input(x,
+                                  local_sample_dots=sample_dots,
+                                  local_coordinate_values=coords,
+                                  pop_out=False,
+                                  zoom_factor=factor,
+                                  first_added_anims=added_anims)
             self.wait()
             last_sample_dots = sample_dots
             last_coords = self.local_coordinates
@@ -1907,9 +1802,7 @@ class ZoomInMoreAndMoreToZero(ZoomInOnXSquaredNearZero):
 
 
 class ZoomInOnXSquared100xZero(ZoomInOnXSquaredNearZero):
-    CONFIG = {
-        "zoom_factor": 0.01
-    }
+    CONFIG = {"zoom_factor": 0.01}
 
 
 class ZoomInOnXSquared1000xZero(ZoomInOnXSquaredNearZero):
@@ -1947,22 +1840,23 @@ class XSquaredForNegativeInput(TalkThroughXSquaredExample):
         self.zoom_in_on_example()
 
     def show_full_transformation(self):
-        sample_dots = self.get_sample_dots(
-            x_min=-4.005,
-            delta_x=0.05,
-            dot_radius=0.05
-        )
+        sample_dots = self.get_sample_dots(x_min=-4.005,
+                                           delta_x=0.05,
+                                           dot_radius=0.05)
         sample_dots.set_fill(opacity=0.8)
 
         self.play(LaggedStartMap(DrawBorderThenFill, sample_dots))
-        self.play(LaggedStartMap(
-            ApplyFunction, sample_dots[len(sample_dots) / 2:0:-1],
-            lambda mob: (
-                lambda m: m.scale(2).shift(SMALL_BUFF * UP).set_color(PINK),
-                mob,
-            ),
-            rate_func=there_and_back,
-        ))
+        self.play(
+            LaggedStartMap(
+                ApplyFunction,
+                sample_dots[len(sample_dots) / 2:0:-1],
+                lambda mob: (
+                    lambda m: m.scale(2).shift(SMALL_BUFF * UP).set_color(PINK
+                                                                          ),
+                    mob,
+                ),
+                rate_func=there_and_back,
+            ))
         self.add_sample_dot_ghosts(sample_dots)
         self.apply_function(self.func, sample_dots=sample_dots)
         self.wait()
@@ -1971,12 +1865,9 @@ class XSquaredForNegativeInput(TalkThroughXSquaredExample):
         x = -2
 
         local_sample_dots = self.get_local_sample_dots(x)
-        local_coordinate_values = self.get_local_coordinate_values(
-            x, dx=0.1
-        )
+        local_coordinate_values = self.get_local_coordinate_values(x, dx=0.1)
         target_coordinate_values = self.get_local_coordinate_values(
-            self.func(x), dx=0.1
-        )
+            self.func(x), dx=0.1)
         deriv_equation = self.get_deriv_equation(x, 2 * x, color=BLUE)
         sample_dot_ghost_copies = self.sample_dot_ghosts.copy()
         scale_words = self.get_stretch_words(-4, color=BLUE)
@@ -1990,35 +1881,26 @@ class XSquaredForNegativeInput(TalkThroughXSquaredExample):
         self.play(Write(deriv_equation))
         self.add_foreground_mobject(scale_words)
         self.play(Write(scale_words))
-        self.apply_function(
-            self.func,
-            sample_dots=sample_dot_ghost_copies,
-            local_sample_dots=local_sample_dots,
-            target_coordinate_values=target_coordinate_values
-        )
+        self.apply_function(self.func,
+                            sample_dots=sample_dot_ghost_copies,
+                            local_sample_dots=local_sample_dots,
+                            target_coordinate_values=target_coordinate_values)
         self.wait()
 
 
 class FeelsALittleCramped(TeacherStudentsScene):
     def construct(self):
-        self.student_says(
-            "Kind of cramped,\\\\ isn't it?",
-            target_mode="sassy"
-        )
+        self.student_says("Kind of cramped,\\\\ isn't it?",
+                          target_mode="sassy")
         self.wait()
-        self.teacher_says(
-            "Sure, but think \\\\ locally"
-        )
+        self.teacher_says("Sure, but think \\\\ locally")
         self.change_all_student_modes("pondering", look_at_arg=self.screen)
         self.wait(3)
 
 
 class HowDoesThisSolveProblems(TeacherStudentsScene):
     def construct(self):
-        self.student_says(
-            "Is this...useful?",
-            target_mode="confused"
-        )
+        self.student_says("Is this...useful?", target_mode="confused")
         self.change_student_modes("maybe", "confused", "sassy")
         self.play(self.teacher.change, "happy")
         self.wait(3)
@@ -2065,38 +1947,40 @@ class IntroduceContinuedFractionPuzzle(PiCreatureScene):
 
         self.play(
             LaggedStartMap(
-                Write, frac,
+                Write,
+                frac,
                 run_time=15,
                 lag_ratio=0.15,
             ),
             FadeInFromDown(equals),
             FadeInFromDown(rhs),
-            PiCreatureSays(
-                friend, "Would this be valid? \\\\ If not, why not?",
-                target_mode="confused",
-                look_at_arg=frac,
-                bubble_kwargs={
-                    "direction": RIGHT,
-                    "width": 4,
-                    "height": 3,
-                }
-            ),
-            morty.change, "pondering",
+            PiCreatureSays(friend,
+                           "Would this be valid? \\\\ If not, why not?",
+                           target_mode="confused",
+                           look_at_arg=frac,
+                           bubble_kwargs={
+                               "direction": RIGHT,
+                               "width": 4,
+                               "height": 3,
+                           }),
+            morty.change,
+            "pondering",
         )
         self.wait()
 
         anims = [
-            RemovePiCreatureBubble(
-                friend, target_mode="pondering",
-                look_at_arg=frac
-            ),
+            RemovePiCreatureBubble(friend,
+                                   target_mode="pondering",
+                                   look_at_arg=frac),
         ]
         if self.remove_initial_rhs:
             anims += [
                 Animation(frac),
                 FadeOut(equals),
-                rhs.scale, 0.5,
-                rhs.to_corner, DL,
+                rhs.scale,
+                0.5,
+                rhs.to_corner,
+                DL,
             ]
         self.play(*anims)
 
@@ -2109,9 +1993,9 @@ class IntroduceContinuedFractionPuzzle(PiCreatureScene):
         morty, friend = self.get_pi_creatures()
 
         inner_frac = frac[4:]
-        inner_frac_rect = SurroundingRectangle(
-            inner_frac, stroke_width=2, buff=0.5 * SMALL_BUFF
-        )
+        inner_frac_rect = SurroundingRectangle(inner_frac,
+                                               stroke_width=2,
+                                               buff=0.5 * SMALL_BUFF)
         inner_frac_group = VGroup(inner_frac, inner_frac_rect)
 
         equals = TexMobject("=")
@@ -2125,11 +2009,8 @@ class IntroduceContinuedFractionPuzzle(PiCreatureScene):
 
         fixed_point_words = VGroup(
             TextMobject("Fixed point of"),
-            TexMobject(
-                "f(x) = 1 + \\frac{1}{x}",
-                tex_to_color_map={"x": YELLOW}
-            )
-        )
+            TexMobject("f(x) = 1 + \\frac{1}{x}",
+                       tex_to_color_map={"x": YELLOW}))
         fixed_point_words.arrange(DOWN)
 
         self.play(Write(x), Write(equals))
@@ -2137,31 +2018,17 @@ class IntroduceContinuedFractionPuzzle(PiCreatureScene):
         self.play(ShowCreation(inner_frac_rect))
         self.wait()
         self.play(
-            inner_frac_group.scale, 0.75,
-            inner_frac_group.center,
+            inner_frac_group.scale, 0.75, inner_frac_group.center,
             inner_frac_group.to_edge, LEFT,
-            ReplacementTransform(
-                x.copy(), new_x,
-                path_arc=-90 * DEGREES
-            )
-        )
+            ReplacementTransform(x.copy(), new_x, path_arc=-90 * DEGREES))
         self.wait()
-        self.play(
-            frac[3].stretch, 0.1, 0, {"about_edge": RIGHT},
-            MaintainPositionRelativeTo(
-                VGroup(frac[2], new_x), frac[3]
-            ),
-            UpdateFromFunc(
-                frac[:2], lambda m: m.next_to(frac[3], LEFT)
-            )
-        )
+        self.play(frac[3].stretch, 0.1, 0, {"about_edge": RIGHT},
+                  MaintainPositionRelativeTo(VGroup(frac[2], new_x), frac[3]),
+                  UpdateFromFunc(frac[:2], lambda m: m.next_to(frac[3], LEFT)))
         self.wait()
         fixed_point_words.next_to(VGroup(frac[0], xs), DOWN, LARGE_BUFF)
-        self.play(
-            Write(fixed_point_words),
-            morty.change, "hooray",
-            friend.change, "happy"
-        )
+        self.play(Write(fixed_point_words), morty.change, "hooray",
+                  friend.change, "happy")
         self.wait(3)
 
 
@@ -2188,7 +2055,10 @@ class GraphOnePlusOneOverX(GraphScene):
 
     def add_title(self):
         title = self.title = TexMobject(
-            "\\text{Solve: }", "1 + \\frac{1}{x}", "=", "x",
+            "\\text{Solve: }",
+            "1 + \\frac{1}{x}",
+            "=",
+            "x",
         )
         title.set_color_by_tex("x", self.identity_graph_color, substring=False)
         title.set_color_by_tex("frac", self.func_graph_color)
@@ -2198,9 +2068,11 @@ class GraphOnePlusOneOverX(GraphScene):
     def setup_axes(self):
         GraphScene.setup_axes(self)
         step = 2
-        self.x_axis.add_numbers(*list(range(-6, 0, step)) + list(range(step, 7, step)))
+        self.x_axis.add_numbers(*list(range(-6, 0, step)) +
+                                list(range(step, 7, step)))
         self.y_axis.label_direction = RIGHT
-        self.y_axis.add_numbers(*list(range(-2, 0, step)) + list(range(step, 4, step)))
+        self.y_axis.add_numbers(*list(range(-2, 0, step)) +
+                                list(range(step, 4, step)))
 
     def draw_graphs(self, animate=True):
         lower_func_graph, upper_func_graph = func_graph = VGroup(*[
@@ -2209,34 +2081,33 @@ class GraphOnePlusOneOverX(GraphScene):
                 x_min=x_min,
                 x_max=x_max,
                 color=self.func_graph_color,
-            )
-            for x_min, x_max in [(-10, -0.1), (0.1, 10)]
+            ) for x_min, x_max in [(-10, -0.1), (0.1, 10)]
         ])
         func_graph.label = self.get_graph_label(
-            upper_func_graph, "y = 1 + \\frac{1}{x}",
-            x_val=6, direction=UP,
+            upper_func_graph,
+            "y = 1 + \\frac{1}{x}",
+            x_val=6,
+            direction=UP,
         )
 
-        identity_graph = self.get_graph(
-            lambda x: x, color=self.identity_graph_color
-        )
-        identity_graph.label = self.get_graph_label(
-            identity_graph, "y = x",
-            x_val=3, direction=UL, buff=SMALL_BUFF
-        )
+        identity_graph = self.get_graph(lambda x: x,
+                                        color=self.identity_graph_color)
+        identity_graph.label = self.get_graph_label(identity_graph,
+                                                    "y = x",
+                                                    x_val=3,
+                                                    direction=UL,
+                                                    buff=SMALL_BUFF)
 
         if animate:
             for graph in func_graph, identity_graph:
-                self.play(
-                    ShowCreation(graph),
-                    Write(graph.label),
-                    run_time=2
-                )
+                self.play(ShowCreation(graph), Write(graph.label), run_time=2)
             self.wait()
         else:
             self.add(
-                func_graph, func_graph.label,
-                identity_graph, identity_graph.label,
+                func_graph,
+                func_graph.label,
+                identity_graph,
+                identity_graph.label,
             )
 
         self.func_graph = func_graph
@@ -2248,19 +2119,15 @@ class GraphOnePlusOneOverX(GraphScene):
 
         lines = VGroup()
         for num in phi, phi_bro:
-            line = DashedLine(
-                self.coords_to_point(num, 0),
-                self.coords_to_point(num, num),
-                color=WHITE
-            )
+            line = DashedLine(self.coords_to_point(num, 0),
+                              self.coords_to_point(num, num),
+                              color=WHITE)
             line_copy = line.copy()
             line_copy.set_color(YELLOW)
             line.fade(0.5)
-            line_anim = ShowCreationThenDestruction(
-                line_copy,
-                lag_ratio=0.5,
-                run_time=2
-            )
+            line_anim = ShowCreationThenDestruction(line_copy,
+                                                    lag_ratio=0.5,
+                                                    run_time=2)
             cycle_animation(line_anim)
             lines.add(line)
 
@@ -2280,10 +2147,8 @@ class GraphOnePlusOneOverX(GraphScene):
 
         phi_decimal = DecimalNumber(phi, **decimal_kwargs)
         phi_decimal.next_to(phi_line, DOWN, LARGE_BUFF)
-        phi_arrow = Arrow(
-            phi_decimal[:4].get_top(), phi_line.get_bottom(),
-            **arrow_kwargs
-        )
+        phi_arrow = Arrow(phi_decimal[:4].get_top(), phi_line.get_bottom(),
+                          **arrow_kwargs)
         phi_label = TexMobject("=", "\\varphi")
         phi_label.next_to(phi_decimal, RIGHT)
         phi_label.set_color_by_tex("\\varphi", YELLOW)
@@ -2291,20 +2156,16 @@ class GraphOnePlusOneOverX(GraphScene):
         phi_bro_decimal = DecimalNumber(phi_bro, **decimal_kwargs)
         phi_bro_decimal.next_to(phi_bro_line, UP, LARGE_BUFF)
         phi_bro_decimal.shift(0.5 * LEFT)
-        phi_bro_arrow = Arrow(
-            phi_bro_decimal[:6].get_bottom(), phi_bro_line.get_top(),
-            **arrow_kwargs
-        )
+        phi_bro_arrow = Arrow(phi_bro_decimal[:6].get_bottom(),
+                              phi_bro_line.get_top(), **arrow_kwargs)
 
-        brother_words = TextMobject(
-            "$\\varphi$'s little brother",
-            tex_to_color_map={"$\\varphi$": YELLOW},
-            arg_separator=""
-        )
-        brother_words.next_to(
-            phi_bro_decimal[-2], UP, buff=MED_SMALL_BUFF,
-            aligned_edge=RIGHT
-        )
+        brother_words = TextMobject("$\\varphi$'s little brother",
+                                    tex_to_color_map={"$\\varphi$": YELLOW},
+                                    arg_separator="")
+        brother_words.next_to(phi_bro_decimal[-2],
+                              UP,
+                              buff=MED_SMALL_BUFF,
+                              aligned_edge=RIGHT)
 
         self.add(phi_line.continual_anim)
         self.play(ShowCreation(phi_line))
@@ -2349,46 +2210,56 @@ class ThinkAboutWithRepeatedApplication(IntroduceContinuedFractionPuzzle):
         frac = self.frac
         rhs = self.neg_one_over_phi
         plusses = frac[1::4]
-        plus_rects = VGroup(*[
-            SurroundingRectangle(plus, buff=0) for plus in plusses
-        ])
+        plus_rects = VGroup(
+            *[SurroundingRectangle(plus, buff=0) for plus in plusses])
         plus_rects.set_color(PINK)
 
         self.play(FadeIn(randy))
         self.play(
             PiCreatureSays(
-                randy, "Obviously not!",
-                bubble_kwargs={"width": 3, "height": 2},
+                randy,
+                "Obviously not!",
+                bubble_kwargs={
+                    "width": 3,
+                    "height": 2
+                },
                 target_mode="angry",
                 run_time=1,
-            ),
-            morty.change, "guilty",
-            friend.change, "hesitant"
-        )
+            ), morty.change, "guilty", friend.change, "hesitant")
         self.wait()
         self.play(
             Animation(frac),
             RemovePiCreatureBubble(randy, target_mode="sassy"),
-            morty.change, "confused",
-            friend.change, "confused",
+            morty.change,
+            "confused",
+            friend.change,
+            "confused",
         )
-        self.play(LaggedStartMap(
-            ShowCreationThenDestruction, plus_rects,
-            run_time=2,
-            lag_ratio=0.35,
-        ))
+        self.play(
+            LaggedStartMap(
+                ShowCreationThenDestruction,
+                plus_rects,
+                run_time=2,
+                lag_ratio=0.35,
+            ))
         self.play(WiggleOutThenIn(rhs))
         self.wait(2)
         self.play(
-            frac.scale, 0.7,
-            frac.to_corner, UL,
+            frac.scale,
+            0.7,
+            frac.to_corner,
+            UL,
             FadeOut(self.equals),
-            rhs.scale, 0.5,
+            rhs.scale,
+            0.5,
             rhs.center,
-            rhs.to_edge, LEFT,
+            rhs.to_edge,
+            LEFT,
             FadeOut(randy),
-            morty.change, "pondering",
-            friend.change, "pondering",
+            morty.change,
+            "pondering",
+            friend.change,
+            "pondering",
         )
 
     def ask_about_fraction(self):
@@ -2400,16 +2271,13 @@ class ThinkAboutWithRepeatedApplication(IntroduceContinuedFractionPuzzle):
         question.next_to(arrow, RIGHT)
 
         self.play(
-            LaggedStartMap(FadeIn, question, run_time=1),
-            GrowArrow(arrow),
-            LaggedStartMap(
-                ApplyMethod, frac,
-                lambda m: (m.set_color, RED),
-                rate_func=there_and_back,
-                lag_ratio=0.2,
-                run_time=2
-            )
-        )
+            LaggedStartMap(FadeIn, question, run_time=1), GrowArrow(arrow),
+            LaggedStartMap(ApplyMethod,
+                           frac,
+                           lambda m: (m.set_color, RED),
+                           rate_func=there_and_back,
+                           lag_ratio=0.2,
+                           run_time=2))
         self.wait()
         self.play(FadeOut(question), FadeOut(arrow))
 
@@ -2424,7 +2292,8 @@ class ThinkAboutWithRepeatedApplication(IntroduceContinuedFractionPuzzle):
         for n_terms in range(5):
             lhs = get_nested_f(n_terms, arg="c")
             equals = TexMobject("=")
-            rhs = get_nested_one_plus_one_over_x(n_terms, bottom_term=value_str)
+            rhs = get_nested_one_plus_one_over_x(n_terms,
+                                                 bottom_term=value_str)
             equals.next_to(rhs[0], LEFT)
             lhs.next_to(equals, LEFT)
             lines.add(VGroup(lhs, equals, rhs))
@@ -2434,7 +2303,8 @@ class ThinkAboutWithRepeatedApplication(IntroduceContinuedFractionPuzzle):
             value_labels.add(value_label)
 
         lines.arrange(
-            DOWN, buff=MED_LARGE_BUFF,
+            DOWN,
+            buff=MED_LARGE_BUFF,
         )
         VGroup(lines, value_labels).scale(0.8)
         lines.to_corner(UR)
@@ -2457,10 +2327,7 @@ class ThinkAboutWithRepeatedApplication(IntroduceContinuedFractionPuzzle):
         q_marks = TexMobject("???")
         q_marks.next_to(arrow, DOWN)
 
-        self.play(
-            FadeInFromDown(top_line),
-            FadeInFromDown(value_labels[0])
-        )
+        self.play(FadeInFromDown(top_line), FadeInFromDown(value_labels[0]))
         for n in range(1, len(lines)):
             new_line = lines[n]
             last_line = lines[n - 1]
@@ -2471,12 +2338,13 @@ class ThinkAboutWithRepeatedApplication(IntroduceContinuedFractionPuzzle):
                     line[0][-1],
                     line[1],
                     line[2][:4],
-                )
-                for line in (lines[1], new_line)
+                ) for line in (lines[1], new_line)
             ]
-            anims = [ReplacementTransform(
-                mover.copy().fade(1), target, path_arc=30 * DEGREES
-            )]
+            anims = [
+                ReplacementTransform(mover.copy().fade(1),
+                                     target,
+                                     path_arc=30 * DEGREES)
+            ]
             if n == 4:
                 morty.generate_target()
                 morty.target.change("horrified")
@@ -2485,20 +2353,12 @@ class ThinkAboutWithRepeatedApplication(IntroduceContinuedFractionPuzzle):
             self.play(*anims)
             self.wait()
             self.play(
-                ReplacementTransform(
-                    last_line[0].copy(), new_line[0][1:-1]
-                ),
-                ReplacementTransform(
-                    last_line[2].copy(), new_line[2][4:]
-                ),
+                ReplacementTransform(last_line[0].copy(), new_line[0][1:-1]),
+                ReplacementTransform(last_line[2].copy(), new_line[2][4:]),
             )
             self.play(FadeIn(value_label))
             self.wait()
-        self.play(
-            GrowArrow(arrow),
-            Write(q_marks),
-            friend.change, "confused"
-        )
+        self.play(GrowArrow(arrow), Write(q_marks), friend.change, "confused")
         self.wait(3)
 
         self.top_line = VGroup(lines[0], value_labels[0])
@@ -2516,17 +2376,12 @@ class RepeatedApplicationWithPhiBro(ThinkAboutWithRepeatedApplication):
         self.obviously_not()
         self.revert_to_original_skipping_status()
 
-        self.plug_func_into_self(
-            value=self.value,
-            value_str=self.value_str
-        )
+        self.plug_func_into_self(value=self.value, value_str=self.value_str)
 
 
-class RepeatedApplicationWithNegativeSeed(RepeatedApplicationWithPhiBro, MovingCameraScene):
-    CONFIG = {
-        "value": -0.65,
-        "value_str": "-0.65"
-    }
+class RepeatedApplicationWithNegativeSeed(RepeatedApplicationWithPhiBro,
+                                          MovingCameraScene):
+    CONFIG = {"value": -0.65, "value_str": "-0.65"}
 
     def setup(self):
         MovingCameraScene.setup(self)
@@ -2540,16 +2395,11 @@ class RepeatedApplicationWithNegativeSeed(RepeatedApplicationWithPhiBro, MovingC
         question.match_color(rect)
         question.next_to(rect, UP)
         self.play(ShowCreation(rect))
-        self.play(
-            Write(question),
-            self.camera.frame.set_height, FRAME_HEIGHT + 1.5
-        )
+        self.play(Write(question), self.camera.frame.set_height,
+                  FRAME_HEIGHT + 1.5)
         self.wait()
-        self.play(
-            FadeOut(question),
-            FadeOut(rect),
-            self.camera.frame.set_height, FRAME_HEIGHT
-        )
+        self.play(FadeOut(question), FadeOut(rect),
+                  self.camera.frame.set_height, FRAME_HEIGHT)
 
 
 class ShowRepeatedApplication(Scene):
@@ -2562,11 +2412,9 @@ class ShowRepeatedApplication(Scene):
         self.show_repeated_iteration()
 
     def add_func_title(self):
-        title = self.title = VGroup(
-            TexMobject("f(", "x", ")"),
-            TexMobject("="),
-            get_nested_one_plus_one_over_x(1)
-        )
+        title = self.title = VGroup(TexMobject("f(", "x", ")"),
+                                    TexMobject("="),
+                                    get_nested_one_plus_one_over_x(1))
         title.arrange(RIGHT)
         title.to_corner(UL)
         title.set_color(self.title_color)
@@ -2602,10 +2450,7 @@ class ShowRepeatedApplication(Scene):
             arrow = get_arrow()
             line.add(arrow)
 
-            new_term = DecimalNumber(
-                func(last_term.number),
-                **decimal_kwargs
-            )
+            new_term = DecimalNumber(func(last_term.number), **decimal_kwargs)
             new_term.next_to(arrow[0], RIGHT)
             last_term = new_term
             line.add(new_term)
@@ -2622,17 +2467,14 @@ class ShowRepeatedApplication(Scene):
         ])
         rects.set_stroke(BLUE, 2)
 
-        braces = VGroup(*[
-            Brace(rect, DOWN, buff=SMALL_BUFF)
-            for rect in rects
-        ])
+        braces = VGroup(
+            *[Brace(rect, DOWN, buff=SMALL_BUFF) for rect in rects])
         braces.set_color_by_gradient(GREEN, YELLOW)
         brace_texts = VGroup(*[
             brace.get_text(text).scale(0.75, about_edge=UP)
             for brace, text in zip(braces, [
                 "Arbitrary \\\\ starting \\\\ value",
-                "Repeatedly apply $f(x)$",
-                "$\\varphi$ \\\\ ``Golden ratio''"
+                "Repeatedly apply $f(x)$", "$\\varphi$ \\\\ ``Golden ratio''"
             ])
         ])
         var_phi_mob = brace_texts[2][0]
@@ -2641,10 +2483,7 @@ class ShowRepeatedApplication(Scene):
 
         # Animations
         self.add(line[0])
-        self.play(
-            GrowFromCenter(braces[0]),
-            Write(brace_texts[0])
-        )
+        self.play(GrowFromCenter(braces[0]), Write(brace_texts[0]))
         self.wait()
         self.play(
             GrowFromEdge(line[1], LEFT),
@@ -2712,9 +2551,7 @@ class NumericalPlayOnNumberLineFromOne(Scene):
 
     def add_phi_label(self):
         number_line = self.number_line
-        phi_point = number_line.number_to_point(
-            (1 + np.sqrt(5)) / 2
-        )
+        phi_point = number_line.number_to_point((1 + np.sqrt(5)) / 2)
         phi_dot = Dot(phi_point, color=YELLOW)
         arrow = Vector(DL)
         arrow.next_to(phi_point, UR, SMALL_BUFF)
@@ -2742,15 +2579,9 @@ class NumericalPlayOnNumberLineFromOne(Scene):
         start_here.next_to(arrow.get_start(), UP, SMALL_BUFF)
         start_here.match_color(dot)
 
-        self.play(
-            FadeIn(start_here),
-            GrowArrow(arrow),
-            GrowFromPoint(dot, arrow.get_start())
-        )
-        self.play(
-            FadeOut(start_here),
-            FadeOut(arrow)
-        )
+        self.play(FadeIn(start_here), GrowArrow(arrow),
+                  GrowFromPoint(dot, arrow.get_start()))
+        self.play(FadeOut(start_here), FadeOut(arrow))
         self.wait()
         for x in range(self.n_jumps):
             new_value = self.func(value)
@@ -2759,17 +2590,10 @@ class NumericalPlayOnNumberLineFromOne(Scene):
                 path_arc = -120 * DEGREES
             else:
                 path_arc = -120 * DEGREES
-            arc = Line(
-                point, new_point,
-                path_arc=path_arc,
-                buff=SMALL_BUFF
-            )
+            arc = Line(point, new_point, path_arc=path_arc, buff=SMALL_BUFF)
             self.play(
                 ShowCreationThenDestruction(arc, run_time=1.5),
-                ApplyMethod(
-                    dot.move_to, new_point,
-                    path_arc=path_arc
-                ),
+                ApplyMethod(dot.move_to, new_point, path_arc=path_arc),
             )
             self.wait(0.5)
 
@@ -2803,9 +2627,7 @@ class NumericalPlayOnNumberLineFromMinusPhi(NumericalPlayOnNumberLineFromOne):
     def add_phi_label(self):
         NumericalPlayOnNumberLineFromOne.add_phi_label(self)
         number_line = self.number_line
-        new_point = number_line.number_to_point(
-            (1 - np.sqrt(5)) / 2
-        )
+        new_point = number_line.number_to_point((1 - np.sqrt(5)) / 2)
         arrow = Vector(DR)
         arrow.next_to(new_point, UL, SMALL_BUFF)
         arrow.set_color(RED)
@@ -2846,11 +2668,7 @@ class RepeatedApplicationGraphically(GraphOnePlusOneOverX, PiCreatureScene):
             self.n_mode_changes += 1
         if self.n_mode_changes % 3 != 0:
             return randy.get_mode()
-        return random.choice([
-            "confused",
-            "erm",
-            "maybe"
-        ])
+        return random.choice(["confused", "erm", "maybe"])
 
     def draw_spider_web(self):
         randy = self.pi_creature
@@ -2875,11 +2693,8 @@ class RepeatedApplicationGraphically(GraphOnePlusOneOverX, PiCreatureScene):
 
             for line in v_line, h_line:
                 line_end = line.get_end()
-                self.play(
-                    ShowCreation(line),
-                    dot.move_to, line_end,
-                    randy.change, self.get_new_randy_mode()
-                )
+                self.play(ShowCreation(line), dot.move_to, line_end,
+                          randy.change, self.get_new_randy_mode())
                 self.wait()
 
             if n < self.n_times_to_show_identity_property:
@@ -2890,9 +2705,7 @@ class RepeatedApplicationGraphically(GraphOnePlusOneOverX, PiCreatureScene):
                     for point in (x_point, y_point)
                 ])
                 lines.set_color(YELLOW)
-                self.play(ShowCreationThenDestruction(
-                    lines, run_time=2
-                ))
+                self.play(ShowCreationThenDestruction(lines, run_time=2))
                 self.wait(0.25)
 
 
@@ -2906,10 +2719,7 @@ class RepeatedApplicationGraphicallyFromNegPhi(RepeatedApplicationGraphically):
 
 class LetsSwitchToTheTransformationalView(TeacherStudentsScene):
     def construct(self):
-        self.teacher_says(
-            "Lose the \\\\ graphs!",
-            target_mode="hooray"
-        )
+        self.teacher_says("Lose the \\\\ graphs!", target_mode="hooray")
         self.change_student_modes("hooray", "erm", "surprised")
         self.wait(5)
 
@@ -2956,18 +2766,13 @@ class AnalyzeFunctionWithTransformations(NumberlineTransformationScene):
         sample_dots.set_stroke(BLACK, 0.5)
         sample_points = list(map(Mobject.get_center, sample_dots))
 
-        self.play(LaggedStartMap(
-            FadeInFrom, sample_dots,
-            lambda m: (m, UP)
-        ))
+        self.play(LaggedStartMap(FadeInFrom, sample_dots, lambda m: (m, UP)))
         self.show_arrows(sample_points)
         self.wait()
         for x in range(self.num_initial_applications):
-            self.apply_function(
-                self.func,
-                apply_function_to_number_line=False,
-                sample_dots=sample_dots
-            )
+            self.apply_function(self.func,
+                                apply_function_to_number_line=False,
+                                sample_dots=sample_dots)
             self.wait()
 
             shift_vect = input_zero_point - output_zero_point
@@ -2980,9 +2785,12 @@ class AnalyzeFunctionWithTransformations(NumberlineTransformationScene):
             self.remove(self.output_line)
             self.play(
                 ReplacementTransform(lower_output_line, self.output_line),
-                upper_output_line.shift, shift_vect,
-                upper_output_line.fade, 1,
-                sample_dots.shift, shift_vect,
+                upper_output_line.shift,
+                shift_vect,
+                upper_output_line.fade,
+                1,
+                sample_dots.shift,
+                shift_vect,
             )
             self.remove(upper_output_line)
             self.wait()
@@ -2994,14 +2802,10 @@ class AnalyzeFunctionWithTransformations(NumberlineTransformationScene):
         alt_point_func = self.number_func_to_point_func(lambda x: 1.0 / x)
         arrows, alt_arrows = [
             VGroup(*[
-                Arrow(
-                    point, func(point), buff=SMALL_BUFF,
-                    tip_length=0.15
-                )
+                Arrow(point, func(point), buff=SMALL_BUFF, tip_length=0.15)
                 for point in sample_points
                 if get_norm(point - input_zero_point) > 0.3
-            ])
-            for func in (point_func, alt_point_func)
+            ]) for func in (point_func, alt_point_func)
         ]
         for group in arrows, alt_arrows:
             group.set_stroke(WHITE, 0.5)
@@ -3015,11 +2819,13 @@ class AnalyzeFunctionWithTransformations(NumberlineTransformationScene):
 
         self.play(LaggedStartMap(GrowArrow, arrows))
         self.wait()
-        self.play(LaggedStartMap(
-            ApplyMethod, arrows,
-            lambda a: (a.scale, 0.7),
-            rate_func=there_and_back,
-        ))
+        self.play(
+            LaggedStartMap(
+                ApplyMethod,
+                arrows,
+                lambda a: (a.scale, 0.7),
+                rate_func=there_and_back,
+            ))
         self.wait()
         self.play(
             Transform(arrows, alt_arrows),
@@ -3059,7 +2865,8 @@ class AnalyzeFunctionWithTransformations(NumberlineTransformationScene):
             "tip_length": 0.2,
         }
         phi_arrow = Arrow(phi_tick, output_phi_point, **arrow_kwargs)
-        phi_bro_arrow = Arrow(phi_bro_tick, output_phi_bro_point, **arrow_kwargs)
+        phi_bro_arrow = Arrow(phi_bro_tick, output_phi_bro_point,
+                              **arrow_kwargs)
 
         def fade_arrow(arrow):
             # arrow.set_stroke(DARK_GREY, 0.5)
@@ -3069,36 +2876,25 @@ class AnalyzeFunctionWithTransformations(NumberlineTransformationScene):
             return arrow
 
         self.play(
-            LaggedStartMap(
-                ApplyFunction, self.all_arrows,
-                lambda a: (fade_arrow, a)
-            ),
+            LaggedStartMap(ApplyFunction, self.all_arrows, lambda a:
+                           (fade_arrow, a)),
             FadeIn(phi_arrow),
             FadeIn(phi_bro_arrow),
         )
-        self.play(
-            Write(phi_label),
-            GrowFromCenter(phi_tick)
-        )
-        self.play(
-            Write(phi_bro_label),
-            GrowFromCenter(phi_bro_tick)
-        )
+        self.play(Write(phi_label), GrowFromCenter(phi_tick))
+        self.play(Write(phi_bro_label), GrowFromCenter(phi_bro_tick))
 
-        self.set_variables_as_attrs(
-            input_phi_point, output_phi_point,
-            input_phi_bro_point, output_phi_bro_point,
-            phi_label, phi_tick,
-            phi_bro_label, phi_bro_tick,
-            phi_arrow, phi_bro_arrow
-        )
+        self.set_variables_as_attrs(input_phi_point, output_phi_point,
+                                    input_phi_bro_point, output_phi_bro_point,
+                                    phi_label, phi_tick, phi_bro_label,
+                                    phi_bro_tick, phi_arrow, phi_bro_arrow)
 
     def zoom_in_on_phi(self):
         phi = (1 + np.sqrt(5)) / 2
         # phi_point = self.get_input_point(phi)
-        local_sample_dots = self.get_local_sample_dots(
-            phi, dot_radius=0.005, sample_radius=1
-        )
+        local_sample_dots = self.get_local_sample_dots(phi,
+                                                       dot_radius=0.005,
+                                                       sample_radius=1)
         local_coordinate_values = [1.55, 1.6, 1.65, 1.7]
 
         # zcbr = self.zoomed_camera_background_rectangle
@@ -3106,24 +2902,21 @@ class AnalyzeFunctionWithTransformations(NumberlineTransformationScene):
         zcbr_group.add(self.phi_tick)
 
         title = self.title
-        deriv_text = TexMobject(
-            "|", "\\frac{df}{dx}(\\varphi)", "|", "< 1",
-            tex_to_color_map={"\\varphi": YELLOW}
-        )
-        deriv_text.get_parts_by_tex("|").match_height(
-            deriv_text, stretch=True
-        )
+        deriv_text = TexMobject("|",
+                                "\\frac{df}{dx}(\\varphi)",
+                                "|",
+                                "< 1",
+                                tex_to_color_map={"\\varphi": YELLOW})
+        deriv_text.get_parts_by_tex("|").match_height(deriv_text, stretch=True)
         deriv_text.move_to(title, UP)
         approx_value = TexMobject("\\approx |%.2f|" % (-1 / phi**2))
         approx_value.move_to(deriv_text)
         deriv_text_lhs = deriv_text[:-1]
         deriv_text_rhs = deriv_text[-1]
 
-        self.zoom_in_on_input(
-            phi,
-            local_sample_dots=local_sample_dots,
-            local_coordinate_values=local_coordinate_values
-        )
+        self.zoom_in_on_input(phi,
+                              local_sample_dots=local_sample_dots,
+                              local_coordinate_values=local_coordinate_values)
         self.wait()
         self.apply_function(
             self.func,
@@ -3132,30 +2925,21 @@ class AnalyzeFunctionWithTransformations(NumberlineTransformationScene):
             target_coordinate_values=local_coordinate_values,
         )
         self.wait()
-        self.play(
-            FadeInFromDown(deriv_text_lhs),
-            FadeInFromDown(deriv_text_rhs),
-            title.to_corner, UL
-        )
+        self.play(FadeInFromDown(deriv_text_lhs),
+                  FadeInFromDown(deriv_text_rhs), title.to_corner, UL)
         self.wait()
-        self.play(
-            deriv_text_lhs.next_to, approx_value, LEFT,
-            deriv_text_rhs.next_to, approx_value, RIGHT,
-            FadeIn(approx_value)
-        )
+        self.play(deriv_text_lhs.next_to, approx_value, LEFT,
+                  deriv_text_rhs.next_to, approx_value, RIGHT,
+                  FadeIn(approx_value))
         self.wait()
         for n in range(self.num_repeated_local_applications):
-            self.apply_function(
-                self.func,
-                apply_function_to_number_line=False,
-                local_sample_dots=local_sample_dots,
-                path_arc=60 * DEGREES,
-                run_time=2
-            )
+            self.apply_function(self.func,
+                                apply_function_to_number_line=False,
+                                local_sample_dots=local_sample_dots,
+                                path_arc=60 * DEGREES,
+                                run_time=2)
 
-        self.deriv_text = VGroup(
-            deriv_text_lhs, deriv_text_rhs, approx_value
-        )
+        self.deriv_text = VGroup(deriv_text_lhs, deriv_text_rhs, approx_value)
 
     def zoom_in_on_phi_bro(self):
         zcbr = self.zoomed_camera_background_rectangle
@@ -3169,18 +2953,16 @@ class AnalyzeFunctionWithTransformations(NumberlineTransformationScene):
 
         deriv_text = TexMobject(
             "\\left| \\frac{df}{dx}\\left(\\frac{-1}{\\varphi}\\right) \\right|",
-            "\\approx |%.2f|" % (-1 / (phi_bro**2)),
-            "> 1"
-        )
+            "\\approx |%.2f|" % (-1 / (phi_bro**2)), "> 1")
         deriv_text.move_to(self.deriv_text, UL)
         deriv_text[0][10:14].set_color(YELLOW)
 
-        self.play(
-            zoomed_frame.set_height, 4,
-            zoomed_frame.center,
-            self.deriv_text.fade, 1,
-            run_time=2
-        )
+        self.play(zoomed_frame.set_height,
+                  4,
+                  zoomed_frame.center,
+                  self.deriv_text.fade,
+                  1,
+                  run_time=2)
         self.wait()
         zcbr.set_fill(opacity=0)
         self.zoom_in_on_input(
@@ -3241,11 +3023,15 @@ class StabilityAndInstability(AnalyzeFunctionWithTransformations):
 
         arrow_groups = VGroup()
         for point in phi_point, phi_bro_point:
-            arrows = VGroup(*[a for a in self.all_arrows if get_norm(a.get_start() - point) < 0.75]).copy()
+            arrows = VGroup(*[
+                a for a in self.all_arrows
+                if get_norm(a.get_start() - point) < 0.75
+            ]).copy()
             arrows.set_fill(PINK, 1)
             arrows.set_stroke(PINK, 3)
             arrows.second_anim = LaggedStartMap(
-                ApplyMethod, arrows,
+                ApplyMethod,
+                arrows,
                 lambda m: (m.set_color, YELLOW),
                 rate_func=there_and_back_with_pause,
                 lag_ratio=0.7,
@@ -3283,13 +3069,10 @@ class StabilityAndInstability(AnalyzeFunctionWithTransformations):
 
         deriv_labels = VGroup()
         for char, label in zip("<>", labels):
-            deriv_label = TexMobject(
-                "\\big|", "\\frac{df}{dx}(", "x", ")", "\\big|",
-                char, "1"
-            )
-            deriv_label.get_parts_by_tex("\\big|").match_height(
-                deriv_label, stretch=True
-            )
+            deriv_label = TexMobject("\\big|", "\\frac{df}{dx}(", "x", ")",
+                                     "\\big|", char, "1")
+            deriv_label.get_parts_by_tex("\\big|").match_height(deriv_label,
+                                                                stretch=True)
             deriv_label.set_color_by_tex("x", YELLOW, substring=False)
             deriv_label.next_to(label, UP)
             deriv_labels.add(deriv_label)
@@ -3327,10 +3110,8 @@ class StaticAlgebraicObject(Scene):
         frac.to_edge(DOWN)
         frac.set_stroke(WHITE, width=0.5)
 
-        title = TexMobject(
-            "\\infty \\ne \\lim",
-            tex_to_color_map={"\\ne": RED}
-        )
+        title = TexMobject("\\infty \\ne \\lim",
+                           tex_to_color_map={"\\ne": RED})
         title.scale(1.5)
         title.to_edge(UP)
 
@@ -3338,24 +3119,21 @@ class StaticAlgebraicObject(Scene):
         polynomial.move_to(title)
 
         self.add(title)
-        self.play(LaggedStartMap(
-            GrowFromCenter, frac,
-            lag_ratio=0.1,
-            run_time=3
-        ))
+        self.play(
+            LaggedStartMap(GrowFromCenter, frac, lag_ratio=0.1, run_time=3))
         self.wait()
         factor = 1.1
         self.play(frac.scale, factor, run_time=0.5)
         self.play(
-            frac.scale, 1 / factor,
-            frac.set_color, LIGHT_GREY,
-            run_time=0.5, rate_func=lambda t: t**5,
+            frac.scale,
+            1 / factor,
+            frac.set_color,
+            LIGHT_GREY,
+            run_time=0.5,
+            rate_func=lambda t: t**5,
         )
         self.wait()
-        self.play(
-            FadeOut(title),
-            FadeIn(polynomial)
-        )
+        self.play(FadeOut(title), FadeIn(polynomial))
         self.wait(2)
 
 
@@ -3365,26 +3143,19 @@ class NotBetterThanGraphs(TeacherStudentsScene):
             "Um, yeah, I'll stick \\\\ with graphs thanks",
             target_mode="sassy",
         )
-        self.play(
-            self.teacher.change, "guilty",
-            self.get_student_changes("sad", "sassy", "hesitant")
-        )
+        self.play(self.teacher.change, "guilty",
+                  self.get_student_changes("sad", "sassy", "hesitant"))
         self.wait(2)
-        self.play(
-            RemovePiCreatureBubble(self.students[1]),
-            self.teacher.change, "raise_right_hand"
-        )
-        self.change_all_student_modes(
-            "confused", look_at_arg=self.screen
-        )
+        self.play(RemovePiCreatureBubble(self.students[1]),
+                  self.teacher.change, "raise_right_hand")
+        self.change_all_student_modes("confused", look_at_arg=self.screen)
         self.wait(3)
-        self.teacher_says(
-            "You must flex those \\\\ conceptual muscles",
-            added_anims=[self.get_student_changes(
-                *3 * ["thinking"],
-                look_at_arg=self.teacher.eyes
-            )]
-        )
+        self.teacher_says("You must flex those \\\\ conceptual muscles",
+                          added_anims=[
+                              self.get_student_changes(
+                                  *3 * ["thinking"],
+                                  look_at_arg=self.teacher.eyes)
+                          ])
         self.wait(3)
 
 
@@ -3399,8 +3170,10 @@ class WhatComesAfterWrapper(Wrapper):
 
         self.play(
             FadeInFromDown(new_title),
-            self.title.shift, UP,
-            self.title.fade, 1,
+            self.title.shift,
+            UP,
+            self.title.fade,
+            1,
         )
         self.wait(3)
 
@@ -3416,10 +3189,8 @@ class TopicsAfterSingleVariable(PiCreatureScene, MoreTopics):
         self.zero_in_on_complex_analysis()
 
     def create_pi_creatures(self):
-        creatures = VGroup(*[
-            PiCreature(color=color)
-            for color in [BLUE_E, BLUE_C, BLUE_D]
-        ])
+        creatures = VGroup(
+            *[PiCreature(color=color) for color in [BLUE_E, BLUE_C, BLUE_D]])
         creatures.arrange(RIGHT, buff=LARGE_BUFF)
         creatures.scale(0.5)
         creatures.to_corner(DR)
@@ -3442,17 +3213,13 @@ class TopicsAfterSingleVariable(PiCreatureScene, MoreTopics):
         self.other_topics.remove(complex_analysis)
 
         self.play(
-            complex_analysis.scale, 1.25,
-            complex_analysis.center,
+            complex_analysis.scale, 1.25, complex_analysis.center,
             complex_analysis.to_edge, UP,
             LaggedStartMap(FadeOut, self.other_topics),
-            LaggedStartMap(FadeOut, self.lines),
-            FadeOut(self.calculus),
-            *[
+            LaggedStartMap(FadeOut, self.lines), FadeOut(self.calculus), *[
                 ApplyMethod(creature.change, "pondering")
                 for creature in creatures
-            ]
-        )
+            ])
         self.wait(4)
 
 
@@ -3470,11 +3237,7 @@ class ShowJacobianZoomedIn(LinearTransformationScene, ZoomedScene):
     def construct(self):
         def example_function(point):
             x, y, z = point
-            return np.array([
-                x + np.sin(y),
-                y + np.sin(x),
-                0
-            ])
+            return np.array([x + np.sin(y), y + np.sin(x), 0])
 
         zoomed_camera = self.zoomed_camera
         zoomed_display = self.zoomed_display
@@ -3489,9 +3252,7 @@ class ShowJacobianZoomedIn(LinearTransformationScene, ZoomedScene):
         )
         self.add_foreground_mobject(zd_rect)
         zd_rect.anim = UpdateFromFunc(
-            zd_rect,
-            lambda rect: rect.replace(zoomed_display).scale(1.1)
-        )
+            zd_rect, lambda rect: rect.replace(zoomed_display).scale(1.1))
         zd_rect.next_to(FRAME_HEIGHT * UP, UP)
 
         tiny_grid = NumberPlane(
@@ -3510,25 +3271,19 @@ class ShowJacobianZoomedIn(LinearTransformationScene, ZoomedScene):
 
         self.play(self.get_zoom_in_animation())
         self.activate_zooming()
-        self.play(
-            self.get_zoomed_display_pop_out_animation(),
-            zd_rect.anim
-        )
-        self.play(
-            ShowCreation(tiny_grid),
-            Write(jacobian_words),
-            run_time=2
-        )
+        self.play(self.get_zoomed_display_pop_out_animation(), zd_rect.anim)
+        self.play(ShowCreation(tiny_grid), Write(jacobian_words), run_time=2)
         self.add_transformable_mobject(tiny_grid)
         self.add_foreground_mobject(jacobian_words)
         self.wait()
-        self.apply_nonlinear_transformation(
-            example_function,
-            added_anims=[MaintainPositionRelativeTo(
-                zoomed_camera.frame, tiny_grid,
-            )],
-            run_time=5
-        )
+        self.apply_nonlinear_transformation(example_function,
+                                            added_anims=[
+                                                MaintainPositionRelativeTo(
+                                                    zoomed_camera.frame,
+                                                    tiny_grid,
+                                                )
+                                            ],
+                                            run_time=5)
         self.wait()
 
 
@@ -3555,9 +3310,7 @@ class PrinciplesOverlay(PiCreatureScene):
             mark.set_stroke(BLACK, 1)
         q_marks.next_to(morty, UP)
         q_marks.shift_onto_screen()
-        q_marks.sort(
-            lambda p: get_norm(p - morty.get_top())
-        )
+        q_marks.sort(lambda p: get_norm(p - morty.get_top()))
 
         self.play(morty.change, "pondering")
         self.wait(2)
@@ -3567,10 +3320,7 @@ class PrinciplesOverlay(PiCreatureScene):
         self.wait(4)
         self.play(FadeInFromDown(q_marks[0]))
         self.wait(2)
-        self.play(LaggedStartMap(
-            FadeInFromDown, q_marks[1:],
-            run_time=3
-        ))
+        self.play(LaggedStartMap(FadeInFromDown, q_marks[1:], run_time=3))
         self.wait(3)
 
 
@@ -3581,10 +3331,7 @@ class ManyInfiniteExpressions(Scene):
         frac.to_corner(UL)
 
         n = 9
-        radical_str_parts = [
-            "%d + \\sqrt{" % d
-            for d in range(1, n + 1)
-        ]
+        radical_str_parts = ["%d + \\sqrt{" % d for d in range(1, n + 1)]
         radical_str_parts += ["\\cdots"]
         radical_str_parts += ["}"] * n
         radical = TexMobject("".join(radical_str_parts))
@@ -3593,19 +3340,17 @@ class ManyInfiniteExpressions(Scene):
         radical.set_color_by_gradient(YELLOW, RED)
 
         n = 12
-        power_tower = TexMobject(
-            *["\\sqrt{2}^{"] * n + ["\\dots"] + ["}"] * n
-        )
+        power_tower = TexMobject(*["\\sqrt{2}^{"] * n + ["\\dots"] + ["}"] * n)
         power_tower.to_corner(UR)
         power_tower.set_color_by_gradient(BLUE, GREEN)
 
         self.play(*[
             LaggedStartMap(
-                GrowFromCenter, group,
+                GrowFromCenter,
+                group,
                 lag_ratio=0.1,
                 run_time=8,
-            )
-            for group in (frac, radical, power_tower)
+            ) for group in (frac, radical, power_tower)
         ])
         self.wait(2)
 
@@ -3621,10 +3366,7 @@ class HoldUpPromo(PrinciplesOverlay):
         rect.next_to(url, DOWN)
         rect.to_edge(LEFT)
 
-        self.play(
-            Write(url),
-            self.pi_creature.change, "raise_right_hand"
-        )
+        self.play(Write(url), self.pi_creature.change, "raise_right_hand")
         self.play(ShowCreation(rect))
         self.wait(2)
         self.change_mode("thinking")

@@ -5,10 +5,8 @@ from manimlib.imports import *
 def get_shadow(mobject, opacity=0.5):
     result = mobject.deepcopy()
     result.apply_function(lambda p: [p[0], p[1], 0])
-    color = interpolate_color(
-        mobject.get_fill_color(), BLACK,
-        mobject.get_fill_opacity()
-    )
+    color = interpolate_color(mobject.get_fill_color(), BLACK,
+                              mobject.get_fill_opacity())
     # color = BLACK
     result.set_fill(color, opacity=opacity)
     result.set_stroke(BLACK, 0.5, opacity=opacity)
@@ -30,10 +28,10 @@ def get_area(planar_mobject):
     ys = boundary[:, 1]
     dxs = np.append(xs[-1], xs[:-1]) - xs
     dys = np.append(ys[-1], ys[:-1]) - ys
-    return abs(sum([
-        0.5 * (x * dy - y * dx)
-        for x, dx, y, dy in zip(xs, dxs, ys, dys)
-    ]))
+    return abs(
+        sum([
+            0.5 * (x * dy - y * dx) for x, dx, y, dy in zip(xs, dxs, ys, dys)
+        ]))
 
 
 def get_xy_plane_projection_point(p1, p2):
@@ -117,12 +115,8 @@ class ShowShadows(ThreeDScene):
         #     self.add_fixed_in_frame_mobjects(decimal)
 
         # decimal.add_updater(update_decimal)
-        decimal.add_updater(
-            lambda d: d.set_value(get_area(self.shadow))
-        )
-        decimal.add_updater(
-            lambda d: self.add_fixed_in_frame_mobjects(d)
-        )
+        decimal.add_updater(lambda d: d.set_value(get_area(self.shadow)))
+        decimal.add_updater(lambda d: self.add_fixed_in_frame_mobjects(d))
 
         # self.add_fixed_orientation_mobjects(label)
         self.add_fixed_in_frame_mobjects(label)
@@ -148,13 +142,11 @@ class ShowShadows(ThreeDScene):
         obj3d.clear_updaters()
         temp_shadow = always_redraw(lambda: get_shadow(obj3d))
         self.add(temp_shadow)
-        self.move_camera(
-            **self.initial_orientation_config,
-            added_anims=[
-                LaggedStartMap(DrawBorderThenFill, obj3d)
-            ],
-            run_time=2
-        )
+        self.move_camera(**self.initial_orientation_config,
+                         added_anims=[
+                             LaggedStartMap(DrawBorderThenFill, obj3d)
+                         ],
+                         run_time=2)
         self.begin_ambient_camera_rotation(0.01)
         self.remove(obj3d, temp_shadow)
 
@@ -171,12 +163,13 @@ class ShowShadows(ThreeDScene):
 
     def randomly_reorient(self, run_time=3):
         a, b, c = TAU * np.random.random(3)
-        self.play(
-            self.alpha_tracker.set_value, a,
-            self.beta_tracker.set_value, b,
-            self.gamma_tracker.set_value, c,
-            run_time=run_time
-        )
+        self.play(self.alpha_tracker.set_value,
+                  a,
+                  self.beta_tracker.set_value,
+                  b,
+                  self.gamma_tracker.set_value,
+                  c,
+                  run_time=run_time)
 
     #
     def get_object(self):
@@ -207,16 +200,15 @@ class ShowShadows(ThreeDScene):
             buff=SMALL_BUFF,
             color=RED,
         )
-        words = TextMobject(
-            "Average", "=",
-            "$\\frac{\\text{Surface area}}{4}$"
-        )
+        words = TextMobject("Average", "=",
+                            "$\\frac{\\text{Surface area}}{4}$")
         words.scale(1.5)
         words[0].match_color(rect)
         words[2].set_color(self.surface_area_label[0].get_fill_color())
         words.set_background_stroke(width=3)
         words.next_to(
-            rect, DOWN,
+            rect,
+            DOWN,
             index_of_submobject_to_align=0,
         )
         # words.shift(MED_LARGE_BUFF * LEFT)
@@ -250,16 +242,16 @@ class ShowInfinitelyFarLightSource(ShowShadows):
     def move_light_around(self):
         light = self.light
         self.add_foreground_mobjects(self.shadow_area_label)
+        self.play(light.move_to, 5 * OUT + DOWN, run_time=3)
         self.play(
-            light.move_to, 5 * OUT + DOWN,
-            run_time=3
-        )
-        self.play(Rotating(
-            light, angle=TAU, about_point=5 * OUT,
-            rate_func=smooth, run_time=3
-        ))
+            Rotating(light,
+                     angle=TAU,
+                     about_point=5 * OUT,
+                     rate_func=smooth,
+                     run_time=3))
         self.play(
-            light.move_to, 30 * OUT,
+            light.move_to,
+            30 * OUT,
             run_time=3,
         )
         self.remove(light)
@@ -279,12 +271,9 @@ class ShowInfinitelyFarLightSource(ShowShadows):
         self.play(LaggedStartMap(ShowCreation, lines))
         self.wait()
         self.add(source_obj3d, lines)
-        self.play(
-            ReplacementTransform(source_obj3d, target_obj3d),
-            run_time=2
-        )
+        self.play(ReplacementTransform(source_obj3d, target_obj3d), run_time=2)
         self.add(target_obj3d, lines)
-        self.play(FadeOut(target_obj3d),)
+        self.play(FadeOut(target_obj3d), )
         self.wait()
         lines.add_updater(lambda m: m.become(self.get_vertical_lines()))
         for x in range(5):
@@ -303,15 +292,13 @@ class ShowInfinitelyFarLightSource(ShowShadows):
             unit_c_to_lsp = normalize(c_to_lsp)
             rotation = rotation_matrix(
                 angle=np.arccos(np.dot(unit_c_to_lsp, OUT)),
-                axis=normalize(np.cross(unit_c_to_lsp, OUT))
-            )
-            new_shadow = get_shadow(
-                self.obj3d.copy().apply_matrix(rotation)
-            )
+                axis=normalize(np.cross(unit_c_to_lsp, OUT)))
+            new_shadow = get_shadow(self.obj3d.copy().apply_matrix(rotation))
             shadow.become(new_shadow)
             shadow.scale(get_norm(lsp) / get_norm(c_to_lsp))
             shadow.move_to(proj_center)
             return shadow
+
         shadow.add_updater(update)
 
     def get_light(self):
@@ -333,10 +320,7 @@ class ShowInfinitelyFarLightSource(ShowShadows):
         # half_points = [(p1 + p2) / 2 for p1, p2 in adjacent_pairs(points)]
         # points = np.append(points, half_points, axis=0)
         light_source = self.light.get_center()
-        lines = VGroup(*[
-            DashedLine(light_source, point)
-            for point in points
-        ])
+        lines = VGroup(*[DashedLine(light_source, point) for point in points])
         lines.set_shade_in_3d(True)
         for line in lines:
             line.remove(*line[:int(0.8 * len(line))])
@@ -353,23 +337,17 @@ class CylinderShadows(ShowShadows):
 
     def get_object(self):
         height = 2
-        cylinder = ParametricSurface(
-            lambda u, v: np.array([
-                np.cos(TAU * v),
-                np.sin(TAU * v),
-                height * (1 - u)
-            ]),
-            resolution=(6, 32)
-        )
+        cylinder = ParametricSurface(lambda u, v: np.array(
+            [np.cos(TAU * v),
+             np.sin(TAU * v), height * (1 - u)]),
+                                     resolution=(6, 32))
         # circle = Circle(radius=1)
-        circle = ParametricSurface(
-            lambda u, v: np.array([
-                (v + 0.01) * np.cos(TAU * u),
-                (v + 0.01) * np.sin(TAU * u),
-                0,
-            ]),
-            resolution=(16, 8)
-        )
+        circle = ParametricSurface(lambda u, v: np.array([
+            (v + 0.01) * np.cos(TAU * u),
+            (v + 0.01) * np.sin(TAU * u),
+            0,
+        ]),
+                                   resolution=(16, 8))
         # circle.set_fill(GREEN, opacity=0.5)
         for surface in cylinder, circle:
             surface.set_fill_by_checkerboard(GREEN, GREEN_E, opacity=1.0)

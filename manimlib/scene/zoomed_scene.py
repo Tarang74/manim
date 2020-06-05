@@ -34,8 +34,7 @@ class ZoomedScene(MovingCameraScene):
         # Initialize camera and display
         zoomed_camera = MovingCamera(**self.zoomed_camera_config)
         zoomed_display = ImageMobjectFromCamera(
-            zoomed_camera, **self.zoomed_camera_image_mobject_config
-        )
+            zoomed_camera, **self.zoomed_camera_image_mobject_config)
         zoomed_display.add_display_frame()
         for mob in zoomed_camera.frame, zoomed_display:
             mob.stretch_to_fit_height(self.zoomed_display_height)
@@ -47,10 +46,8 @@ class ZoomedScene(MovingCameraScene):
         if self.zoomed_display_center is not None:
             zoomed_display.move_to(self.zoomed_display_center)
         else:
-            zoomed_display.to_corner(
-                self.zoomed_display_corner,
-                buff=self.zoomed_display_corner_buff
-            )
+            zoomed_display.to_corner(self.zoomed_display_corner,
+                                     buff=self.zoomed_display_corner_buff)
 
         self.zoomed_camera = zoomed_camera
         self.zoomed_display = zoomed_display
@@ -84,7 +81,5 @@ class ZoomedScene(MovingCameraScene):
         return ApplyMethod(display.restore)
 
     def get_zoom_factor(self):
-        return fdiv(
-            self.zoomed_camera.frame.get_height(),
-            self.zoomed_display.get_height()
-        )
+        return fdiv(self.zoomed_camera.frame.get_height(),
+                    self.zoomed_display.get_height())

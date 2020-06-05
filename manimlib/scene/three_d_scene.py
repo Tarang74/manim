@@ -22,7 +22,11 @@ class ThreeDScene(Scene):
         }
     }
 
-    def set_camera_orientation(self, phi=None, theta=None, distance=None, gamma=None):
+    def set_camera_orientation(self,
+                               phi=None,
+                               theta=None,
+                               distance=None,
+                               gamma=None):
         if phi is not None:
             self.camera.set_phi(phi)
         if theta is not None:
@@ -36,8 +40,7 @@ class ThreeDScene(Scene):
         # TODO, use a ValueTracker for rate, so that it
         # can begin and end smoothly
         self.camera.theta_tracker.add_updater(
-            lambda m, dt: m.increment_value(rate * dt)
-        )
+            lambda m, dt: m.increment_value(rate * dt))
         self.add(self.camera.theta_tracker)
 
     def stop_ambient_camera_rotation(self):
@@ -61,14 +64,10 @@ class ThreeDScene(Scene):
         ]
         for value, tracker in value_tracker_pairs:
             if value is not None:
-                anims.append(
-                    ApplyMethod(tracker.set_value, value, **kwargs)
-                )
+                anims.append(ApplyMethod(tracker.set_value, value, **kwargs))
         if frame_center is not None:
-            anims.append(ApplyMethod(
-                self.camera.frame_center.move_to,
-                frame_center
-            ))
+            anims.append(
+                ApplyMethod(self.camera.frame_center.move_to, frame_center))
 
         self.play(*anims + added_anims)
 
@@ -141,7 +140,9 @@ class SpecialThreeDScene(ThreeDScene):
 
     def __init__(self, **kwargs):
         digest_config(self, kwargs)
-        if self.camera_config["pixel_width"] == PRODUCTION_QUALITY_CAMERA_CONFIG["pixel_width"]:
+        if self.camera_config[
+                "pixel_width"] == PRODUCTION_QUALITY_CAMERA_CONFIG[
+                    "pixel_width"]:
             config = {}
         else:
             config = self.low_quality_config
@@ -157,16 +158,16 @@ class SpecialThreeDScene(ThreeDScene):
                 p2 = axis.number_to_point(1)
                 p3 = axis.get_end()
                 new_pieces = VGroup(
-                    Line(p0, p1), Line(p1, p2), Line(p2, p3),
+                    Line(p0, p1),
+                    Line(p1, p2),
+                    Line(p2, p3),
                 )
                 for piece in new_pieces:
                     piece.shade_in_3d = True
                 new_pieces.match_style(axis.pieces)
                 axis.pieces.submobjects = new_pieces.submobjects
             for tick in axis.tick_marks:
-                tick.add(VectorizedPoint(
-                    1.5 * tick.get_center(),
-                ))
+                tick.add(VectorizedPoint(1.5 * tick.get_center(), ))
         return axes
 
     def get_sphere(self, **kwargs):
@@ -177,6 +178,4 @@ class SpecialThreeDScene(ThreeDScene):
         return self.default_angled_camera_position
 
     def set_camera_to_default_position(self):
-        self.set_camera_orientation(
-            **self.default_angled_camera_position
-        )
+        self.set_camera_orientation(**self.default_angled_camera_position)

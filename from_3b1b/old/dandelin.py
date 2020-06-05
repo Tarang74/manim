@@ -28,13 +28,14 @@ class LogoGeneration(LogoGenerationTemplate):
             ),
             AnimationGroup(*[
                 LaggedStartMap(
-                    Restore, layer,
+                    Restore,
+                    layer,
                     run_time=3,
                     path_arc=180 * DEGREES,
-                    rate_func=squish_rate_func(smooth, a / 3.0, (a + 0.9) / 3.0),
+                    rate_func=squish_rate_func(smooth, a / 3.0, (a + 0.9) /
+                                               3.0),
                     lag_ratio=0.8,
-                )
-                for layer, a in zip(layers, [0, 2, 1, 0])
+                ) for layer, a in zip(layers, [0, 2, 1, 0])
             ]),
             Animation(logo.pupil),
         ]
@@ -70,15 +71,10 @@ class ThinkingAboutAProof(PiCreatureScene):
             FadeInFrom(you, LEFT),
             GrowArrow(you_arrow),
         )
-        self.play(
-            FadeInFromDown(love_math),
-            GrowArrow(lm_arrow),
-            randy.change, "erm"
-        )
+        self.play(FadeInFromDown(love_math), GrowArrow(lm_arrow), randy.change,
+                  "erm")
         self.wait(2)
-        self.play(
-            randy.change, "pondering", cloud
-        )
+        self.play(randy.change, "pondering", cloud)
         self.wait(10)
 
 
@@ -88,16 +84,18 @@ class SumOfIntegersProof(Scene):
     }
 
     def construct(self):
-        equation = TexMobject(
-            "1", "+", "2", "+", "3", "+",
-            "\\cdots", "+", "n",
-            "=", "\\frac{n(n+1)}{2}"
-        )
+        equation = TexMobject("1", "+", "2", "+", "3", "+", "\\cdots", "+",
+                              "n", "=", "\\frac{n(n+1)}{2}")
         equation.scale(1.5)
         equation.to_edge(UP)
         one, two, three, dots, n = numbers = VGroup(*[
-            equation.get_part_by_tex(tex, substring=False).copy()
-            for tex in ("1", "2", "3", "\\cdots", "n",)
+            equation.get_part_by_tex(tex, substring=False).copy() for tex in (
+                "1",
+                "2",
+                "3",
+                "\\cdots",
+                "n",
+            )
         ])
         for number in numbers:
             number.generate_target()
@@ -124,22 +122,18 @@ class SumOfIntegersProof(Scene):
         self.play(LaggedStartMap(FadeInFromDown, equation[:-1]))
         self.wait()
         self.play(
-            LaggedStartMap(
-                MoveToTarget, numbers,
-                path_arc=-90 * DEGREES,
-                lag_ratio=1,
-                run_time=1
-            )
-        )
+            LaggedStartMap(MoveToTarget,
+                           numbers,
+                           path_arc=-90 * DEGREES,
+                           lag_ratio=1,
+                           run_time=1))
         self.play(LaggedStartMap(Restore, rows))
         self.wait()
         self.play(
-            ReplacementTransform(
-                rows.copy().set_fill(opacity=0), flipped_rows,
-                path_arc=-PI,
-                run_time=2
-            )
-        )
+            ReplacementTransform(rows.copy().set_fill(opacity=0),
+                                 flipped_rows,
+                                 path_arc=-PI,
+                                 run_time=2))
         self.wait()
         self.play(Write(equation[-1]))
         self.wait(5)
@@ -186,17 +180,16 @@ class HoldUpProof(TeacherStudentsScene):
 
         self.play(
             self.teacher.change, "raise_right_hand", self.screen,
-            self.get_student_changes(
-                "pondering", "confused", "maybe",
-                look_at_arg=title
-            )
-        )
+            self.get_student_changes("pondering",
+                                     "confused",
+                                     "maybe",
+                                     look_at_arg=title))
         self.look_at(title)
         self.wait(5)
-        self.change_student_modes(
-            "happy", "thinking", "hooray",
-            look_at_arg=title
-        )
+        self.change_student_modes("happy",
+                                  "thinking",
+                                  "hooray",
+                                  look_at_arg=title)
         self.wait(5)
 
 
@@ -210,10 +203,7 @@ class MultipleDefinitionsOfAnEllipse(Scene):
             TextMobject("2. Thumbtack \\\\ \\quad\\, construction"),
             TextMobject("3. Slice a cone"),
         )
-        definitions.arrange(
-            DOWN, buff=LARGE_BUFF,
-            aligned_edge=LEFT
-        )
+        definitions.arrange(DOWN, buff=LARGE_BUFF, aligned_edge=LEFT)
         definitions.next_to(title, DOWN, LARGE_BUFF)
         definitions.to_edge(LEFT)
 
@@ -221,28 +211,22 @@ class MultipleDefinitionsOfAnEllipse(Scene):
             definition.saved_state = definition.copy()
             definition.saved_state.set_fill(LIGHT_GREY, 0.5)
 
-        self.play(LaggedStartMap(
-            FadeInFrom, definitions,
-            lambda m: (m, RIGHT),
-            run_time=4
-        ))
+        self.play(
+            LaggedStartMap(FadeInFrom,
+                           definitions,
+                           lambda m: (m, RIGHT),
+                           run_time=4))
         self.wait()
         for definition in definitions:
             others = [d for d in definitions if d is not definition]
-            self.play(
-                definition.set_fill, WHITE, 1,
-                definition.scale, 1.2, {"about_edge": LEFT},
-                *list(map(Restore, others))
-            )
+            self.play(definition.set_fill, WHITE, 1, definition.scale, 1.2,
+                      {"about_edge": LEFT}, *list(map(Restore, others)))
             self.wait(2)
 
 
 class StretchACircle(Scene):
     def construct(self):
-        plane = NumberPlane(
-            x_unit_size=2,
-            y_unit_size=2
-        )
+        plane = NumberPlane(x_unit_size=2, y_unit_size=2)
 
         circle = Circle(radius=2)
         circle.set_stroke(YELLOW, 5)
@@ -278,14 +262,12 @@ class StretchACircle(Scene):
         self.wait()
         self.play(
             ApplyMethod(
-                plane_circle_group.stretch, 2, 0,
+                plane_circle_group.stretch,
+                2,
+                0,
                 run_time=2,
             ),
-            LaggedStartMap(
-                GrowArrow, arrows,
-                run_time=1,
-                lag_ratio=1
-            ),
+            LaggedStartMap(GrowArrow, arrows, run_time=1, lag_ratio=1),
         )
         self.play(FadeOut(arrows))
         self.wait()
@@ -297,15 +279,12 @@ class StretchACircle(Scene):
         )
         self.wait()
         self.add(circle_ghost)
-        self.play(
-            circle.stretch, 2, 0,
-            ReplacementTransform(start_point.copy(), end_point),
-            run_time=2
-        )
-        self.play(
-            GrowArrow(cxy_arrow),
-            Write(cxy)
-        )
+        self.play(circle.stretch,
+                  2,
+                  0,
+                  ReplacementTransform(start_point.copy(), end_point),
+                  run_time=2)
+        self.play(GrowArrow(cxy_arrow), Write(cxy))
         self.wait(2)
 
     def get_arrows(self):
@@ -322,9 +301,7 @@ class StretchACircle(Scene):
 class ShowArrayOfEccentricities(Scene):
     def construct(self):
         eccentricities = np.linspace(0, 0.99, 6)
-        eccentricity_labels = VGroup(*list(map(
-            DecimalNumber, eccentricities
-        )))
+        eccentricity_labels = VGroup(*list(map(DecimalNumber, eccentricities)))
         ellipses = self.get_ellipse_row(eccentricities)
         ellipses.set_color_by_gradient(BLUE, YELLOW)
         ellipses.move_to(DOWN)
@@ -359,22 +336,19 @@ class ShowArrayOfEccentricities(Scene):
 
         self.add(ellipses[0])
         for e1, e2 in zip(ellipses[:-1], ellipses[1:]):
-            self.play(ReplacementTransform(
-                e1.copy(), e2,
-                path_arc=10 * DEGREES
-            ))
+            self.play(
+                ReplacementTransform(e1.copy(), e2, path_arc=10 * DEGREES))
         self.wait()
 
-        self.play(
-            Write(name),
-            LaggedStartMap(GrowArrow, arrows),
-            LaggedStartMap(Restore, eccentricity_labels)
-        )
+        self.play(Write(name), LaggedStartMap(GrowArrow, arrows),
+                  LaggedStartMap(Restore, eccentricity_labels))
         self.wait()
         self.play(
             Write(alt_name),
             MoveToTarget(name),
-            morty.change, "hooray", alt_name,
+            morty.change,
+            "hooray",
+            alt_name,
             VFadeIn(morty),
         )
         self.play(Blink(morty))
@@ -386,26 +360,17 @@ class ShowArrayOfEccentricities(Scene):
             e_copy = ellipses[i].copy()
             e_copy.set_color(RED)
             self.play(ShowCreation(e_copy))
-            self.play(
-                ShowCreationThenFadeAround(
-                    eccentricity_labels[i],
-                ),
-                FadeOut(e_copy)
-            )
+            self.play(ShowCreationThenFadeAround(eccentricity_labels[i], ),
+                      FadeOut(e_copy))
         self.wait()
 
         circle = ellipses[0]
-        group = VGroup(*it.chain(
-            eccentricity_labels,
-            ellipses[1:],
-            arrows,
-            name,
-            alt_name,
-            [morty]
-        ))
+        group = VGroup(*it.chain(eccentricity_labels, ellipses[1:], arrows,
+                                 name, alt_name, [morty]))
         self.play(
             LaggedStartMap(FadeOutAndShiftDown, group),
-            circle.set_height, 5,
+            circle.set_height,
+            5,
             circle.center,
         )
 
@@ -422,10 +387,8 @@ class ShowArrayOfEccentricities(Scene):
         return result
 
     def get_ellipse_row(self, eccentricities, buff=MED_SMALL_BUFF, **kwargs):
-        result = VGroup(*[
-            self.get_ellipse(e, **kwargs)
-            for e in eccentricities
-        ])
+        result = VGroup(
+            *[self.get_ellipse(e, **kwargs) for e in eccentricities])
         result.arrange(RIGHT, buff=buff)
         return result
 
@@ -465,19 +428,13 @@ class ShowOrbits(ShowArrayOfEccentricities):
 
         earth_parts = VGroup(sun, earth_orbit, earth)
 
-        eccentricity_label = DecimalNumber(
-            earth_eccentricity,
-            num_decimal_places=4
-        )
-        eccentricity_equals = TextMobject(
-            "Eccentricity = "
-        )
+        eccentricity_label = DecimalNumber(earth_eccentricity,
+                                           num_decimal_places=4)
+        eccentricity_equals = TextMobject("Eccentricity = ")
         earth_orbit_words = TextMobject("Earth's orbit")
         earth_orbit_words.set_color(BLUE)
-        full_label = VGroup(
-            earth_orbit_words,
-            eccentricity_equals, eccentricity_label
-        )
+        full_label = VGroup(earth_orbit_words, eccentricity_equals,
+                            eccentricity_label)
         full_label.arrange(RIGHT, SMALL_BUFF)
         earth_orbit_words.shift(0.5 * SMALL_BUFF * UL)
         full_label.to_edge(UP)
@@ -494,23 +451,18 @@ class ShowOrbits(ShowArrayOfEccentricities):
         self.wait(10)
         orbiting_earth.rate = 1.5
         orbiting_comet.rate = 1.5
-        self.play(
-            earth_parts.set_height,
-            comet_orbit.get_height() / 4.53,
-            earth_parts.shift, 3 * RIGHT
-        )
+        self.play(earth_parts.set_height,
+                  comet_orbit.get_height() / 4.53, earth_parts.shift,
+                  3 * RIGHT)
         comet_orbit.shift(3 * RIGHT)
         comet_orbit.save_state()
         Transform(comet_orbit, earth_orbit).update(1)
         self.play(
             Restore(comet_orbit, run_time=2),
-            ChangingDecimal(
-                eccentricity_label,
-                lambda a: self.get_eccentricity(comet_orbit)
-            ),
+            ChangingDecimal(eccentricity_label,
+                            lambda a: self.get_eccentricity(comet_orbit)),
             FadeOutAndShift(earth_orbit_words, UP),
-            FadeInFromDown(comet_orbit_words)
-        )
+            FadeInFromDown(comet_orbit_words))
         self.add(orbiting_comet)
         self.wait(10)
 
@@ -519,26 +471,27 @@ class EccentricityInThumbtackCase(ShowArrayOfEccentricities):
     def construct(self):
         ellipse = self.get_ellipse(0.2, width=5)
         ellipse_target = self.get_ellipse(0.9, width=5)
-        ellipse_target.scale(fdiv(
-            sum(self.get_abc(ellipse)),
-            sum(self.get_abc(ellipse_target)),
-        ))
+        ellipse_target.scale(
+            fdiv(
+                sum(self.get_abc(ellipse)),
+                sum(self.get_abc(ellipse_target)),
+            ))
         for mob in ellipse, ellipse_target:
             mob.center()
             mob.set_color(BLUE)
         thumbtack_update = self.get_thumbtack_update(ellipse)
         ellipse_point_update = self.get_ellipse_point_update(ellipse)
         focal_lines_update = self.get_focal_lines_update(
-            ellipse, ellipse_point_update.mobject
-        )
-        focus_to_focus_line_update = self.get_focus_to_focus_line_update(ellipse)
+            ellipse, ellipse_point_update.mobject)
+        focus_to_focus_line_update = self.get_focus_to_focus_line_update(
+            ellipse)
         eccentricity_label = self.get_eccentricity_label()
         eccentricity_value_update = self.get_eccentricity_value_update(
-            eccentricity_label, ellipse,
+            eccentricity_label,
+            ellipse,
         )
         inner_brace_update = self.get_focus_line_to_focus_line_brace_update(
-            focus_to_focus_line_update.mobject
-        )
+            focus_to_focus_line_update.mobject)
         outer_lines = self.get_outer_dashed_lines(ellipse)
         outer_lines_brace = Brace(outer_lines, DOWN)
 
@@ -548,18 +501,14 @@ class EccentricityInThumbtackCase(ShowArrayOfEccentricities):
         focus_distance.add_to_back(focus_distance.copy().set_stroke(BLACK, 5))
         focus_distance_update = Mobject.add_updater(
             focus_distance,
-            lambda m: m.set_width(
-                inner_brace_update.mobject.get_width(),
-            ).next_to(inner_brace_update.mobject, DOWN, SMALL_BUFF)
-        )
+            lambda m: m.set_width(inner_brace_update.mobject.get_width(
+            ), ).next_to(inner_brace_update.mobject, DOWN, SMALL_BUFF))
         diameter = TextMobject("Diameter")
         diameter.set_color(RED)
         diameter.next_to(outer_lines_brace, DOWN, SMALL_BUFF)
 
-        fraction = TexMobject(
-            "{\\text{Focus distance}", "\\over",
-            "\\text{Diameter}}"
-        )
+        fraction = TexMobject("{\\text{Focus distance}", "\\over",
+                              "\\text{Diameter}}")
         numerator = fraction.get_part_by_tex("Focus")
         numerator.set_color(GREEN)
         fraction.set_color_by_tex("Diameter", RED)
@@ -568,9 +517,7 @@ class EccentricityInThumbtackCase(ShowArrayOfEccentricities):
         numerator_update = Mobject.add_updater(
             numerator,
             lambda m: m.set_width(focus_distance.get_width()).next_to(
-                fraction[1], UP, MED_SMALL_BUFF
-            )
-        )
+                fraction[1], UP, MED_SMALL_BUFF))
 
         fraction_arrow = Arrow(
             eccentricity_label.get_right(),
@@ -580,7 +527,8 @@ class EccentricityInThumbtackCase(ShowArrayOfEccentricities):
         fraction_arrow.pointwise_become_partial(fraction_arrow, 0, 0.95)
 
         ellipse_transformation = Transform(
-            ellipse, ellipse_target,
+            ellipse,
+            ellipse_target,
             rate_func=there_and_back,
             run_time=8,
         )
@@ -619,10 +567,7 @@ class EccentricityInThumbtackCase(ShowArrayOfEccentricities):
         )
 
     def get_thumbtack_update(self, ellipse):
-        thumbtacks = VGroup(*[
-            self.get_thumbtack()
-            for x in range(2)
-        ])
+        thumbtacks = VGroup(*[self.get_thumbtack() for x in range(2)])
 
         def update_thumbtacks(thumbtacks):
             foci = self.get_foci(ellipse)
@@ -634,11 +579,8 @@ class EccentricityInThumbtackCase(ShowArrayOfEccentricities):
 
     def get_ellipse_point_update(self, ellipse):
         dot = Dot(color=RED)
-        return cycle_animation(MoveAlongPath(
-            dot, ellipse,
-            run_time=5,
-            rate_func=linear
-        ))
+        return cycle_animation(
+            MoveAlongPath(dot, ellipse, run_time=5, rate_func=linear))
 
     def get_focal_lines_update(self, ellipse, ellipse_point):
         lines = VGroup(*[Line(LEFT, RIGHT) for x in range(2)])
@@ -656,18 +598,14 @@ class EccentricityInThumbtackCase(ShowArrayOfEccentricities):
     def get_focus_to_focus_line_update(self, ellipse):
         return Mobject.add_updater(
             Line(LEFT, RIGHT, color=WHITE),
-            lambda m: m.put_start_and_end_on(*self.get_foci(ellipse))
-        )
+            lambda m: m.put_start_and_end_on(*self.get_foci(ellipse)))
 
     def get_focus_line_to_focus_line_brace_update(self, line):
         brace = Brace(Line(LEFT, RIGHT))
         brace.add_to_back(brace.copy().set_stroke(BLACK, 5))
         return Mobject.add_updater(
-            brace,
-            lambda b: b.match_width(line, stretch=True).next_to(
-                line, DOWN, buff=SMALL_BUFF
-            )
-        )
+            brace, lambda b: b.match_width(line, stretch=True).next_to(
+                line, DOWN, buff=SMALL_BUFF))
 
     def get_eccentricity_label(self):
         words = TextMobject("Eccentricity = ")
@@ -679,9 +617,8 @@ class EccentricityInThumbtackCase(ShowArrayOfEccentricities):
 
     def get_eccentricity_value_update(self, eccentricity_label, ellipse):
         decimal = eccentricity_label[1]
-        decimal.add_updater(lambda d: d.set_value(
-            self.get_eccentricity(ellipse)
-        ))
+        decimal.add_updater(
+            lambda d: d.set_value(self.get_eccentricity(ellipse)))
         return decimal
 
     def get_outer_dashed_lines(self, ellipse):
@@ -716,11 +653,9 @@ class EccentricityInThumbtackCase(ShowArrayOfEccentricities):
 
 class EccentricityForSlicedConed(Scene):
     def construct(self):
-        equation = TexMobject(
-            "\\text{Eccentricity} = ",
-            "{\\sin(", "\\text{angle of plane}", ")", "\\over",
-            "\\sin(", "\\text{angle of cone slant}", ")}"
-        )
+        equation = TexMobject("\\text{Eccentricity} = ", "{\\sin(",
+                              "\\text{angle of plane}", ")", "\\over",
+                              "\\sin(", "\\text{angle of cone slant}", ")}")
         equation.set_color_by_tex("plane", YELLOW)
         equation.set_color_by_tex("cone", BLUE)
         equation.to_edge(LEFT)
@@ -730,17 +665,13 @@ class EccentricityForSlicedConed(Scene):
 class AskWhyAreTheyTheSame(TeacherStudentsScene):
     def construct(self):
         morty = self.teacher
-        self.student_says(
-            "Why on earth \\\\ are these the same?",
-            student_index=2,
-            target_mode="sassy",
-            bubble_kwargs={"direction": LEFT}
-        )
+        self.student_says("Why on earth \\\\ are these the same?",
+                          student_index=2,
+                          target_mode="sassy",
+                          bubble_kwargs={"direction": LEFT})
         bubble = self.students[2].bubble
-        self.play(
-            morty.change, "awe",
-            self.get_student_changes("confused", "confused", "sassy")
-        )
+        self.play(morty.change, "awe",
+                  self.get_student_changes("confused", "confused", "sassy"))
         self.look_at(self.screen)
         self.wait(3)
         self.play(morty.change, "thinking", self.screen)
@@ -753,18 +684,18 @@ class AskWhyAreTheyTheSame(TeacherStudentsScene):
         baby_morty.to_corner(DL)
 
         self.play(
-            FadeOutAndShift(bubble),
-            FadeOutAndShift(bubble.content),
+            FadeOutAndShift(bubble), FadeOutAndShift(bubble.content),
             LaggedStartMap(
-                FadeOutAndShift, self.students,
+                FadeOutAndShift,
+                self.students,
                 lambda m: (m, 3 * DOWN),
             ),
             ReplacementTransform(
-                morty, baby_morty,
+                morty,
+                baby_morty,
                 path_arc=30 * DEGREES,
                 run_time=2,
-            )
-        )
+            ))
         self.pi_creatures = VGroup(baby_morty)
         bubble = ThoughtBubble(height=6, width=7)
         bubble.set_fill(DARK_GREY, 0.5)
@@ -773,11 +704,7 @@ class AskWhyAreTheyTheSame(TeacherStudentsScene):
         egg = Circle(radius=0.4)
         egg.stretch(0.75, 1)
         egg.move_to(RIGHT)
-        egg.apply_function(
-            lambda p: np.array([
-                p[0], p[0] * p[1], p[2]
-            ])
-        )
+        egg.apply_function(lambda p: np.array([p[0], p[0] * p[1], p[2]]))
         egg.flip()
         egg.set_width(3)
         egg.set_stroke(RED, 5)
@@ -785,21 +712,18 @@ class AskWhyAreTheyTheSame(TeacherStudentsScene):
 
         self.play(baby_morty.change, "confused", 2 * DOWN)
         self.wait(2)
-        self.play(
-            baby_morty.change, "thinking",
-            LaggedStartMap(DrawBorderThenFill, bubble)
-        )
+        self.play(baby_morty.change, "thinking",
+                  LaggedStartMap(DrawBorderThenFill, bubble))
         self.play(ShowCreation(egg))
         self.wait(3)
 
         bubble_group = VGroup(bubble, egg)
         self.play(
             ApplyMethod(
-                bubble_group.shift, FRAME_WIDTH * LEFT,
+                bubble_group.shift,
+                FRAME_WIDTH * LEFT,
                 rate_func=running_start,
-            ),
-            baby_morty.change, "awe"
-        )
+            ), baby_morty.change, "awe")
         self.play(Blink(baby_morty))
         self.wait()
 
@@ -814,10 +738,7 @@ class TriangleOfEquivalences(Scene):
         rects[2].next_to(rects[:2], DOWN, buff=1.5)
         rects.next_to(title, DOWN)
 
-        arrows = VGroup(*[
-            TexMobject("\\Leftrightarrow")
-            for x in range(3)
-        ])
+        arrows = VGroup(*[TexMobject("\\Leftrightarrow") for x in range(3)])
         arrows.scale(2)
         arrows[0].move_to(rects[:2])
         arrows[1].rotate(60 * DEGREES)
@@ -826,11 +747,13 @@ class TriangleOfEquivalences(Scene):
         arrows[2].move_to(rects[::2])
         arrows[1:].shift(0.5 * DOWN)
 
-        self.play(LaggedStartMap(
-            DrawBorderThenFill, arrows,
-            lag_ratio=0.7,
-            run_time=3,
-        ))
+        self.play(
+            LaggedStartMap(
+                DrawBorderThenFill,
+                arrows,
+                lag_ratio=0.7,
+                run_time=3,
+            ))
         self.wait()
         self.play(FadeOutAndShift(arrows[1:]))
         self.wait()
@@ -861,20 +784,16 @@ class ShowMeasurementBook(TeacherStudentsScene):
         arrow.next_to(measurement, LEFT)
         words.next_to(arrow, LEFT)
 
-        self.play(
-            self.teacher.change, "raise_right_hand",
-            FadeInFromDown(measurement)
-        )
+        self.play(self.teacher.change, "raise_right_hand",
+                  FadeInFromDown(measurement))
         self.change_all_student_modes("hooray")
         self.wait()
         self.play(
-            GrowArrow(arrow),
-            FadeInFrom(words, RIGHT),
-            self.get_student_changes(
-                "thinking", "happy", "pondering",
-                look_at_arg=arrow
-            )
-        )
+            GrowArrow(arrow), FadeInFrom(words, RIGHT),
+            self.get_student_changes("thinking",
+                                     "happy",
+                                     "pondering",
+                                     look_at_arg=arrow))
         self.wait(3)
 
 
@@ -885,19 +804,14 @@ class IntroduceSpheres(ExternallyAnimatedScene):
 class TangencyAnimation(Scene):
     def construct(self):
         rings = VGroup(*[
-            Circle(color=YELLOW, stroke_width=3, radius=0.5)
-            for x in range(5)
+            Circle(color=YELLOW, stroke_width=3, radius=0.5) for x in range(5)
         ])
         for ring in rings:
             ring.save_state()
             ring.scale(0)
             ring.saved_state.set_stroke(width=0)
 
-        self.play(LaggedStartMap(
-            Restore, rings,
-            run_time=2,
-            lag_ratio=0.7
-        ))
+        self.play(LaggedStartMap(Restore, rings, run_time=2, lag_ratio=0.7))
 
 
 class TwoSpheresRotating(ExternallyAnimatedScene):
@@ -933,20 +847,21 @@ class AskAboutWhyYouWouldAddSpheres(PiCreatureScene):
         self.play(FadeInFromDown(randy))
         self.play(
             Animation(graph_spot),
-            randy.change, "maybe",
+            randy.change,
+            "maybe",
             Write(why),
         )
         self.wait(3)
         self.play(randy.change, "pondering")
         self.play(
-            why.to_corner, DR,
-            why.set_fill, LIGHT_GREY, 0.5,
+            why.to_corner,
+            DR,
+            why.set_fill,
+            LIGHT_GREY,
+            0.5,
         )
         self.wait()
-        self.play(
-            ShowCreation(bubble),
-            randy.change, "thinking"
-        )
+        self.play(ShowCreation(bubble), randy.change, "thinking")
         self.wait()
         self.look_at(graph_spot)
         self.wait(2)
@@ -965,14 +880,12 @@ class UseDefiningFeatures(Scene):
         title = TextMobject("Problem-solving tip:")
         title.scale(1.5)
         title.to_edge(UP)
-        tip = TextMobject(
-            """
+        tip = TextMobject("""
             - Make sure you're using all the \\\\
             \\phantom{-} defining features of the objects \\\\
             \\phantom{-} involved.
             """,
-            alignment=""
-        )
+                          alignment="")
         tip.next_to(title, DOWN, MED_LARGE_BUFF)
         tip.shift(MED_SMALL_BUFF * RIGHT)
         tip.set_color(YELLOW)
@@ -1007,15 +920,10 @@ class ShowSegmentSplit(Scene):
         braces.rotate(-14 * DEGREES)
         braces.move_to(0.85 * UP + 1.7 * LEFT)
 
-        words = VGroup(
-            TextMobject("Top segment"),
-            TextMobject("Bottom segment")
-        )
+        words = VGroup(TextMobject("Top segment"),
+                       TextMobject("Bottom segment"))
         for word, brace in zip(words, braces):
-            word.next_to(
-                brace.get_center(), LEFT,
-                buff=0.35
-            )
+            word.next_to(brace.get_center(), LEFT, buff=0.35)
         words[0].set_color(PINK)
         words[1].set_color(GOLD)
 
@@ -1027,12 +935,7 @@ class ShowSegmentSplit(Scene):
             brace.set_stroke(width=0)
             brace.scale(0)
 
-        self.play(
-            LaggedStartMap(
-                Restore, braces,
-                lag_ratio=0.7
-            ),
-        )
+        self.play(LaggedStartMap(Restore, braces, lag_ratio=0.7), )
         for word in words:
             self.play(Write(word, run_time=1))
         self.wait()
@@ -1113,18 +1016,15 @@ class WriteConjecture(Scene):
             word.rotate(angle, about_point=ORIGIN)
             word.shift(line.get_center())
 
-        self.play(LaggedStartMap(
-            FadeInFromDown,
-            VGroup(title, equation),
-            lag_ratio=0.7
-        ))
+        self.play(
+            LaggedStartMap(FadeInFromDown,
+                           VGroup(title, equation),
+                           lag_ratio=0.7))
         self.wait()
         for word, line in zip(words, lines):
             self.play(ShowCreation(line))
             self.play(WiggleOutThenIn(line))
-            self.play(ReplacementTransform(
-                word.in_equation.copy(), word
-            ))
+            self.play(ReplacementTransform(word.in_equation.copy(), word))
             self.wait()
 
 
@@ -1183,15 +1083,13 @@ class QuickGeometryProof(Scene):
         ticks.scale(0.1)
         ticks.arrange(RIGHT, buff=SMALL_BUFF)
 
-        equation = TexMobject(
-            "\\Delta OP_1Q \\cong \\Delta OP_2Q",
-            tex_to_color_map={
-                "O": BLUE,
-                "P_1": MAROON_B,
-                "P_2": MAROON_B,
-                "Q": YELLOW,
-            }
-        )
+        equation = TexMobject("\\Delta OP_1Q \\cong \\Delta OP_2Q",
+                              tex_to_color_map={
+                                  "O": BLUE,
+                                  "P_1": MAROON_B,
+                                  "P_2": MAROON_B,
+                                  "Q": YELLOW,
+                              })
         equation.to_edge(UP)
         self.add(*equation)
 
@@ -1203,12 +1101,8 @@ class QuickGeometryProof(Scene):
             TexMobject("Q").next_to(Q, RIGHT).set_color(YELLOW),
         )
         self.add(O_p1, O_p2, p1_Q, p2_Q, O_Q)
-        self.add(
-            Dot(O, color=BLUE),
-            Dot(p1, color=MAROON_B),
-            Dot(p2, color=MAROON_B),
-            Dot(Q, color=YELLOW)
-        )
+        self.add(Dot(O, color=BLUE), Dot(p1, color=MAROON_B),
+                 Dot(p2, color=MAROON_B), Dot(Q, color=YELLOW))
         self.add(
             elbow.copy().rotate(angle + PI, about_point=ORIGIN).shift(p1),
             elbow.copy().rotate(-angle + PI / 2, about_point=ORIGIN).shift(p2),
@@ -1220,11 +1114,11 @@ class QuickGeometryProof(Scene):
 
         everything = VGroup(*self.mobjects)
 
-        self.play(LaggedStartMap(
-            GrowFromCenter, everything,
-            lag_ratio=0.25,
-            run_time=4
-        ))
+        self.play(
+            LaggedStartMap(GrowFromCenter,
+                           everything,
+                           lag_ratio=0.25,
+                           run_time=4))
 
 
 class ShowFocalSumEqualsCircleDistance(ExternallyAnimatedScene):
@@ -1243,10 +1137,7 @@ class NameDandelin(Scene):
     CONFIG = {"camera_config": {"background_opacity": 1}}
 
     def construct(self):
-        title = TextMobject(
-            "Proof by\\\\",
-            "Germinal Pierre Dandelin (1822)"
-        )
+        title = TextMobject("Proof by\\\\", "Germinal Pierre Dandelin (1822)")
         title.to_edge(UP)
 
         portrait = ImageMobject("GerminalDandelin")
@@ -1278,11 +1169,11 @@ class NameDandelin(Scene):
         self.play(Write(cmon_google, run_time=1))
         self.wait()
 
-        self.play(LaggedStartMap(
-            FadeInFromDown, dandelions,
-            lag_ratio=0.7,
-            run_time=1
-        ))
+        self.play(
+            LaggedStartMap(FadeInFromDown,
+                           dandelions,
+                           lag_ratio=0.7,
+                           run_time=1))
         self.wait()
 
 
@@ -1309,10 +1200,8 @@ class DetailsLeftAsHomework(PiCreatureScene):
 
     def construct(self):
         # morty = self.pi_creature
-        self.pi_creature_says(
-            "Details left \\\\ as homework",
-            target_mode="hooray"
-        )
+        self.pi_creature_says("Details left \\\\ as homework",
+                              target_mode="hooray")
         self.wait(3)
 
 
@@ -1321,7 +1210,8 @@ class AskWhyYouWouldChooseThisProof(PiCreatureScene):
         randy, other = self.pi_creatures
         screen = ScreenRectangle(height=4).to_edge(UP)
 
-        for pi, vect, word in (randy, UP, "You"), (other, LEFT, "Non-math \\\\ enthusiast"):
+        for pi, vect, word in (randy, UP, "You"), (other, LEFT,
+                                                   "Non-math \\\\ enthusiast"):
             arrow = Vector(-vect, color=WHITE)
             arrow.next_to(pi, vect)
             label = TextMobject(word)
@@ -1333,11 +1223,15 @@ class AskWhyYouWouldChooseThisProof(PiCreatureScene):
             self.play(
                 GrowArrow(pi.arrow),
                 FadeInFrom(pi.label, RIGHT),
-                pi.change, mode,
+                pi.change,
+                mode,
             )
         self.play(
-            randy.change, "raise_right_hand", screen,
-            other.look_at, screen,
+            randy.change,
+            "raise_right_hand",
+            screen,
+            other.look_at,
+            screen,
         )
         self.wait()
         self.play(other.change, "thinking", screen)
@@ -1369,10 +1263,8 @@ class CreativeConstruction(PiCreatureScene):
         kant.set_height(3)
         bubble = ThoughtBubble(height=3, width=4)
         bubble.pin_to(kant)
-        kant_words = TextMobject(
-            "How is synthetic a priori\\\\" +
-            "reasoning possible?"
-        )
+        kant_words = TextMobject("How is synthetic a priori\\\\" +
+                                 "reasoning possible?")
         kant_words.scale(0.75)
         bubble.position_mobject_inside(kant_words)
         kant_group = VGroup(bubble, kant_words, kant)
@@ -1380,15 +1272,19 @@ class CreativeConstruction(PiCreatureScene):
 
         self.add(dandelin)
         self.add(lightbulb)
-        self.play(
-            Write(lightbulb, run_time=1),
-            self.get_light_shine(lightbulb)
-        )
+        self.play(Write(lightbulb, run_time=1),
+                  self.get_light_shine(lightbulb))
         self.wait()
         self.play(
-            lightbulb.next_to, randy, RIGHT,
-            {"buff": LARGE_BUFF, "aligned_edge": UP},
-            randy.change, "pondering",
+            lightbulb.next_to,
+            randy,
+            RIGHT,
+            {
+                "buff": LARGE_BUFF,
+                "aligned_edge": UP
+            },
+            randy.change,
+            "pondering",
             VFadeIn(randy),
             FadeOutAndShift(dandelin, DOWN),
         )
@@ -1407,7 +1303,8 @@ class CreativeConstruction(PiCreatureScene):
         lightbulb.generate_target()
         q_marks = VGroup()
         for submob in lightbulb.target.family_members_with_points():
-            if True or get_norm(submob.get_center() - lightbulb.get_center()) > 0.25:
+            if True or get_norm(submob.get_center() -
+                                lightbulb.get_center()) > 0.25:
                 q_mark = TexMobject("?")
                 q_mark.set_height(0.25)
                 q_mark.move_to(submob)
@@ -1417,25 +1314,21 @@ class CreativeConstruction(PiCreatureScene):
 
         self.wait()
         self.play(randy.change, 'confused', lightbulb)
-        self.play(MoveToTarget(
-            lightbulb,
-            run_time=3,
-            rate_func=there_and_back,
-            lag_ratio=0.5
-        ))
+        self.play(
+            MoveToTarget(lightbulb,
+                         run_time=3,
+                         rate_func=there_and_back,
+                         lag_ratio=0.5))
         self.play(Blink(randy))
         self.wait()
 
     def get_rings(self, center, max_radius, delta_r):
         radii = np.arange(0, max_radius, delta_r)
         rings = VGroup(*[
-            Annulus(
-                inner_radius=r1,
-                outer_radius=r2,
-                fill_opacity=0.75 * (1 - fdiv(r1, max_radius)),
-                fill_color=YELLOW
-            )
-            for r1, r2 in zip(radii, radii[1:])
+            Annulus(inner_radius=r1,
+                    outer_radius=r2,
+                    fill_opacity=0.75 * (1 - fdiv(r1, max_radius)),
+                    fill_color=YELLOW) for r1, r2 in zip(radii, radii[1:])
         ])
         rings.move_to(center)
         return rings
@@ -1446,18 +1339,15 @@ class CreativeConstruction(PiCreatureScene):
             max_radius=15.0,
             delta_r=0.025,
         )
-        return LaggedStartMap(
-            FadeIn, rings,
-            rate_func=there_and_back,
-            run_time=2,
-            lag_ratio=0.5
-        )
+        return LaggedStartMap(FadeIn,
+                              rings,
+                              rate_func=there_and_back,
+                              run_time=2,
+                              lag_ratio=0.5)
 
 
 class LockhartQuote(Scene):
-    CONFIG = {
-        "camera_config": {"background_opacity": 1}
-    }
+    CONFIG = {"camera_config": {"background_opacity": 1}}
 
     def construct(self):
         mb_string = "Madame\\,\\,Bovary"
@@ -1471,14 +1361,12 @@ class LockhartQuote(Scene):
             when it happens to me, I feel very fortunate.
         """ % strings
         quote_parts = [s for s in quote_text.split(" ") if s]
-        quote = TextMobject(
-            *quote_parts,
-            tex_to_color_map={
-                mb_string: BLUE,
-                ml_string: YELLOW,
-            },
-            alignment=""
-        )
+        quote = TextMobject(*quote_parts,
+                            tex_to_color_map={
+                                mb_string: BLUE,
+                                ml_string: YELLOW,
+                            },
+                            alignment="")
         quote.set_width(FRAME_WIDTH - 2)
         quote.to_edge(UP)
 
@@ -1501,20 +1389,20 @@ class LockhartQuote(Scene):
             anims = [ShowWord(word)]
             for text, picture in zip(strings, pictures[1:]):
                 if word is quote.get_part_by_tex(text):
-                    anims.append(FadeInFromDown(
-                        picture, run_time=1
-                    ))
+                    anims.append(FadeInFromDown(picture, run_time=1))
             self.play(*anims)
             self.wait(0.005 * len(word)**1.5)
         self.wait(2)
         self.play(
             LaggedStartMap(
-                FadeOutAndShiftDown, quote,
+                FadeOutAndShiftDown,
+                quote,
                 lag_ratio=0.2,
                 run_time=5,
             ),
             LaggedStartMap(
-                FadeOutAndShiftDown, pictures,
+                FadeOutAndShiftDown,
+                pictures,
                 run_time=3,
             ),
         )
@@ -1535,20 +1423,16 @@ class ShowApollonianCircles(Scene):
         radii = [1.0, 2.0, 3.0]
         curvatures = [1.0 / r for r in radii]
         k4 = sum(curvatures) - 2 * np.sqrt(
-            sum([
-                k1 * k2
-                for k1, k2 in it.combinations(curvatures, 2)
-            ])
-        )
+            sum([k1 * k2 for k1, k2 in it.combinations(curvatures, 2)]))
         radii.append(1.0 / k4)
         centers = [
-            ORIGIN, 3 * RIGHT, 4 * UP,
+            ORIGIN,
+            3 * RIGHT,
+            4 * UP,
             4 * UP + 3 * RIGHT,
         ]
-        circles = VGroup(*[
-            Circle(radius=r).shift(c)
-            for r, c in zip(radii, centers)
-        ])
+        circles = VGroup(
+            *[Circle(radius=r).shift(c) for r, c in zip(radii, centers)])
 
         circles.set_height(FRAME_HEIGHT - 3)
         circles.center().to_edge(DOWN)
@@ -1571,9 +1455,7 @@ class ShowApollonianCircles(Scene):
         equation.next_to(circles, UP)
 
         self.add(equation)
-        self.play(LaggedStartMap(
-            DrawBorderThenFill, circles
-        ))
+        self.play(LaggedStartMap(DrawBorderThenFill, circles))
         self.wait()
 
 
@@ -1586,11 +1468,11 @@ class EllipseLengthsLinedUp(EccentricityInThumbtackCase):
         point = VectorizedPoint()
         point_movement = cycle_animation(
             MoveAlongPath(
-                point, ellipse,
+                point,
+                ellipse,
                 run_time=5,
                 rate_func=linear,
-            )
-        )
+            ))
 
         arrow = Vector(RIGHT, color=WHITE)
         arrow.to_edge(LEFT)
@@ -1607,15 +1489,12 @@ class EllipseLengthsLinedUp(EccentricityInThumbtackCase):
         def update_lines(lines):
             for line, focus in zip(lines, foci):
                 d = get_norm(point.get_center() - focus)
-                line.put_start_and_end_on(
-                    ORIGIN, d * UP
-                )
+                line.put_start_and_end_on(ORIGIN, d * UP)
             lines.arrange(DOWN, buff=0)
             lines.next_to(arrow, RIGHT)
             h_line.move_to(lines[0].get_bottom())
-        lines_animation = Mobject.add_updater(
-            lines, update_lines
-        )
+
+        lines_animation = Mobject.add_updater(lines, update_lines)
 
         self.add(point_movement)
         self.add(arrow)
@@ -1666,57 +1545,40 @@ class ReactionToGlimpseOfGenius(TeacherStudentsScene, CreativeConstruction):
             "I think Lockhart was \\\\"
             "speaking more generally.",
             target_mode="sassy",
-            added_anims=[morty.change, "guilty"]
-        )
+            added_anims=[morty.change, "guilty"])
         self.wait(2)
+        self.play(morty.change,
+                  "raise_right_hand",
+                  FadeInFromDown(lightbulb),
+                  RemovePiCreatureBubble(self.students[1]),
+                  self.get_student_changes(*3 * ["confused"]),
+                  run_time=1)
         self.play(
-            morty.change, "raise_right_hand",
-            FadeInFromDown(lightbulb),
-            RemovePiCreatureBubble(self.students[1]),
-            self.get_student_changes(*3 * ["confused"]),
-            run_time=1
-        )
-        self.play(Transform(
-            lightbulb, q_marks,
-            run_time=3,
-            rate_func=there_and_back_with_pause,
-            lag_ratio=0.5
-        ))
+            Transform(lightbulb,
+                      q_marks,
+                      run_time=3,
+                      rate_func=there_and_back_with_pause,
+                      lag_ratio=0.5))
         self.play(
-            ClockPassesTime(clock, hours_passed=4, run_tim=4),
-            VFadeIn(clock),
+            ClockPassesTime(clock, hours_passed=4, run_tim=4), VFadeIn(clock),
             GrowArrow(arrow),
-            self.get_student_changes(
-                *3 * ["pondering"],
-                look_at_arg=clock
-            )
-        )
-        self.play(
-            ClockPassesTime(clock, run_time=1, hours_passed=1),
-            VFadeOut(clock),
-            FadeOut(arrow),
-            lightbulb.scale, 1.5,
-            lightbulb.move_to, 2 * UP,
-            self.get_student_changes(
-                *3 * ["awe"],
-                look_at_arg=2 * UP
-            ),
-            run_time=1
-        )
+            self.get_student_changes(*3 * ["pondering"], look_at_arg=clock))
+        self.play(ClockPassesTime(clock, run_time=1, hours_passed=1),
+                  VFadeOut(clock),
+                  FadeOut(arrow),
+                  lightbulb.scale,
+                  1.5,
+                  lightbulb.move_to,
+                  2 * UP,
+                  self.get_student_changes(*3 * ["awe"], look_at_arg=2 * UP),
+                  run_time=1)
         self.play(self.get_light_shine(lightbulb))
         self.play(
-            ReplacementTransform(
-                VGroup(lightbulb),
-                pi_lights
-            ),
-            morty.change, "happy",
-            *[
-                ApplyMethod(pi.change, mode, pi.get_top())
-                for pi, mode in zip(self.students, [
-                    "hooray", "tease", "surprised"
-                ])
-            ]
-        )
+            ReplacementTransform(VGroup(lightbulb), pi_lights), morty.change,
+            "happy", *[
+                ApplyMethod(pi.change, mode, pi.get_top()) for pi, mode in zip(
+                    self.students, ["hooray", "tease", "surprised"])
+            ])
         self.wait(3)
 
 

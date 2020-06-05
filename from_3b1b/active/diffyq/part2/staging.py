@@ -32,19 +32,13 @@ class PartTwoOfTour(TourOfDifferentialEquations):
             thumbnails[0],
             run_time=1,
         )
+        self.play(Restore(frame, run_time=3), )
+        self.play(TransformFromCopy(ode, pde), )
         self.play(
-            Restore(frame, run_time=3),
-        )
-        self.play(
-            TransformFromCopy(ode, pde),
-        )
-        self.play(
-            ApplyMethod(
-                frame.replace, thumbnails[1],
-                path_arc=(-30 * DEGREES),
-                run_time=3
-            ),
-        )
+            ApplyMethod(frame.replace,
+                        thumbnails[1],
+                        path_arc=(-30 * DEGREES),
+                        run_time=3), )
         self.wait()
 
 
@@ -84,10 +78,8 @@ class BrownianMotion(Scene):
         max_v = self.max_v
         n_particles = self.n_particles
 
-        lil_particles = VGroup(*[
-            self.get_particle(m1, r1, L, max_v)
-            for k in range(n_particles)
-        ])
+        lil_particles = VGroup(
+            *[self.get_particle(m1, r1, L, max_v) for k in range(n_particles)])
         big_particle = self.get_particle(m2, r2, L=r2, max_v=0)
         big_particle.set_fill(YELLOW, 1)
 
@@ -113,8 +105,7 @@ class BrownianMotion(Scene):
         dot.radius = r
         dot.center = op.add(
             np.random.uniform(-L + r, L - r) * RIGHT,
-            np.random.uniform(-L + r, L - r) * UP
-        )
+            np.random.uniform(-L + r, L - r) * UP)
         dot.move_to(dot.center)
         dot.velocity = rotate_vector(
             np.random.uniform(0, max_v) * RIGHT,
@@ -162,14 +153,8 @@ class BrownianMotion(Scene):
                     u2 = p2.velocity
                     m1 = p1.mass
                     m2 = p2.mass
-                    v1 = (
-                        (m2 * (u2 - u1) + m1 * u1 + m2 * u2) /
-                        (m1 + m2)
-                    )
-                    v2 = (
-                        (m1 * (u1 - u2) + m1 * u1 + m2 * u2) /
-                        (m1 + m2)
-                    )
+                    v1 = ((m2 * (u2 - u1) + m1 * u1 + m2 * u2) / (m1 + m2))
+                    v2 = ((m1 * (u1 - u2) + m1 * u1 + m2 * u2) / (m1 + m2))
                     p1.velocity = v1
                     p2.velocity = v2
 
@@ -179,10 +164,8 @@ class BrownianMotion(Scene):
             for i in [0, 1]:
                 if abs(c1[i]) + r1 > self.L:
                     c1[i] = np.sign(c1[i]) * (self.L - r1)
-                    p1.velocity[i] *= -1 * op.mul(
-                        np.sign(p1.velocity[i]),
-                        np.sign(c1[i])
-                    )
+                    p1.velocity[i] *= -1 * op.mul(np.sign(p1.velocity[i]),
+                                                  np.sign(c1[i]))
 
         for p in particles:
             p.move_to(p.center)
@@ -215,11 +198,16 @@ class BlackScholes(AltBrownianMotion):
         title.next_to(2 * UP, UP)
 
         equation = TexMobject(
-            "{\\partial V \\over \\partial t}", "+",
+            "{\\partial V \\over \\partial t}",
+            "+",
             "\\frac{1}{2} \\sigma^2 S^2",
-            "{\\partial^2 V \\over \\partial S^2}", "+",
-            "rS", "{\\partial V \\over \\partial S}",
-            "-rV", "=", "0",
+            "{\\partial^2 V \\over \\partial S^2}",
+            "+",
+            "rS",
+            "{\\partial V \\over \\partial S}",
+            "-rV",
+            "=",
+            "0",
         )
         equation.scale(0.8)
         equation.next_to(title, DOWN)
@@ -243,17 +231,13 @@ class BlackScholes(AltBrownianMotion):
         axes.move_to(DOWN)
 
         def get_graph_point():
-            return axes.c2p(
-                self.get_time(),
-                5 + 2 * self.big_particle.get_center()[1]
-            )
+            return axes.c2p(self.get_time(),
+                            5 + 2 * self.big_particle.get_center()[1])
 
         graph = VMobject()
         graph.match_style(self.path)
         graph.start_new_path(get_graph_point())
-        graph.add_updater(
-            lambda g: g.add_line_to(get_graph_point())
-        )
+        graph.add_updater(lambda g: g.add_line_to(get_graph_point()))
 
         self.add(axes)
         self.add(graph)
@@ -261,10 +245,8 @@ class BlackScholes(AltBrownianMotion):
 
 class ContrastChapters1And2(Scene):
     def construct(self):
-        c1_frame, c2_frame = frames = VGroup(*[
-            ScreenRectangle(height=3.5)
-            for x in range(2)
-        ])
+        c1_frame, c2_frame = frames = VGroup(
+            *[ScreenRectangle(height=3.5) for x in range(2)])
         frames.arrange(RIGHT, buff=LARGE_BUFF)
 
         c1_title, c2_title = titles = VGroup(
@@ -301,24 +283,33 @@ class ContrastChapters1And2(Scene):
         lt.scale(2, about_edge=UP)
 
         c1_words = TextMobject(
-            "They're", "really\\\\", "{}",
-            "freaking", "hard\\\\",
-            "to", "solve\\\\",
+            "They're",
+            "really\\\\",
+            "{}",
+            "freaking",
+            "hard\\\\",
+            "to",
+            "solve\\\\",
         )
         c1_words.set_height(0.5 * c1_frame.get_height())
         c1_words.move_to(c1_frame)
 
         c2_words = TextMobject(
-            "They're", "really", "\\emph{really}\\\\",
-            "freaking", "hard\\\\",
-            "to", "solve\\\\",
+            "They're",
+            "really",
+            "\\emph{really}\\\\",
+            "freaking",
+            "hard\\\\",
+            "to",
+            "solve\\\\",
         )
         c2_words.set_color_by_tex("\\emph", YELLOW)
         c2_words.move_to(c2_frame)
         edit_shift = MED_LARGE_BUFF * RIGHT
         c2_edits = VGroup(
             TextMobject("sometimes").next_to(
-                c2_words[1:3], UP,
+                c2_words[1:3],
+                UP,
                 aligned_edge=LEFT,
             ),
             Line(
@@ -327,7 +318,8 @@ class ContrastChapters1And2(Scene):
                 stroke_width=8,
             ),
             TextMobject("not too").next_to(
-                c2_words[3], LEFT,
+                c2_words[3],
+                LEFT,
             ),
             Line(
                 c2_words[3].get_left(),
@@ -344,7 +336,8 @@ class ContrastChapters1And2(Scene):
 
         self.wait()
         self.play(LaggedStartMap(
-            FadeInFromDown, c1_words,
+            FadeInFromDown,
+            c1_words,
             lag_ratio=0.1,
         ))
         self.wait()
@@ -352,14 +345,12 @@ class ContrastChapters1And2(Scene):
         self.play(
             # TransformFromCopy(ode, pde),
             TransformFromCopy(c1_words, c2_words),
-            Write(lt)
-        )
+            Write(lt))
         self.wait()
+        self.play(Write(c2_edits[:2], run_time=1), )
         self.play(
-            Write(c2_edits[:2], run_time=1),
-        )
-        self.play(
-            c2_words[3:5].shift, edit_shift,
+            c2_words[3:5].shift,
+            edit_shift,
             Write(c2_edits[2:]),
             run_time=1,
         )
@@ -408,9 +399,7 @@ class ShowCubeFormation(ThreeDScene):
         self.begin_ambient_camera_rotation(rate=0.05)
 
         for target in [cube_1d, cube_2d, cube_3d]:
-            self.play(
-                Transform(cube, target, run_time=1.5)
-            )
+            self.play(Transform(cube, target, run_time=1.5))
         self.wait(8)
 
 
@@ -469,38 +458,22 @@ class TwoBodyEquations(Scene):
             }
         }
         equations = VGroup(
-            TexMobject(
-                "{d^2 x_1 \\over dt^2}",
-                "=",
-                "{x_2 - x_1 \\over m_1 \\left(",
-                "(x_2 - x_1)^2 + (y_2 - y_1)^2",
-                "\\right)^{3/2}",
-                **kw
-            ),
-            TexMobject(
-                "{d^2 y_1 \\over dt^2}",
-                "=",
-                "{y_2 - y_1 \\over m_1 \\left(",
-                "(x_2 - x_1)^2 + (y_2 - y_1)^2",
-                "\\right)^{3/2}",
-                **kw
-            ),
-            TexMobject(
-                "{d^2 x_2 \\over dt^2}",
-                "=",
-                "{x_1 - x_2 \\over m_2 \\left(",
-                "(x_2 - x_1)^2 + (y_2 - y_1)^2",
-                "\\right)^{3/2}",
-                **kw
-            ),
-            TexMobject(
-                "{d^2 y_2 \\over dt^2}",
-                "=",
-                "{y_1 - y_2 \\over m_2 \\left(",
-                "(x_2 - x_1)^2 + (y_2 - y_1)^2",
-                "\\right)^{3/2}",
-                **kw
-            ),
+            TexMobject("{d^2 x_1 \\over dt^2}", "=",
+                       "{x_2 - x_1 \\over m_1 \\left(",
+                       "(x_2 - x_1)^2 + (y_2 - y_1)^2", "\\right)^{3/2}",
+                       **kw),
+            TexMobject("{d^2 y_1 \\over dt^2}", "=",
+                       "{y_2 - y_1 \\over m_1 \\left(",
+                       "(x_2 - x_1)^2 + (y_2 - y_1)^2", "\\right)^{3/2}",
+                       **kw),
+            TexMobject("{d^2 x_2 \\over dt^2}", "=",
+                       "{x_1 - x_2 \\over m_2 \\left(",
+                       "(x_2 - x_1)^2 + (y_2 - y_1)^2", "\\right)^{3/2}",
+                       **kw),
+            TexMobject("{d^2 y_2 \\over dt^2}", "=",
+                       "{y_1 - y_2 \\over m_2 \\left(",
+                       "(x_2 - x_1)^2 + (y_2 - y_1)^2", "\\right)^{3/2}",
+                       **kw),
         )
 
         equations.arrange(DOWN, buff=LARGE_BUFF)
@@ -525,39 +498,27 @@ class TwoBodyEquations(Scene):
             variable.scale(0.7)
             variable.move_to(lhs, LEFT)
 
-        self.play(LaggedStart(*[
-            FadeInFrom(v, RIGHT)
-            for v in variables
-        ]))
+        self.play(LaggedStart(*[FadeInFrom(v, RIGHT) for v in variables]))
         self.wait()
-        self.play(
-            LaggedStartMap(Restore, variables),
-            FadeIn(
-                lhss_copy,
-                remover=True,
-                lag_ratio=0.1,
-                run_time=2,
-            )
-        )
+        self.play(LaggedStartMap(Restore, variables),
+                  FadeIn(
+                      lhss_copy,
+                      remover=True,
+                      lag_ratio=0.1,
+                      run_time=2,
+                  ))
         self.add(lhss)
         self.wait()
+        self.play(LaggedStartMap(FadeIn, rhss))
+        self.wait()
+        self.play(
+            LaggedStart(*[ShowCreationThenFadeAround(lhs[:3])
+                          for lhs in lhss]))
+        self.wait()
         self.play(LaggedStartMap(
-            FadeIn, rhss
+            ShowCreationThenFadeAround,
+            rhss,
         ))
-        self.wait()
-        self.play(
-            LaggedStart(*[
-                ShowCreationThenFadeAround(lhs[:3])
-                for lhs in lhss
-            ])
-        )
-        self.wait()
-        self.play(
-            LaggedStartMap(
-                ShowCreationThenFadeAround,
-                rhss,
-            )
-        )
         self.wait()
 
 
@@ -581,8 +542,7 @@ class LaplacianIntuition(SpecialThreeDScene):
         def func(x, y):
             return np.array([
                 x, y,
-                2.7 + 0.5 * (np.sin(x) + np.cos(y)) -
-                0.025 * (x**2 + y**2)
+                2.7 + 0.5 * (np.sin(x) + np.cos(y)) - 0.025 * (x**2 + y**2)
             ])
 
         surface_config = {
@@ -607,9 +567,7 @@ class LaplacianIntuition(SpecialThreeDScene):
         plane.center()
         plane.set_shade_in_3d(True)
 
-        surface = ParametricSurface(
-            func, **surface_config
-        )
+        surface = ParametricSurface(func, **surface_config)
         surface.set_stroke(BLUE, width=0.1)
         surface.set_fill(BLUE, opacity=0.25)
 
@@ -630,13 +588,9 @@ class LaplacianIntuition(SpecialThreeDScene):
         circle.insert_n_curves(20)
         circle.add_updater(lambda m: m.move_to(point))
         circle.set_shade_in_3d(True)
-        surface_circle = always_redraw(
-            lambda: circle.copy().apply_function(
-                lambda p: func(*p[:2])
-            ).shift(
-                0.02 * IN
-            ).color_using_background_image("VerticalTempGradient")
-        )
+        surface_circle = always_redraw(lambda: circle.copy(
+        ).apply_function(lambda p: func(*p[:2])).shift(
+            0.02 * IN).color_using_background_image("VerticalTempGradient"))
 
         self.play(FadeInFromLarge(dot))
         self.play(ShowCreation(line))
@@ -646,14 +600,14 @@ class LaplacianIntuition(SpecialThreeDScene):
                 circle.copy(),
                 surface_circle.copy().clear_updaters(),
                 remover=True,
-            )
-        )
+            ))
         self.add(surface_circle)
 
         self.wait()
         for vect in [4 * LEFT, DOWN, 4 * RIGHT, UP]:
             self.play(
-                point.shift, vect,
+                point.shift,
+                vect,
                 run_time=3,
             )
 
@@ -678,20 +632,12 @@ class StrogatzMention(PiCreatureScene):
         name.match_width(steve)
         name.next_to(steve, DOWN)
 
-        self.think(
-            "Hmm...many good\\\\lessons here...",
-            run_time=1
-        )
+        self.think("Hmm...many good\\\\lessons here...", run_time=1)
         self.wait()
         self.play(FadeInFromDown(steve))
         self.wait()
-        self.play(
-            FadeInFrom(book, DOWN),
-            steve.shift, 4 * RIGHT,
-            RemovePiCreatureBubble(
-                morty, target_mode="thinking"
-            )
-        )
+        self.play(FadeInFrom(book, DOWN), steve.shift, 4 * RIGHT,
+                  RemovePiCreatureBubble(morty, target_mode="thinking"))
         self.wait(3)
         self.play(
             FadeOut(steve),
@@ -707,15 +653,11 @@ class StrogatzMention(PiCreatureScene):
         )
         motives.scale(1.5)
         motives.arrange(
-            DOWN, LARGE_BUFF,
+            DOWN,
+            LARGE_BUFF,
             aligned_edge=LEFT,
         )
-        motives.move_to(
-            Line(
-                self.book.get_right(),
-                FRAME_WIDTH * RIGHT / 2
-            )
-        )
+        motives.move_to(Line(self.book.get_right(), FRAME_WIDTH * RIGHT / 2))
         motives.to_edge(UP)
 
         for motive in motives:
@@ -725,20 +667,15 @@ class StrogatzMention(PiCreatureScene):
 
     def show_pages(self):
         book = self.book
-        pages = Group(*[
-            ImageMobject("IP_Sample_Page{}".format(i))
-            for i in range(1, 4)
-        ])
+        pages = Group(
+            *[ImageMobject("IP_Sample_Page{}".format(i)) for i in range(1, 4)])
         for page in pages:
             page.match_height(book)
             page.next_to(book, RIGHT)
 
         last_page = VectorizedPoint()
         for page in pages:
-            self.play(
-                FadeOut(last_page),
-                FadeIn(page)
-            )
+            self.play(FadeOut(last_page), FadeIn(page))
             self.wait()
             last_page = page
 
@@ -755,14 +692,14 @@ class Thumbnail(Scene):
         image.to_edge(DOWN, buff=-SMALL_BUFF)
         self.add(image)
 
-        equation = TexMobject(
-            "{\\partial {T} \\over \\partial {t}}", "=",
-            "\\alpha", "\\nabla^2 {T}",
-            tex_to_color_map={
-                "{t}": YELLOW,
-                "{T}": RED,
-            }
-        )
+        equation = TexMobject("{\\partial {T} \\over \\partial {t}}",
+                              "=",
+                              "\\alpha",
+                              "\\nabla^2 {T}",
+                              tex_to_color_map={
+                                  "{t}": YELLOW,
+                                  "{T}": RED,
+                              })
         equation.scale(2)
         equation.to_edge(UP)
 

@@ -19,17 +19,12 @@ class FourierSeriesExampleWithRectForZoom(ComplexFourierSeriesExample):
         self.circles.set_stroke(opacity=0.5)
         rect = self.rect = self.get_rect()
         rect.set_height(self.rect_scale_factor * FRAME_HEIGHT)
-        rect.add_updater(lambda m: m.move_to(
-            self.get_rect_center()
-        ))
+        rect.add_updater(lambda m: m.move_to(self.get_rect_center()))
         self.add(rect)
         self.run_one_cycle()
 
     def get_rect_center(self):
-        return center_of_mass([
-            v.get_end()
-            for v in self.vectors
-        ])
+        return center_of_mass([v.get_end() for v in self.vectors])
 
     def get_rect(self):
         return ScreenRectangle(
@@ -38,7 +33,8 @@ class FourierSeriesExampleWithRectForZoom(ComplexFourierSeriesExample):
         )
 
 
-class ZoomedInFourierSeriesExample(FourierSeriesExampleWithRectForZoom, MovingCameraScene):
+class ZoomedInFourierSeriesExample(FourierSeriesExampleWithRectForZoom,
+                                   MovingCameraScene):
     CONFIG = {
         "vector_config": {
             "max_tip_length_to_length_ratio": 0.15,
@@ -81,7 +77,8 @@ class ZoomedInFourierSeriesExample100x(ZoomedInFourierSeriesExample):
     #     return self.get_path_end(vectors, stroke_width, **kwargs)
 
 
-class TrebleClefFourierSeriesExampleWithRectForZoom(FourierSeriesExampleWithRectForZoom):
+class TrebleClefFourierSeriesExampleWithRectForZoom(
+        FourierSeriesExampleWithRectForZoom):
     CONFIG = {
         "file_name": "TrebleClef",
         "drawn_path_stroke_width": 10,
@@ -94,7 +91,8 @@ class TrebleClefZoomedInFourierSeriesExample(ZoomedInFourierSeriesExample):
     }
 
 
-class NailAndGearFourierSeriesExampleWithRectForZoom(FourierSeriesExampleWithRectForZoom):
+class NailAndGearFourierSeriesExampleWithRectForZoom(
+        FourierSeriesExampleWithRectForZoom):
     CONFIG = {
         "file_name": "Nail_And_Gear",
         "n_vectors": 200,
@@ -110,7 +108,8 @@ class NailAndGearZoomedInFourierSeriesExample(ZoomedInFourierSeriesExample):
     }
 
 
-class SigmaFourierSeriesExampleWithRectForZoom(FourierSeriesExampleWithRectForZoom):
+class SigmaFourierSeriesExampleWithRectForZoom(
+        FourierSeriesExampleWithRectForZoom):
     CONFIG = {
         "n_vectors": 200,
         "drawn_path_color": PINK,
@@ -121,7 +120,9 @@ class SigmaFourierSeriesExampleWithRectForZoom(FourierSeriesExampleWithRectForZo
         return TexMobject("\\Sigma")
 
 
-class SigmaZoomedInFourierSeriesExample(SigmaFourierSeriesExampleWithRectForZoom, ZoomedInFourierSeriesExample):
+class SigmaZoomedInFourierSeriesExample(
+        SigmaFourierSeriesExampleWithRectForZoom,
+        ZoomedInFourierSeriesExample):
     pass
 
 
@@ -172,8 +173,7 @@ class FourierOfHilbert(FourierSeriesExampleWithRectForZoom):
         start = combined_path.get_start()
         end = combined_path.get_end()
         points = [
-            interpolate(end, start, alpha)
-            for alpha in np.linspace(0, 1, 10)
+            interpolate(end, start, alpha) for alpha in np.linspace(0, 1, 10)
         ]
         for point in points:
             combined_path.add_line_to(point)

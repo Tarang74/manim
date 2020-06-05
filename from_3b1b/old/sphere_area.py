@@ -1,30 +1,21 @@
 from manimlib.imports import *
 from active_projects.shadows import *
 
-
 # Abstract scenes
+
 
 class Cylinder(Sphere):
     """
     Inherits from sphere so as to be as aligned as possible
     for transformations
     """
-
     def func(self, u, v):
-        return np.array([
-            np.cos(v),
-            np.sin(v),
-            np.cos(u)
-        ])
+        return np.array([np.cos(v), np.sin(v), np.cos(u)])
 
 
 class UnwrappedCylinder(Cylinder):
     def func(self, u, v):
-        return np.array([
-            v - PI,
-            -self.radius,
-            np.cos(u)
-        ])
+        return np.array([v - PI, -self.radius, np.cos(u)])
 
 
 class ParametricDisc(Sphere):
@@ -63,8 +54,7 @@ class SphereCylinderScene(SpecialThreeDScene):
             Circle(
                 radius=R,
                 **self.cap_config,
-            ).shift(R * vect)
-            for vect in [IN, OUT]
+            ).shift(R * vect) for vect in [IN, OUT]
         ])
         caps.set_shade_in_3d(True)
         return caps
@@ -93,6 +83,7 @@ class SphereCylinderScene(SpecialThreeDScene):
 
 # Scenes for video
 
+
 class AskAboutShadowRelation(SpecialThreeDScene):
     CONFIG = {
         "R_color": YELLOW,
@@ -108,9 +99,7 @@ class AskAboutShadowRelation(SpecialThreeDScene):
     def show_surface_area(self):
         sphere = self.get_sphere()
         sphere.set_fill(BLUE_E, opacity=0.5)
-        sphere.add_updater(
-            lambda s, dt: s.rotate(0.1 * dt, axis=OUT)
-        )
+        sphere.add_updater(lambda s, dt: s.rotate(0.1 * dt, axis=OUT))
         pieces = sphere.deepcopy()
         pieces.space_out_submobjects(1.5)
         pieces.shift(IN)
@@ -122,10 +111,8 @@ class AskAboutShadowRelation(SpecialThreeDScene):
         # R_label.rotate(90 * DEGREES, RIGHT)
         # R_label.next_to(radial_line, OUT, SMALL_BUFF)
 
-        sa_equation = TexMobject(
-            "\\text{Surface area} = 4\\pi R^2",
-            tex_to_color_map={"R": BLUE}
-        )
+        sa_equation = TexMobject("\\text{Surface area} = 4\\pi R^2",
+                                 tex_to_color_map={"R": BLUE})
         sa_equation.scale(1.5)
         sa_equation.to_edge(UP)
 
@@ -147,20 +134,22 @@ class AskAboutShadowRelation(SpecialThreeDScene):
         #         run_time=2
         #     )
         # )
-        self.play(LaggedStartMap(
-            UpdateFromAlphaFunc, sphere,
-            lambda mob: (mob, lambda m, a: m.set_fill(
-                color=interpolate_color(BLUE_E, YELLOW, a),
-                opacity=interpolate(0.5, 1, a)
-            )),
-            rate_func=there_and_back,
-            lag_ratio=0.1,
-            run_time=4
-        ))
         self.play(
-            sphere.scale, 0.75,
-            sphere.shift, 3 * LEFT,
-            sa_equation.shift, 3 * LEFT,
+            LaggedStartMap(UpdateFromAlphaFunc,
+                           sphere,
+                           lambda mob: (mob, lambda m, a: m.set_fill(
+                               color=interpolate_color(BLUE_E, YELLOW, a),
+                               opacity=interpolate(0.5, 1, a))),
+                           rate_func=there_and_back,
+                           lag_ratio=0.1,
+                           run_time=4))
+        self.play(
+            sphere.scale,
+            0.75,
+            sphere.shift,
+            3 * LEFT,
+            sa_equation.shift,
+            3 * LEFT,
         )
         self.wait(2)
 
@@ -176,32 +165,27 @@ class AskAboutShadowRelation(SpecialThreeDScene):
             fill_color=BLUE_E,
             fill_opacity=1,
         )
-        radial_line = Line(
-            shadow.get_center(),
-            shadow.get_right(),
-            color=YELLOW
-        )
+        radial_line = Line(shadow.get_center(),
+                           shadow.get_right(),
+                           color=YELLOW)
         R_label = TexMobject("R").set_color(self.R_color)
         R_label.scale(0.8)
         R_label.next_to(radial_line, DOWN, SMALL_BUFF)
         shadow.add(radial_line, R_label)
         shadow.move_to(
-            self.camera.transform_points_pre_display(sphere, [sphere.get_center()])[0]
-        )
+            self.camera.transform_points_pre_display(sphere,
+                                                     [sphere.get_center()])[0])
 
         shadows = VGroup(*[shadow.copy() for x in range(4)])
         shadows.arrange_in_grid(buff=MED_LARGE_BUFF)
         shadows.to_edge(RIGHT)
 
-        area_label = TexMobject(
-            "\\pi R^2",
-            tex_to_color_map={"R": self.R_color}
-        )
+        area_label = TexMobject("\\pi R^2",
+                                tex_to_color_map={"R": self.R_color})
         area_label.scale(1.2)
         area_labels = VGroup(*[
-            area_label.copy().move_to(interpolate(
-                mob.get_center(), mob.get_top(), 0.5
-            ))
+            area_label.copy().move_to(
+                interpolate(mob.get_center(), mob.get_top(), 0.5))
             for mob in shadows
         ])
 
@@ -212,9 +196,7 @@ class AskAboutShadowRelation(SpecialThreeDScene):
         for new_shadow in shadows:
             old_shadow = shadow.copy()
             self.add_fixed_in_frame_mobjects(old_shadow)
-            anims.append(Transform(
-                old_shadow, new_shadow, remover=True
-            ))
+            anims.append(Transform(old_shadow, new_shadow, remover=True))
         self.remove(shadow)
         self.play(*anims)
         self.add_fixed_in_frame_mobjects(shadows, area_labels)
@@ -234,24 +216,19 @@ class AskAboutShadowRelation(SpecialThreeDScene):
 
         shadow_pieces_group = VGroup()
         for shadow in shadows:
-            pieces = ParametricSurface(
-                func=lambda u, v: np.array([
-                    u * np.cos(TAU * v),
-                    u * np.sin(TAU * v),
-                    0,
-                ]),
-                resolution=(12, 24)
-            )
+            pieces = ParametricSurface(func=lambda u, v: np.array([
+                u * np.cos(TAU * v),
+                u * np.sin(TAU * v),
+                0,
+            ]),
+                                       resolution=(12, 24))
             pieces.replace(shadow)
             pieces.match_style(sphere)
             shadow_pieces_group.add(pieces)
 
         self.add_fixed_in_frame_mobjects(shadow_pieces_group)
-        self.play(
-            FadeOut(shadows),
-            FadeOut(area_labels),
-            FadeIn(shadow_pieces_group)
-        )
+        self.play(FadeOut(shadows), FadeOut(area_labels),
+                  FadeIn(shadow_pieces_group))
         self.show_area_pieces(sphere)
         self.wait()
         self.show_area_pieces(*shadow_pieces_group)
@@ -265,22 +242,17 @@ class AskAboutShadowRelation(SpecialThreeDScene):
             mob.target.space_out_submobjects(self.space_out_factor)
         self.play(*map(MoveToTarget, mobjects))
         self.play(*[
-            LaggedStartMap(
-                ApplyMethod, mob,
-                lambda m: (m.set_fill, YELLOW, 1),
-                rate_func=there_and_back,
-                lag_ratio=0.25,
-                run_time=1.5
-            )
-            for mob in mobjects
+            LaggedStartMap(ApplyMethod,
+                           mob,
+                           lambda m: (m.set_fill, YELLOW, 1),
+                           rate_func=there_and_back,
+                           lag_ratio=0.25,
+                           run_time=1.5) for mob in mobjects
         ])
 
     def unshow_area_pieces(self, *mobjects):
         self.play(*[
-            ApplyMethod(
-                mob.space_out_submobjects,
-                1.0 / self.space_out_factor
-            )
+            ApplyMethod(mob.space_out_submobjects, 1.0 / self.space_out_factor)
             for mob in mobjects
         ])
 
@@ -301,34 +273,24 @@ class ButWhy(TeacherStudentsScene):
             target_mode=self.student_mode,
             bubble_kwargs={"direction": LEFT},
         )
-        self.play(
-            self.teacher.change, self.teacher_mode, self.students[2]
-        )
+        self.play(self.teacher.change, self.teacher_mode, self.students[2])
         self.wait(5)
 
 
 class ButWhyHappy(ButWhy):
-    CONFIG = {
-        "teacher_mode": "happy"
-    }
+    CONFIG = {"teacher_mode": "happy"}
 
 
 class ButWhySassy(ButWhy):
-    CONFIG = {
-        "teacher_mode": "sassy"
-    }
+    CONFIG = {"teacher_mode": "sassy"}
 
 
 class ButWhyHesitant(ButWhy):
-    CONFIG = {
-        "teacher_mode": "hesitant"
-    }
+    CONFIG = {"teacher_mode": "hesitant"}
 
 
 class ButWhyAngry(ButWhy):
-    CONFIG = {
-        "teacher_mode": "angry"
-    }
+    CONFIG = {"teacher_mode": "angry"}
 
 
 class TryFittingCirclesDirectly(ExternallyAnimatedScene):
@@ -343,11 +305,11 @@ class PreviewTwoMethods(MovingCameraScene):
         )
         for thumbnail in thumbnails:
             thumbnail.set_width(FRAME_WIDTH / 2 - 1)
-            thumbnail.add_to_back(SurroundingRectangle(
-                thumbnail, buff=0,
-                stroke_color=WHITE,
-                stroke_width=5
-            ))
+            thumbnail.add_to_back(
+                SurroundingRectangle(thumbnail,
+                                     buff=0,
+                                     stroke_color=WHITE,
+                                     stroke_width=5))
         thumbnails.arrange(RIGHT, buff=LARGE_BUFF)
 
         title = TextMobject("Two proofs")
@@ -362,10 +324,7 @@ class PreviewTwoMethods(MovingCameraScene):
         self.wait()
         for thumbnail in thumbnails:
             frame.save_state()
-            self.play(
-                frame.replace, thumbnail,
-                run_time=2
-            )
+            self.play(frame.replace, thumbnail, run_time=2)
             self.wait()
             self.play(Restore(frame, run_time=2))
 
@@ -388,10 +347,7 @@ class MapSphereOntoCylinder(SphereCylinderScene):
             run_time=2,
         )
         self.wait(2)
-        self.play(
-            ReplacementTransform(sphere, cylinder),
-            run_time=3
-        )
+        self.play(ReplacementTransform(sphere, cylinder), run_time=3)
         self.wait(3)
 
         # Get rid of caps
@@ -410,11 +366,7 @@ class MapSphereOntoCylinder(SphereCylinderScene):
 
         self.play(FadeIn(caps))
         self.wait()
-        self.play(
-            caps.space_out_submobjects, 2,
-            caps.fade, 1,
-            remover=True
-        )
+        self.play(caps.space_out_submobjects, 2, caps.fade, 1, remover=True)
         self.play(Write(label))
         self.wait(2)
         self.play(FadeOut(label))
@@ -422,10 +374,8 @@ class MapSphereOntoCylinder(SphereCylinderScene):
         # Unwrap
         unwrapped_cylinder = self.get_unwrapped_cylinder()
         unwrapped_cylinder.set_fill(opacity=0.75)
-        self.play(
-            ReplacementTransform(cylinder, unwrapped_cylinder),
-            run_time=3
-        )
+        self.play(ReplacementTransform(cylinder, unwrapped_cylinder),
+                  run_time=3)
         self.stop_ambient_camera_rotation()
         self.move_camera(
             phi=90 * DEGREES,
@@ -457,15 +407,9 @@ class MapSphereOntoCylinder(SphereCylinderScene):
         two_pi_R.next_to(top_line, OUT)
         two_R.next_to(side_line, RIGHT)
 
-        self.play(
-            ShowCreation(top_line),
-            FadeInFrom(two_pi_R, IN)
-        )
+        self.play(ShowCreation(top_line), FadeInFrom(two_pi_R, IN))
         self.wait()
-        self.play(
-            ShowCreation(side_line),
-            FadeInFrom(two_R, RIGHT)
-        )
+        self.play(ShowCreation(side_line), FadeInFrom(two_R, RIGHT))
         self.wait()
 
 
@@ -531,17 +475,13 @@ class UnfoldCircles(Scene):
         two_pi_R = TexMobject("2", "\\pi", "R")
         two_pi_R.next_to(w_line, UP)
 
-        pre_area_label = TexMobject(
-            "2\\cdot", "2", "\\pi", "R", "\\cdot R"
-        )
+        pre_area_label = TexMobject("2\\cdot", "2", "\\pi", "R", "\\cdot R")
         area_label = TexMobject("4", "\\pi", "R^2")
         for label in [area_label, pre_area_label]:
             label.next_to(rect.get_center(), UP, SMALL_BUFF)
 
-        self.rect_group = VGroup(
-            rect, h_line, w_line,
-            two_R, two_pi_R, area_label
-        )
+        self.rect_group = VGroup(rect, h_line, w_line, two_R, two_pi_R,
+                                 area_label)
         self.area_label = area_label
         self.rect = rect
 
@@ -558,19 +498,15 @@ class UnfoldCircles(Scene):
             ReplacementTransform(pre_area_label[3:], area_label[2:]),
         )
         self.wait()
-        self.play(
-            self.rect_group.to_corner, UL,
-            {"buff": MED_SMALL_BUFF}
-        )
+        self.play(self.rect_group.to_corner, UL, {"buff": MED_SMALL_BUFF})
 
     def add_four_circles(self):
         rect_group = self.rect_group
         radius = self.radius
 
-        radii_lines = VGroup(*[
-            Line(radius * UP, ORIGIN).set_stroke(WHITE, 2)
-            for x in range(4)
-        ])
+        radii_lines = VGroup(
+            *
+            [Line(radius * UP, ORIGIN).set_stroke(WHITE, 2) for x in range(4)])
         radii_lines.arrange_in_grid(buff=1.3)
         radii_lines[2:].shift(RIGHT)
         radii_lines.next_to(rect_group, DOWN, buff=1.3)
@@ -582,13 +518,11 @@ class UnfoldCircles(Scene):
         unwrap_factor_tracker = ValueTracker(0)
 
         def get_circle(line):
-            return always_redraw(
-                lambda: self.get_unwrapped_circle(
-                    radius=radius, dr=self.dr,
-                    unwrap_factor=unwrap_factor_tracker.get_value(),
-                    center=line.get_top()
-                )
-            )
+            return always_redraw(lambda: self.get_unwrapped_circle(
+                radius=radius,
+                dr=self.dr,
+                unwrap_factor=unwrap_factor_tracker.get_value(),
+                center=line.get_top()))
 
         circles = VGroup(*[get_circle(line) for line in radii_lines])
         circle_copies = circles.copy()
@@ -603,27 +537,19 @@ class UnfoldCircles(Scene):
         self.remove(circle_copies)
         self.add(circles, radii_lines, R_labels)
         self.wait()
-        self.play(
-            radii_lines[2:].shift, 2.9 * RIGHT,
-            R_labels[2:].shift, 2.9 * RIGHT,
-            VGroup(
-                radii_lines[:2], R_labels[:2]
-            ).to_edge, LEFT, {"buff": 1.0}
-        )
-        self.play(
-            unwrap_factor_tracker.set_value, 1,
-            run_time=2
-        )
+        self.play(radii_lines[2:].shift, 2.9 * RIGHT, R_labels[2:].shift,
+                  2.9 * RIGHT,
+                  VGroup(radii_lines[:2],
+                         R_labels[:2]).to_edge, LEFT, {"buff": 1.0})
+        self.play(unwrap_factor_tracker.set_value, 1, run_time=2)
         self.wait()
 
         # Move triangles
         triangles = circles.copy()
         for triangle in triangles:
             triangle.clear_updaters()
-            border = Polygon(*[
-                triangle.get_corner(vect)
-                for vect in (DL, UL, DR)
-            ])
+            border = Polygon(
+                *[triangle.get_corner(vect) for vect in (DL, UL, DR)])
             border.set_stroke(WHITE, 1)
             triangle.add(border)
             triangle.generate_target()
@@ -652,12 +578,10 @@ class UnfoldCircles(Scene):
             angle = interpolate(TAU, 0, alpha)
             length = TAU * r
             arc_radius = length / angle
-            ring = Arc(
-                start_angle=-90 * DEGREES,
-                angle=angle,
-                radius=arc_radius,
-                **self.circle_style
-            )
+            ring = Arc(start_angle=-90 * DEGREES,
+                       angle=angle,
+                       radius=arc_radius,
+                       **self.circle_style)
             ring.shift(center + (r - arc_radius) * DOWN)
             # ring = AnnularSector(
             #     inner_radius=r1,
@@ -726,9 +650,7 @@ class ShowProjection(SphereCylinderScene):
         self.example_group = example_group
 
         self.play(*map(ShowCreation, proj_lines))
-        self.play(
-            LaggedStartMap(MoveToTarget, pieces),
-        )
+        self.play(LaggedStartMap(MoveToTarget, pieces), )
         self.wait()
 
     def focus_on_one(self):
@@ -776,16 +698,14 @@ class ShowProjection(SphereCylinderScene):
                 lambda t: radius * sphere.func(u, t),
                 t_min=sphere.v_min,
                 t_max=sphere.v_max,
-            )
-            for u in u_values
+            ) for u in u_values
         ])
         lon_lines = VGroup(*[
             ParametricFunction(
                 lambda t: radius * sphere.func(t, v),
                 t_min=sphere.u_min,
                 t_max=sphere.u_max,
-            )
-            for v in v_values
+            ) for v in v_values
         ])
         for lines in lat_lines, lon_lines:
             for line in lines:
@@ -796,20 +716,14 @@ class ShowProjection(SphereCylinderScene):
         lat_lines.set_color(RED)
         lon_lines.set_color(PINK)
 
-        self.play(
-            *map(ShowCreationThenDestruction, lat_lines),
-            run_time=2
-        )
+        self.play(*map(ShowCreationThenDestruction, lat_lines), run_time=2)
         self.add_fixed_in_frame_mobjects(w_brace, width_label)
         self.play(
             GrowFromCenter(w_brace),
             Write(width_label),
         )
         self.wait()
-        self.play(
-            *map(ShowCreationThenDestruction, lon_lines),
-            run_time=2
-        )
+        self.play(*map(ShowCreationThenDestruction, lon_lines), run_time=2)
         self.add_fixed_in_frame_mobjects(h_brace, height_label)
         self.play(
             GrowFromCenter(h_brace),
@@ -823,75 +737,61 @@ class ShowProjection(SphereCylinderScene):
         equation = self.equation
         equation.save_state()
         new_example_groups = [
-            self.get_example_group([1, -1, z])
-            for z in [6, 0.25]
+            self.get_example_group([1, -1, z]) for z in [6, 0.25]
         ]
         r1, lines, r2 = example_group
 
         self.stop_ambient_camera_rotation()
-        self.move_camera(
-            phi=65 * DEGREES,
-            theta=-80 * DEGREES,
-            added_anims=[
-                ghost_sphere.set_stroke, {"opacity": 0.1},
-                lines.set_stroke, {"width": 3},
-            ]
-        )
+        self.move_camera(phi=65 * DEGREES,
+                         theta=-80 * DEGREES,
+                         added_anims=[
+                             ghost_sphere.set_stroke,
+                             {
+                                 "opacity": 0.1
+                             },
+                             lines.set_stroke,
+                             {
+                                 "width": 3
+                             },
+                         ])
         for eg in new_example_groups:
             eg[1].set_stroke(width=3)
         self.show_length_stretch_of_rect(example_group)
         all_example_groups = [example_group, *new_example_groups]
         for eg1, eg2 in zip(all_example_groups, all_example_groups[1:]):
             if eg1 is new_example_groups[0]:
-                self.move_camera(
-                    phi=70 * DEGREES,
-                    theta=-110 * DEGREES
-                )
+                self.move_camera(phi=70 * DEGREES, theta=-110 * DEGREES)
             self.remove(eg1)
-            self.play(
-                ReplacementTransform(eg1.deepcopy(), eg2),
-                Transform(
-                    equation,
-                    self.get_equation(eg2[2])
-                )
-            )
+            self.play(ReplacementTransform(eg1.deepcopy(), eg2),
+                      Transform(equation, self.get_equation(eg2[2])))
             if eg1 is example_group:
                 self.move_camera(
                     phi=0,
                     theta=-90 * DEGREES,
                 )
             self.show_length_stretch_of_rect(eg2)
-        self.play(
-            ReplacementTransform(all_example_groups[-1], example_group),
-            Restore(equation)
-        )
+        self.play(ReplacementTransform(all_example_groups[-1], example_group),
+                  Restore(equation))
 
     def show_length_stretch_of_rect(self, example_group):
         s_rect, proj_lines, c_rect = example_group
         rects = VGroup(s_rect, c_rect)
-        line1, line2 = lines = VGroup(*[
-            Line(m.get_anchors()[1], m.get_anchors()[2])
-            for m in rects
-        ])
+        line1, line2 = lines = VGroup(
+            *[Line(m.get_anchors()[1],
+                   m.get_anchors()[2]) for m in rects])
         lines.set_stroke(YELLOW, 5)
         lines.set_shade_in_3d(True)
         proj_lines_to_fade = VGroup(
             proj_lines[0],
             proj_lines[3],
         )
-        self.play(
-            FadeIn(lines[0]),
-            FadeOut(rects),
-            FadeOut(proj_lines_to_fade)
-        )
+        self.play(FadeIn(lines[0]), FadeOut(rects),
+                  FadeOut(proj_lines_to_fade))
         for x in range(3):
             anims = []
             if lines[1] in self.mobjects:
                 anims.append(FadeOut(lines[1]))
-            self.play(
-                TransformFromCopy(lines[0], lines[1]),
-                *anims
-            )
+            self.play(TransformFromCopy(lines[0], lines[1]), *anims)
         self.play(
             FadeOut(lines),
             FadeIn(rects),
@@ -907,57 +807,51 @@ class ShowProjection(SphereCylinderScene):
         equation = self.equation
         r1, lines, r2 = example_group
         to_fade = VGroup(*[
-            mob
-            for mob in it.chain(ghost_sphere, ghost_cylinder)
+            mob for mob in it.chain(ghost_sphere, ghost_cylinder)
             if np.dot(mob.get_center(), [1, 1, 0]) < 0
         ])
         to_fade.save_state()
 
         new_example_groups = [
-            self.get_example_group([1, -1, z])
-            for z in [6, 0.25]
+            self.get_example_group([1, -1, z]) for z in [6, 0.25]
         ]
         for eg in new_example_groups:
             eg[::2].set_stroke(YELLOW, 2)
             eg.set_stroke(width=1)
         all_example_groups = VGroup(example_group, *new_example_groups)
 
-        self.play(
-            to_fade.shift, IN,
-            to_fade.fade, 1,
-            remover=True
-        )
-        self.move_camera(
-            phi=85 * DEGREES,
-            theta=-135 * DEGREES,
-            added_anims=[
-                lines.set_stroke, {"width": 1},
-                r1.set_stroke, YELLOW, 2, 1,
-                r2.set_stroke, YELLOW, 2, 1,
-            ]
-        )
+        self.play(to_fade.shift, IN, to_fade.fade, 1, remover=True)
+        self.move_camera(phi=85 * DEGREES,
+                         theta=-135 * DEGREES,
+                         added_anims=[
+                             lines.set_stroke,
+                             {
+                                 "width": 1
+                             },
+                             r1.set_stroke,
+                             YELLOW,
+                             2,
+                             1,
+                             r2.set_stroke,
+                             YELLOW,
+                             2,
+                             1,
+                         ])
         self.show_shadow(example_group)
         for eg1, eg2 in zip(all_example_groups, all_example_groups[1:]):
             self.remove(*eg1.get_family())
-            self.play(
-                ReplacementTransform(eg1.deepcopy(), eg2),
-                Transform(
-                    equation,
-                    self.get_equation(eg2[2])
-                )
-            )
+            self.play(ReplacementTransform(eg1.deepcopy(), eg2),
+                      Transform(equation, self.get_equation(eg2[2])))
             self.show_shadow(eg2)
-        self.move_camera(
-            phi=70 * DEGREES,
-            theta=-115 * DEGREES,
-            added_anims=[
-                ReplacementTransform(
-                    all_example_groups[-1],
-                    example_group,
-                ),
-                Restore(equation),
-            ]
-        )
+        self.move_camera(phi=70 * DEGREES,
+                         theta=-115 * DEGREES,
+                         added_anims=[
+                             ReplacementTransform(
+                                 all_example_groups[-1],
+                                 example_group,
+                             ),
+                             Restore(equation),
+                         ])
         self.begin_ambient_camera_rotation()
         self.play(Restore(to_fade))
         self.wait(5)
@@ -980,10 +874,11 @@ class ShowProjection(SphereCylinderScene):
                 "color": YELLOW,
                 "stroke_width": 0.5,
             }
-            result.add(VGroup(*[
-                Line(p1, p2, **kwargs)
-                for p1, p2 in [(start, corner), (corner, end)]
-            ]))
+            result.add(
+                VGroup(*[
+                    Line(p1, p2, **kwargs)
+                    for p1, p2 in [(start, corner), (corner, end)]
+                ]))
         result.set_shade_in_3d(True)
         return result
 
@@ -1037,16 +932,13 @@ class ShowProjection(SphereCylinderScene):
     def get_example_group(self, vect):
         pieces = self.pieces
         rect = pieces[np.argmax([
-            np.dot(r.saved_state.get_center(), vect)
-            for r in pieces
+            np.dot(r.saved_state.get_center(), vect) for r in pieces
         ])].saved_state.copy()
         rect_proj_lines = self.get_projection_lines(rect)
         rect.set_fill(YELLOW, 1)
         original_rect = rect.copy()
         self.project_mobject(rect)
-        rect.shift(
-            0.001 * np.array([*rect.get_center()[:2], 0])
-        )
+        rect.shift(0.001 * np.array([*rect.get_center()[:2], 0]))
         result = VGroup(original_rect, rect_proj_lines, rect)
         result.set_shade_in_3d(True)
         return result
@@ -1079,10 +971,7 @@ class SlantedShadowSquishing(ShowShadows):
         self.add(square, shadow)
         for n in range(self.num_reorientations):
             angle = 40 * DEGREES
-            self.play(
-                Rotate(square, angle, axis=RIGHT),
-                run_time=2
-            )
+            self.play(Rotate(square, angle, axis=RIGHT), run_time=2)
 
     def get_object(self):
         square = Square()
@@ -1124,18 +1013,15 @@ class JustifyLengthStretch(ShowProjection):
         sphere = self.ghost_sphere
         cylinder = self.ghost_cylinder
         to_fade = VGroup(*[
-            mob
-            for mob in it.chain(sphere, cylinder)
+            mob for mob in it.chain(sphere, cylinder)
             if np.dot(mob.get_center(), DOWN) > 0
         ])
         self.lost_hemisphere = to_fade
         to_fade.save_state()
 
-        circle = Circle(
-            stroke_width=2,
-            stroke_color=PINK,
-            radius=self.sphere.radius
-        )
+        circle = Circle(stroke_width=2,
+                        stroke_color=PINK,
+                        radius=self.sphere.radius)
         circle.rotate(90 * DEGREES, RIGHT)
         self.circle = circle
 
@@ -1143,12 +1029,11 @@ class JustifyLengthStretch(ShowProjection):
 
         self.stop_ambient_camera_rotation()
         self.play(
-            Rotate(
-                to_fade, -PI,
-                axis=OUT,
-                about_point=sphere.get_left(),
-                run_time=2
-            ),
+            Rotate(to_fade,
+                   -PI,
+                   axis=OUT,
+                   about_point=sphere.get_left(),
+                   run_time=2),
             VFadeOut(to_fade, run_time=2),
             FadeIn(circle),
         )
@@ -1177,12 +1062,8 @@ class JustifyLengthStretch(ShowProjection):
     def label_d(self):
         example_group = self.example_group
         s_rect = example_group[0]
-        d_line = self.get_d_line(
-            s_rect.get_corner(IN + RIGHT + DOWN)
-        )
-        alt_d_line = self.get_d_line(
-            s_rect.get_corner(OUT + LEFT + DOWN)
-        )
+        d_line = self.get_d_line(s_rect.get_corner(IN + RIGHT + DOWN))
+        alt_d_line = self.get_d_line(s_rect.get_corner(OUT + LEFT + DOWN))
         d_label = TexMobject("d")
         d_label.next_to(d_line, IN)
 
@@ -1198,7 +1079,9 @@ class JustifyLengthStretch(ShowProjection):
             self.play(
                 FadeIn(to_fade_in),
                 FadeOut(to_fade_out),
-                d_label.next_to, to_fade_in, IN,
+                d_label.next_to,
+                to_fade_in,
+                IN,
             )
 
         self.d_line = d_line
@@ -1222,17 +1105,14 @@ class JustifyLengthStretch(ShowProjection):
         base = Line(p1, p2)
         base.set_stroke(PINK, 3)
 
-        big_triangle = Polygon(
-            p0, self.project_point(p1), self.project_point(p2)
-        )
+        big_triangle = Polygon(p0, self.project_point(p1),
+                               self.project_point(p2))
         big_triangle.set_stroke(width=0)
         big_triangle.set_fill(RED, opacity=1)
 
-        equation = VGroup(
-            triangle.copy().rotate(-3 * DEGREES),
-            TexMobject("\\sim"),
-            big_triangle.copy().rotate(-3 * DEGREES)
-        )
+        equation = VGroup(triangle.copy().rotate(-3 * DEGREES),
+                          TexMobject("\\sim"),
+                          big_triangle.copy().rotate(-3 * DEGREES))
         equation.arrange(RIGHT, buff=SMALL_BUFF)
         equation.to_corner(UL)
         eq_d = TexMobject("d").next_to(equation[0], DOWN, SMALL_BUFF)
@@ -1247,8 +1127,9 @@ class JustifyLengthStretch(ShowProjection):
             phi=40 * DEGREES,
             theta=-85 * DEGREES,
             added_anims=[
-                d_label.next_to, d_line, DOWN, SMALL_BUFF,
-                d_line.set_stroke, {"width": 1},
+                d_label.next_to, d_line, DOWN, SMALL_BUFF, d_line.set_stroke, {
+                    "width": 1
+                },
                 FadeOut(proj_lines[0]),
                 FadeOut(proj_lines[3]),
                 FadeOut(R_label)
@@ -1257,18 +1138,12 @@ class JustifyLengthStretch(ShowProjection):
         )
         point = VectorizedPoint(p0)
         point.set_shade_in_3d(True)
-        self.play(
-            ReplacementTransform(point, triangle),
-            Animation(self.camera.phi_tracker)
-        )
+        self.play(ReplacementTransform(point, triangle),
+                  Animation(self.camera.phi_tracker))
         self.add_fixed_in_frame_mobjects(equation, eq_d, eq_R)
-        self.play(
-            FadeInFrom(equation[0], 7 * RIGHT + 2.5 * DOWN),
-            FadeIn(equation[1:]),
-            FadeInFromDown(eq_d),
-            FadeInFromDown(eq_R),
-            Animation(self.camera.phi_tracker)
-        )
+        self.play(FadeInFrom(equation[0], 7 * RIGHT + 2.5 * DOWN),
+                  FadeIn(equation[1:]), FadeInFromDown(eq_d),
+                  FadeInFromDown(eq_R), Animation(self.camera.phi_tracker))
         self.wait()
         for x in range(2):
             self.play(ShowCreationThenDestruction(base))
@@ -1279,21 +1154,24 @@ class JustifyLengthStretch(ShowProjection):
         self.wait(2)
         R_label.next_to(R_line, DOWN, SMALL_BUFF)
         R_label.shift(0.25 * IN)
-        self.play(
-            ReplacementTransform(triangle, big_triangle),
-            FadeIn(R_label),
-            Animation(self.camera.phi_tracker)
-        )
+        self.play(ReplacementTransform(triangle, big_triangle),
+                  FadeIn(R_label), Animation(self.camera.phi_tracker))
         self.wait(3)
 
-        self.move_camera(
-            phi=70 * DEGREES,
-            theta=-70 * DEGREES,
-            added_anims=[
-                big_triangle.set_fill, {"opacity": 0.25},
-                d_label.next_to, d_line, IN, {"buff": 0.3},
-            ]
-        )
+        self.move_camera(phi=70 * DEGREES,
+                         theta=-70 * DEGREES,
+                         added_anims=[
+                             big_triangle.set_fill,
+                             {
+                                 "opacity": 0.25
+                             },
+                             d_label.next_to,
+                             d_line,
+                             IN,
+                             {
+                                 "buff": 0.3
+                             },
+                         ])
         self.begin_ambient_camera_rotation()
         lost_hemisphere = self.lost_hemisphere
         lost_hemisphere.restore()
@@ -1301,14 +1179,16 @@ class JustifyLengthStretch(ShowProjection):
         lost_hemisphere.rotate(-PI, axis=OUT, about_point=left_point)
         self.play(
             Rotate(
-                lost_hemisphere, PI,
+                lost_hemisphere,
+                PI,
                 axis=OUT,
                 about_point=left_point,
                 run_time=2,
             ),
             VFadeIn(lost_hemisphere),
             FadeOut(self.circle),
-            R_line.set_color, self.R_color,
+            R_line.set_color,
+            self.R_color,
         )
         self.wait(10)
 
@@ -1361,20 +1241,14 @@ class ProTipNameThings(Scene):
 
 class WidthScaleLabel(Scene):
     def construct(self):
-        text = TexMobject(
-            "\\text{Width scale factor} =",
-            "\\frac{R}{d}"
-        )
+        text = TexMobject("\\text{Width scale factor} =", "\\frac{R}{d}")
         self.play(Write(text))
         self.wait()
 
 
 class HeightSquishLabel(Scene):
     def construct(self):
-        text = TexMobject(
-            "\\text{Height squish factor} =",
-            "\\frac{R}{d}"
-        )
+        text = TexMobject("\\text{Height squish factor} =", "\\frac{R}{d}")
         self.play(Write(text))
         self.wait()
 
@@ -1389,8 +1263,7 @@ class TinierAndTinerRectangles(SphereCylinderScene):
             self.get_sphere(
                 resolution=(12 * (2**n), 24 * (2**n)),
                 stroke_width=0,
-            )
-            for n in range(self.n_iterations)
+            ) for n in range(self.n_iterations)
         ]
 
         self.set_camera_to_default_position()
@@ -1406,9 +1279,7 @@ class TinierAndTinerRectangles(SphereCylinderScene):
             s2.fade(1)
             for piece in s1:
                 piece.add(VectorizedPoint(piece.get_center() / 2))
-            self.play(
-                LaggedStartMap(Restore, s2)
-            )
+            self.play(LaggedStartMap(Restore, s2))
             self.remove(s1)
         self.wait(5)
 
@@ -1457,11 +1328,9 @@ class JustifyHeightSquish(MovingCameraScene):
         self.label_angles()
 
     def recreate_cross_section(self):
-        axes = Axes(
-            axis_config={
-                "unit_size": 2,
-            }
-        )
+        axes = Axes(axis_config={
+            "unit_size": 2,
+        })
         circle = Circle(
             radius=self.radius,
             stroke_color=PINK,
@@ -1471,19 +1340,15 @@ class JustifyHeightSquish(MovingCameraScene):
         R_line.set_color(self.R_color)
         R_label = TexMobject("R")
         R_label.next_to(R_line, DOWN, SMALL_BUFF)
-        d_lines = VGroup(*[
-            self.get_d_line(phi)
-            for phi in [self.low_phi, self.top_phi]
-        ])
+        d_lines = VGroup(
+            *[self.get_d_line(phi) for phi in [self.low_phi, self.top_phi]])
         d_line = d_lines[0]
         d_line.set_color(self.d_color)
         d_label = TexMobject("d")
         d_label.next_to(d_line, DOWN, SMALL_BUFF)
 
-        proj_lines = VGroup(*[
-            self.get_R_line(phi)
-            for phi in [self.top_phi, self.low_phi]
-        ])
+        proj_lines = VGroup(
+            *[self.get_R_line(phi) for phi in [self.top_phi, self.low_phi]])
         proj_lines.set_stroke(YELLOW, 1)
 
         s_rect_line, c_rect_line = [
@@ -1491,16 +1356,19 @@ class JustifyHeightSquish(MovingCameraScene):
                 *[l.get_end() for l in lines],
                 stroke_color=YELLOW,
                 stroke_width=2,
-            )
-            for lines in [d_lines, proj_lines]
+            ) for lines in [d_lines, proj_lines]
         ]
 
         mobjects = [
-            axes, circle,
-            R_line, d_line,
-            R_label, d_label,
+            axes,
+            circle,
+            R_line,
+            d_line,
+            R_label,
+            d_label,
             proj_lines,
-            s_rect_line, c_rect_line,
+            s_rect_line,
+            c_rect_line,
         ]
         self.add(*mobjects)
         self.set_variables_as_attrs(*mobjects)
@@ -1534,23 +1402,19 @@ class JustifyHeightSquish(MovingCameraScene):
                 continue
             mob.generate_target()
             mob.save_state()
-            mob.target.set_stroke(
-                width=sw_sf * mob.get_stroke_width()
-            )
+            mob.target.set_stroke(width=sw_sf * mob.get_stroke_width())
             stroke_width_changers.add(mob)
 
-        self.play(
-            frame.scale, scale_factor,
-            frame.move_to, lil_tri,
-            self.d_label.scale, d_sf, {"about_edge": UP},
-            *map(MoveToTarget, stroke_width_changers)
-        )
+        self.play(frame.scale, scale_factor, frame.move_to, lil_tri,
+                  self.d_label.scale, d_sf, {"about_edge": UP},
+                  *map(MoveToTarget, stroke_width_changers))
         self.play(DrawBorderThenFill(lil_tri, stroke_width=0.5))
         self.wait()
         self.play(
             ShowCreation(hyp),
             LaggedStartMap(
-                DrawBorderThenFill, hyp_word,
+                DrawBorderThenFill,
+                hyp_word,
                 stroke_width=0.5,
                 run_time=1,
             ),
@@ -1558,20 +1422,18 @@ class JustifyHeightSquish(MovingCameraScene):
         self.wait()
         self.play(TransformFromCopy(hyp, leg))
         self.play(TransformFromCopy(
-            hyp_word, leg_word,
+            hyp_word,
+            leg_word,
             path_arc=-PI / 2,
         ))
         self.wait()
-        self.play(
-            frame.restore,
-            self.d_label.scale, 1 / d_sf, {"about_edge": UP},
-            *map(Restore, stroke_width_changers),
-            run_time=3
-        )
+        self.play(frame.restore,
+                  self.d_label.scale,
+                  1 / d_sf, {"about_edge": UP},
+                  *map(Restore, stroke_width_changers),
+                  run_time=3)
 
-        self.set_variables_as_attrs(
-            hyp_word, leg_word, tri_group
-        )
+        self.set_variables_as_attrs(hyp_word, leg_word, tri_group)
 
     def show_tangent_to_radius(self):
         tri_group = self.tri_group
@@ -1597,11 +1459,16 @@ class JustifyHeightSquish(MovingCameraScene):
         self.wait()
         self.play(
             Rotate(
-                R_line, 90 * DEGREES - phi,
+                R_line,
+                90 * DEGREES - phi,
                 about_point=ORIGIN,
             ),
-            R_label.next_to, 0.5 * circle_point, DR, {"buff": 0},
-            d_label.shift, SMALL_BUFF * UL,
+            R_label.next_to,
+            0.5 * circle_point,
+            DR,
+            {"buff": 0},
+            d_label.shift,
+            SMALL_BUFF * UL,
         )
         self.play(ShowCreation(elbow))
         self.wait()
@@ -1623,9 +1490,12 @@ class JustifyHeightSquish(MovingCameraScene):
 
         to_fade = VGroup(
             self.proj_lines,
-            self.s_rect_line, self.c_rect_line,
-            self.hyp_word, self.leg_word,
-            lil_tri.hyp, lil_tri.leg2,
+            self.s_rect_line,
+            self.c_rect_line,
+            self.hyp_word,
+            self.leg_word,
+            lil_tri.hyp,
+            lil_tri.leg2,
         )
         rad_tangent = VGroup(
             R_line,
@@ -1636,50 +1506,43 @@ class JustifyHeightSquish(MovingCameraScene):
         phi_tracker = ValueTracker(self.low_phi)
 
         self.play(
-            frame.scale, 0.6,
-            frame.shift, UR,
-            R_label.scale, 0.6, {"about_edge": UL},
-            d_label.scale, 0.6,
+            frame.scale,
+            0.6,
+            frame.shift,
+            UR,
+            R_label.scale,
+            0.6,
+            {"about_edge": UL},
+            d_label.scale,
+            0.6,
             {"about_point": d_label.get_top() + SMALL_BUFF * DOWN},
             *map(FadeOut, to_fade),
         )
 
         curr_phi = self.low_phi
         d_phi = abs(self.top_phi - self.low_phi)
-        alt_phis = [
-            80 * DEGREES,
-            20 * DEGREES,
-            50 * DEGREES,
-            curr_phi
-        ]
+        alt_phis = [80 * DEGREES, 20 * DEGREES, 50 * DEGREES, curr_phi]
         for new_phi in alt_phis:
             self.add(tri_group, d_label)
-            self.play(
-                phi_tracker.set_value, new_phi,
-                UpdateFromFunc(
-                    tri_group,
-                    lambda tg: tg.become(
-                        self.get_double_triangle_group(
-                            phi_tracker.get_value(),
-                            d_phi
-                        )
-                    )
-                ),
-                Rotate(
-                    rad_tangent,
-                    -(new_phi - curr_phi),
-                    about_point=ORIGIN,
-                ),
-                MaintainPositionRelativeTo(R_label, R_line),
-                UpdateFromFunc(
-                    d_line,
-                    lambda dl: dl.become(
-                        self.get_d_line(phi_tracker.get_value())
-                    ),
-                ),
-                MaintainPositionRelativeTo(d_label, d_line),
-                run_time=2
-            )
+            self.play(phi_tracker.set_value,
+                      new_phi,
+                      UpdateFromFunc(
+                          tri_group, lambda tg: tg.become(
+                              self.get_double_triangle_group(
+                                  phi_tracker.get_value(), d_phi))),
+                      Rotate(
+                          rad_tangent,
+                          -(new_phi - curr_phi),
+                          about_point=ORIGIN,
+                      ),
+                      MaintainPositionRelativeTo(R_label, R_line),
+                      UpdateFromFunc(
+                          d_line,
+                          lambda dl: dl.become(
+                              self.get_d_line(phi_tracker.get_value())),
+                      ),
+                      MaintainPositionRelativeTo(d_label, d_line),
+                      run_time=2)
             self.wait()
             curr_phi = new_phi
         for tri in tri_group:
@@ -1728,17 +1591,13 @@ class JustifyHeightSquish(MovingCameraScene):
         elbow.shift(big_tri.get_corner(UL))
         elbow.set_stroke(width=2)
 
-        equation = TexMobject(
-            "\\alpha", "+", "\\beta", "+",
-            "90^\\circ", "=", "180^\\circ"
-        )
+        equation = TexMobject("\\alpha", "+", "\\beta", "+", "90^\\circ", "=",
+                              "180^\\circ")
         equation.scale(0.6)
         equation.next_to(frame.get_corner(UR), DL)
 
-        movers = VGroup(
-            alpha_label.deepcopy(), beta_label.deepcopy(),
-            elbow.copy()
-        )
+        movers = VGroup(alpha_label.deepcopy(), beta_label.deepcopy(),
+                        elbow.copy())
         indices = [0, 2, 4]
         for mover, index in zip(movers, indices):
             mover.target = VGroup(equation[index])
@@ -1758,10 +1617,8 @@ class JustifyHeightSquish(MovingCameraScene):
         self.play(ShowCreation(elbow))
         self.wait()
 
-        self.play(
-            LaggedStartMap(MoveToTarget, movers),
-            LaggedStartMap(FadeInFromDown, equation[1:4:2])
-        )
+        self.play(LaggedStartMap(MoveToTarget, movers),
+                  LaggedStartMap(FadeInFromDown, equation[1:4:2]))
         self.wait()
         self.play(FadeInFrom(equation[-2:], LEFT))
         self.remove(equation, movers)
@@ -1771,33 +1628,33 @@ class JustifyHeightSquish(MovingCameraScene):
         # Zoom in
         self.remove(self.tangent_elbow)
         stroke_width_changers = VGroup(*[
-            mob for mob in self.mobjects
-            if mob not in [
-                beta_arc, beta_label, frame, equation,
+            mob for mob in self.mobjects if mob not in [
+                beta_arc,
+                beta_label,
+                frame,
+                equation,
             ]
         ])
         for mob in stroke_width_changers:
             mob.generate_target()
             mob.save_state()
-            mob.target.set_stroke(
-                width=0.3 * mob.get_stroke_width()
-            )
+            mob.target.set_stroke(width=0.3 * mob.get_stroke_width())
         equation.set_background_stroke(width=0)
         scaled_arcs = VGroup(beta_arc, self.tangent_elbow)
         beta_label.set_background_stroke(color=BLACK, width=0.3)
         self.play(
             ApplyMethod(
-                VGroup(frame, equation).scale, 0.15,
+                VGroup(frame, equation).scale,
+                0.15,
                 {"about_point": circle_point + 0.1 * LEFT},
             ),
             ApplyMethod(
-                beta_label.scale, 0.3,
+                beta_label.scale,
+                0.3,
                 {"about_point": circle_point},
-            ),
-            scaled_arcs.set_stroke, {"width": 0.3},
-            scaled_arcs.scale, 0.3, {"about_point": circle_point},
-            *map(MoveToTarget, stroke_width_changers)
-        )
+            ), scaled_arcs.set_stroke, {"width": 0.3}, scaled_arcs.scale, 0.3,
+            {"about_point": circle_point},
+            *map(MoveToTarget, stroke_width_changers))
 
         # Show small triangle angles
         TexMobject.CONFIG["background_stroke_width"] = 0
@@ -1833,17 +1690,13 @@ class JustifyHeightSquish(MovingCameraScene):
         alpha_label1.move_to(q_mark)
 
         alpha_label2 = alpha_label1.copy()
-        alpha_label2.next_to(
-            alpha_arc2, RIGHT, buff=0.01
-        )
+        alpha_label2.next_to(alpha_arc2, RIGHT, buff=0.01)
         alpha_label2.set_background_stroke(color=BLACK, width=0.3)
 
         beta_label1 = beta_label.copy()
         beta_label1.scale(0.7)
         beta_label1.set_background_stroke(color=BLACK, width=0.3)
-        beta_label1.next_to(
-            beta_arc1, UP, buff=0.01
-        )
+        beta_label1.next_to(beta_arc1, UP, buff=0.01)
         beta_label1.shift(0.01 * LEFT)
 
         self.play(FadeOut(words))
@@ -1851,23 +1704,21 @@ class JustifyHeightSquish(MovingCameraScene):
         self.wait(0.25)
         self.play(WiggleOutThenIn(beta_label))
         self.wait(0.25)
-        self.play(
-            ShowCreation(alpha_arc1),
-            FadeInFrom(q_mark, 0.1 * RIGHT)
-        )
+        self.play(ShowCreation(alpha_arc1), FadeInFrom(q_mark, 0.1 * RIGHT))
         self.wait()
-        self.play(ShowPassingFlash(
-            self.tangent.copy().scale(0.1).set_stroke(PINK, 0.5)
-        ))
+        self.play(
+            ShowPassingFlash(self.tangent.copy().scale(0.1).set_stroke(
+                PINK, 0.5)))
         self.wait()
         self.play(ReplacementTransform(q_mark, alpha_label1))
-        self.play(ShowCreationThenFadeAround(
-            equation,
-            surrounding_rectangle_config={
-                "buff": 0.015,
-                "stroke_width": 0.5,
-            },
-        ))
+        self.play(
+            ShowCreationThenFadeAround(
+                equation,
+                surrounding_rectangle_config={
+                    "buff": 0.015,
+                    "stroke_width": 0.5,
+                },
+            ))
         self.wait()
         self.play(
             ShowCreation(alpha_arc2),
@@ -1887,26 +1738,26 @@ class JustifyHeightSquish(MovingCameraScene):
         p2[0] = p0[0]
 
         little_triangle = Polygon(
-            p0, p1, p2,
+            p0,
+            p1,
+            p2,
             stroke_width=0,
             fill_color=self.little_triangle_color,
             fill_opacity=1,
         )
-        big_triangle = Polygon(
-            p0, ORIGIN, p0 - p0[0] * RIGHT,
-            stroke_width=0,
-            fill_color=self.big_triangle_color,
-            fill_opacity=1
-        )
+        big_triangle = Polygon(p0,
+                               ORIGIN,
+                               p0 - p0[0] * RIGHT,
+                               stroke_width=0,
+                               fill_color=self.big_triangle_color,
+                               fill_opacity=1)
         result = VGroup(little_triangle, big_triangle)
         for tri in result:
             p0, p1, p2 = tri.get_anchors()[:3]
             tri.hyp = Line(p0, p1)
             tri.leg1 = Line(p1, p2)
             tri.leg2 = Line(p2, p0)
-            tri.side_lines = VGroup(
-                tri.hyp, tri.leg1, tri.leg2
-            )
+            tri.side_lines = VGroup(tri.hyp, tri.leg1, tri.leg2)
             tri.side_lines.set_stroke(WHITE, 1)
         result.set_stroke(width=0)
         return result
@@ -1949,22 +1800,18 @@ class DrawSquareThenFade(Scene):
 
 class WhyAreWeDoingThis(TeacherStudentsScene):
     def construct(self):
-        self.student_says(
-            "Hang on, what \\\\ are we doing?",
-            student_index=2,
-            bubble_kwargs={"direction": LEFT},
-            target_mode="hesitant"
-        )
-        self.change_student_modes(
-            "maybe", "pondering", "hesitant",
-            added_anims=[self.teacher.change, "tease"]
-        )
+        self.student_says("Hang on, what \\\\ are we doing?",
+                          student_index=2,
+                          bubble_kwargs={"direction": LEFT},
+                          target_mode="hesitant")
+        self.change_student_modes("maybe",
+                                  "pondering",
+                                  "hesitant",
+                                  added_anims=[self.teacher.change, "tease"])
         self.wait(3)
-        self.play(
-            RemovePiCreatureBubble(self.students[2]),
-            self.teacher.change, "raise_right_hand",
-            self.change_student_modes(*2 * ["pondering"])
-        )
+        self.play(RemovePiCreatureBubble(self.students[2]),
+                  self.teacher.change, "raise_right_hand",
+                  self.change_student_modes(*2 * ["pondering"]))
         self.look_at(self.screen)
         self.wait(2)
 
@@ -1998,46 +1845,48 @@ class SameEffectAsRotating(Scene):
         group.center()
         moving_rect = rect1.copy()
 
-        low_brace = always_redraw(
-            lambda: Brace(
-                moving_rect, DOWN, buff=SMALL_BUFF,
-                min_num_quads=2,
-            )
-        )
-        right_brace = always_redraw(
-            lambda: Brace(
-                moving_rect, RIGHT, buff=SMALL_BUFF,
-                min_num_quads=2,
-            )
-        )
+        low_brace = always_redraw(lambda: Brace(
+            moving_rect,
+            DOWN,
+            buff=SMALL_BUFF,
+            min_num_quads=2,
+        ))
+        right_brace = always_redraw(lambda: Brace(
+            moving_rect,
+            RIGHT,
+            buff=SMALL_BUFF,
+            min_num_quads=2,
+        ))
         times_R_over_d = TexMobject("\\times \\frac{R}{d}")
         times_d_over_R = TexMobject("\\times \\frac{d}{R}")
         times_R_over_d.add_updater(
-            lambda m: m.next_to(low_brace, DOWN, SMALL_BUFF)
-        )
+            lambda m: m.next_to(low_brace, DOWN, SMALL_BUFF))
         times_d_over_R.add_updater(
-            lambda m: m.next_to(right_brace, RIGHT, SMALL_BUFF)
-        )
+            lambda m: m.next_to(right_brace, RIGHT, SMALL_BUFF))
 
         self.add(rect1, arrow)
         self.play(moving_rect.move_to, rect2)
         self.add(low_brace)
         self.play(
-            moving_rect.match_width, rect2, {"stretch": True},
+            moving_rect.match_width,
+            rect2,
+            {"stretch": True},
             FadeIn(times_R_over_d),
         )
         self.add(right_brace)
         self.play(
-            moving_rect.match_height, rect2, {"stretch": True},
+            moving_rect.match_height,
+            rect2,
+            {"stretch": True},
             FadeIn(times_d_over_R),
         )
         self.wait()
         rotated_rect1.move_to(moving_rect)
-        self.play(TransformFromCopy(
-            rect1, rotated_rect1,
-            path_arc=-90 * DEGREES,
-            run_time=2
-        ))
+        self.play(
+            TransformFromCopy(rect1,
+                              rotated_rect1,
+                              path_arc=-90 * DEGREES,
+                              run_time=2))
 
 
 class NotSameEffectAsRotating(SameEffectAsRotating):
@@ -2060,11 +1909,8 @@ class ShowParameterization(Scene):
             }
         }
         vector = Matrix(
-            [
-                ["\\text{cos}(u)\\text{sin}(v)"],
-                ["\\text{sin}(u)\\text{sin}(v)"],
-                ["\\text{cos}(v)"]
-            ],
+            [["\\text{cos}(u)\\text{sin}(v)"],
+             ["\\text{sin}(u)\\text{sin}(v)"], ["\\text{cos}(v)"]],
             element_to_mobject_config=tex_kwargs,
             element_alignment_corner=DOWN,
         )
@@ -2073,14 +1919,11 @@ class ShowParameterization(Scene):
         ranges = VGroup(
             TexMobject("0 \\le u \\le 2\\pi", **tex_kwargs),
             TexMobject("0 \\le v \\le \\pi", **tex_kwargs),
-            TextMobject(
-                "Sample $u$ and $v$ with \\\\ the same density",
-                tex_to_color_map={
-                    "$u$": u_color,
-                    "$v$": v_color,
-                }
-            )
-        )
+            TextMobject("Sample $u$ and $v$ with \\\\ the same density",
+                        tex_to_color_map={
+                            "$u$": u_color,
+                            "$v$": v_color,
+                        }))
         ranges.arrange(DOWN)
         ranges.next_to(vector, DOWN)
 
@@ -2129,21 +1972,15 @@ class RotateAllPiecesWithExpansion(ShowProjection):
         sphere_target = VGroup()
         for piece in sphere:
             p0, p1, p2, p3 = piece.get_anchors()[:4]
-            piece.set_points_as_corners([
-                p3, p0, p1, p2, p3
-            ])
+            piece.set_points_as_corners([p3, p0, p1, p2, p3])
             piece.generate_target()
             sphere_target.add(piece.target)
-            piece.target.move_to(
-                (1 + random.random()) * piece.get_center()
-            )
+            piece.target.move_to((1 + random.random()) * piece.get_center())
 
         self.add(ghost_sphere, sphere)
         self.wait()
         if self.with_expansion:
-            self.play(LaggedStartMap(
-                MoveToTarget, sphere
-            ))
+            self.play(LaggedStartMap(MoveToTarget, sphere))
         self.wait()
         self.play(*[
             Rotate(piece, 90 * DEGREES, axis=piece.get_center())
@@ -2167,7 +2004,9 @@ class ThinkingCritically(PiCreatureScene):
         self.play(randy.change, "pondering")
         self.wait()
         self.play(
-            randy.change, "hesitant", 2 * UP,
+            randy.change,
+            "hesitant",
+            2 * UP,
         )
         self.wait()
         self.play(randy.change, "sassy")
@@ -2220,11 +2059,9 @@ class SequenceOfSpheres(SphereCylinderScene):
         n_shapes = 4
         spheres, cylinders = groups = VGroup(*[
             VGroup(*[
-                func(resolution=(n, 2 * n))
-                for k in range(1, n_shapes + 1)
+                func(resolution=(n, 2 * n)) for k in range(1, n_shapes + 1)
                 for n in [3 * (2**k)]
-            ])
-            for func in [self.get_sphere, self.get_cylinder]
+            ]) for func in [self.get_sphere, self.get_cylinder]
         ])
         groups.scale(0.5)
         for group in groups:
@@ -2243,9 +2080,8 @@ class SequenceOfSpheres(SphereCylinderScene):
             equals = self.get_oriented_tex("=")
             equals.scale(1.5)
             equals.rotate(90 * DEGREES, UP)
-            equals.move_to(interpolate(
-                sphere.get_nadir(), cylinder.get_zenith(), 0.5
-            ))
+            equals.move_to(
+                interpolate(sphere.get_nadir(), cylinder.get_zenith(), 0.5))
             all_equals.add(equals)
         all_equals.remove(all_equals[-1])
 
@@ -2254,16 +2090,11 @@ class SequenceOfSpheres(SphereCylinderScene):
             arrow_group = VGroup()
             for m1, m2 in zip(group, group[1:]):
                 arrow = self.get_oriented_tex("\\rightarrow")
-                arrow.move_to(interpolate(
-                    m1.get_right(), m2.get_left(), 0.5
-                ))
+                arrow.move_to(interpolate(m1.get_right(), m2.get_left(), 0.5))
                 arrow_group.add(arrow)
             arrow_groups.add(arrow_group)
 
-        q_marks = VGroup(*[
-            group[-1]
-            for group in groups
-        ])
+        q_marks = VGroup(*[group[-1] for group in groups])
         final_arrows = VGroup(
             arrow_groups[0][-1],
             arrow_groups[1][-1],
@@ -2274,12 +2105,10 @@ class SequenceOfSpheres(SphereCylinderScene):
             arrow.add(dots)
         q_marks.shift(MED_LARGE_BUFF * RIGHT)
         tilted_final_arrows = VGroup(
-            final_arrows[0].copy().rotate(
-                -45 * DEGREES, axis=DOWN
-            ).shift(0.75 * IN),
-            final_arrows[1].copy().rotate(
-                45 * DEGREES, axis=DOWN
-            ).shift(0.75 * OUT),
+            final_arrows[0].copy().rotate(-45 * DEGREES,
+                                          axis=DOWN).shift(0.75 * IN),
+            final_arrows[1].copy().rotate(45 * DEGREES,
+                                          axis=DOWN).shift(0.75 * OUT),
         )
         final_q_mark = q_marks[0].copy()
         final_q_mark.move_to(q_marks)
@@ -2296,15 +2125,11 @@ class SequenceOfSpheres(SphereCylinderScene):
             ]
             if i > 0:
                 anims += [
-                    Write(arrow_group[i - 1])
-                    for arrow_group in arrow_groups
+                    Write(arrow_group[i - 1]) for arrow_group in arrow_groups
                 ]
             self.play(*anims, run_time=1)
             self.play(GrowFromCenter(all_equals[i]))
-        self.play(
-            FadeInFrom(q_marks, LEFT),
-            Write(final_arrows)
-        )
+        self.play(FadeInFrom(q_marks, LEFT), Write(final_arrows))
         self.wait()
         self.play(
             Transform(final_arrows, tilted_final_arrows),
@@ -2331,13 +2156,8 @@ class WhatIsSurfaceArea(SpecialThreeDScene):
         self.add_fixed_in_frame_mobjects(title)
 
         power_tracker = ValueTracker(1)
-        surface = always_redraw(
-            lambda: self.get_surface(
-                radius=3,
-                amplitude=1,
-                power=power_tracker.get_value()
-            )
-        )
+        surface = always_redraw(lambda: self.get_surface(
+            radius=3, amplitude=1, power=power_tracker.get_value()))
 
         pieces = surface.copy()
         pieces.clear_updaters()
@@ -2347,38 +2167,32 @@ class WhatIsSurfaceArea(SpecialThreeDScene):
         self.begin_ambient_camera_rotation()
         # self.add(self.get_axes())
         self.play(LaggedStartMap(
-            DrawBorderThenFill, pieces,
+            DrawBorderThenFill,
+            pieces,
             lag_ratio=0.2,
         ))
         self.remove(pieces)
         self.add(surface)
         if self.change_power:
-            self.play(
-                power_tracker.set_value, 5,
-                run_time=2
-            )
-            self.play(
-                power_tracker.set_value, 1,
-                run_time=2
-            )
+            self.play(power_tracker.set_value, 5, run_time=2)
+            self.play(power_tracker.set_value, 1, run_time=2)
         self.wait(2)
 
     def get_surface(self, radius, amplitude, power):
         def alt_pow(x, y):
-            return np.sign(x) * (np.abs(x) ** y)
-        return ParametricSurface(
-            lambda u, v: radius * np.array([
-                v * np.cos(TAU * u),
-                v * np.sin(TAU * u),
-                0,
-            ]) + amplitude * np.array([
-                0,
-                0,
-                (v**2) * alt_pow(np.sin(5 * TAU * u), power),
-            ]),
-            resolution=(100, 20),
-            v_min=0.01
-        )
+            return np.sign(x) * (np.abs(x)**y)
+
+        return ParametricSurface(lambda u, v: radius * np.array([
+            v * np.cos(TAU * u),
+            v * np.sin(TAU * u),
+            0,
+        ]) + amplitude * np.array([
+            0,
+            0,
+            (v**2) * alt_pow(np.sin(5 * TAU * u), power),
+        ]),
+                                 resolution=(100, 20),
+                                 v_min=0.01)
 
 
 class AltWhatIsSurfaceArea(WhatIsSurfaceArea):
@@ -2388,7 +2202,7 @@ class AltWhatIsSurfaceArea(WhatIsSurfaceArea):
 
     def get_surface(self, radius, amplitude, power):
         return ParametricSurface(
-            lambda u, v: radius * (1 - 0.8 * (v**2) ** power) * np.array([
+            lambda u, v: radius * (1 - 0.8 * (v**2)**power) * np.array([
                 np.cos(TAU * u) * (1 + 0.5 * v * np.sin(5 * TAU * u)),
                 np.sin(TAU * u) * (1 + 0.5 * v * np.sin(5 * TAU * u)),
                 v,
@@ -2440,9 +2254,17 @@ class RoleOfCalculus(SpecialThreeDScene):
         self.play(ShowCreation(cross))
         self.wait()
         self.play(
-            sphere.next_to, ORIGIN, LEFT, 1.0,
-            arrow.move_to, ORIGIN, LEFT,
-            calc.next_to, ORIGIN, RIGHT, 2.25,
+            sphere.next_to,
+            ORIGIN,
+            LEFT,
+            1.0,
+            arrow.move_to,
+            ORIGIN,
+            LEFT,
+            calc.next_to,
+            ORIGIN,
+            RIGHT,
+            2.25,
             FadeOut(cross),
             path_arc=PI,
             run_time=2,
@@ -2475,13 +2297,12 @@ class UnwrappedCircleLogic(UnfoldCircles):
 
         def get_unwrapped_circle():
             result = self.get_unwrapped_circle(
-                radius=radius, dr=dr,
+                radius=radius,
+                dr=dr,
                 unwrap_factor=unwrap_factor_tracker.get_value(),
-                center=center_tracker.get_center()
-            )
-            self.get_submob_from_prop(
-                result, get_highlight_prop()
-            ).set_stroke(YELLOW, 2)
+                center=center_tracker.get_center())
+            self.get_submob_from_prop(result, get_highlight_prop()).set_stroke(
+                YELLOW, 2)
             return result
 
         unwrapped_circle = always_redraw(get_unwrapped_circle)
@@ -2493,73 +2314,51 @@ class UnwrappedCircleLogic(UnfoldCircles):
         R_label.next_to(R_line, LEFT)
         circle_group = VGroup(circle, R_line, R_label)
 
-        tri_R_line = always_redraw(
-            lambda: Line(
-                ORIGIN, radius * DOWN
-            ).shift(center_tracker.get_center())
-        )
+        tri_R_line = always_redraw(lambda: Line(ORIGIN, radius * DOWN).shift(
+            center_tracker.get_center()))
 
         # Unwrap
         self.play(FadeInFromDown(circle_group))
         self.add(circle_group, unwrapped_circle, tri_R_line, R_label)
         circle_group.set_stroke(opacity=0.5)
-        self.play(
-            unwrap_factor_tracker.set_value, 1,
-            run_time=2
-        )
+        self.play(unwrap_factor_tracker.set_value, 1, run_time=2)
         self.play(
             center_tracker.move_to,
             circle.get_right() + (radius + MED_SMALL_BUFF) * RIGHT,
-            circle_group.set_stroke, {"opacity": 1},
+            circle_group.set_stroke,
+            {"opacity": 1},
         )
         self.wait()
 
         # Change radius
-        r_line = always_redraw(
-            lambda: Line(
-                ORIGIN, get_r() * DOWN,
-                stroke_width=2,
-                stroke_color=WHITE,
-            ).shift(circle.get_center())
-        )
+        r_line = always_redraw(lambda: Line(
+            ORIGIN,
+            get_r() * DOWN,
+            stroke_width=2,
+            stroke_color=WHITE,
+        ).shift(circle.get_center()))
         r_label = TexMobject("r")
-        r_label.add_updater(
-            lambda m: m.next_to(r_line, LEFT, SMALL_BUFF)
-        )
+        r_label.add_updater(lambda m: m.next_to(r_line, LEFT, SMALL_BUFF))
         two_pi_r_label = TexMobject("2\\pi r")
-        two_pi_r_label.add_updater(
-            lambda m: m.next_to(
-                self.get_submob_from_prop(
-                    unwrapped_circle,
-                    get_highlight_prop(),
-                ), DOWN, SMALL_BUFF
-            )
-        )
+        two_pi_r_label.add_updater(lambda m: m.next_to(
+            self.get_submob_from_prop(
+                unwrapped_circle,
+                get_highlight_prop(),
+            ), DOWN, SMALL_BUFF))
 
-        circle.add_updater(
-            lambda m: m.match_style(unwrapped_circle)
-        )
+        circle.add_updater(lambda m: m.match_style(unwrapped_circle))
 
         self.play(
             ReplacementTransform(R_line, r_line),
             ReplacementTransform(R_label, r_label),
-            FadeInFromDown(
-                two_pi_r_label.copy().clear_updaters(),
-                remover=True
-            )
-        )
+            FadeInFromDown(two_pi_r_label.copy().clear_updaters(),
+                           remover=True))
         self.add(two_pi_r_label)
         for prop in [0.2, 0.8, 0.5]:
-            self.play(
-                highligt_prop_tracker.set_value, prop,
-                run_time=2
-            )
+            self.play(highligt_prop_tracker.set_value, prop, run_time=2)
 
         # Show line
-        line = Line(*[
-            unwrapped_circle.get_corner(vect)
-            for vect in (UL, DR)
-        ])
+        line = Line(*[unwrapped_circle.get_corner(vect) for vect in (UL, DR)])
         line.set_color(PINK)
         line.set_fill(BLACK, 1)
         line_word = TextMobject("Line")
@@ -2622,9 +2421,7 @@ class AskAboutDirectConnection(TeacherStudentsScene, SpecialThreeDScene):
         area_label = TexMobject("\\pi R^2", background_stroke_width=0)
         area_label.scale(1.5)
         circle.add(area_label)
-        group = VGroup(
-            sphere, cylinder, formula, circle
-        )
+        group = VGroup(sphere, cylinder, formula, circle)
         for mob in group:
             mob.set_height(1.5)
         formula.scale(0.5)
@@ -2634,15 +2431,12 @@ class AskAboutDirectConnection(TeacherStudentsScene, SpecialThreeDScene):
 
         arrows = VGroup()
         for m1, m2 in zip(group, group[1:]):
-            arrow = Arrow(
-                m1.get_center(), m2.get_center(),
-                buff=1,
-                color=WHITE
-            )
+            arrow = Arrow(m1.get_center(),
+                          m2.get_center(),
+                          buff=1,
+                          color=WHITE)
             arrows.add(arrow)
-        direct_arrow = Arrow(
-            sphere, circle, color=WHITE
-        )
+        direct_arrow = Arrow(sphere, circle, color=WHITE)
         q_marks = TexMobject(*"???")
         q_marks.space_out_submobjects(1.5)
         q_marks.scale(1.5)
@@ -2653,24 +2447,23 @@ class AskAboutDirectConnection(TeacherStudentsScene, SpecialThreeDScene):
             self.get_student_changes(
                 *3 * ["pondering"],
                 look_at_arg=group,
-            ),
-            LaggedStartMap(FadeInFromDown, group),
-            LaggedStartMap(GrowArrow, arrows)
-        )
+            ), LaggedStartMap(FadeInFromDown, group),
+            LaggedStartMap(GrowArrow, arrows))
         self.wait()
         self.play(
-            self.teacher.change, "pondering",
-            self.students[2].change, "raise_right_hand",
-            GrowArrow(direct_arrow),
+            self.teacher.change, "pondering", self.students[2].change,
+            "raise_right_hand", GrowArrow(direct_arrow),
             LaggedStartMap(
-                FadeInFrom, q_marks,
+                FadeInFrom,
+                q_marks,
                 lambda m: (m, UP),
                 lag_ratio=0.8,
                 run_time=1.5,
-            )
-        )
+            ))
         self.change_student_modes(
-            "erm", "sassy", "raise_right_hand",
+            "erm",
+            "sassy",
+            "raise_right_hand",
         )
         self.wait(2)
         self.look_at(group)
@@ -2698,9 +2491,7 @@ class ExercisesGiveLearning(MovingCameraScene):
         self.play(LaggedStartMap(DrawBorderThenFill, bulb))
         self.play(ShowCreation(cross))
         self.play(
-            VGroup(lectures, cross).shift, DOWN,
-            FadeInFrom(exercises, UP)
-        )
+            VGroup(lectures, cross).shift, DOWN, FadeInFrom(exercises, UP))
         self.wait()
 
         # Show self
@@ -2712,34 +2503,25 @@ class ExercisesGiveLearning(MovingCameraScene):
         pupil_copy = logo.pupil.copy()
 
         self.add(logo, pupil_copy)
-        self.play(
-            frame.shift, 1.5 * LEFT,
-            Write(logo, run_time=1.5)
-        )
+        self.play(frame.shift, 1.5 * LEFT, Write(logo, run_time=1.5))
         self.remove(pupil_copy)
-        self.play(
-            GrowArrow(arrow2),
-            FadeOut(cross)
-        )
+        self.play(GrowArrow(arrow2), FadeOut(cross))
         self.wait()
-        self.play(
-            VGroup(logo, arrow2).next_to,
-            exercises, LEFT
-        )
+        self.play(VGroup(logo, arrow2).next_to, exercises, LEFT)
         self.wait()
 
 
 class NobodyLikesHomework(TeacherStudentsScene):
     def construct(self):
-        self.change_student_modes(
-            "angry", "pleading", "angry",
-            added_anims=[self.teacher.change, "guilty"]
-        )
+        self.change_student_modes("angry",
+                                  "pleading",
+                                  "angry",
+                                  added_anims=[self.teacher.change, "guilty"])
         self.wait()
         self.change_all_student_modes(
-            "tired", look_at_arg=8 * RIGHT + 4 * DOWN,
-            added_anims=[self.teacher.change, "tease"]
-        )
+            "tired",
+            look_at_arg=8 * RIGHT + 4 * DOWN,
+            added_anims=[self.teacher.change, "tease"])
         self.wait(2)
 
 
@@ -2797,11 +2579,10 @@ class SecondProof(SpecialThreeDScene):
         rings = self.rings
 
         self.play(FadeIn(rings), FadeOut(self.sphere))
-        self.play(
-            rings.space_out_submobjects, 1.5,
-            rate_func=there_and_back_with_pause,
-            run_time=3
-        )
+        self.play(rings.space_out_submobjects,
+                  1.5,
+                  rate_func=there_and_back_with_pause,
+                  run_time=3)
         self.wait(2)
         rings.save_state()
 
@@ -2838,22 +2619,18 @@ class SecondProof(SpecialThreeDScene):
         R_label.set_background_stroke(width=1)
         R_label.next_to(radial_line, DOWN)
 
+        self.play(FadeInFromDown(R_label), ShowCreation(radial_line))
         self.play(
-            FadeInFromDown(R_label),
-            ShowCreation(radial_line)
-        )
-        self.play(Rotating(
-            radial_line, angle=TAU,
-            about_point=ORIGIN,
-            rate_func=smooth,
-            run_time=3,
-        ))
+            Rotating(
+                radial_line,
+                angle=TAU,
+                about_point=ORIGIN,
+                rate_func=smooth,
+                run_time=3,
+            ))
         self.wait()
 
-        self.set_variables_as_attrs(
-            shadows, ghost_rings,
-            radial_line, R_label
-        )
+        self.set_variables_as_attrs(shadows, ghost_rings, radial_line, R_label)
 
     def correspond_to_every_other_ring(self):
         rings = self.rings
@@ -2875,9 +2652,7 @@ class SecondProof(SpecialThreeDScene):
         shadows_copy = shadows.copy()
         shadows.fade(1)
         self.play(
-            ReplacementTransform(
-                shadows_copy, every_other_ring
-            ),
+            ReplacementTransform(shadows_copy, every_other_ring),
             FadeOut(self.ghost_rings),
             run_time=2,
         )
@@ -2921,35 +2696,25 @@ class SecondProof(SpecialThreeDScene):
         )
         self.wait()
 
-        self.set_variables_as_attrs(
-            back_half, front_half,
-            front_half_ghost,
-            slice_circle=circle
-        )
+        self.set_variables_as_attrs(back_half,
+                                    front_half,
+                                    front_half_ghost,
+                                    slice_circle=circle)
 
     def show_theta(self):
         theta_tracker = ValueTracker(0)
         get_theta = theta_tracker.get_value
-        theta_group = always_redraw(
-            lambda: self.get_theta_group(get_theta())
-        )
+        theta_group = always_redraw(lambda: self.get_theta_group(get_theta()))
         theta_mob_opacity_tracker = ValueTracker(0)
         get_theta_mob_opacity = theta_mob_opacity_tracker.get_value
         theta_mob = theta_group[-1]
         theta_mob.add_updater(
-            lambda m: m.set_fill(opacity=get_theta_mob_opacity())
-        )
+            lambda m: m.set_fill(opacity=get_theta_mob_opacity()))
         theta_mob.add_updater(
-            lambda m: m.set_background_stroke(
-                width=get_theta_mob_opacity()
-            )
-        )
+            lambda m: m.set_background_stroke(width=get_theta_mob_opacity()))
 
-        lit_ring = always_redraw(
-            lambda: self.get_ring_from_theta(
-                self.rings, get_theta()
-            ).copy().set_color(YELLOW)
-        )
+        lit_ring = always_redraw(lambda: self.get_ring_from_theta(
+            self.rings, get_theta()).copy().set_color(YELLOW))
 
         self.stop_ambient_camera_rotation()
         self.move_camera(theta=-60 * DEGREES)
@@ -2960,8 +2725,10 @@ class SecondProof(SpecialThreeDScene):
         angle = PI * lit_ring_index / n_rings
         for alpha in [angle, 0, PI, angle]:
             self.play(
-                theta_tracker.set_value, alpha,
-                theta_mob_opacity_tracker.set_value, 1,
+                theta_tracker.set_value,
+                alpha,
+                theta_mob_opacity_tracker.set_value,
+                1,
                 Animation(self.camera.phi_tracker),
                 run_time=2,
             )
@@ -3009,9 +2776,7 @@ class SecondProof(SpecialThreeDScene):
             theta=-90 * DEGREES,
         )
         self.wait()
-        self.play(
-            FadeInFrom(brace_label, IN),
-        )
+        self.play(FadeInFrom(brace_label, IN), )
         self.play(
             ShowCreation(radial_line),
             FadeIn(R_label),
@@ -3024,9 +2789,14 @@ class SecondProof(SpecialThreeDScene):
         self.wait(3)
 
         self.set_variables_as_attrs(
-            theta_tracker, lit_ring, theta_group,
-            brace, brace_label, d_theta,
-            alt_R_line, theta_mob_opacity_tracker,
+            theta_tracker,
+            lit_ring,
+            theta_group,
+            brace,
+            brace_label,
+            d_theta,
+            alt_R_line,
+            theta_mob_opacity_tracker,
         )
 
     def enumerate_rings(self):
@@ -3035,32 +2805,24 @@ class SecondProof(SpecialThreeDScene):
     def ask_about_ring_circumference(self):
         theta = self.theta_tracker.get_value()
         radius = self.sphere_config["radius"]
-        circle = Circle(
-            radius=radius * np.sin(theta)
-        )
+        circle = Circle(radius=radius * np.sin(theta))
         circle.shift(radius * np.cos(theta) * OUT)
         circle.set_stroke(Color("red"), 5)
 
-        to_fade = VGroup(
-            self.R_label, self.radial_line,
-            self.brace, self.brace_label
-        )
+        to_fade = VGroup(self.R_label, self.radial_line, self.brace,
+                         self.brace_label)
 
-        self.move_camera(
-            phi=0 * DEGREES,
-            theta=-90 * DEGREES,
-            added_anims=[FadeOut(to_fade)]
-        )
+        self.move_camera(phi=0 * DEGREES,
+                         theta=-90 * DEGREES,
+                         added_anims=[FadeOut(to_fade)])
         self.play(ShowCreation(circle))
         self.wait()
-        self.move_camera(
-            phi=70 * DEGREES,
-            theta=-70 * DEGREES,
-            added_anims=[
-                FadeIn(to_fade),
-                FadeOut(circle),
-            ]
-        )
+        self.move_camera(phi=70 * DEGREES,
+                         theta=-70 * DEGREES,
+                         added_anims=[
+                             FadeIn(to_fade),
+                             FadeOut(circle),
+                         ])
         self.wait()
 
     def ask_about_shadow_area(self):
@@ -3084,16 +2846,12 @@ class SecondProof(SpecialThreeDScene):
             p1 = np.array([*p0[:2], 0])
             result = DashedLine(p0, p1)
             result.set_stroke(WHITE, 1)
-            result.add_to_back(
-                result.copy().set_stroke(BLACK, 2)
-            )
+            result.add_to_back(result.copy().set_stroke(BLACK, 2))
             result.set_shade_in_3d(True)
             return result
 
-        dashed_lines = VGroup(*[
-            get_dashed_line(t)
-            for t in [theta, theta + d_theta]
-        ])
+        dashed_lines = VGroup(
+            *[get_dashed_line(t) for t in [theta, theta + d_theta]])
 
         self.play(
             ReplacementTransform(lit_ring_copy, shadow),
@@ -3113,19 +2871,15 @@ class SecondProof(SpecialThreeDScene):
     def ask_about_2_to_1_correspondance(self):
         theta_tracker = ValueTracker(0)
         get_theta = theta_tracker.get_value
-        new_lit_ring = always_redraw(
-            lambda: self.get_ring_from_theta(
-                self.rings, get_theta()
-            ).copy().set_color(PINK)
-        )
+        new_lit_ring = always_redraw(lambda: self.get_ring_from_theta(
+            self.rings, get_theta()).copy().set_color(PINK))
 
         self.add(new_lit_ring)
         for angle in [PI, 0, PI]:
-            self.play(
-                theta_tracker.set_value, angle,
-                Animation(self.camera.phi_tracker),
-                run_time=3
-            )
+            self.play(theta_tracker.set_value,
+                      angle,
+                      Animation(self.camera.phi_tracker),
+                      run_time=3)
         self.remove(new_lit_ring)
         self.remove(theta_tracker)
 
@@ -3137,19 +2891,21 @@ class SecondProof(SpecialThreeDScene):
         theta_group_copy.clear_updaters()
         self.remove(self.theta_group, *self.theta_group)
         to_fade = VGroup(
-            theta_group_copy, self.alt_R_line,
-            self.brace, self.brace_label,
-            lit_ring_copy, self.lit_shadow,
+            theta_group_copy,
+            self.alt_R_line,
+            self.brace,
+            self.brace_label,
+            lit_ring_copy,
+            self.lit_shadow,
             self.slice_circle,
             self.dashed_lines,
         )
 
         R_label = self.R_label
         radial_line = self.radial_line
-        R_label.rotate(
-            -90 * DEGREES,
-            axis=RIGHT, about_point=radial_line.get_center()
-        )
+        R_label.rotate(-90 * DEGREES,
+                       axis=RIGHT,
+                       about_point=radial_line.get_center())
         shadows = self.shadows
         self.set_ring_colors(shadows, [GREY_BROWN, DARK_GREY])
         for submob in shadows:
@@ -3159,18 +2915,19 @@ class SecondProof(SpecialThreeDScene):
         self.play(
             FadeOut(to_fade),
             LaggedStartMap(FadeIn, shadows),
-            self.theta_mob_opacity_tracker.set_value, 0,
+            self.theta_mob_opacity_tracker.set_value,
+            0,
         )
-        self.play(
-            LaggedStartMap(Restore, shadows),
-            ApplyMethod(
-                self.camera.phi_tracker.set_value, 60 * DEGREES,
-            ),
-            ApplyMethod(
-                self.camera.theta_tracker.set_value, -130 * DEGREES,
-            ),
-            run_time=3
-        )
+        self.play(LaggedStartMap(Restore, shadows),
+                  ApplyMethod(
+                      self.camera.phi_tracker.set_value,
+                      60 * DEGREES,
+                  ),
+                  ApplyMethod(
+                      self.camera.theta_tracker.set_value,
+                      -130 * DEGREES,
+                  ),
+                  run_time=3)
         self.play(
             ShowCreation(radial_line),
             FadeIn(R_label),
@@ -3182,11 +2939,7 @@ class SecondProof(SpecialThreeDScene):
         rings = self.rings
         rings_copy = rings.saved_state.copy()
         self.set_ring_colors(rings_copy)
-        self.play(
-            FadeOut(R_label),
-            FadeOut(radial_line),
-            FadeIn(rings_copy)
-        )
+        self.play(FadeOut(R_label), FadeOut(radial_line), FadeIn(rings_copy))
         self.remove(rings_copy)
         rings.become(rings_copy)
         self.add(rings)
@@ -3194,9 +2947,7 @@ class SecondProof(SpecialThreeDScene):
     def ask_about_global_correspondance(self):
         rings = self.rings
 
-        self.play(
-            FadeOut(rings[::2])
-        )
+        self.play(FadeOut(rings[::2]))
         self.wait(8)
 
     #
@@ -3208,18 +2959,13 @@ class SecondProof(SpecialThreeDScene):
             for piece in ring:
                 piece.insert_n_curves(4)
                 piece.on_sphere = True
-                piece.points = np.array([
-                    *piece.points[3:-1],
-                    *piece.points[:3],
-                    piece.points[3]
-                ])
+                piece.points = np.array(
+                    [*piece.points[3:-1], *piece.points[:3], piece.points[3]])
         return rings
 
     def get_shadow(self, mobject):
         result = mobject.copy()
-        result.apply_function(
-            lambda p: np.array([*p[:2], 0])
-        )
+        result.apply_function(lambda p: np.array([*p[:2], 0]))
         return result
 
     def get_hemisphere(self, group, vect):
@@ -3229,10 +2975,8 @@ class SecondProof(SpecialThreeDScene):
             else:
                 return VMobject()
         else:
-            return VGroup(*[
-                self.get_hemisphere(submob, vect)
-                for submob in group
-            ])
+            return VGroup(
+                *[self.get_hemisphere(submob, vect) for submob in group])
 
     def get_northern_hemisphere(self, group):
         return self.get_hemisphere(group, OUT)
@@ -3253,16 +2997,12 @@ class SecondProof(SpecialThreeDScene):
         theta_mob = TexMobject("\\theta")
         theta_mob.rotate(90 * DEGREES, RIGHT)
         vect = np.cos(theta / 2) * OUT + np.sin(theta / 2) * RIGHT
-        theta_mob.move_to(
-            (arc.radius + 0.25) * normalize(vect),
-        )
+        theta_mob.move_to((arc.radius + 0.25) * normalize(vect), )
         theta_mob.set_background_stroke(width=1)
 
         radius = self.sphere_config["radius"]
         point = arc.point_from_proportion(1)
-        radial_line = Line(
-            ORIGIN, radius * normalize(point)
-        )
+        radial_line = Line(ORIGIN, radius * normalize(point))
         radial_line.set_stroke(WHITE, 2)
 
         return VGroup(arc, radial_line, theta_mob)
@@ -3297,7 +3037,8 @@ class RangeFrom0To180(Scene):
         self.add(angle)
         self.wait()
         self.play(ChangeDecimalToValue(
-            angle, 180,
+            angle,
+            180,
             run_time=2,
         ))
         self.wait()
@@ -3315,17 +3056,12 @@ class Question1(Scene):
             \\small
             Question \\#1: What is the circumference of\\\\
             one of these rings (in terms of $R$ and $\\theta$)?\\\\
-            """,
-            **kwargs
-        )
+            """, **kwargs)
         prompt = TextMobject(
             """
             Multiply this circumference by $R\\,d\\theta$ to \\\\
             get an approximation of the ring's area.
-            """,
-            **kwargs
-
-        )
+            """, **kwargs)
         for words in question, prompt:
             words.set_width(FRAME_WIDTH - 1)
 
@@ -3334,12 +3070,11 @@ class Question1(Scene):
         for word in question, prompt:
             word.circum = word.get_part_by_tex("circumference")
             word.remove(word.circum)
-        self.play(
-            FadeOutAndShift(question, UP),
-            FadeInFromDown(prompt),
-            question.circum.replace, prompt.circum,
-            run_time=1.5
-        )
+        self.play(FadeOutAndShift(question, UP),
+                  FadeInFromDown(prompt),
+                  question.circum.replace,
+                  prompt.circum,
+                  run_time=1.5)
         self.wait()
 
 
@@ -3352,25 +3087,21 @@ class YouCouldIntegrate(TeacherStudentsScene):
         )
         self.play(self.teacher.change, "hesitant")
         self.wait()
-        self.teacher_says(
-            "We'll be a bit \\\\ more Archimedean",
-            target_mode="speaking"
-        )
+        self.teacher_says("We'll be a bit \\\\ more Archimedean",
+                          target_mode="speaking")
         self.change_all_student_modes("confused")
         self.wait()
 
 
 class Question2(Scene):
     def construct(self):
-        question = TextMobject(
-            """
+        question = TextMobject("""
             Question \\#2: What is the area of the shadow of\\\\
             one of these rings?  (In terms of $R$, $\\theta$, and $d\\theta$).
             """,
-            tex_to_color_map={
-                "shadow": YELLOW,
-            }
-        )
+                               tex_to_color_map={
+                                   "shadow": YELLOW,
+                               })
         question.set_width(FRAME_WIDTH - 1)
 
         self.play(FadeInFromDown(question))
@@ -3381,10 +3112,8 @@ class Question3(Scene):
     def construct(self):
         question = TextMobject("Question \\#3:")
         question.to_edge(LEFT)
-        equation = TextMobject(
-            "(Shadow area)", "=", "$\\frac{1}{2}$",
-            "(Area of one of the rings)"
-        )
+        equation = TextMobject("(Shadow area)", "=", "$\\frac{1}{2}$",
+                               "(Area of one of the rings)")
         equation[0][1:-1].set_color(YELLOW)
         equation[3][1:-1].set_color(PINK)
         equation.next_to(question, RIGHT)
@@ -3396,10 +3125,7 @@ class Question3(Scene):
         self.add(question)
         self.play(FadeInFrom(equation))
         self.wait()
-        self.play(
-            GrowFromCenter(brace),
-            Write(which_one)
-        )
+        self.play(GrowFromCenter(brace), Write(which_one))
         self.wait()
 
 
@@ -3409,23 +3135,20 @@ class ExtraHint(Scene):
         title.scale(2.5)
         title.shift(UP)
         equation = TexMobject(
-            "\\sin(2\\theta) = 2\\sin(\\theta)\\cos(\\theta)"
-        )
+            "\\sin(2\\theta) = 2\\sin(\\theta)\\cos(\\theta)")
         equation.next_to(title, DOWN)
         self.add(title, equation)
 
 
 class Question4(Scene):
     def construct(self):
-        question = TextMobject(
-            "Question \\#4:",
-            "Explain how the shadows relate to\\\\"
-            "every other ring on the sphere.",
-            tex_to_color_map={
-                "shadows": YELLOW,
-                "every other ring": BLUE,
-            }
-        )
+        question = TextMobject("Question \\#4:",
+                               "Explain how the shadows relate to\\\\"
+                               "every other ring on the sphere.",
+                               tex_to_color_map={
+                                   "shadows": YELLOW,
+                                   "every other ring": BLUE,
+                               })
 
         self.add(question[0])
         self.wait()
@@ -3435,12 +3158,10 @@ class Question4(Scene):
 
 class Question5(Scene):
     def construct(self):
-        question = TextMobject(
-            """
+        question = TextMobject("""
             Question \\#5: Why does this imply that the \\\\
             shadow is $\\frac{1}{4}$ the surface area?
-            """
-        )
+            """)
         self.play(FadeInFromDown(question))
         self.wait()
 
@@ -3588,26 +3309,18 @@ class SpherePatronThanks(Scene):
     def show_columns(self):
         random.seed(1)
         random.shuffle(self.specific_patrons)
-        patrons = VGroup(*[
-            TextMobject(name)
-            for name in self.specific_patrons
-        ])
+        patrons = VGroup(
+            *[TextMobject(name) for name in self.specific_patrons])
         columns = VGroup()
         column_size = 15
         for n in range(0, len(patrons), column_size):
             column = patrons[n:n + column_size]
-            column.arrange(
-                DOWN,
-                aligned_edge=LEFT
-            )
+            column.arrange(DOWN, aligned_edge=LEFT)
             columns.add(column)
         columns.set_height(6)
         for group in columns[:4], columns[4:]:
             for k, column in enumerate(group):
-                column.move_to(
-                    6.5 * LEFT + 3.75 * k * RIGHT + 2.5 * UP,
-                    UL
-                )
+                column.move_to(6.5 * LEFT + 3.75 * k * RIGHT + 2.5 * UP, UL)
 
         self.add(columns[:4])
         self.wait()
@@ -3671,10 +3384,7 @@ class Thumbnail(SpecialThreeDScene):
         sphere.set_fill(BLUE_E)
         sphere.set_stroke(WHITE, 0.5)
 
-        circles = VGroup(*[
-            Circle(radius=radius)
-            for x in range(4)
-        ])
+        circles = VGroup(*[Circle(radius=radius) for x in range(4)])
         circles.set_stroke(WHITE, 2)
         circles.set_fill(BLUE_E, 1)
         circles[0].set_fill(GREY_BROWN)

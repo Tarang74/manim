@@ -32,11 +32,9 @@ class MirrorScene(Scene):
         self.start_y_offset_tracker = ValueTracker(self.start_y_offset)
         self.start_x_offset_tracker = ValueTracker(self.start_x_offset)
         self.center_tracker = VectorizedPoint(self.center)
-        self.beam_point = VectorizedPoint(np.array([
-            self.get_start_x_offset(),
-            self.get_start_y_offset(),
-            0
-        ]))
+        self.beam_point = VectorizedPoint(
+            np.array([self.get_start_x_offset(),
+                      self.get_start_y_offset(), 0]))
         self.ghost_beam_point = self.beam_point.copy()
         self.is_sound_allowed = False
 
@@ -118,9 +116,8 @@ class MirrorScene(Scene):
             max_height = 0.8 * arc.get_height()
             if symbol.get_height() > max_height:
                 symbol.set_height(max_height)
-            symbol.move_to(
-                center + vect + buff * normalize(vect)
-            )
+            symbol.move_to(center + vect + buff * normalize(vect))
+
         symbol.add_updater(update_symbol)
         return symbol
 
@@ -131,10 +128,9 @@ class MirrorScene(Scene):
 
         points = [np.array([x, y, 0])]
         points += [
-            np.array([x, y, 0])
-            for k in range(1, int(PI / theta) + 1)
-            for x in [y / np.tan(k * theta)]
-            if abs(x) < FRAME_WIDTH
+            np.array([x, y, 0]) for k in range(1,
+                                               int(PI / theta) + 1)
+            for x in [y / np.tan(k * theta)] if abs(x) < FRAME_WIDTH
         ]
         points.append(points[-1] + x * LEFT)
         points = np.array(points)
@@ -198,9 +194,7 @@ class MirrorScene(Scene):
             if count == 0:
                 group.submobjects = []
             elif count < len(collision_point_counts) + 1:
-                group.submobjects = [
-                    collision_point_counts[count - 1]
-                ]
+                group.submobjects = [collision_point_counts[count - 1]]
 
         return UpdateFromFunc(group, update, remover=True)
 
@@ -220,20 +214,13 @@ class MirrorScene(Scene):
     def get_theta_display(self):
         lhs = TexMobject("\\theta = ")
         radians = DecimalNumber()
-        radians.add_updater(
-            lambda m: m.set_value(self.get_theta())
-        )
+        radians.add_updater(lambda m: m.set_value(self.get_theta()))
         radians_word = TextMobject("radians")
-        radians_word.next_to(
-            radians, RIGHT, aligned_edge=DOWN
-        )
+        radians_word.next_to(radians, RIGHT, aligned_edge=DOWN)
         equals = TexMobject("=")
         degrees = Integer(0, unit="^\\circ")
         degrees.add_updater(
-            lambda m: m.set_value(
-                int(np.round(self.get_theta() / DEGREES))
-            )
-        )
+            lambda m: m.set_value(int(np.round(self.get_theta() / DEGREES))))
         group = VGroup(lhs, radians, radians_word, equals, degrees)
         group.arrange(RIGHT, aligned_edge=DOWN)
         equals.align_to(lhs[-1], DOWN)
@@ -247,26 +234,25 @@ class MirrorScene(Scene):
         result.set_color(YELLOW)
         return result
 
-    def get_count_display_number(self, count_display_word=None, ghost_beam_point=None):
+    def get_count_display_number(self,
+                                 count_display_word=None,
+                                 ghost_beam_point=None):
         if count_display_word is None:
             count_display_word = self.count_display_word
         result = Integer()
         result.next_to(
-            count_display_word[-1], RIGHT,
+            count_display_word[-1],
+            RIGHT,
             aligned_edge=DOWN,
         )
         result.set_color(YELLOW)
-        result.add_updater(
-            lambda m: m.set_value(self.get_count())
-        )
+        result.add_updater(lambda m: m.set_value(self.get_count()))
         return result
 
     def get_count(self, ghost_beam_point=None):
         if ghost_beam_point is None:
             ghost_beam_point = self.ghost_beam_point.get_location()
-        angle = angle_of_vector(
-            ghost_beam_point - self.get_center()
-        )
+        angle = angle_of_vector(ghost_beam_point - self.get_center())
         return int(angle / self.get_theta())
 
     # Sounds
@@ -291,43 +277,44 @@ class MirrorScene(Scene):
         trajectory = self.trajectory
         ghost_trajectory = self.get_ghost_trajectory()
 
-        beam_anims = self.get_shooting_beam_anims(
-            trajectory, ghost_trajectory
-        )
+        beam_anims = self.get_shooting_beam_anims(trajectory, ghost_trajectory)
         count_anim = self.get_collision_count_anim()
 
         self.allow_sound()
         self.play(count_anim, *beam_anims, run_time=run_time)
         self.disallow_sound()
 
-    def get_special_flash(self, mobject, stroke_width, time_width, rate_func=linear, **kwargs):
+    def get_special_flash(self,
+                          mobject,
+                          stroke_width,
+                          time_width,
+                          rate_func=linear,
+                          **kwargs):
         kwargs["rate_func"] = rate_func
         mob_copy = mobject.copy()
         mob_copy.set_stroke(width=stroke_width)
         mob_copy.time_width = time_width
         return UpdateFromAlphaFunc(
-            mob_copy,
-            lambda m, a: m.pointwise_become_partial(
+            mob_copy, lambda m, a: m.pointwise_become_partial(
                 mobject,
                 max(a - (1 - a) * m.time_width, 0),
                 a,
-            ),
-            **kwargs
-        )
+            ), **kwargs)
 
-    def get_shooting_beam_anims(self,
-                                trajectory,
-                                ghost_trajectory=None,
-                                update_beam_point=True,
-                                num_flashes=20,
-                                min_time_width=0.01,
-                                max_time_width=0.5,
-                                min_stroke_width=0.01,
-                                max_stroke_width=6,
-                                fade_trajectory=True,
-                                faded_trajectory_width=0.25,
-                                faded_trajectory_time_exp=0.2,
-                                ):
+    def get_shooting_beam_anims(
+        self,
+        trajectory,
+        ghost_trajectory=None,
+        update_beam_point=True,
+        num_flashes=20,
+        min_time_width=0.01,
+        max_time_width=0.5,
+        min_stroke_width=0.01,
+        max_stroke_width=6,
+        fade_trajectory=True,
+        faded_trajectory_width=0.25,
+        faded_trajectory_time_exp=0.2,
+    ):
         # Most flashes
         result = [
             self.get_special_flash(trajectory, stroke_width, time_width)
@@ -343,19 +330,18 @@ class MirrorScene(Scene):
             result.append(
                 UpdateFromFunc(
                     self.beam_point,
-                    lambda m: m.move_to(smallest_flash.mobject.points[-1])
-                )
-            )
+                    lambda m: m.move_to(smallest_flash.mobject.points[-1])))
 
         # Make sure ghost beam point is updated
         if ghost_trajectory:
             ghost_flash = self.get_special_flash(
-                ghost_trajectory, 0, min_time_width,
+                ghost_trajectory,
+                0,
+                min_time_width,
             )
             ghost_beam_point_update = UpdateFromFunc(
                 self.ghost_beam_point,
-                lambda m: m.move_to(ghost_flash.mobject.points[-1])
-            )
+                lambda m: m.move_to(ghost_flash.mobject.points[-1]))
             result += [
                 ghost_flash,
                 ghost_beam_point_update,
@@ -365,12 +351,9 @@ class MirrorScene(Scene):
         if fade_trajectory:
             ftte = faded_trajectory_time_exp
             result.append(
-                ApplyMethod(
-                    trajectory.set_stroke,
-                    {"width": faded_trajectory_width},
-                    rate_func=lambda t: there_and_back(t)**ftte
-                ),
-            )
+                ApplyMethod(trajectory.set_stroke,
+                            {"width": faded_trajectory_width},
+                            rate_func=lambda t: there_and_back(t)**ftte), )
         return result
 
 
@@ -384,15 +367,14 @@ class ShowTrajectoryWithChangingTheta(MirrorScene):
         for angle, y in zip(angles, ys):
             rect = SurroundingRectangle(self.theta_display)
             self.play(
-                self.theta_tracker.set_value, angle,
-                self.start_y_offset_tracker.set_value, y,
+                self.theta_tracker.set_value,
+                angle,
+                self.start_y_offset_tracker.set_value,
+                y,
                 FadeIn(rect, rate_func=there_and_back, remover=True),
-                UpdateFromFunc(
-                    trajectory,
-                    lambda m: m.become(self.get_trajectory())
-                ),
-                run_time=2
-            )
+                UpdateFromFunc(trajectory,
+                               lambda m: m.become(self.get_trajectory())),
+                run_time=2)
             self.show_bouncing()
         self.wait(2)
 
@@ -403,7 +385,11 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
         "center": DOWN,
         "randy_height": 1,
         "partial_trajectory_values": [
-            0, 0.22, 0.28, 0.315, 1,
+            0,
+            0.22,
+            0.28,
+            0.315,
+            1,
         ],
     }
 
@@ -433,11 +419,7 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
         randy.shift(0.01 * UP)
         randy.to_edge(RIGHT, buff=1)
         randy.tracked_mobject = self.trajectory
-        randy.add_updater(
-            lambda m: m.look_at(
-                m.tracked_mobject.points[-1]
-            )
-        )
+        randy.add_updater(lambda m: m.look_at(m.tracked_mobject.points[-1]))
         self.add(randy)
 
     def shift_displays(self):
@@ -449,24 +431,18 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
 
     def add_ghost_beam_point(self):
         self.ghost_beam_point.add_updater(
-            lambda m: m.move_to(
-                self.ghost_trajectory.points[-1]
-            )
-        )
+            lambda m: m.move_to(self.ghost_trajectory.points[-1]))
         self.add(self.ghost_beam_point)
 
     def up_through_first_bounce(self):
         self.play(*self.get_both_partial_trajectory_anims(
-            *self.partial_trajectory_values[:2]
-        ))
+            *self.partial_trajectory_values[:2]))
         self.wait()
 
     def create_reflected_worlds(self):
         mirrors = self.mirrors
-        triangle = Polygon(*[
-            mirrors.get_corner(corner)
-            for corner in (DR, DL, UR)
-        ])
+        triangle = Polygon(
+            *[mirrors.get_corner(corner) for corner in (DR, DL, UR)])
         triangle.set_stroke(width=0)
         triangle.set_fill(BLUE_E, opacity=0)
         world = self.world = VGroup(
@@ -484,8 +460,7 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
 
     def create_reflected_trajectories(self):
         self.reflected_trajectories = always_redraw(
-            lambda: self.get_reflected_worlds(self.trajectory)
-        )
+            lambda: self.get_reflected_worlds(self.trajectory))
 
     def first_reflection(self):
         reflected_trajectory = self.reflected_trajectories[0]
@@ -494,22 +469,18 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
         trajectory = self.trajectory
         ghost_trajectory = self.ghost_trajectory
 
-        self.play(
-            TransformFromCopy(world, reflected_world),
-            TransformFromCopy(trajectory, reflected_trajectory),
-            run_time=2
-        )
+        self.play(TransformFromCopy(world, reflected_world),
+                  TransformFromCopy(trajectory, reflected_trajectory),
+                  run_time=2)
         beam_anims = self.get_shooting_beam_anims(
             ghost_trajectory,
             fade_trajectory=False,
         )
-        self.play(
-            *[
-                ApplyMethod(m.set_stroke, GREY, 1)
-                for m in (trajectory, reflected_trajectory)
-            ] + beam_anims,
-            run_time=2
-        )
+        self.play(*[
+            ApplyMethod(m.set_stroke, GREY, 1)
+            for m in (trajectory, reflected_trajectory)
+        ] + beam_anims,
+                  run_time=2)
         for x in range(2):
             self.play(*beam_anims, run_time=2)
 
@@ -522,8 +493,7 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
         i = index
         self.play(
             *self.get_both_partial_trajectory_anims(
-                *self.partial_trajectory_values[i - 1:i + 1]
-            ),
+                *self.partial_trajectory_values[i - 1:i + 1]),
             UpdateFromFunc(
                 VMobject(),  # Null
                 lambda m: self.reflected_trajectories.update(),
@@ -532,11 +502,8 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
         )
 
         anims = [
-            TransformFromCopy(*reflections[i - 2:i])
-            for reflections in [
-                self.reflected_worlds,
-                self.reflected_trajectories
-            ]
+            TransformFromCopy(*reflections[i - 2:i]) for reflections in
+            [self.reflected_worlds, self.reflected_trajectories]
         ]
         self.play(*anims, run_time=2)
         self.add(self.ghost_trajectory)
@@ -546,13 +513,12 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
         worlds = self.reflected_worlds
         trajectories = self.reflected_trajectories
 
-        pairs = [
-            (VGroup(w1, t1), VGroup(w2, t2))
-            for w1, w2, t1, t2 in zip(
-                worlds[2:], worlds[3:],
-                trajectories[2:], trajectories[3:],
-            )
-        ]
+        pairs = [(VGroup(w1, t1), VGroup(w2, t2)) for w1, w2, t1, t2 in zip(
+            worlds[2:],
+            worlds[3:],
+            trajectories[2:],
+            trajectories[3:],
+        )]
 
         new_worlds = VGroup()  # Brought to you by Dvorak
         for m1, m2 in pairs:
@@ -563,19 +529,14 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
             mob.become(mob.pre_world)
             mob.fade(1)
 
-        self.play(LaggedStartMap(
-            Restore, new_worlds,
-            lag_ratio=0.4,
-            run_time=3
-        ))
+        self.play(
+            LaggedStartMap(Restore, new_worlds, lag_ratio=0.4, run_time=3))
 
     def show_completed_beam(self):
         self.add(self.reflected_trajectories)
         self.add(self.ghost_trajectory)
         self.play(*self.get_both_partial_trajectory_anims(
-            *self.partial_trajectory_values[-2:],
-            run_time=7
-        ))
+            *self.partial_trajectory_values[-2:], run_time=7))
 
     def blink_all_randys(self):
         randys = self.randys = VGroup(self.randy)
@@ -584,14 +545,9 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
 
     def add_randy_updates(self):
         # Makes it run slower, but it's fun!
-        reflected_randys = VGroup(*[
-            rw[-1] for rw in self.reflected_worlds
-        ])
+        reflected_randys = VGroup(*[rw[-1] for rw in self.reflected_worlds])
         reflected_randys.add_updater(
-            lambda m: m.become(
-                self.get_reflected_worlds(self.randy)
-            )
-        )
+            lambda m: m.become(self.get_reflected_worlds(self.randy)))
         self.add(reflected_randys)
 
     def show_all_trajectories(self):
@@ -602,22 +558,24 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
         trajectories = VGroup(trajectory, *reflected_trajectories)
 
         all_mirrors = VGroup(*[
-            world[1]
-            for world in it.chain([self.world], self.reflected_worlds)
+            world[1] for world in it.chain([self.world], self.reflected_worlds)
         ])
 
         self.play(
             FadeOut(ghost_trajectory),
-            trajectories.set_stroke, YELLOW, 0.5,
-            all_mirrors.set_stroke, {"width": 1},
+            trajectories.set_stroke,
+            YELLOW,
+            0.5,
+            all_mirrors.set_stroke,
+            {"width": 1},
         )
 
         # All trajectory light beams
         flash_groups = [
             self.get_shooting_beam_anims(
-                mob, fade_trajectory=False,
-            )
-            for mob in trajectories
+                mob,
+                fade_trajectory=False,
+            ) for mob in trajectories
         ]
         all_flashes = list(it.chain(*flash_groups))
 
@@ -628,7 +586,8 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
         red_ghost = self.ghost_trajectory.copy()
         red_ghost.set_color(RED)
         red_ghost_beam = self.get_shooting_beam_anims(
-            red_ghost, fade_trajectory=False,
+            red_ghost,
+            fade_trajectory=False,
         )
 
         num_repeats = 3
@@ -640,8 +599,7 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
                 for flash in all_flashes:
                     if hasattr(flash.mobject, "time_width"):
                         flash.mobject.set_stroke(
-                            width=0.25 * flash.mobject.get_stroke_width()
-                        )
+                            width=0.25 * flash.mobject.get_stroke_width())
                         flash.mobject.time_width *= 0.25
             self.play(*anims, run_time=3)
 
@@ -650,33 +608,23 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
         self.play(
             FadeOut(self.reflected_trajectories),
             FadeIn(self.ghost_trajectory),
-            self.trajectory.set_stroke, YELLOW, 1,
+            self.trajectory.set_stroke,
+            YELLOW,
+            1,
         )
         self.add_flashing_windows()
         t_beam_anims = self.get_shooting_beam_anims(self.trajectory)
         gt_beam_anims = self.get_shooting_beam_anims(self.ghost_trajectory)
         self.ghost_beam_point.clear_updaters()
         self.ghost_beam_point.add_updater(
-            lambda m: m.move_to(
-                gt_beam_anims[0].mobject.points[-1]
-            )
-        )
+            lambda m: m.move_to(gt_beam_anims[0].mobject.points[-1]))
         self.randy.tracked_mobject = t_beam_anims[0].mobject
         self.allow_sound()
-        self.play(
-            *t_beam_anims, *gt_beam_anims,
-            run_time=6
-        )
+        self.play(*t_beam_anims, *gt_beam_anims, run_time=6)
         self.add_room_color_updates()
-        self.play(
-            *t_beam_anims, *gt_beam_anims,
-            run_time=6
-        )
+        self.play(*t_beam_anims, *gt_beam_anims, run_time=6)
         self.blink_all_randys()
-        self.play(
-            *t_beam_anims, *gt_beam_anims,
-            run_time=6
-        )
+        self.play(*t_beam_anims, *gt_beam_anims, run_time=6)
 
     # Helpers
     def get_reflected_worlds(self, world, n_reflections=None):
@@ -692,7 +640,9 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
             reflected_world = last_world.copy()
             reflected_world.clear_updaters()
             reflected_world.rotate(
-                PI, axis=vect, about_point=center,
+                PI,
+                axis=vect,
+                about_point=center,
             )
             last_world = reflected_world
             result.add(last_world)
@@ -702,20 +652,13 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
         if not hasattr(trajectory, "full_self"):
             trajectory.full_self = trajectory.copy()
         return UpdateFromAlphaFunc(
-            trajectory,
-            lambda m, alpha: m.pointwise_become_partial(
-                m.full_self, 0,
-                interpolate(a, b, alpha)
-            ),
-            **kwargs
-        )
+            trajectory, lambda m, alpha: m.pointwise_become_partial(
+                m.full_self, 0, interpolate(a, b, alpha)), **kwargs)
 
     def get_both_partial_trajectory_anims(self, a, b, run_time=2, **kwargs):
         kwargs["run_time"] = run_time
         return [
-            self.get_partial_trajectory_anims(
-                mob, a, b, **kwargs
-            )
+            self.get_partial_trajectory_anims(mob, a, b, **kwargs)
             for mob in (self.trajectory, self.ghost_trajectory)
         ]
 
@@ -728,8 +671,8 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
                 center + rotate_vector(10 * RIGHT, k * theta),
                 color=BLUE,
                 stroke_width=0,
-            )
-            for k in range(0, self.get_count() + 1)
+            ) for k in range(0,
+                             self.get_count() + 1)
         ])
         windows[0].set_stroke(opacity=0)
 
@@ -737,19 +680,19 @@ class ReflectWorldThroughMirrorNew(MirrorScene):
         def update_windows(windows):
             windows.set_stroke(width=0)
             windows[self.get_count()].set_stroke(width=5)
+
         windows.add_updater(update_windows)
         self.add(windows)
 
     def add_room_color_updates(self):
         def update_reflected_worlds(worlds):
             for n, world in enumerate(worlds):
-                worlds[n][0].set_fill(
-                    opacity=(0.25 if (n % 2 == 0) else 0)
-                )
+                worlds[n][0].set_fill(opacity=(0.25 if (n % 2 == 0) else 0))
             index = self.get_count() - 1
             if index < 0:
                 return
             worlds[index][0].set_fill(opacity=0.5)
+
         self.reflected_worlds.add_updater(update_reflected_worlds)
         self.add(self.reflected_worlds)
 
@@ -781,8 +724,10 @@ class MirrorAndWiresOverlay(MirrorScene):
             (845, 288),
             (1273, 314),
         ],
-        "max_x_pixel": 1440,
-        "max_y_pixel": 1440,
+        "max_x_pixel":
+        1440,
+        "max_y_pixel":
+        1440,
     }
 
     def setup(self):
@@ -813,11 +758,8 @@ class MirrorAndWiresOverlay(MirrorScene):
     def add_wires(self):
         ul_corner = TOP + LEFT_SIDE
         points = self.wire_points = [
-            ul_corner + np.array([
-                (x / self.max_x_pixel) * FRAME_HEIGHT,
-                (-y / self.max_y_pixel) * FRAME_HEIGHT,
-                0
-            ])
+            ul_corner + np.array([(x / self.max_x_pixel) * FRAME_HEIGHT,
+                                  (-y / self.max_y_pixel) * FRAME_HEIGHT, 0])
             for x, y in self.wire_pixel_points
         ]
         wires = self.wires = VGroup(
@@ -833,14 +775,13 @@ class MirrorAndWiresOverlay(MirrorScene):
         self.trajectory.set_points_as_corners(points[:3])
         self.ghost_trajectory = VMobject()
         self.ghost_trajectory.set_points_as_corners([*points[:2], points[4]])
-        VGroup(self.trajectory, self.ghost_trajectory).match_style(
-            self.wires
-        )
+        VGroup(self.trajectory, self.ghost_trajectory).match_style(self.wires)
 
     def add_diagram(self):
         diagram = self.diagram = VGroup()
         rect = diagram.rect = Rectangle(
-            height=4, width=5,
+            height=4,
+            width=5,
             stroke_color=WHITE,
             stroke_width=1,
             fill_color=BLACK,
@@ -868,20 +809,13 @@ class MirrorAndWiresOverlay(MirrorScene):
             m1.become(m2)
             m1.rotate(PI, axis=RIGHT, about_point=center)
 
-        wires = VGroup(*[
-            Line(center + np.array([-1, -1.5, 0]), center)
-            for x in range(4)
-        ])
+        wires = VGroup(
+            *
+            [Line(center + np.array([-1, -1.5, 0]), center) for x in range(4)])
         dl_wire, dr_wire, ul_wire, ur_wire = wires
-        dr_wire.add_updater(
-            lambda m: set_as_reflection(m, dl_wire)
-        )
-        ul_wire.add_updater(
-            lambda m: set_as_mirror_image(m, dl_wire)
-        )
-        ur_wire.add_updater(
-            lambda m: set_as_mirror_image(m, dr_wire)
-        )
+        dr_wire.add_updater(lambda m: set_as_reflection(m, dl_wire))
+        ul_wire.add_updater(lambda m: set_as_mirror_image(m, dl_wire))
+        ur_wire.add_updater(lambda m: set_as_mirror_image(m, dr_wire))
 
         diagram.wires = wires
         diagram.wires.set_stroke(RED, 2)
@@ -908,12 +842,10 @@ class MirrorAndWiresOverlay(MirrorScene):
 
         diagram = self.diagram.copy()
         diagram.clear_updaters()
-        self.play(
-            FadeIn(diagram.rect),
-            ShowCreation(diagram.mirror),
-            LaggedStartMap(ShowCreation, diagram.wires),
-            run_time=1
-        )
+        self.play(FadeIn(diagram.rect),
+                  ShowCreation(diagram.mirror),
+                  LaggedStartMap(ShowCreation, diagram.wires),
+                  run_time=1)
         self.remove(diagram)
         self.add(self.diagram)
 
@@ -951,6 +883,7 @@ class MirrorAndWiresOverlay(MirrorScene):
                 angle=dl_wire.get_angle(),
                 **arc_config,
             )
+
         dl_arc = always_redraw(get_dl_arc)
 
         def get_dr_arc():
@@ -959,18 +892,15 @@ class MirrorAndWiresOverlay(MirrorScene):
                 angle=dr_wire.get_angle() - PI,
                 **arc_config,
             )
+
         dr_arc = always_redraw(get_dr_arc)
 
         incidence = TextMobject("Incidence")
         reflection = TextMobject("Reflection")
         words = VGroup(incidence, reflection)
         words.scale(0.75)
-        incidence.add_updater(
-            lambda m: m.next_to(dl_arc, LEFT, SMALL_BUFF)
-        )
-        reflection.add_updater(
-            lambda m: m.next_to(dr_arc, RIGHT, SMALL_BUFF)
-        )
+        incidence.add_updater(lambda m: m.next_to(dl_arc, LEFT, SMALL_BUFF))
+        reflection.add_updater(lambda m: m.next_to(dr_arc, RIGHT, SMALL_BUFF))
         for word in words:
             word.set_background_stroke(width=0)
             word.add_updater(lambda m: m.shift(SMALL_BUFF * DOWN))
@@ -978,21 +908,17 @@ class MirrorAndWiresOverlay(MirrorScene):
         self.add(incidence)
         self.play(
             ShowCreation(dl_arc),
-            UpdateFromAlphaFunc(
-                VMobject(),
-                lambda m, a: incidence.set_fill(opacity=a),
-                remover=True
-            ),
+            UpdateFromAlphaFunc(VMobject(),
+                                lambda m, a: incidence.set_fill(opacity=a),
+                                remover=True),
         )
         self.wait()
         self.add(reflection)
         self.play(
             ShowCreation(dr_arc),
-            UpdateFromAlphaFunc(
-                VMobject(),
-                lambda m, a: reflection.set_fill(opacity=a),
-                remover=True
-            ),
+            UpdateFromAlphaFunc(VMobject(),
+                                lambda m, a: reflection.set_fill(opacity=a),
+                                remover=True),
         )
         self.wait()
 
@@ -1002,11 +928,11 @@ class MirrorAndWiresOverlay(MirrorScene):
         for angle in [20 * DEGREES, -20 * DEGREES]:
             self.play(
                 Rotate(
-                    dr_wire, angle,
+                    dr_wire,
+                    angle,
                     about_point=dr_wire.get_end(),
                     run_time=2,
-                ),
-            )
+                ), )
             self.play(
                 *self.get_shooting_beam_anims(self.ghost_trajectory),
                 *self.get_shooting_beam_anims(self.d_trajectory),

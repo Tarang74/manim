@@ -118,7 +118,7 @@ class Text(SVGMobject):
         settings = self.font + self.slant + self.weight
         settings += str(self.t2f) + str(self.t2s) + str(self.t2w)
         settings += str(self.lsh) + str(self.size)
-        id_str = self.text+settings
+        id_str = self.text + settings
         hasher = hashlib.sha256()
         hasher.update(id_str.encode())
         return hasher.hexdigest()[:16]
@@ -179,7 +179,7 @@ class Text(SVGMobject):
 
         dir_name = consts.TEXT_DIR
         hash_name = self.text2hash()
-        file_name = os.path.join(dir_name, hash_name)+'.svg'
+        file_name = os.path.join(dir_name, hash_name) + '.svg'
         if os.path.exists(file_name):
             return file_name
 
@@ -201,7 +201,8 @@ class Text(SVGMobject):
             if setting.line_num != last_line_num:
                 offset_x = 0
                 last_line_num = setting.line_num
-            context.move_to(START_X + offset_x, START_Y + lsh*setting.line_num)
+            context.move_to(START_X + offset_x,
+                            START_Y + lsh * setting.line_num)
             context.show_text(text)
             offset_x += context.text_extents(text)[4]
 

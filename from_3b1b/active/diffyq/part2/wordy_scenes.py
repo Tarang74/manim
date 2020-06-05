@@ -21,49 +21,41 @@ class WriteHeatEquationTemplate(Scene):
             "{\\partial {T} \\over \\partial {t}}({x}, {t})", "=",
             "\\alpha \\cdot",
             "{\\partial^2 {T} \\over \\partial {x}^2} ({x}, {t})",
-            **self.tex_mobject_config
-        )
+            **self.tex_mobject_config)
 
     def get_d1_equation_without_inputs(self):
-        return TexMobject(
-            "{\\partial {T} \\over \\partial {t}}", "=",
-            "\\alpha \\cdot",
-            "{\\partial^2 {T} \\over \\partial {x}^2}",
-            **self.tex_mobject_config
-        )
+        return TexMobject("{\\partial {T} \\over \\partial {t}}", "=",
+                          "\\alpha \\cdot",
+                          "{\\partial^2 {T} \\over \\partial {x}^2}",
+                          **self.tex_mobject_config)
 
     def get_d3_equation(self):
-        return TexMobject(
-            "{\\partial {T} \\over \\partial {t}}", "=",
-            "\\alpha \\left(",
-            "{\\partial^2 {T} \\over \\partial {x}^2} + ",
-            "{\\partial^2 {T} \\over \\partial {y}^2} + ",
-            "{\\partial^2 {T} \\over \\partial {z}^2}",
-            "\\right)",
-            **self.tex_mobject_config
-        )
+        return TexMobject("{\\partial {T} \\over \\partial {t}}", "=",
+                          "\\alpha \\left(",
+                          "{\\partial^2 {T} \\over \\partial {x}^2} + ",
+                          "{\\partial^2 {T} \\over \\partial {y}^2} + ",
+                          "{\\partial^2 {T} \\over \\partial {z}^2}",
+                          "\\right)", **self.tex_mobject_config)
 
     def get_general_equation(self):
         return TexMobject(
-            "{\\partial {T} \\over \\partial {t}}", "=",
-            "\\alpha", "\\nabla^2 {T}",
+            "{\\partial {T} \\over \\partial {t}}",
+            "=",
+            "\\alpha",
+            "\\nabla^2 {T}",
             **self.tex_mobject_config,
         )
 
     def get_d3_equation_with_inputs(self):
-        return TexMobject(
-            "{\\partial {T} \\over \\partial {t}}",
-            "({x}, {y}, {z}, {t})", "=",
-            "\\alpha \\left(",
-            "{\\partial^2 {T} \\over \\partial {x}^2}",
-            "({x}, {y}, {z}, {t}) + ",
-            "{\\partial^2 {T} \\over \\partial {y}^2}",
-            "({x}, {y}, {z}, {t}) + ",
-            "{\\partial^2 {T} \\over \\partial {z}^2}",
-            "({x}, {y}, {z}, {t})",
-            "\\right)",
-            **self.tex_mobject_config
-        )
+        return TexMobject("{\\partial {T} \\over \\partial {t}}",
+                          "({x}, {y}, {z}, {t})", "=", "\\alpha \\left(",
+                          "{\\partial^2 {T} \\over \\partial {x}^2}",
+                          "({x}, {y}, {z}, {t}) + ",
+                          "{\\partial^2 {T} \\over \\partial {y}^2}",
+                          "({x}, {y}, {z}, {t}) + ",
+                          "{\\partial^2 {T} \\over \\partial {z}^2}",
+                          "({x}, {y}, {z}, {t})", "\\right)",
+                          **self.tex_mobject_config)
 
     def get_d1_words(self):
         return TextMobject("Heat equation\\\\", "(1 dimension)")
@@ -119,7 +111,9 @@ class BringTogether(Scene):
         self.play(
             VFadeIn(words),
             Restore(words),
-            arrows.arrange, RIGHT, {"buff": SMALL_BUFF},
+            arrows.arrange,
+            RIGHT,
+            {"buff": SMALL_BUFF},
             VFadeIn(arrows),
         )
         self.play(FadeOut(words), FadeOut(arrows))
@@ -130,7 +124,8 @@ class FourierSeriesIntro(WriteHeatEquationTemplate):
         title_scale_value = 1.5
 
         title = TextMobject(
-            "Fourier ", "Series",
+            "Fourier ",
+            "Series",
         )
         title.scale(title_scale_value)
         title.to_edge(UP)
@@ -147,9 +142,7 @@ class FourierSeriesIntro(WriteHeatEquationTemplate):
         physics.set_color_by_tex("{T}", RED)
         arrow1 = Arrow(LEFT, RIGHT)
         arrow2 = Arrow(LEFT, RIGHT)
-        group = VGroup(
-            heat, arrow1, physics, arrow2, title.target
-        )
+        group = VGroup(heat, arrow1, physics, arrow2, title.target)
         group.arrange(RIGHT)
         # physics.align_to(title.target, UP)
         group.to_edge(UP)
@@ -165,9 +158,13 @@ class FourierSeriesIntro(WriteHeatEquationTemplate):
             for letter, vertex in zip(letters, vertices):
                 alpha = (normalize(vertex)[0] + 1) / 2
                 i, sa = integer_interpolate(0, len(colors) - 1, alpha)
-                letter.set_color(interpolate_color(
-                    colors[i], colors[i + 1], alpha,
-                ))
+                letter.set_color(
+                    interpolate_color(
+                        colors[i],
+                        colors[i + 1],
+                        alpha,
+                    ))
+
         heat.add_updater(update_heat_colors)
 
         image = ImageMobject("Joseph Fourier")
@@ -229,13 +226,9 @@ class TodaysTargetWrapper(Scene):
 
 class TwoGraphTypeTitles(Scene):
     def construct(self):
-        left_title = TextMobject(
-            "Represent time\\\\with actual time"
-        )
+        left_title = TextMobject("Represent time\\\\with actual time")
         left_title.shift(FRAME_WIDTH * LEFT / 4)
-        right_title = TextMobject(
-            "Represent time\\\\with an axis"
-        )
+        right_title = TextMobject("Represent time\\\\with an axis")
         right_title.shift(FRAME_WIDTH * RIGHT / 4)
 
         titles = VGroup(left_title, right_title)
@@ -258,18 +251,23 @@ class ShowPartialDerivativeSymbols(Scene):
         d_derivs, del_derivs = VGroup(*[
             VGroup(*[
                 TexMobject(
-                    "{" + sym, "T", "\\over", sym, var + "}",
-                    "(", "{x}", ",", "{t}", ")",
-                ).set_color_by_tex_to_color_map(t2c)
-                for var in ("{x}", "{t}")
-            ])
-            for sym in ("d", "\\partial")
+                    "{" + sym,
+                    "T",
+                    "\\over",
+                    sym,
+                    var + "}",
+                    "(",
+                    "{x}",
+                    ",",
+                    "{t}",
+                    ")",
+                ).set_color_by_tex_to_color_map(t2c) for var in ("{x}", "{t}")
+            ]) for sym in ("d", "\\partial")
         ])
         dTdx, dTdt = d_derivs
         delTdelx, delTdelx = del_derivs
         dels = VGroup(*it.chain(*[
-            del_deriv.get_parts_by_tex("\\partial")
-            for del_deriv in del_derivs
+            del_deriv.get_parts_by_tex("\\partial") for del_deriv in del_derivs
         ]))
 
         dTdx.to_edge(UP)
@@ -280,11 +278,8 @@ class ShowPartialDerivativeSymbols(Scene):
         self.wait()
 
         dTdt.move_to(dTdx)
-        self.play(
-            dTdx.next_to, dTdt, RIGHT, {"buff": 1.5},
-            dTdx.set_opacity, 0.5,
-            FadeInFromDown(dTdt)
-        )
+        self.play(dTdx.next_to, dTdt, RIGHT, {"buff": 1.5}, dTdx.set_opacity,
+                  0.5, FadeInFromDown(dTdt))
         self.wait()
 
         for m1, m2 in zip(d_derivs, del_derivs):
@@ -295,33 +290,29 @@ class ShowPartialDerivativeSymbols(Scene):
 
         self.play(
             Write(pd_words),
-            dTdx.set_opacity, 1,
+            dTdx.set_opacity,
+            1,
             run_time=1,
         )
         self.wait()
+        self.play(ReplacementTransform(d_derivs, del_derivs))
         self.play(
-            ReplacementTransform(d_derivs, del_derivs)
-        )
-        self.play(
-            LaggedStartMap(
-                ShowCreationThenFadeAround,
-                dels,
-                surrounding_rectangle_config={
-                    "color": BLUE,
-                    "buff": 0.5 * SMALL_BUFF,
-                    "stroke_width": 2,
-                }
-            )
-        )
+            LaggedStartMap(ShowCreationThenFadeAround,
+                           dels,
+                           surrounding_rectangle_config={
+                               "color": BLUE,
+                               "buff": 0.5 * SMALL_BUFF,
+                               "stroke_width": 2,
+                           }))
         self.wait()
 
         num_words = VGroup(*[
             TextMobject(
                 "Change in $T$\\\\caused by {}",
-                "$\\partial$", "${}$".format(var),
+                "$\\partial$",
+                "${}$".format(var),
                 arg_separator="",
-            ).set_color_by_tex_to_color_map(t2c)
-            for var in ("{x}", "{t}")
+            ).set_color_by_tex_to_color_map(t2c) for var in ("{x}", "{t}")
         ])
         num_words.scale(0.8)
         for word, deriv in zip(num_words, del_derivs):
@@ -339,7 +330,8 @@ class ShowPartialDerivativeSymbols(Scene):
 
         self.play(
             Write(num_words[1]),
-            VGroup(del_derivs, pd_words).shift, DOWN,
+            VGroup(del_derivs, pd_words).shift,
+            DOWN,
             ShowCreation(del_derivs[1].rect),
         )
         self.play(
@@ -369,9 +361,7 @@ class WriteHeatEquation(WriteHeatEquationTemplate):
         two_outlines.set_stroke(YELLOW, 2)
         two_outlines.set_fill(opacity=0)
 
-        to_be_explained = TextMobject(
-            "To be explained shortly..."
-        )
+        to_be_explained = TextMobject("To be explained shortly...")
         to_be_explained.scale(0.7)
         to_be_explained.next_to(equation, RIGHT, MED_LARGE_BUFF)
         to_be_explained.fade(1)
@@ -395,12 +385,10 @@ class WriteHeatEquation(WriteHeatEquationTemplate):
         self.wait()
         self.play(Write(to_be_explained, run_time=1))
         self.wait(2)
-        self.play(
-            ShowCreationThenDestruction(
-                del_outlines,
-                lag_ratio=0.1,
-            )
-        )
+        self.play(ShowCreationThenDestruction(
+            del_outlines,
+            lag_ratio=0.1,
+        ))
         self.play(
             FadeOutAndShift(title, UP),
             FadeInFrom(pde, DOWN),
@@ -415,20 +403,19 @@ class Show3DEquation(WriteHeatEquationTemplate):
         equation = self.get_d3_equation_with_inputs()
         equation.set_width(FRAME_WIDTH - 1)
         inputs = VGroup(*it.chain(*[
-            equation.get_parts_by_tex(s)
-            for s in ["{x}", "{y}", "{z}", "{t}"]
+            equation.get_parts_by_tex(s) for s in ["{x}", "{y}", "{z}", "{t}"]
         ]))
         inputs.sort()
         equation.to_edge(UP)
 
         self.add(equation)
-        self.play(LaggedStartMap(
-            ShowCreationThenFadeAround, inputs,
-            surrounding_rectangle_config={
-                "buff": 0.05,
-                "stroke_width": 2,
-            }
-        ))
+        self.play(
+            LaggedStartMap(ShowCreationThenFadeAround,
+                           inputs,
+                           surrounding_rectangle_config={
+                               "buff": 0.05,
+                               "stroke_width": 2,
+                           }))
         self.wait()
 
 
@@ -466,10 +453,7 @@ class Show1DAnd3DEquations(WriteHeatEquationTemplate):
             run_time=1,
         )
         self.wait(2)
-        self.play(
-            Restore(d1_group),
-            FadeInFrom(d3_group, LEFT)
-        )
+        self.play(Restore(d1_group), FadeInFrom(d3_group, LEFT))
         self.wait()
         self.play(
             GrowFromCenter(d3_brace),
@@ -494,15 +478,13 @@ class D1EquationNoInputs(WriteHeatEquationTemplate):
 
 class AltHeatRHS(Scene):
     def construct(self):
-        formula = TexMobject(
-            "{\\alpha \\over 2}", "\\Big(",
-            "T({x} - 1, {t}) + T({x} + 1, {t})"
-            "\\Big)",
-            tex_to_color_map={
-                "{x}": GREEN,
-                "{t}": YELLOW,
-            }
-        )
+        formula = TexMobject("{\\alpha \\over 2}",
+                             "\\Big(", "T({x} - 1, {t}) + T({x} + 1, {t})"
+                             "\\Big)",
+                             tex_to_color_map={
+                                 "{x}": GREEN,
+                                 "{t}": YELLOW,
+                             })
         self.add(formula)
 
 
@@ -512,30 +494,26 @@ class CompareInputsOfGeneralCaseTo1D(WriteHeatEquation):
             TexMobject(
                 "{T}(" + inputs + ", {t})",
                 **self.tex_mobject_config,
-            )
-            for inputs in ["{x}, {y}, {z}", "{x}"]
+            ) for inputs in ["{x}, {y}, {z}", "{x}"]
         ]
         for expr in three_d_expr, one_d_expr:
             expr.scale(2)
             expr.to_edge(UP)
 
         x, y, z = [
-            three_d_expr.get_part_by_tex(letter)
-            for letter in ["x", "y", "z"]
+            three_d_expr.get_part_by_tex(letter) for letter in ["x", "y", "z"]
         ]
 
         self.play(FadeInFromDown(three_d_expr))
-        self.play(LaggedStartMap(
-            ShowCreationThenFadeAround,
-            VGroup(x, y, z)
-        ))
+        self.play(LaggedStartMap(ShowCreationThenFadeAround, VGroup(x, y, z)))
         self.wait()
         low = 3
         high = -3
         self.play(
             ReplacementTransform(three_d_expr[:low], one_d_expr[:low]),
             ReplacementTransform(three_d_expr[high:], one_d_expr[high:]),
-            three_d_expr[low:high].scale, 0,
+            three_d_expr[low:high].scale,
+            0,
         )
         self.wait()
 
@@ -548,9 +526,7 @@ class ShowLaplacian(WriteHeatEquation):
         parts = VGroup()
         plusses = VGroup()
         for char in "xyz":
-            index = equation.index_of_part_by_tex(
-                "{" + char + "}"
-            )
+            index = equation.index_of_part_by_tex("{" + char + "}")
             part = equation[index - 6:index + 3]
             rect = SurroundingRectangle(part)
             rect.match_color(equation[index])
@@ -575,39 +551,29 @@ class ShowLaplacian(WriteHeatEquation):
         self.remove(*plusses, *parts[1], *parts[2])
         for part in parts[1:]:
             self.play(
-                rp.become, part.rp,
+                rp.become,
+                part.rp,
                 FadeInFrom(part, LEFT),
                 Write(part.plus),
                 ShowCreation(part.rect),
             )
-            self.play(
-                FadeOut(part.rect),
-            )
+            self.play(FadeOut(part.rect), )
             self.wait()
 
         # Show laplacian
         brace = Brace(parts, DOWN)
         laplacian = TexMobject("\\nabla^2", "T")
         laplacian.next_to(brace, DOWN)
-        laplacian_name = TextMobject(
-            "``Laplacian''"
-        )
+        laplacian_name = TextMobject("``Laplacian''")
         laplacian_name.next_to(laplacian, DOWN)
 
         T_parts = VGroup(*[part[3] for part in parts])
-        non_T_parts = VGroup(*[
-            VGroup(*part[:3], *part[4:])
-            for part in parts
-        ])
+        non_T_parts = VGroup(*[VGroup(*part[:3], *part[4:]) for part in parts])
 
         self.play(GrowFromCenter(brace))
         self.play(Write(laplacian_name))
-        self.play(
-            TransformFromCopy(non_T_parts, laplacian[0])
-        )
-        self.play(
-            TransformFromCopy(T_parts, laplacian[1])
-        )
+        self.play(TransformFromCopy(non_T_parts, laplacian[0]))
+        self.play(TransformFromCopy(T_parts, laplacian[1]))
         self.wait(3)
 
 
@@ -625,8 +591,7 @@ class AskAboutActuallySolving(WriteHeatEquationTemplate):
             tex_to_color_map={
                 "{x}": GREEN,
                 "{t}": YELLOW,
-            }
-        )
+            })
         formula.next_to(equation, DOWN, LARGE_BUFF)
         q3 = TextMobject("Is this it?")
         arrow = Vector(LEFT, color=WHITE)
@@ -638,13 +603,11 @@ class AskAboutActuallySolving(WriteHeatEquationTemplate):
         self.wait()
         self.play(
             FadeInFromDown(q2),
-            q1.shift, 1.5 * UP,
+            q1.shift,
+            1.5 * UP,
         )
         self.play(FadeInFrom(formula, UP))
-        self.play(
-            GrowArrow(arrow),
-            FadeInFrom(q3, LEFT)
-        )
+        self.play(GrowArrow(arrow), FadeInFrom(q3, LEFT))
         self.wait()
 
 

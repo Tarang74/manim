@@ -19,11 +19,7 @@ from manimlib.utils.config_ops import digest_locals
 def string_to_numbers(num_string):
     num_string = num_string.replace("-", ",-")
     num_string = num_string.replace("e,-", "e-")
-    return [
-        float(s)
-        for s in re.split("[ ,]", num_string)
-        if s != ""
-    ]
+    return [float(s) for s in re.split("[ ,]", num_string) if s != ""]
 
 
 class SVGMobject(VMobject):
@@ -51,8 +47,10 @@ class SVGMobject(VMobject):
             raise Exception("Must specify file for SVGMobject")
         possible_paths = [
             os.path.join(os.path.join("assets", "svg_images"), self.file_name),
-            os.path.join(os.path.join("assets", "svg_images"), self.file_name + ".svg"),
-            os.path.join(os.path.join("assets", "svg_images"), self.file_name + ".xdv"),
+            os.path.join(os.path.join("assets", "svg_images"),
+                         self.file_name + ".svg"),
+            os.path.join(os.path.join("assets", "svg_images"),
+                         self.file_name + ".xdv"),
             self.file_name,
         ]
         for path in possible_paths:
@@ -83,13 +81,11 @@ class SVGMobject(VMobject):
             pass  # TODO, handle style
         elif element.tagName in ['g', 'svg', 'symbol']:
             result += it.chain(*[
-                self.get_mobjects_from(child)
-                for child in element.childNodes
+                self.get_mobjects_from(child) for child in element.childNodes
             ])
         elif element.tagName == 'path':
-            result.append(self.path_string_to_mobject(
-                element.getAttribute('d')
-            ))
+            result.append(
+                self.path_string_to_mobject(element.getAttribute('d')))
         elif element.tagName == 'use':
             result += self.use_to_mobjects(element)
         elif element.tagName == 'rect':
@@ -124,15 +120,11 @@ class SVGMobject(VMobject):
         if ref not in self.ref_to_element:
             warnings.warn("%s not recognized" % ref)
             return VGroup()
-        return self.get_mobjects_from(
-            self.ref_to_element[ref]
-        )
+        return self.get_mobjects_from(self.ref_to_element[ref])
 
     def attribute_to_float(self, attr):
-        stripped_attr = "".join([
-            char for char in attr
-            if char in string.digits + "." + "-"
-        ])
+        stripped_attr = "".join(
+            [char for char in attr if char in string.digits + "." + "-"])
         return float(stripped_attr)
 
     def polygon_to_mobject(self, polygon_element):
@@ -147,22 +139,16 @@ class SVGMobject(VMobject):
 
     def circle_to_mobject(self, circle_element):
         x, y, r = [
-            self.attribute_to_float(
-                circle_element.getAttribute(key)
-            )
-            if circle_element.hasAttribute(key)
-            else 0.0
+            self.attribute_to_float(circle_element.getAttribute(key))
+            if circle_element.hasAttribute(key) else 0.0
             for key in ("cx", "cy", "r")
         ]
         return Circle(radius=r).shift(x * RIGHT + y * DOWN)
 
     def ellipse_to_mobject(self, circle_element):
         x, y, rx, ry = [
-            self.attribute_to_float(
-                circle_element.getAttribute(key)
-            )
-            if circle_element.hasAttribute(key)
-            else 0.0
+            self.attribute_to_float(circle_element.getAttribute(key))
+            if circle_element.hasAttribute(key) else 0.0
             for key in ("cx", "cy", "rx", "ry")
         ]
         return Circle().scale(rx * RIGHT + ry * UP).shift(x * RIGHT + y * DOWN)
@@ -174,12 +160,14 @@ class SVGMobject(VMobject):
         corner_radius = rect_element.getAttribute("rx")
 
         # input preprocessing
-        if fill_color in ["", "none", "#FFF", "#FFFFFF"] or Color(fill_color) == Color(WHITE):
+        if fill_color in ["", "none", "#FFF", "#FFFFFF"
+                          ] or Color(fill_color) == Color(WHITE):
             opacity = 0
             fill_color = BLACK  # shdn't be necessary but avoids error msgs
         if fill_color in ["#000", "#000000"]:
             fill_color = WHITE
-        if stroke_color in ["", "none", "#FFF", "#FFFFFF"] or Color(stroke_color) == Color(WHITE):
+        if stroke_color in ["", "none", "#FFF", "#FFFFFF"
+                            ] or Color(stroke_color) == Color(WHITE):
             stroke_width = 0
             stroke_color = BLACK
         if stroke_color in ["#000", "#000000"]:
@@ -193,32 +181,24 @@ class SVGMobject(VMobject):
         corner_radius = float(corner_radius)
 
         if corner_radius == 0:
-            mob = Rectangle(
-                width=self.attribute_to_float(
-                    rect_element.getAttribute("width")
-                ),
-                height=self.attribute_to_float(
-                    rect_element.getAttribute("height")
-                ),
-                stroke_width=stroke_width,
-                stroke_color=stroke_color,
-                fill_color=fill_color,
-                fill_opacity=opacity
-            )
+            mob = Rectangle(width=self.attribute_to_float(
+                rect_element.getAttribute("width")),
+                            height=self.attribute_to_float(
+                                rect_element.getAttribute("height")),
+                            stroke_width=stroke_width,
+                            stroke_color=stroke_color,
+                            fill_color=fill_color,
+                            fill_opacity=opacity)
         else:
-            mob = RoundedRectangle(
-                width=self.attribute_to_float(
-                    rect_element.getAttribute("width")
-                ),
-                height=self.attribute_to_float(
-                    rect_element.getAttribute("height")
-                ),
-                stroke_width=stroke_width,
-                stroke_color=stroke_color,
-                fill_color=fill_color,
-                fill_opacity=opacity,
-                corner_radius=corner_radius
-            )
+            mob = RoundedRectangle(width=self.attribute_to_float(
+                rect_element.getAttribute("width")),
+                                   height=self.attribute_to_float(
+                                       rect_element.getAttribute("height")),
+                                   stroke_width=stroke_width,
+                                   stroke_color=stroke_color,
+                                   fill_color=fill_color,
+                                   fill_opacity=opacity,
+                                   corner_radius=corner_radius)
 
         mob.shift(mob.get_center() - mob.get_corner(UP + LEFT))
         return mob
@@ -238,7 +218,8 @@ class SVGMobject(VMobject):
         try:  # transform matrix
             prefix = "matrix("
             suffix = ")"
-            if not transform.startswith(prefix) or not transform.endswith(suffix):
+            if not transform.startswith(prefix) or not transform.endswith(
+                    suffix):
                 raise Exception()
             transform = transform[len(prefix):-len(suffix)]
             transform = string_to_numbers(transform)
@@ -259,13 +240,15 @@ class SVGMobject(VMobject):
         try:  # transform scale
             prefix = "scale("
             suffix = ")"
-            if not transform.startswith(prefix) or not transform.endswith(suffix):
+            if not transform.startswith(prefix) or not transform.endswith(
+                    suffix):
                 raise Exception()
             transform = transform[len(prefix):-len(suffix)]
             scale_values = string_to_numbers(transform)
             if len(scale_values) == 2:
                 scale_x, scale_y = scale_values
-                mobject.scale(np.array([scale_x, scale_y, 1]), about_point=ORIGIN)
+                mobject.scale(np.array([scale_x, scale_y, 1]),
+                              about_point=ORIGIN)
             elif len(scale_values) == 1:
                 scale = scale_values[0]
                 mobject.scale(np.array([scale, scale, 1]), about_point=ORIGIN)
@@ -275,7 +258,8 @@ class SVGMobject(VMobject):
         try:  # transform translate
             prefix = "translate("
             suffix = ")"
-            if not transform.startswith(prefix) or not transform.endswith(suffix):
+            if not transform.startswith(prefix) or not transform.endswith(
+                    suffix):
                 raise Exception()
             transform = transform[len(prefix):-len(suffix)]
             x, y = string_to_numbers(transform)
@@ -304,7 +288,8 @@ class SVGMobject(VMobject):
         return self.flatten([e for e in all_childNodes_have_id if e])
 
     def update_ref_to_element(self, defs):
-        new_refs = dict([(e.getAttribute('id'), e) for e in self.get_all_childNodes_have_id(defs)])
+        new_refs = dict([(e.getAttribute('id'), e)
+                         for e in self.get_all_childNodes_have_id(defs)])
         self.ref_to_element.update(new_refs)
 
     def move_into_position(self):
@@ -339,10 +324,9 @@ class VMobjectFromSVGPathstring(VMobject):
 
     def generate_points(self):
         pattern = "[%s]" % ("".join(self.get_path_commands()))
-        pairs = list(zip(
-            re.findall(pattern, self.path_string),
-            re.split(pattern, self.path_string)[1:]
-        ))
+        pairs = list(
+            zip(re.findall(pattern, self.path_string),
+                re.split(pattern, self.path_string)[1:]))
         # Which mobject should new points be added to
         self = self
         for command, coord_string in pairs:
@@ -416,7 +400,7 @@ class VMobjectFromSVGPathstring(VMobject):
                 if isLower:
                     new_points[i:i + 3] -= points[-1]
                     new_points[i:i + 3] += new_points[i - 1]
-                self.add_cubic_bezier_curve_to(*new_points[i:i+3])
+                self.add_cubic_bezier_curve_to(*new_points[i:i + 3])
 
     def string_to_points(self, coord_string):
         numbers = string_to_numbers(coord_string)

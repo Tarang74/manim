@@ -59,16 +59,12 @@ class NumberLine(Line):
     def init_leftmost_tick(self):
         if self.leftmost_tick is None:
             self.leftmost_tick = op.mul(
-                self.tick_frequency,
-                np.ceil(self.x_min / self.tick_frequency)
-            )
+                self.tick_frequency, np.ceil(self.x_min / self.tick_frequency))
 
     def add_tick_marks(self):
         tick_size = self.tick_size
-        self.tick_marks = VGroup(*[
-            self.get_tick(x, tick_size)
-            for x in self.get_tick_numbers()
-        ])
+        self.tick_marks = VGroup(
+            *[self.get_tick(x, tick_size) for x in self.get_tick_numbers()])
         big_tick_size = tick_size * self.longer_tick_multiple
         self.big_tick_marks = VGroup(*[
             self.get_tick(x, big_tick_size)
@@ -96,17 +92,13 @@ class NumberLine(Line):
 
     def get_tick_numbers(self):
         u = -1 if self.include_tip else 1
-        return np.arange(
-            self.leftmost_tick,
-            self.x_max + u * self.tick_frequency / 2,
-            self.tick_frequency
-        )
+        return np.arange(self.leftmost_tick,
+                         self.x_max + u * self.tick_frequency / 2,
+                         self.tick_frequency)
 
     def number_to_point(self, number):
         alpha = float(number - self.x_min) / (self.x_max - self.x_min)
-        return interpolate(
-            self.get_start(), self.get_end(), alpha
-        )
+        return interpolate(self.get_start(), self.get_end(), alpha)
 
     def point_to_number(self, point):
         start_point, end_point = self.get_start_and_end()
@@ -116,10 +108,8 @@ class NumberLine(Line):
         def distance_from_start(p):
             return np.dot(p - start_point, unit_vect)
 
-        proportion = fdiv(
-            distance_from_start(point),
-            distance_from_start(end_point)
-        )
+        proportion = fdiv(distance_from_start(point),
+                          distance_from_start(end_point))
         return interpolate(self.x_min, self.x_max, proportion)
 
     def n2p(self, number):
@@ -144,7 +134,8 @@ class NumberLine(Line):
             numbers = numbers[numbers != 0]
         return numbers
 
-    def get_number_mobject(self, number,
+    def get_number_mobject(self,
+                           number,
                            number_config=None,
                            scale_val=None,
                            direction=None,
@@ -161,28 +152,22 @@ class NumberLine(Line):
 
         num_mob = DecimalNumber(number, **number_config)
         num_mob.scale(scale_val)
-        num_mob.next_to(
-            self.number_to_point(number),
-            direction=direction,
-            buff=buff
-        )
+        num_mob.next_to(self.number_to_point(number),
+                        direction=direction,
+                        buff=buff)
         return num_mob
 
     def get_number_mobjects(self, *numbers, **kwargs):
         if len(numbers) == 0:
             numbers = self.default_numbers_to_display()
-        return VGroup(*[
-            self.get_number_mobject(number, **kwargs)
-            for number in numbers
-        ])
+        return VGroup(
+            *[self.get_number_mobject(number, **kwargs) for number in numbers])
 
     def get_labels(self):
         return self.get_number_mobjects()
 
     def add_numbers(self, *numbers, **kwargs):
-        self.numbers = self.get_number_mobjects(
-            *numbers, **kwargs
-        )
+        self.numbers = self.get_number_mobjects(*numbers, **kwargs)
         self.add(self.numbers)
         return self
 

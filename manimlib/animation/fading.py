@@ -6,7 +6,6 @@ from manimlib.mobject.types.vectorized_mobject import VMobject
 from manimlib.utils.bezier import interpolate
 from manimlib.utils.rate_functions import there_and_back
 
-
 DEFAULT_FADE_LAG_RATIO = 0
 
 
@@ -136,17 +135,13 @@ class VFadeIn(Animation):
 
     def interpolate_submobject(self, submob, start, alpha):
         submob.set_stroke(
-            opacity=interpolate(0, start.get_stroke_opacity(), alpha)
-        )
+            opacity=interpolate(0, start.get_stroke_opacity(), alpha))
         submob.set_fill(
-            opacity=interpolate(0, start.get_fill_opacity(), alpha)
-        )
+            opacity=interpolate(0, start.get_fill_opacity(), alpha))
 
 
 class VFadeOut(VFadeIn):
-    CONFIG = {
-        "remover": True
-    }
+    CONFIG = {"remover": True}
 
     def interpolate_submobject(self, submob, start, alpha):
         super().interpolate_submobject(submob, start, 1 - alpha)

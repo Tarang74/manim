@@ -40,23 +40,15 @@ class FourierNameIntro(Scene):
         v_line.set_height(FRAME_HEIGHT)
         v_line.set_stroke(WHITE, 2)
 
-        self.play(
-            FadeInFrom(lt, RIGHT),
-            ShowCreation(v_line)
-        )
-        self.play(
-            FadeInFrom(rt, LEFT),
-        )
+        self.play(FadeInFrom(lt, RIGHT), ShowCreation(v_line))
+        self.play(FadeInFrom(rt, LEFT), )
         # Edit in images of circle animations
         # and clips from FT video
 
         # for title, variants in (rt, rt_variants), (lt, lt_variants):
         for title, variants in [(rt, rt_variants)]:
             # Maybe do it for left variant, maybe not...
-            self.play(
-                MoveToTarget(title),
-                FadeInFrom(variants[0][0], LEFT)
-            )
+            self.play(MoveToTarget(title), FadeInFrom(variants[0][0], LEFT))
             for v1, v2 in zip(variants, variants[1:]):
                 self.play(
                     FadeOutAndShift(v1[0], UP),
@@ -64,10 +56,7 @@ class FourierNameIntro(Scene):
                     run_time=0.5,
                 )
                 self.wait(0.5)
-            self.play(
-                Restore(title),
-                FadeOut(variants[-1][0])
-            )
+            self.play(Restore(title), FadeOut(variants[-1][0]))
         self.wait()
 
         self.titles = titles
@@ -96,15 +85,16 @@ class FourierNameIntro(Scene):
             FadeIn(image),
             FadeIn(name[0]),
             *[
-                ReplacementTransform(
-                    title[0].deepcopy(),
-                    name[1]
-                )
+                ReplacementTransform(title[0].deepcopy(), name[1])
                 for title in titles
             ],
-            titles.scale, 0.65,
-            titles.arrange, DOWN,
-            titles.next_to, image, UP,
+            titles.scale,
+            0.65,
+            titles.arrange,
+            DOWN,
+            titles.next_to,
+            image,
+            UP,
         )
         self.wait()
 
@@ -156,15 +146,10 @@ class FourierNameIntro(Scene):
             color=date_rect.get_color(),
         )
 
-        heat_rect = SurroundingRectangle(
-            TextMobject("CHALEUR")
-        )
+        heat_rect = SurroundingRectangle(TextMobject("CHALEUR"))
         heat_rect.set_color(RED)
         heat_rect.scale(0.6)
-        heat_rect.move_to(
-            paper.get_top() +
-            1.22 * DOWN + 0.37 * RIGHT
-        )
+        heat_rect.move_to(paper.get_top() + 1.22 * DOWN + 0.37 * RIGHT)
         heat_word = TextMobject("Heat")
         heat_word.scale(1.5)
         heat_word.next_to(paper, UP)
@@ -178,9 +163,7 @@ class FourierNameIntro(Scene):
         )
 
         self.play(FadeInFrom(paper, LEFT))
-        self.play(
-            ShowCreation(date_rect),
-        )
+        self.play(ShowCreation(date_rect), )
         self.play(
             GrowFromPoint(date, date_arrow.get_start()),
             ShowCreation(date_arrow),
@@ -190,9 +173,7 @@ class FourierNameIntro(Scene):
         # Insert animation of circles/sine waves
         # approximating a square wave
 
-        self.play(
-            ShowCreation(heat_rect),
-        )
+        self.play(ShowCreation(heat_rect), )
         self.play(
             GrowFromPoint(heat_word, heat_arrow.get_start()),
             ShowCreation(heat_arrow),
@@ -215,19 +196,11 @@ class ManyCousinsOfFourierThings(Scene):
         for group, vect in zip(groups, [LEFT, RIGHT]):
             group.scale(0.7)
             group.arrange(DOWN, aligned_edge=LEFT)
-            group.move_to(
-                vect * FRAME_WIDTH / 4
-            )
+            group.move_to(vect * FRAME_WIDTH / 4)
             group.set_color(YELLOW)
 
-        self.play(*[
-            LaggedStartMap(FadeIn, group)
-            for group in groups
-        ])
-        self.play(*[
-            LaggedStartMap(FadeOut, group)
-            for group in groups
-        ])
+        self.play(*[LaggedStartMap(FadeIn, group) for group in groups])
+        self.play(*[LaggedStartMap(FadeOut, group) for group in groups])
 
 
 class FourierSeriesIllustraiton(Scene):
@@ -267,26 +240,18 @@ class FourierSeriesIllustraiton(Scene):
         target_func_tex = self.get_target_func_tex()
         target_func_tex.next_to(axes2, DOWN)
         target_func_tex.match_y(sum_tex)
-        eq.move_to(midpoint(
-            target_func_tex.get_left(),
-            sum_tex.get_right()
-        ))
+        eq.move_to(midpoint(target_func_tex.get_left(), sum_tex.get_right()))
 
-        range_words = TextMobject(
-            "For $0 \\le x \\le 1$"
-        )
+        range_words = TextMobject("For $0 \\le x \\le 1$")
         range_words.next_to(
             VGroup(sum_tex, target_func_tex),
             DOWN,
         )
 
-        rects = it.chain(
-            [
-                SurroundingRectangle(piece)
-                for piece in self.get_sum_tex_pieces(sum_tex)
-            ],
-            it.cycle([None])
-        )
+        rects = it.chain([
+            SurroundingRectangle(piece)
+            for piece in self.get_sum_tex_pieces(sum_tex)
+        ], it.cycle([None]))
 
         self.add(axes1, arrow, axes2)
         self.add(sum_tex, eq, target_func_tex)
@@ -294,20 +259,22 @@ class FourierSeriesIllustraiton(Scene):
 
         curr_partial_sum = axes1.get_graph(lambda x: 0)
         curr_partial_sum.set_stroke(width=1)
-        for sine_graph, partial_sum, rect in zip(sine_graphs, partial_sums, rects):
-            anims1 = [
-                ShowCreation(sine_graph)
-            ]
+        for sine_graph, partial_sum, rect in zip(sine_graphs, partial_sums,
+                                                 rects):
+            anims1 = [ShowCreation(sine_graph)]
             partial_sum.set_stroke(BLACK, 4, background=True)
             anims2 = [
                 curr_partial_sum.set_stroke,
-                {"width": 1, "opacity": 0.5},
+                {
+                    "width": 1,
+                    "opacity": 0.5
+                },
                 curr_partial_sum.set_stroke,
-                {"width": 0, "background": True},
-                ReplacementTransform(
-                    sine_graph, partial_sum,
-                    remover=True
-                ),
+                {
+                    "width": 0,
+                    "background": True
+                },
+                ReplacementTransform(sine_graph, partial_sum, remover=True),
             ]
             if rect:
                 rect.match_style(sine_graph)
@@ -319,12 +286,12 @@ class FourierSeriesIllustraiton(Scene):
 
     def get_axes_arrow_axes(self):
         axes1 = Axes(**self.axes_config)
-        axes1.x_axis.add_numbers(
-            0.5, 1,
-            number_config={"num_decimal_places": 1}
-        )
+        axes1.x_axis.add_numbers(0.5,
+                                 1,
+                                 number_config={"num_decimal_places": 1})
         axes1.y_axis.add_numbers(
-            -1, 1,
+            -1,
+            1,
             number_config={"num_decimal_places": 1},
             direction=LEFT,
         )
@@ -336,10 +303,8 @@ class FourierSeriesIllustraiton(Scene):
         return group
 
     def get_sine_graphs(self, axes):
-        sine_graphs = VGroup(*[
-            axes.get_graph(self.generate_nth_func(n))
-            for n in self.n_range
-        ])
+        sine_graphs = VGroup(
+            *[axes.get_graph(self.generate_nth_func(n)) for n in self.n_range])
         sine_graphs.set_stroke(width=3)
         for graph, color in zip(sine_graphs, it.cycle(self.colors)):
             graph.set_color(color)
@@ -354,25 +319,21 @@ class FourierSeriesIllustraiton(Scene):
         return partial_sums
 
     def get_sum_tex(self):
-        return TexMobject(
-            "\\frac{4}{\\pi} \\left(",
-            "\\frac{\\cos(\\pi x)}{1}",
-            "-\\frac{\\cos(3\\pi x)}{3}",
-            "+\\frac{\\cos(5\\pi x)}{5}",
-            "- \\cdots \\right)"
-        ).scale(0.75)
+        return TexMobject("\\frac{4}{\\pi} \\left(",
+                          "\\frac{\\cos(\\pi x)}{1}",
+                          "-\\frac{\\cos(3\\pi x)}{3}",
+                          "+\\frac{\\cos(5\\pi x)}{5}",
+                          "- \\cdots \\right)").scale(0.75)
 
     def get_sum_tex_pieces(self, sum_tex):
         return sum_tex[1:4]
 
     def get_target_func_tex(self):
-        step_tex = TexMobject(
-            """
+        step_tex = TexMobject("""
             1 \\quad \\text{if $x < 0.5$} \\\\
             0 \\quad \\text{if $x = 0.5$} \\\\
             -1 \\quad \\text{if $x > 0.5$} \\\\
-            """
-        )
+            """)
         lb = Brace(step_tex, LEFT, buff=SMALL_BUFF)
         step_tex.add(lb)
         return step_tex
@@ -393,17 +354,12 @@ class FourierSeriesIllustraiton(Scene):
     #     return lambda x: (4 / n / PI) * np.sin(TAU * n * x)
 
     def generate_nth_func(self, n):
-        return lambda x: np.prod([
-            (4 / PI),
-            (1 / n) * (-1)**((n - 1) / 2),
-            np.cos(PI * n * x)
-        ])
+        return lambda x: np.prod([(4 / PI), (1 / n) * (-1)**((n - 1) / 2),
+                                  np.cos(PI * n * x)])
 
     def generate_kth_partial_sum_func(self, k):
-        return lambda x: np.sum([
-            self.generate_nth_func(n)(x)
-            for n in self.n_range[:k]
-        ])
+        return lambda x: np.sum(
+            [self.generate_nth_func(n)(x) for n in self.n_range[:k]])
 
 
 class FourierSeriesOfLineIllustration(FourierSeriesIllustraiton):
@@ -419,13 +375,11 @@ class FourierSeriesOfLineIllustration(FourierSeriesIllustraiton):
     }
 
     def get_sum_tex(self):
-        return TexMobject(
-            "\\frac{8}{\\pi^2} \\left(",
-            "\\frac{\\cos(\\pi x)}{1^2}",
-            "+\\frac{\\cos(3\\pi x)}{3^2}",
-            "+\\frac{\\cos(5\\pi x)}{5^2}",
-            "+ \\cdots \\right)"
-        ).scale(0.75)
+        return TexMobject("\\frac{8}{\\pi^2} \\left(",
+                          "\\frac{\\cos(\\pi x)}{1^2}",
+                          "+\\frac{\\cos(3\\pi x)}{3^2}",
+                          "+\\frac{\\cos(5\\pi x)}{5^2}",
+                          "+ \\cdots \\right)").scale(0.75)
 
     # def get_sum_tex_pieces(self, sum_tex):
     #     return sum_tex[1:4]
@@ -449,11 +403,7 @@ class FourierSeriesOfLineIllustration(FourierSeriesIllustraiton):
     #     return lambda x: (4 / n / PI) * np.sin(TAU * n * x)
 
     def generate_nth_func(self, n):
-        return lambda x: np.prod([
-            (8 / PI**2),
-            (1 / n**2),
-            np.cos(PI * n * x)
-        ])
+        return lambda x: np.prod([(8 / PI**2), (1 / n**2), np.cos(PI * n * x)])
 
 
 class CircleAnimationOfF(FourierOfTrebleClef):
@@ -496,7 +446,9 @@ class ExponentialDecay(PiCreatureScene):
         bubble.pin_to(randy)
         bubble.set_fill(DARKER_GREY)
         exp = TexMobject(
-            "Ce^{", mk_tex, "t}",
+            "Ce^{",
+            mk_tex,
+            "t}",
             tex_to_color_map=t2c,
         )
         exp.move_to(bubble.get_bubble_center())
@@ -517,14 +469,14 @@ class ExponentialDecay(PiCreatureScene):
         axes.y_axis.add_numbers(0)
         axes.x_axis.add(
             TextMobject("Time").next_to(
-                axes.x_axis.get_end(), DR,
-            )
-        )
+                axes.x_axis.get_end(),
+                DR,
+            ))
         axes.y_axis.add(
             TexMobject("f").next_to(
-                axes.y_axis.get_corner(UR), RIGHT,
-            ).set_color(YELLOW)
-        )
+                axes.y_axis.get_corner(UR),
+                RIGHT,
+            ).set_color(YELLOW))
         axes.x_axis.set_opacity(0)
 
         # Value trackers
@@ -533,8 +485,10 @@ class ExponentialDecay(PiCreatureScene):
         dydt_tracker = ValueTracker()
         dxdt_tracker = ValueTracker(0)
         self.add(
-            y_tracker, x_tracker,
-            dydt_tracker, dxdt_tracker,
+            y_tracker,
+            x_tracker,
+            dydt_tracker,
+            dxdt_tracker,
         )
 
         get_y = y_tracker.get_value
@@ -542,56 +496,47 @@ class ExponentialDecay(PiCreatureScene):
         get_dydt = dydt_tracker.get_value
         get_dxdt = dxdt_tracker.get_value
 
-        dydt_tracker.add_updater(lambda m: m.set_value(
-            - k * get_y()
-        ))
-        y_tracker.add_updater(lambda m, dt: m.increment_value(
-            dt * get_dydt()
-        ))
-        x_tracker.add_updater(lambda m, dt: m.increment_value(
-            dt * get_dxdt()
-        ))
+        dydt_tracker.add_updater(lambda m: m.set_value(-k * get_y()))
+        y_tracker.add_updater(lambda m, dt: m.increment_value(dt * get_dydt()))
+        x_tracker.add_updater(lambda m, dt: m.increment_value(dt * get_dxdt()))
 
         # Tip/decimal
         tip = ArrowTip(color=YELLOW)
         tip.set_width(0.25)
-        tip.add_updater(lambda m: m.move_to(
-            axes.c2p(get_x(), get_y()), LEFT
-        ))
+        tip.add_updater(lambda m: m.move_to(axes.c2p(get_x(), get_y()), LEFT))
         decimal = DecimalNumber()
         decimal.add_updater(lambda d: d.set_value(get_y()))
         decimal.add_updater(lambda d: d.next_to(
-            tip, RIGHT,
+            tip,
+            RIGHT,
             SMALL_BUFF,
         ))
 
         # Rate of change arrow
         arrow = Vector(
-            DOWN, color=RED,
+            DOWN,
+            color=RED,
             max_stroke_width_to_length_ratio=50,
             max_tip_length_to_length_ratio=0.2,
         )
         arrow.set_stroke(width=4)
-        arrow.add_updater(lambda m: m.scale(
-            2.5 * abs(get_dydt()) / m.get_length()
-        ))
-        arrow.add_updater(lambda m: m.move_to(
-            tip.get_left(), UP
-        ))
+        arrow.add_updater(
+            lambda m: m.scale(2.5 * abs(get_dydt()) / m.get_length()))
+        arrow.add_updater(lambda m: m.move_to(tip.get_left(), UP))
 
         # Graph
         graph = TracedPath(tip.get_left)
 
         # Equation
-        ode = TexMobject(
-            "{d{f} \\over dt}(t)",
-            "=", mk_tex, "\\cdot {f}(t)",
-            tex_to_color_map={
-                "{f}": YELLOW,
-                "=": WHITE,
-                mk_tex: mk_tex_color
-            }
-        )
+        ode = TexMobject("{d{f} \\over dt}(t)",
+                         "=",
+                         mk_tex,
+                         "\\cdot {f}(t)",
+                         tex_to_color_map={
+                             "{f}": YELLOW,
+                             "=": WHITE,
+                             mk_tex: mk_tex_color
+                         })
         ode.to_edge(UP)
         dfdt = ode[:3]
         ft = ode[-2:]
@@ -607,12 +552,7 @@ class ExponentialDecay(PiCreatureScene):
         rect = SurroundingRectangle(dfdt)
         self.play(ShowCreation(rect))
         self.wait()
-        self.play(
-            Transform(
-                rect,
-                SurroundingRectangle(ft)
-            )
-        )
+        self.play(Transform(rect, SurroundingRectangle(ft)))
         self.wait(3)
 
         # Show graph over time
@@ -620,11 +560,13 @@ class ExponentialDecay(PiCreatureScene):
             DrawBorderThenFill(bubble),
             Write(exp),
             FadeOut(rect),
-            randy.change, "thinking",
+            randy.change,
+            "thinking",
         )
         axes.x_axis.set_opacity(1)
         self.play(
-            y_tracker.set_value, 3,
+            y_tracker.set_value,
+            3,
             ShowCreation(axes.x_axis),
         )
         dxdt_tracker.set_value(1)
@@ -655,21 +597,16 @@ class ExponentialDecay(PiCreatureScene):
             FadeIn(eq),
         )
         self.wait(2)
-        self.play(
-            ApplyMethod(
-                exp[1].copy().replace,
-                const[0],
-            )
-        )
+        self.play(ApplyMethod(
+            exp[1].copy().replace,
+            const[0],
+        ))
         self.wait()
         rect = SurroundingRectangle(exp)
         rect.set_stroke(BLUE, 2)
         self.play(FadeIn(rect))
-        self.play(
-            Write(dot),
-            TransformFromCopy(exp, exp_copy),
-            rect.move_to, exp_copy
-        )
+        self.play(Write(dot), TransformFromCopy(exp, exp_copy), rect.move_to,
+                  exp_copy)
         self.play(FadeOut(rect))
         self.wait(5)
 
@@ -688,26 +625,22 @@ class InvestmentGrowth(Scene):
 
     def construct(self):
         # Axes
-        axes = Axes(
-            x_min=0,
-            x_max=self.total_time,
-            y_min=0,
-            y_max=6,
-            x_axis_config={
-                "unit_size": 0.3,
-                "tick_size": 0.05,
-                "numbers_with_elongated_ticks": range(
-                    0, self.total_time, 5
-                )
-            }
-        )
+        axes = Axes(x_min=0,
+                    x_max=self.total_time,
+                    y_min=0,
+                    y_max=6,
+                    x_axis_config={
+                        "unit_size":
+                        0.3,
+                        "tick_size":
+                        0.05,
+                        "numbers_with_elongated_ticks":
+                        range(0, self.total_time, 5)
+                    })
         axes.to_corner(DL, buff=LARGE_BUFF)
 
         time_label = TextMobject("Time")
-        time_label.next_to(
-            axes.x_axis.get_right(),
-            UP, MED_LARGE_BUFF
-        )
+        time_label.next_to(axes.x_axis.get_right(), UP, MED_LARGE_BUFF)
         time_label.shift_onto_screen()
         axes.x_axis.add(time_label)
         money_label = TexMobject(self.output_tex)
@@ -720,8 +653,7 @@ class InvestmentGrowth(Scene):
 
         # Graph
         graph = axes.get_graph(
-            lambda x: self.initial_value * np.exp(self.k * x)
-        )
+            lambda x: self.initial_value * np.exp(self.k * x))
         graph.set_color(self.output_color)
         full_graph = graph.copy()
         time_tracker = self.get_time_tracker()
@@ -729,9 +661,9 @@ class InvestmentGrowth(Scene):
             full_graph, 0,
             np.clip(
                 time_tracker.get_value() / self.total_time,
-                0, 1,
-            )
-        ))
+                0,
+                1,
+            )))
 
         # Equation
         tex_kwargs = {
@@ -740,31 +672,18 @@ class InvestmentGrowth(Scene):
                 self.initial_value_tex: BLUE,
             }
         }
-        ode = TexMobject(
-            "{d",
-            "\\over dt}",
-            self.output_tex,
-            "(t)",
-            "=", self.k_tex,
-            "\\cdot", self.output_tex, "(t)",
-            **tex_kwargs
-        )
+        ode = TexMobject("{d", "\\over dt}", self.output_tex, "(t)", "=",
+                         self.k_tex, "\\cdot", self.output_tex, "(t)",
+                         **tex_kwargs)
         ode.to_edge(UP)
-        exp = TexMobject(
-            self.output_tex,
-            "(t) =", self.initial_value_tex,
-            "e^{", self.k_tex, "t}",
-            **tex_kwargs
-        )
+        exp = TexMobject(self.output_tex, "(t) =", self.initial_value_tex,
+                         "e^{", self.k_tex, "t}", **tex_kwargs)
         exp.next_to(ode, DOWN, LARGE_BUFF)
 
         M0_part = exp.get_part_by_tex(self.initial_value_tex)
         exp_part = exp[-3:]
         M0_label = M0_part.copy()
-        M0_label.next_to(
-            axes.c2p(0, self.initial_value),
-            LEFT
-        )
+        M0_label.next_to(axes.c2p(0, self.initial_value), LEFT)
         M0_part.set_opacity(0)
         exp_part.save_state()
         exp_part.align_to(M0_part, LEFT)
@@ -779,27 +698,21 @@ class InvestmentGrowth(Scene):
         self.wait(2)
         self.play(
             Restore(exp_part),
-            M0_part.set_opacity, 1,
+            M0_part.set_opacity,
+            1,
         )
-        self.play(TransformFromCopy(
-            M0_part, M0_label
-        ))
+        self.play(TransformFromCopy(M0_part, M0_label))
         self.wait(5)
 
     def get_time_tracker(self):
         time_tracker = ValueTracker(0)
         time_tracker.add_updater(
-            lambda m, dt: m.increment_value(
-                self.time_rate * dt
-            )
-        )
+            lambda m, dt: m.increment_value(self.time_rate * dt))
         return time_tracker
 
 
 class GrowingPileOfMoney(InvestmentGrowth):
-    CONFIG = {
-        "total_time": 60
-    }
+    CONFIG = {"total_time": 60}
 
     def construct(self):
         initial_count = 5
@@ -809,15 +722,11 @@ class GrowingPileOfMoney(InvestmentGrowth):
         time_tracker = self.get_time_tracker()
 
         final_count = initial_count * np.exp(k * total_time)
-        dollar_signs = VGroup(*[
-            TexMobject("\\$")
-            for x in range(int(final_count))
-        ])
+        dollar_signs = VGroup(
+            *[TexMobject("\\$") for x in range(int(final_count))])
         dollar_signs.set_color(GREEN)
         for ds in dollar_signs:
-            ds.shift(
-                3 * np.random.random(3)
-            )
+            ds.shift(3 * np.random.random(3))
         dollar_signs.center()
         dollar_signs.sort(get_norm)
         dollar_signs.set_stroke(BLACK, 3, background=True)
@@ -853,16 +762,11 @@ class CarbonDecayCurve(InvestmentGrowth):
 class CarbonDecayingInMammoth(Scene):
     def construct(self):
         mammoth = SVGMobject("Mammoth")
-        mammoth.set_color(
-            interpolate_color(GREY_BROWN, WHITE, 0.25)
-        )
+        mammoth.set_color(interpolate_color(GREY_BROWN, WHITE, 0.25))
         mammoth.set_height(4)
         body = mammoth[9]
 
-        atoms = VGroup(*[
-            self.get_atom(body)
-            for n in range(600)
-        ])
+        atoms = VGroup(*[self.get_atom(body) for n in range(600)])
 
         p_decay = 0.2
 
@@ -871,6 +775,7 @@ class CarbonDecayingInMammoth(Scene):
                 if np.random.random() < dt * p_decay:
                     group.remove(atom)
             return group
+
         atoms.add_updater(update_atoms)
 
         self.add(mammoth)
@@ -888,8 +793,7 @@ class CarbonDecayingInMammoth(Scene):
         while wn == 0:
             point = np.array([
                 interpolate(dl[0], ur[0], np.random.random()),
-                interpolate(dl[1], ur[1], np.random.random()),
-                0
+                interpolate(dl[1], ur[1], np.random.random()), 0
             ])
             wn = get_winding_number([
                 body.point_from_proportion(a) - point
@@ -903,19 +807,15 @@ class CarbonDecayingInMammoth(Scene):
 
 class BoundaryConditionInterlude(Scene):
     def construct(self):
-        background = FullScreenFadeRectangle(
-            fill_color=DARK_GREY
-        )
+        background = FullScreenFadeRectangle(fill_color=DARK_GREY)
         storyline = self.get_main_storyline()
         storyline.generate_target()
         v_shift = 2 * DOWN
         storyline.target.shift(v_shift)
         im_to_im = storyline[1].get_center() - storyline[0].get_center()
 
-        bc_image = self.get_labeled_image(
-            "Boundary\\\\conditions",
-            "boundary_condition_thumbnail"
-        )
+        bc_image = self.get_labeled_image("Boundary\\\\conditions",
+                                          "boundary_condition_thumbnail")
         bc_image.next_to(storyline[1], UP)
         new_arrow0 = Arrow(
             storyline.arrows[0].get_start() + v_shift,
@@ -969,12 +869,10 @@ class BoundaryConditionInterlude(Scene):
                 Transform(rect1, rect2, **kw),
                 # TransformFromCopy(rect1, rect3, **kw),
                 lag_ratio=0.4,
-            )
-        )
-        self.play(
-            FadeOut(rect1),
-            # FadeOut(rect3),
-        )
+            ))
+        self.play(FadeOut(rect1),
+                  # FadeOut(rect3),
+                  )
 
         # Reorganize images
         im1, im3, im4 = storyline
@@ -987,9 +885,7 @@ class BoundaryConditionInterlude(Scene):
             group.target.center()
 
         l_group.target.to_edge(LEFT)
-        r_group.target.move_to(
-            FRAME_WIDTH * RIGHT / 4
-        )
+        r_group.target.move_to(FRAME_WIDTH * RIGHT / 4)
         brace = Brace(r_group.target, LEFT)
         nv_text = brace.get_text("Next\\\\video")
         nv_text.scale(1.5, about_edge=RIGHT)
@@ -1009,10 +905,7 @@ class BoundaryConditionInterlude(Scene):
             ),
             FadeOut(arrows),
         )
-        self.play(
-            GrowFromCenter(brace),
-            FadeInFrom(nv_text, RIGHT)
-        )
+        self.play(GrowFromCenter(brace), FadeInFrom(nv_text, RIGHT))
         self.wait()
 
     def get_main_storyline(self):

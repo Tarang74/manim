@@ -2,16 +2,15 @@ from manimlib.imports import *
 
 
 def get_factors(n):
-    return filter(
-        lambda k: (n % k) == 0,
-        range(1, n)
-    )
+    return filter(lambda k: (n % k) == 0, range(1, n))
 
 
 class AmicableNumbers(Scene):
     CONFIG = {
-        "n1": 28,
-        "n2": 284,
+        "n1":
+        28,
+        "n2":
+        284,
         "colors": [
             BLUE_C,
             BLUE_B,

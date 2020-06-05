@@ -22,8 +22,8 @@ from manimlib.utils.space_ops import angle_of_vector
 from manimlib.utils.space_ops import get_norm
 from manimlib.utils.space_ops import rotation_matrix
 
-
 # TODO: Explain array_attrs
+
 
 class Mobject(Container):
     """
@@ -87,7 +87,9 @@ class Mobject(Container):
         Ensures all attributes which are mobjects are included
         in the submobjects list.
         """
-        mobject_attrs = [x for x in list(self.__dict__.values()) if isinstance(x, Mobject)]
+        mobject_attrs = [
+            x for x in list(self.__dict__.values()) if isinstance(x, Mobject)
+        ]
         self.submobjects = list_update(self.submobjects, mobject_attrs)
         return self
 
@@ -110,8 +112,7 @@ class Mobject(Container):
 
     def save_image(self, name=None):
         self.get_image().save(
-            os.path.join(consts.VIDEO_DIR, (name or str(self)) + ".png")
-        )
+            os.path.join(consts.VIDEO_DIR, (name or str(self)) + ".png"))
 
     def copy(self):
         # TODO, either justify reason for shallow copy, or
@@ -126,7 +127,8 @@ class Mobject(Container):
         copy_mobject.updaters = list(self.updaters)
         family = self.get_family()
         for attr, value in list(self.__dict__.items()):
-            if isinstance(value, Mobject) and value in family and value is not self:
+            if isinstance(value,
+                          Mobject) and value in family and value is not self:
                 setattr(copy_mobject, attr, value.copy())
             if isinstance(value, np.ndarray):
                 setattr(copy_mobject, attr, np.array(value))
@@ -175,10 +177,7 @@ class Mobject(Container):
         return self.updaters
 
     def get_family_updaters(self):
-        return list(it.chain(*[
-            sm.get_updaters()
-            for sm in self.get_family()
-        ]))
+        return list(it.chain(*[sm.get_updaters() for sm in self.get_family()]))
 
     def add_updater(self, update_function, index=None, call_updater=True):
         if index is None:
@@ -246,8 +245,7 @@ class Mobject(Container):
         respect to that point.
         """
         self.apply_points_function_about_point(
-            lambda points: scale_factor * points, **kwargs
-        )
+            lambda points: scale_factor * points, **kwargs)
         return self
 
     def rotate_about_origin(self, angle, axis=OUT, axes=[]):
@@ -256,9 +254,7 @@ class Mobject(Container):
     def rotate(self, angle, axis=OUT, **kwargs):
         rot_matrix = rotation_matrix(angle, axis)
         self.apply_points_function_about_point(
-            lambda points: np.dot(points, rot_matrix.T),
-            **kwargs
-        )
+            lambda points: np.dot(points, rot_matrix.T), **kwargs)
         return self
 
     def flip(self, axis=UP, **kwargs):
@@ -268,6 +264,7 @@ class Mobject(Container):
         def func(points):
             points[:, dim] *= factor
             return points
+
         self.apply_points_function_about_point(func, **kwargs)
         return self
 
@@ -276,9 +273,7 @@ class Mobject(Container):
         if len(kwargs) == 0:
             kwargs["about_point"] = ORIGIN
         self.apply_points_function_about_point(
-            lambda points: np.apply_along_axis(function, 1, points),
-            **kwargs
-        )
+            lambda points: np.apply_along_axis(function, 1, points), **kwargs)
         return self
 
     def apply_function_to_position(self, function):
@@ -298,20 +293,15 @@ class Mobject(Container):
         matrix = np.array(matrix)
         full_matrix[:matrix.shape[0], :matrix.shape[1]] = matrix
         self.apply_points_function_about_point(
-            lambda points: np.dot(points, full_matrix.T),
-            **kwargs
-        )
+            lambda points: np.dot(points, full_matrix.T), **kwargs)
         return self
 
     def apply_complex_function(self, function, **kwargs):
         def R3_func(point):
             x, y, z = point
             xy_complex = function(complex(x, y))
-            return [
-                xy_complex.real,
-                xy_complex.imag,
-                z
-            ]
+            return [xy_complex.real, xy_complex.imag, z]
+
         return self.apply_function(R3_func)
 
     def wag(self, direction=RIGHT, axis=DOWN, wag_factor=1.0):
@@ -320,17 +310,14 @@ class Mobject(Container):
             alphas -= min(alphas)
             alphas /= max(alphas)
             alphas = alphas**wag_factor
-            mob.points += np.dot(
-                alphas.reshape((len(alphas), 1)),
-                np.array(direction).reshape((1, mob.dim))
-            )
+            mob.points += np.dot(alphas.reshape((len(alphas), 1)),
+                                 np.array(direction).reshape((1, mob.dim)))
         return self
 
     def reverse_points(self):
         for mob in self.family_members_with_points():
             mob.apply_over_attr_arrays(
-                lambda arr: np.array(list(reversed(arr)))
-            )
+                lambda arr: np.array(list(reversed(arr))))
         return self
 
     def repeat(self, count):
@@ -338,10 +325,9 @@ class Mobject(Container):
         This can make transition animations nicer
         """
         def repeat_array(array):
-            return reduce(
-                lambda a1, a2: np.append(a1, a2, axis=0),
-                [array] * count
-            )
+            return reduce(lambda a1, a2: np.append(a1, a2, axis=0),
+                          [array] * count)
+
         for mob in self.family_members_with_points():
             mob.apply_over_attr_arrays(repeat_array)
         return self
@@ -350,7 +336,10 @@ class Mobject(Container):
     # Note, much of these are now redundant with default behavior of
     # above methods
 
-    def apply_points_function_about_point(self, func, about_point=None, about_edge=None):
+    def apply_points_function_about_point(self,
+                                          func,
+                                          about_point=None,
+                                          about_edge=None):
         if about_point is None:
             if about_edge is None:
                 about_edge = ORIGIN
@@ -395,29 +384,32 @@ class Mobject(Container):
         self.shift(shift_val)
         return self
 
-    def to_corner(self, corner=LEFT + DOWN, buff=DEFAULT_MOBJECT_TO_EDGE_BUFFER):
+    def to_corner(self,
+                  corner=LEFT + DOWN,
+                  buff=DEFAULT_MOBJECT_TO_EDGE_BUFFER):
         return self.align_on_border(corner, buff)
 
     def to_edge(self, edge=LEFT, buff=DEFAULT_MOBJECT_TO_EDGE_BUFFER):
         return self.align_on_border(edge, buff)
 
-    def next_to(self, mobject_or_point,
-                direction=RIGHT,
-                buff=DEFAULT_MOBJECT_TO_MOBJECT_BUFFER,
-                aligned_edge=ORIGIN,
-                submobject_to_align=None,
-                index_of_submobject_to_align=None,
-                coor_mask=np.array([1, 1, 1]),
-                ):
+    def next_to(
+        self,
+        mobject_or_point,
+        direction=RIGHT,
+        buff=DEFAULT_MOBJECT_TO_MOBJECT_BUFFER,
+        aligned_edge=ORIGIN,
+        submobject_to_align=None,
+        index_of_submobject_to_align=None,
+        coor_mask=np.array([1, 1, 1]),
+    ):
         if isinstance(mobject_or_point, Mobject):
             mob = mobject_or_point
             if index_of_submobject_to_align is not None:
                 target_aligner = mob[index_of_submobject_to_align]
             else:
                 target_aligner = mob
-            target_point = target_aligner.get_critical_point(
-                aligned_edge + direction
-            )
+            target_point = target_aligner.get_critical_point(aligned_edge +
+                                                             direction)
         else:
             target_point = mobject_or_point
         if submobject_to_align is not None:
@@ -427,8 +419,8 @@ class Mobject(Container):
         else:
             aligner = self
         point_to_align = aligner.get_critical_point(aligned_edge - direction)
-        self.shift((target_point - point_to_align +
-                    buff * direction) * coor_mask)
+        self.shift(
+            (target_point - point_to_align + buff * direction) * coor_mask)
         return self
 
     def shift_onto_screen(self, **kwargs):
@@ -510,7 +502,9 @@ class Mobject(Container):
             submob.scale(1. / factor)
         return self
 
-    def move_to(self, point_or_mobject, aligned_edge=ORIGIN,
+    def move_to(self,
+                point_or_mobject,
+                aligned_edge=ORIGIN,
                 coor_mask=np.array([1, 1, 1])):
         if isinstance(point_or_mobject, Mobject):
             target = point_or_mobject.get_critical_point(aligned_edge)
@@ -528,15 +522,14 @@ class Mobject(Container):
             self.stretch_to_fit_width(mobject.get_width())
             self.stretch_to_fit_height(mobject.get_height())
         else:
-            self.rescale_to_fit(
-                mobject.length_over_dim(dim_to_match),
-                dim_to_match,
-                stretch=False
-            )
+            self.rescale_to_fit(mobject.length_over_dim(dim_to_match),
+                                dim_to_match,
+                                stretch=False)
         self.shift(mobject.get_center() - self.get_center())
         return self
 
-    def surround(self, mobject,
+    def surround(self,
+                 mobject,
                  dim_to_match=0,
                  stretch=False,
                  buff=MED_SMALL_BUFF):
@@ -555,11 +548,8 @@ class Mobject(Container):
             get_norm(target_vect) / get_norm(curr_vect),
             about_point=curr_start,
         )
-        self.rotate(
-            angle_of_vector(target_vect) -
-            angle_of_vector(curr_vect),
-            about_point=curr_start
-        )
+        self.rotate(angle_of_vector(target_vect) - angle_of_vector(curr_vect),
+                    about_point=curr_start)
         self.shift(start - curr_start)
         return self
 
@@ -568,11 +558,10 @@ class Mobject(Container):
         # TODO, this does not behave well when the mobject has points,
         # since it gets displayed on top
         from manimlib.mobject.shape_matchers import BackgroundRectangle
-        self.background_rectangle = BackgroundRectangle(
-            self, color=color,
-            fill_opacity=opacity,
-            **kwargs
-        )
+        self.background_rectangle = BackgroundRectangle(self,
+                                                        color=color,
+                                                        fill_opacity=opacity,
+                                                        **kwargs)
         self.add_to_back(self.background_rectangle)
         return self
 
@@ -605,9 +594,13 @@ class Mobject(Container):
         self.set_submobject_colors_by_gradient(*colors)
         return self
 
-    def set_colors_by_radial_gradient(self, center=None, radius=1, inner_color=WHITE, outer_color=BLACK):
-        self.set_submobject_colors_by_radial_gradient(
-            center, radius, inner_color, outer_color)
+    def set_colors_by_radial_gradient(self,
+                                      center=None,
+                                      radius=1,
+                                      inner_color=WHITE,
+                                      outer_color=BLACK):
+        self.set_submobject_colors_by_radial_gradient(center, radius,
+                                                      inner_color, outer_color)
         return self
 
     def set_submobject_colors_by_gradient(self, *colors):
@@ -623,7 +616,11 @@ class Mobject(Container):
             mob.set_color(color, family=False)
         return self
 
-    def set_submobject_colors_by_radial_gradient(self, center=None, radius=1, inner_color=WHITE, outer_color=BLACK):
+    def set_submobject_colors_by_radial_gradient(self,
+                                                 center=None,
+                                                 radius=1,
+                                                 inner_color=WHITE,
+                                                 outer_color=BLACK):
         if center is None:
             center = self.get_center()
 
@@ -641,9 +638,7 @@ class Mobject(Container):
 
     def fade_to(self, color, alpha, family=True):
         if self.get_num_points() > 0:
-            new_color = interpolate_color(
-                self.get_color(), color, alpha
-            )
+            new_color = interpolate_color(self.get_color(), color, alpha)
             self.set_color(new_color, family=False)
         if family:
             for submob in self.submobjects:
@@ -697,10 +692,9 @@ class Mobject(Container):
     def get_merged_array(self, array_attr):
         result = getattr(self, array_attr)
         for submob in self.submobjects:
-            result = np.append(
-                result, submob.get_merged_array(array_attr),
-                axis=0
-            )
+            result = np.append(result,
+                               submob.get_merged_array(array_attr),
+                               axis=0)
             submob.get_merged_array(array_attr)
         return result
 
@@ -737,9 +731,9 @@ class Mobject(Container):
         if len(all_points) == 0:
             return result
         for dim in range(self.dim):
-            result[dim] = self.get_extremum_along_dim(
-                all_points, dim=dim, key=direction[dim]
-            )
+            result[dim] = self.get_extremum_along_dim(all_points,
+                                                      dim=dim,
+                                                      key=direction[dim])
         return result
 
     # Pseudonyms for more general get_critical_point method
@@ -780,10 +774,8 @@ class Mobject(Container):
         return self.get_edge_center(IN)
 
     def length_over_dim(self, dim):
-        return (
-            self.reduce_across_dimension(np.max, np.max, dim) -
-            self.reduce_across_dimension(np.min, np.min, dim)
-        )
+        return (self.reduce_across_dimension(np.max, np.max, dim) -
+                self.reduce_across_dimension(np.min, np.min, dim))
 
     def get_width(self):
         return self.length_over_dim(0)
@@ -798,9 +790,7 @@ class Mobject(Container):
         """
         Meant to generalize get_x, get_y, get_z
         """
-        return self.get_extremum_along_dim(
-            dim=dim, key=direction[dim]
-        )
+        return self.get_extremum_along_dim(dim=dim, key=direction[dim])
 
     def get_x(self, direction=ORIGIN):
         return self.get_coord(0, direction)
@@ -830,9 +820,7 @@ class Mobject(Container):
         template.submobjects = []
         alphas = np.linspace(0, 1, n_pieces + 1)
         return Group(*[
-            template.copy().pointwise_become_partial(
-                self, a1, a2
-            )
+            template.copy().pointwise_become_partial(self, a1, a2)
             for a1, a2 in zip(alphas[:-1], alphas[1:])
         ])
 
@@ -853,10 +841,7 @@ class Mobject(Container):
         return self.set_color(mobject.get_color())
 
     def match_dim_size(self, mobject, dim, **kwargs):
-        return self.rescale_to_fit(
-            mobject.length_over_dim(dim), dim,
-            **kwargs
-        )
+        return self.rescale_to_fit(mobject.length_over_dim(dim), dim, **kwargs)
 
     def match_width(self, mobject, **kwargs):
         return self.match_dim_size(mobject, 0, **kwargs)
@@ -1045,42 +1030,31 @@ class Mobject(Container):
         curr = len(self.submobjects)
         if curr == 0:
             # If empty, simply add n point mobjects
-            self.submobjects = [
-                self.get_point_mobject()
-                for k in range(n)
-            ]
+            self.submobjects = [self.get_point_mobject() for k in range(n)]
             return
 
         target = curr + n
         # TODO, factor this out to utils so as to reuse
         # with VMobject.insert_n_curves
         repeat_indices = (np.arange(target) * curr) // target
-        split_factors = [
-            sum(repeat_indices == i)
-            for i in range(curr)
-        ]
+        split_factors = [sum(repeat_indices == i) for i in range(curr)]
         new_submobs = []
         for submob, sf in zip(self.submobjects, split_factors):
             new_submobs.append(submob)
             for k in range(1, sf):
-                new_submobs.append(
-                    submob.copy().fade(1)
-                )
+                new_submobs.append(submob.copy().fade(1))
         self.submobjects = new_submobs
         return self
 
     def repeat_submobject(self, submob):
         return submob.copy()
 
-    def interpolate(self, mobject1, mobject2,
-                    alpha, path_func=straight_path):
+    def interpolate(self, mobject1, mobject2, alpha, path_func=straight_path):
         """
         Turns self into an interpolation between mobject1
         and mobject2.
         """
-        self.points = path_func(
-            mobject1.points, mobject2.points, alpha
-        )
+        self.points = path_func(mobject1.points, mobject2.points, alpha)
         self.interpolate_color(mobject1, mobject2, alpha)
         return self
 

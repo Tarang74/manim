@@ -78,17 +78,16 @@ class Eddy(VMobject):
         ])
 
     def get_line(self, r):
-        return ParametricFunction(
-            lambda t: r * (t + 1)**(-1) * np.array([
-                np.cos(TAU * t),
-                np.sin(TAU * t),
-                0,
-            ]),
-            t_min=0.1 * random.random(),
-            t_max=self.n_spirils,
-            stroke_width=1,
-            color=interpolate_color(*self.colors, random.random())
-        )
+        return ParametricFunction(lambda t: r * (t + 1)**(-1) * np.array([
+            np.cos(TAU * t),
+            np.sin(TAU * t),
+            0,
+        ]),
+                                  t_min=0.1 * random.random(),
+                                  t_max=self.n_spirils,
+                                  stroke_width=1,
+                                  color=interpolate_color(
+                                      *self.colors, random.random()))
 
 
 class Chaos(Eddy):
@@ -123,17 +122,14 @@ class Chaos(Eddy):
 
     def get_lines(self):
         return VGroup(*[
-            self.get_line(y)
-            for y in np.linspace(0, self.height, self.n_lines)
+            self.get_line(y) for y in np.linspace(0, self.height, self.n_lines)
         ])
 
     def get_line(self, y):
-        frequencies = [0] + list(2 + 2 * np.random.random(self.n_midpoints)) + [0]
+        frequencies = [0] + list(2 +
+                                 2 * np.random.random(self.n_midpoints)) + [0]
         rect = self.rect
-        line = Line(
-            y * UP, y * UP + self.width * RIGHT,
-            stroke_width=1
-        )
+        line = Line(y * UP, y * UP + self.width * RIGHT, stroke_width=1)
         line.insert_n_curves(self.n_midpoints)
         line.total_time = random.random()
         delta_h = self.height / (self.n_lines - 1)
@@ -146,10 +142,8 @@ class Chaos(Eddy):
             new_anchors = [
                 np.array([
                     x + 1.0 * delta_h * np.cos(f * line.total_time),
-                    y0 + y + 1.0 * delta_h * np.cos(f * line.total_time),
-                    0
-                ])
-                for (x, f) in zip(xs, frequencies)
+                    y0 + y + 1.0 * delta_h * np.cos(f * line.total_time), 0
+                ]) for (x, f) in zip(xs, frequencies)
             ]
             line.set_points_smoothly(new_anchors)
 
@@ -182,8 +176,10 @@ class DoublePendulum(VMobject):
         g = 9.81
 
         self.state_vect = np.array([
-            self.start_angles[0], 0,
-            self.start_angles[1], 0,
+            self.start_angles[0],
+            0,
+            self.start_angles[1],
+            0,
         ])
         self.state_vect += np.random.random(4) * 1e-7
 
@@ -195,14 +191,22 @@ class DoublePendulum(VMobject):
                 c, s = np.cos(theta1 - theta2), np.sin(theta1 - theta2)
 
                 theta1dot = z1
-                z1dot = (m2 * g * np.sin(theta2) * c - m2 * s * (L1 * (z1**2) * c + L2 * z2**2) -
-                         (m1 + m2) * g * np.sin(theta1)) / L1 / (m1 + m2 * s**2)
+                z1dot = (m2 * g * np.sin(theta2) * c - m2 * s *
+                         (L1 * (z1**2) * c + L2 * z2**2) -
+                         (m1 + m2) * g * np.sin(theta1)) / L1 / (m1 +
+                                                                 m2 * s**2)
                 theta2dot = z2
-                z2dot = ((m1 + m2) * (L1 * (z1**2) * s - g * np.sin(theta2) + g * np.sin(theta1) * c) +
-                         m2 * L2 * (z2**2) * s * c) / L2 / (m1 + m2 * s**2)
+                z2dot = (
+                    (m1 + m2) *
+                    (L1 *
+                     (z1**2) * s - g * np.sin(theta2) + g * np.sin(theta1) * c)
+                    + m2 * L2 * (z2**2) * s * c) / L2 / (m1 + m2 * s**2)
 
                 group.state_vect += 0.5 * dt * np.array([
-                    theta1dot, z1dot, theta2dot, z2dot,
+                    theta1dot,
+                    z1dot,
+                    theta2dot,
+                    z2dot,
                 ])
                 group.state_vect[1::2] *= 0.9999
 
@@ -224,19 +228,14 @@ class DoublePendulums(VGroup):
                 DoublePendulum(
                     color1=random.choice(colors),
                     color2=random.choice(colors),
-                )
-                for x in range(5)
+                ) for x in range(5)
             ],
             **kwargs,
         )
 
 
 class Diffusion(VMobject):
-    CONFIG = {
-        "height": 1.5,
-        "n_dots": 1000,
-        "colors": [RED, BLUE]
-    }
+    CONFIG = {"height": 1.5, "n_dots": 1000, "colors": [RED, BLUE]}
 
     def __init__(self, **kwargs):
         VMobject.__init__(self, **kwargs)
@@ -297,21 +296,36 @@ class NavierStokesEquations(TexMobject):
             self,
             "\\rho",
             "\\left("
-            "{\\partial", v_tex, "\\over",
-            "\\partial", "t}",
+            "{\\partial",
+            v_tex,
+            "\\over",
+            "\\partial",
+            "t}",
             "+",
-            v_tex, "\\cdot", "\\nabla", v_tex,
+            v_tex,
+            "\\cdot",
+            "\\nabla",
+            v_tex,
             "\\right)",
             "=",
-            "-", "\\nabla", "p{}", "+",
-            "\\mu", "\\nabla^2", v_tex, "+",
+            "-",
+            "\\nabla",
+            "p{}",
+            "+",
+            "\\mu",
+            "\\nabla^2",
+            v_tex,
+            "+",
             # "\\frac{1}{3}", "\\mu", "\\nabla",
             # "(", "\\nabla", "\\cdot", v_tex, ")", "+",
             "\\textbf{F}",
             "\\qquad\\qquad",
-            "\\nabla", "\\cdot", v_tex, "=", "0",
-            **kwargs
-        )
+            "\\nabla",
+            "\\cdot",
+            v_tex,
+            "=",
+            "0",
+            **kwargs)
         self.set_width(self.width)
 
     def get_labels(self):
@@ -353,6 +367,7 @@ class Test(Scene):
         self.add(DoublePendulums())
         self.wait(30)
 
+
 # Scenes
 
 
@@ -367,26 +382,20 @@ class EddyReference(Scene):
         eddy = Eddy(radius=self.radius)
         new_eddy = eddy.get_lines()
         for line in new_eddy:
-            line.set_stroke(
-                width=(3 + 3 * random.random())
-            )
+            line.set_stroke(width=(3 + 3 * random.random()))
         label = TextMobject(self.label)
         label.next_to(new_eddy, UP)
 
-        self.play(
-            LaggedStartMap(ShowCreationThenDestruction, new_eddy),
-            FadeIn(
-                label,
-                rate_func=there_and_back_with_pause,
-            ),
-            run_time=3
-        )
+        self.play(LaggedStartMap(ShowCreationThenDestruction, new_eddy),
+                  FadeIn(
+                      label,
+                      rate_func=there_and_back_with_pause,
+                  ),
+                  run_time=3)
 
 
 class EddyReferenceWithLabel(EddyReference):
-    CONFIG = {
-        "label": "Eddy"
-    }
+    CONFIG = {"label": "Eddy"}
 
 
 class EddyLabels(Scene):
@@ -397,32 +406,20 @@ class EddyLabels(Scene):
             TextMobject("Small eddy"),
         )
         for label in labels:
-            self.play(FadeIn(
-                label,
-                rate_func=there_and_back_with_pause,
-                run_time=3
-            ))
+            self.play(
+                FadeIn(label, rate_func=there_and_back_with_pause, run_time=3))
 
 
 class LargeEddyReference(EddyReference):
-    CONFIG = {
-        "radius": 2,
-        "label": ""
-    }
+    CONFIG = {"radius": 2, "label": ""}
 
 
 class MediumEddyReference(EddyReference):
-    CONFIG = {
-        "radius": 0.8,
-        "label": "Medium eddy"
-    }
+    CONFIG = {"radius": 0.8, "label": "Medium eddy"}
 
 
 class SmallEddyReference(EddyReference):
-    CONFIG = {
-        "radius": 0.25,
-        "label": "Small eddy"
-    }
+    CONFIG = {"radius": 0.25, "label": "Small eddy"}
 
 
 class SomeTurbulenceEquations(PiCreatureScene):
@@ -433,13 +430,11 @@ class SomeTurbulenceEquations(PiCreatureScene):
         navier_stokes.replace(line, dim_to_match=0)
         navier_stokes.scale(1.2)
 
-        distribution = TexMobject(
-            "E(k) \\propto k^{-5/3}",
-            tex_to_color_map={
-                "k": GREEN,
-                "-5/3": YELLOW,
-            }
-        )
+        distribution = TexMobject("E(k) \\propto k^{-5/3}",
+                                  tex_to_color_map={
+                                      "k": GREEN,
+                                      "-5/3": YELLOW,
+                                  })
         distribution.next_to(morty, UL)
         brace = Brace(distribution, DOWN, buff=SMALL_BUFF)
         brace_words = brace.get_text("Explained soon...")
@@ -447,15 +442,23 @@ class SomeTurbulenceEquations(PiCreatureScene):
 
         self.play(
             Write(navier_stokes),
-            randy.change, "confused", navier_stokes,
-            morty.change, "confused", navier_stokes,
+            randy.change,
+            "confused",
+            navier_stokes,
+            morty.change,
+            "confused",
+            navier_stokes,
         )
         self.wait(3)
         self.play(
-            morty.change, "raise_right_hand", distribution,
-            randy.look_at, distribution,
+            morty.change,
+            "raise_right_hand",
+            distribution,
+            randy.look_at,
+            distribution,
             FadeInFromDown(distribution),
-            navier_stokes.fade, 0.5,
+            navier_stokes.fade,
+            0.5,
         )
         self.play(GrowFromCenter(brace_group))
         self.play(randy.change, "pondering", distribution)
@@ -463,9 +466,11 @@ class SomeTurbulenceEquations(PiCreatureScene):
         dist_group = VGroup(distribution, brace_group)
         self.play(
             LaggedStartMap(FadeOut, VGroup(randy, morty, navier_stokes)),
-            dist_group.scale, 1.5,
+            dist_group.scale,
+            1.5,
             dist_group.center,
-            dist_group.to_edge, UP,
+            dist_group.to_edge,
+            UP,
         )
         self.wait()
 
@@ -495,21 +500,20 @@ class JokeRingEquation(Scene):
 
         point = 3.8 * LEFT + 0.2 * UP
         arrow1 = Arrow(
-            items[0].get_left(), point + 0.8 * UP + 0.3 * RIGHT,
+            items[0].get_left(),
+            point + 0.8 * UP + 0.3 * RIGHT,
             path_arc=90 * DEGREES,
         )
         arrow1.pointwise_become_partial(arrow1, 0, 0.99)
 
         arrow2 = Arrow(
-            items[1].get_left(), point,
+            items[1].get_left(),
+            point,
         )
         arrows = VGroup(arrow1, arrow2)
 
         for i in 0, 1:
-            self.play(
-                FadeInFromDown(items[i]),
-                ShowCreation(arrows[i])
-            )
+            self.play(FadeInFromDown(items[i]), ShowCreation(arrows[i]))
             self.wait()
         self.play(LaggedStartMap(FadeIn, items[2:]))
         self.wait()
@@ -532,10 +536,7 @@ class VideoOnPhysicsGirlWrapper(Scene):
 
 class LightBouncingOffFogParticle(Scene):
     def construct(self):
-        words = TextMobject(
-            "Light bouncing\\\\",
-            "off fog particles"
-        )
+        words = TextMobject("Light bouncing\\\\", "off fog particles")
         arrow = Vector(UP + 0.5 * RIGHT)
         arrow.next_to(words, UP)
         arrow.set_color(WHITE)
@@ -571,9 +572,7 @@ class CarefulWithLasers(TeacherStudentsScene):
                 fill_opacity=1,
                 stroke_color=DARK_GREY,
                 stroke_width=1,
-            ),
-            Line(ORIGIN, 10 * RIGHT, color=GREEN_SCREEN)
-        )
+            ), Line(ORIGIN, 10 * RIGHT, color=GREEN_SCREEN))
         laser.arrange(RIGHT, buff=0)
         laser.rotate(45 * DEGREES)
         laser.shift(randy.get_corner(UR) - laser[0].get_center() + 0.1 * DR)
@@ -582,53 +581,38 @@ class CarefulWithLasers(TeacherStudentsScene):
 
         def update_laser(laser, dt):
             laser.time += dt
-            laser.rotate(
-                0.5 * dt * np.sin(laser.time),
-                about_point=laser[0].get_center()
-            )
+            laser.rotate(0.5 * dt * np.sin(laser.time),
+                         about_point=laser[0].get_center())
+
         laser.add_updater(update_laser)
 
-        self.play(LaggedStartMap(FadeInFromDown, self.pi_creatures, run_time=1))
+        self.play(LaggedStartMap(FadeInFromDown, self.pi_creatures,
+                                 run_time=1))
         self.add(self.pi_creatures, laser)
         for pi in self.pi_creatures:
             pi.add_updater(lambda p: p.look_at(laser[1]))
         self.play(
             ShowCreation(laser),
-            self.get_student_changes(
-                "surprised", "hooray", "horrified",
-                look_at_arg=laser
-            )
-        )
-        self.teacher_says(
-            "Careful with \\\\ the laser!",
-            target_mode="angry"
-        )
+            self.get_student_changes("surprised",
+                                     "hooray",
+                                     "horrified",
+                                     look_at_arg=laser))
+        self.teacher_says("Careful with \\\\ the laser!", target_mode="angry")
         self.wait(2.2)
         morty.save_state()
         randy2.save_state()
-        self.play(
-            morty.blink, randy2.blink,
-            run_time=0.3
-        )
+        self.play(morty.blink, randy2.blink, run_time=0.3)
         self.wait(2)
-        self.play(
-            morty.restore, randy2.restore,
-            run_time=0.3
-        )
+        self.play(morty.restore, randy2.restore, run_time=0.3)
         self.wait(2)
 
 
 class SetAsideTurbulence(PiCreatureScene):
     def construct(self):
-        self.pi_creature_says(
-            "Forget vortex rings",
-            target_mode="speaking"
-        )
+        self.pi_creature_says("Forget vortex rings", target_mode="speaking")
         self.wait()
-        self.pi_creature_says(
-            "look at that\\\\ turbulence!",
-            target_mode="surprised"
-        )
+        self.pi_creature_says("look at that\\\\ turbulence!",
+                              target_mode="surprised")
         self.wait()
 
     def create_pi_creature(self):
@@ -639,9 +623,7 @@ class SetAsideTurbulence(PiCreatureScene):
 
 class WavingRodLabel(Scene):
     def construct(self):
-        words = TextMobject(
-            "(Waving a small flag \\\\ through the air)"
-        )
+        words = TextMobject("(Waving a small flag \\\\ through the air)")
         self.play(Write(words))
         self.wait()
 
@@ -690,33 +672,26 @@ class AskAboutTurbulence(TeacherStudentsScene):
         h_line = Line(LEFT, RIGHT).set_width(FRAME_WIDTH - 1)
         h_line.next_to(question, DOWN, buff=MED_LARGE_BUFF)
 
-        self.student_says(
-            words,
-            target_mode='raise_left_hand',
-            added_anims=[morty.change, 'pondering']
-        )
+        self.student_says(words,
+                          target_mode='raise_left_hand',
+                          added_anims=[morty.change, 'pondering'])
         self.change_student_modes(
-            "erm", "raise_left_hand", "confused",
+            "erm",
+            "raise_left_hand",
+            "confused",
         )
         self.wait(3)
         self.play(
-            morty.change, "raise_right_hand",
-            FadeOut(randy.bubble),
+            morty.change, "raise_right_hand", FadeOut(randy.bubble),
             ReplacementTransform(VGroup(words[1], words[3]), question),
             FadeOut(VGroup(words[0], words[2])),
-            self.get_student_changes(
-                *3 * ["pondering"],
-                look_at_arg=question
-            )
-        )
+            self.get_student_changes(*3 * ["pondering"], look_at_arg=question))
         self.play(
             ShowCreation(h_line),
-            LaggedStartMap(
-                FadeOutAndShiftDown, self.pi_creatures,
-                run_time=1,
-                lag_ratio=0.8
-            )
-        )
+            LaggedStartMap(FadeOutAndShiftDown,
+                           self.pi_creatures,
+                           run_time=1,
+                           lag_ratio=0.8))
         self.wait()
 
         self.question = question
@@ -734,10 +709,7 @@ class AskAboutTurbulence(TeacherStudentsScene):
         words.next_to(self.h_line, DOWN)
         words[0].shift(FRAME_WIDTH * LEFT / 4)
         words[1].shift(FRAME_WIDTH * RIGHT / 4)
-        self.play(
-            ShowCreation(v_line),
-            LaggedStartMap(FadeInFromDown, words)
-        )
+        self.play(ShowCreation(v_line), LaggedStartMap(FadeInFromDown, words))
         self.wait()
 
         self.words = words
@@ -748,10 +720,7 @@ class AskAboutTurbulence(TeacherStudentsScene):
             TextMobject("- Chaos"),
             TextMobject("- Diffusion"),
         )
-        words.arrange(
-            DOWN, buff=1.25,
-            aligned_edge=LEFT
-        )
+        words.arrange(DOWN, buff=1.25, aligned_edge=LEFT)
         words.to_edge(LEFT)
         words.shift(MED_LARGE_BUFF * DOWN)
 
@@ -764,10 +733,9 @@ class AskAboutTurbulence(TeacherStudentsScene):
         # for word, obj in zip(words, objects):
         for word in words:
             # obj.next_to(word, RIGHT)
-            self.play(
-                FadeInFromDown(word),
-                # VFadeIn(obj)
-            )
+            self.play(FadeInFromDown(word),
+                      # VFadeIn(obj)
+                      )
         self.wait(3)
 
     def rigorous_definition(self):
@@ -801,11 +769,7 @@ class BumpyPlaneRide(Scene):
             time = 0.2 * random.random()
             total_time += time
             arc = PI * random.random() - PI / 2
-            self.play(
-                plane.move_to, point,
-                run_time=time,
-                path_arc=arc
-            )
+            self.play(plane.move_to, point, run_time=time, path_arc=arc)
 
 
 class PureAirfoilFlowCopy(PureAirfoilFlow):
@@ -840,10 +804,7 @@ class HighCurlFieldBreakingLayers(Scene):
     }
 
     def construct(self):
-        lines = VGroup(*[
-            self.get_line()
-            for x in range(20)
-        ])
+        lines = VGroup(*[self.get_line() for x in range(20)])
         lines.arrange(DOWN, buff=MED_SMALL_BUFF)
         lines[0::2].set_color(BLUE)
         lines[1::2].set_color(RED)
@@ -869,9 +830,7 @@ class HighCurlFieldBreakingLayers(Scene):
 
 
 class HighCurlFieldBreakingLayersLines(HighCurlFieldBreakingLayers):
-    CONFIG = {
-        "flow_anim": move_points_along_vector_field
-    }
+    CONFIG = {"flow_anim": move_points_along_vector_field}
 
     def get_line(self):
         line = Line(LEFT, RIGHT)
@@ -884,20 +843,14 @@ class VorticitySynonyms(Scene):
     def construct(self):
         words = VGroup(
             TextMobject("High", "vorticity"),
-            TexMobject(
-                "\\text{a.k.a} \\,",
-                "|\\nabla \\times \\vec{\\textbf{v}}| > 0"
-            ),
+            TexMobject("\\text{a.k.a} \\,",
+                       "|\\nabla \\times \\vec{\\textbf{v}}| > 0"),
             TextMobject("a.k.a", "high", "swirly-swirly", "factor"),
         )
         words[0].set_color_by_tex("vorticity", BLUE)
         words[1].set_color_by_tex("nabla", BLUE)
         words[2].set_color_by_tex("swirly", BLUE)
-        words.arrange(
-            DOWN,
-            aligned_edge=LEFT,
-            buff=MED_LARGE_BUFF
-        )
+        words.arrange(DOWN, aligned_edge=LEFT, buff=MED_LARGE_BUFF)
 
         for word in words:
             word.add_background_rectangle()
@@ -908,10 +861,14 @@ class VorticitySynonyms(Scene):
 class VorticityDoesNotImplyTurbulence(TeacherStudentsScene):
     def construct(self):
         t_to_v = TextMobject(
-            "Turbulence", "$\\Rightarrow$", "Vorticity",
+            "Turbulence",
+            "$\\Rightarrow$",
+            "Vorticity",
         )
         v_to_t = TextMobject(
-            "Vorticity", "$\\Rightarrow$", "Turbulence",
+            "Vorticity",
+            "$\\Rightarrow$",
+            "Turbulence",
         )
         for words in t_to_v, v_to_t:
             words.move_to(self.hold_up_spot, DR)
@@ -923,18 +880,15 @@ class VorticityDoesNotImplyTurbulence(TeacherStudentsScene):
         cross = Cross(v_to_t[1])
 
         morty = self.teacher
-        self.play(
-            morty.change, "raise_right_hand",
-            FadeInFromDown(t_to_v)
-        )
+        self.play(morty.change, "raise_right_hand", FadeInFromDown(t_to_v))
         self.wait()
-        self.play(t_to_v.shift, 2 * UP,)
+        self.play(
+            t_to_v.shift,
+            2 * UP,
+        )
         self.play(
             TransformFromCopy(t_to_v, v_to_t, path_arc=PI / 2),
-            self.get_student_changes(
-                "erm", "confused", "sassy",
-                run_time=1
-            ),
+            self.get_student_changes("erm", "confused", "sassy", run_time=1),
             ShowCreation(cross, run_time=2),
         )
         self.add(cross)
@@ -956,8 +910,11 @@ class FeynmanOnTurbulence(Scene):
         name = TextMobject("Richard Feynman")
         name.next_to(feynman, DOWN)
         quote = TextMobject(
-            "``", "Turbulence", "is the most\\\\"
-            "important", "unsolved problem\\\\",
+            "``",
+            "Turbulence",
+            "is the most\\\\"
+            "important",
+            "unsolved problem\\\\",
             "of classical physics.''",
             tex_to_color_map={
                 "Turbulence": BLUE,
@@ -968,11 +925,8 @@ class FeynmanOnTurbulence(Scene):
         quote.next_to(feynman, RIGHT)
         Group(feynman, name, quote).center()
 
-        self.play(
-            FadeInFrom(feynman, UP),
-            FadeInFrom(name, DOWN),
-            Write(quote, run_time=4)
-        )
+        self.play(FadeInFrom(feynman, UP), FadeInFrom(name, DOWN),
+                  Write(quote, run_time=4))
         self.wait()
 
 
@@ -991,47 +945,44 @@ class ShowNavierStokesEquations(Scene):
         equations.next_to(name, DOWN, MED_LARGE_BUFF)
         labels = equations.get_labels()
         parts = equations.get_parts()
-        newtons_second = TextMobject(
-            "Newton's 2nd law \\\\ $ma = F$"
-        )
+        newtons_second = TextMobject("Newton's 2nd law \\\\ $ma = F$")
         newtons_second.next_to(parts, DOWN)
         variables = TexMobject(
-            "&\\textbf{v}", "\\text{ is velocity}\\\\",
-            "&\\rho", "\\text{ is density}\\\\",
-            "&p{}", "\\text{ is pressure}\\\\",
-            "&\\mu", "\\text{ is viscosity}\\\\",
-            tex_to_color_map=NavierStokesEquations.CONFIG["tex_to_color_map"]
-        )
+            "&\\textbf{v}",
+            "\\text{ is velocity}\\\\",
+            "&\\rho",
+            "\\text{ is density}\\\\",
+            "&p{}",
+            "\\text{ is pressure}\\\\",
+            "&\\mu",
+            "\\text{ is viscosity}\\\\",
+            tex_to_color_map=NavierStokesEquations.CONFIG["tex_to_color_map"])
         variables.to_corner(DL)
 
         self.play(FadeInFromDown(equations))
         self.play(Write(name))
         self.play(LaggedStartMap(
-            FadeInFrom, variables,
+            FadeInFrom,
+            variables,
             lambda m: (m, RIGHT),
         ))
         self.wait()
         self.play(Write(newtons_second))
         self.wait()
-        self.play(
-            FadeInFromDown(labels[0]),
-            newtons_second.next_to, variables, RIGHT, LARGE_BUFF
-        )
+        self.play(FadeInFromDown(labels[0]), newtons_second.next_to, variables,
+                  RIGHT, LARGE_BUFF)
         self.play(ShowCreationThenFadeAround(parts[0]))
         self.wait()
         self.play(LaggedStartMap(FadeInFrom, labels[1:]))
         self.wait(3)
-        self.play(LaggedStartMap(
-            FadeOut, VGroup(*it.chain(labels, variables, newtons_second))
-        ))
+        self.play(
+            LaggedStartMap(
+                FadeOut, VGroup(*it.chain(labels, variables, newtons_second))))
 
         self.equations = equations
 
     def ask_about_evolution(self):
-        words = TextMobject(
-            "Given a start state...",
-            "...how does it evolve?"
-        )
+        words = TextMobject("Given a start state...", "...how does it evolve?")
         words.arrange(RIGHT, buff=2)
 
         words.next_to(self.equations, DOWN, LARGE_BUFF)
@@ -1043,11 +994,9 @@ class ShowNavierStokesEquations(Scene):
         self.play(FadeOut(words))
 
     def ask_about_reasonable(self):
-        question = TextMobject(
-            "Do ``reasonable'' \\\\"
-            "solutions always\\\\"
-            "exist?"
-        )
+        question = TextMobject("Do ``reasonable'' \\\\"
+                               "solutions always\\\\"
+                               "exist?")
         self.play(FadeInFromDown(question))
         self.wait()
 
@@ -1059,12 +1008,10 @@ class ShowNavierStokesEquations(Scene):
         question.set_color(YELLOW)
         question.move_to(axes.get_corner(UR), LEFT)
         question.align_to(axes, UP)
-        q_arrow = Arrow(
-            question.get_bottom(),
-            graph.point_from_proportion(0.8),
-            buff=SMALL_BUFF,
-            path_arc=-60 * DEGREES
-        )
+        q_arrow = Arrow(question.get_bottom(),
+                        graph.point_from_proportion(0.8),
+                        buff=SMALL_BUFF,
+                        path_arc=-60 * DEGREES)
         q_arrow.set_stroke(WHITE, 3)
         morty = Mortimer()
         morty.to_corner(DR)
@@ -1072,8 +1019,10 @@ class ShowNavierStokesEquations(Scene):
 
         self.play(
             Write(axes, run_time=1),
-            self.reasonable_question.to_edge, LEFT,
-            self.reasonable_question.shift, DOWN,
+            self.reasonable_question.to_edge,
+            LEFT,
+            self.reasonable_question.shift,
+            DOWN,
         )
         self.play(
             Write(question),
@@ -1088,10 +1037,7 @@ class ShowNavierStokesEquations(Scene):
         self.play(morty.change, "maybe", graph)
         self.wait(2)
         to_fade = VGroup(question, q_arrow, axes, graph)
-        self.play(
-            LaggedStartMap(FadeOut, to_fade),
-            morty.change, "pondering"
-        )
+        self.play(LaggedStartMap(FadeOut, to_fade), morty.change, "pondering")
         self.wait(2)
         self.play(Blink(morty))
         self.wait(2)
@@ -1101,8 +1047,7 @@ class ShowNavierStokesEquations(Scene):
     def show_money(self):
         # Million dollar problem
         problem = TextMobject(
-            "Navier-Stokes existence \\\\ and smoothness problems"
-        )
+            "Navier-Stokes existence \\\\ and smoothness problems")
         money = TextMobject("\\$1{,}000{,}000")
         money.set_color(GREEN)
         money.next_to(problem, DOWN)
@@ -1124,15 +1069,19 @@ class ShowNavierStokesEquations(Scene):
                 self.reasonable_question,
                 problem,
             ),
-            pi2.look_at, problem,
-            pi1.look_at, problem,
+            pi2.look_at,
+            problem,
+            pi1.look_at,
+            problem,
             VFadeIn(pi1),
         )
         self.wait()
         self.play(FadeInFromLarge(money))
         self.play(
-            pi1.change, "hooray",
-            pi2.change, "hooray",
+            pi1.change,
+            "hooray",
+            pi2.change,
+            "hooray",
         )
         self.play(
             ReplacementTransform(pi1.pupils, pi1.money_eyes),
@@ -1172,12 +1121,10 @@ class ShowNavierStokesEquations(Scene):
 
 class NewtonsSecond(Scene):
     def construct(self):
-        square = Square(
-            stroke_color=WHITE,
-            fill_color=LIGHT_GREY,
-            fill_opacity=0.5,
-            side_length=1
-        )
+        square = Square(stroke_color=WHITE,
+                        fill_color=LIGHT_GREY,
+                        fill_opacity=0.5,
+                        side_length=1)
         label = TexMobject("m")
         label.scale(1.5)
         label.move_to(square)
@@ -1188,22 +1135,18 @@ class NewtonsSecond(Scene):
             Vector(RIGHT).next_to(square, RIGHT, buff=0),
         )
 
-        self.play(
-            square.shift, 4 * RIGHT + 2 * UP,
-            rate_func=lambda t: t**2,
-            run_time=2
-        )
+        self.play(square.shift,
+                  4 * RIGHT + 2 * UP,
+                  rate_func=lambda t: t**2,
+                  run_time=2)
         self.wait()
         square.restore()
-        self.play(
-            LaggedStartMap(GrowArrow, arrows)
-        )
+        self.play(LaggedStartMap(GrowArrow, arrows))
         square.add(arrows)
-        self.play(
-            square.shift, 4 * RIGHT + 2 * UP,
-            rate_func=lambda t: t**2,
-            run_time=2
-        )
+        self.play(square.shift,
+                  4 * RIGHT + 2 * UP,
+                  rate_func=lambda t: t**2,
+                  run_time=2)
         self.wait()
 
 
@@ -1212,10 +1155,7 @@ class CandleLabel(Scene):
         word = TextMobject("Candle")
         arrow = Vector(DR, color=WHITE)
         arrow.move_to(word.get_bottom() + SMALL_BUFF * DOWN, UL)
-        self.play(
-            FadeInFromDown(word),
-            GrowArrow(arrow)
-        )
+        self.play(FadeInFromDown(word), GrowArrow(arrow))
         self.wait()
 
 
@@ -1229,10 +1169,9 @@ class FiguresOfFluidDynamics(Scene):
             "Geoffrey Taylor",
             "Andrey Kolmogorov",
         ]
-        images = Group(*[
-            ImageMobject(name.replace(" ", "_"), height=3)
-            for name in names
-        ])
+        images = Group(
+            *
+            [ImageMobject(name.replace(" ", "_"), height=3) for name in names])
         images.arrange(RIGHT, buff=MED_SMALL_BUFF)
         image_groups = Group()
         for image, name in zip(images, names):
@@ -1243,11 +1182,11 @@ class FiguresOfFluidDynamics(Scene):
         image_groups.arrange_in_grid(2, 3)
         image_groups.set_height(FRAME_HEIGHT - 1)
 
-        self.play(LaggedStartMap(
-            FadeInFromDown, image_groups,
-            lag_ratio=0.5,
-            run_time=3
-        ))
+        self.play(
+            LaggedStartMap(FadeInFromDown,
+                           image_groups,
+                           lag_ratio=0.5,
+                           run_time=3))
         self.wait()
         to_fade = image_groups[:-1]
         to_fade.generate_target()
@@ -1256,7 +1195,8 @@ class FiguresOfFluidDynamics(Scene):
         to_fade.target.fade(1)
         self.play(
             MoveToTarget(to_fade, remover=True),
-            image_groups[-1].set_height, 5,
+            image_groups[-1].set_height,
+            5,
             image_groups[-1].center,
         )
         self.wait()
@@ -1286,10 +1226,8 @@ class KineticEnergyBreakdown(Scene):
         left_items.to_edge(LEFT)
 
         self.play(
-            Write(VGroup(*it.chain(
-                title, h_line, v_line, lc_title, rc_title
-            )))
-        )
+            Write(
+                VGroup(*it.chain(title, h_line, v_line, lc_title, rc_title))))
         self.wait()
         for item in left_items:
             self.play(FadeInFrom(item))
@@ -1310,30 +1248,25 @@ class Heat(Scene):
             side_length=2,
             stroke_color=WHITE,
         )
-        balls = VGroup(*[
-            self.get_ball(box)
-            for x in range(20)
-        ])
+        balls = VGroup(*[self.get_ball(box) for x in range(20)])
 
         self.add(box, balls)
         self.wait(20)
 
     def get_ball(self, box):
         speed_factor = random.random()
-        ball = Dot(
-            radius=0.05,
-            color=interpolate_color(BLUE, RED, speed_factor)
-        )
+        ball = Dot(radius=0.05,
+                   color=interpolate_color(BLUE, RED, speed_factor))
         speed = 2 + 3 * speed_factor
         direction = rotate_vector(RIGHT, TAU * random.random())
         ball.velocity = speed * direction
         x0, y0, z0 = box.get_corner(DL)
         x1, y1, z1 = box.get_corner(UR)
-        ball.move_to(np.array([
-            interpolate(x0, x1, random.random()),
-            interpolate(y0, y1, random.random()),
-            0
-        ]))
+        ball.move_to(
+            np.array([
+                interpolate(x0, x1, random.random()),
+                interpolate(y0, y1, random.random()), 0
+            ]))
 
         def update(ball, dt):
             ball.shift(ball.velocity * dt)
@@ -1389,11 +1322,7 @@ class Poem(Scene):
 
 class SwirlDiameterD(Scene):
     def construct(self):
-        kwargs = {
-            "path_arc": PI,
-            "buff": SMALL_BUFF,
-            "color": WHITE
-        }
+        kwargs = {"path_arc": PI, "buff": SMALL_BUFF, "color": WHITE}
         swirl = VGroup(
             Arrow(RIGHT, LEFT, **kwargs),
             Arrow(LEFT, RIGHT, **kwargs),
@@ -1403,7 +1332,8 @@ class SwirlDiameterD(Scene):
         swirl.scale(f)
 
         h_line = DashedLine(
-            f * LEFT, f * RIGHT,
+            f * LEFT,
+            f * RIGHT,
             color=YELLOW,
         )
         D_label = TexMobject("D")
@@ -1422,15 +1352,13 @@ class SwirlDiameterD(Scene):
 
 class KolmogorovGraph(Scene):
     def construct(self):
-        axes = Axes(
-            x_min=-1,
-            y_min=-1,
-            x_max=7,
-            y_max=9,
-            y_axis_config={
-                "unit_size": 0.7,
-            }
-        )
+        axes = Axes(x_min=-1,
+                    y_min=-1,
+                    x_max=7,
+                    y_max=9,
+                    y_axis_config={
+                        "unit_size": 0.7,
+                    })
         axes.center().shift(1.5 * RIGHT)
         x_label = TexMobject("\\log(D)")
         x_label.next_to(axes.x_axis.get_right(), UP)
@@ -1441,13 +1369,10 @@ class KolmogorovGraph(Scene):
         axes.add(x_label, y_label)
 
         v_lines = VGroup(*[
-            DashedLine(
-                axes.coords_to_point(x, 0),
-                axes.coords_to_point(x, 9),
-                color=YELLOW,
-                stroke_width=1
-            )
-            for x in [0.5, 5]
+            DashedLine(axes.coords_to_point(x, 0),
+                       axes.coords_to_point(x, 9),
+                       color=YELLOW,
+                       stroke_width=1) for x in [0.5, 5]
         ])
         inertial_subrange = TextMobject("``Inertial subrange''")
         inertial_subrange.scale(0.7)
@@ -1464,10 +1389,7 @@ class KolmogorovGraph(Scene):
         graph = axes.get_graph(func, x_min=0.3, x_max=7)
 
         prop_label = TexMobject("\\text{K.E.} \\propto D^{5/3}")
-        prop_label.next_to(
-            graph.point_from_proportion(0.5), UL,
-            buff=0
-        )
+        prop_label.next_to(graph.point_from_proportion(0.5), UL, buff=0)
 
         self.add(axes)
         self.play(ShowCreation(graph))
@@ -1503,7 +1425,8 @@ class TechnicalNote(Scene):
             \\quad\\\\
             See the links in the description for more details,
             if you're curious.
-        """, alignment="")
+        """,
+                            alignment="")
         words.scale(0.75)
         words.next_to(title, DOWN, LARGE_BUFF)
 
@@ -1513,17 +1436,12 @@ class TechnicalNote(Scene):
 class FiveThirds(TeacherStudentsScene):
     def construct(self):
         words = TextMobject(
-            "5/3", "is a sort of fundamental\\\\ constant of turbulence"
-        )
+            "5/3", "is a sort of fundamental\\\\ constant of turbulence")
         self.teacher_says(words)
         self.change_student_modes("pondering", "maybe", "erm")
-        self.play(
-            FadeOut(self.teacher.bubble),
-            FadeOut(words[1]),
-            self.teacher.change, "raise_right_hand",
-            words[0].scale, 1.5,
-            words[0].move_to, self.hold_up_spot
-        )
+        self.play(FadeOut(self.teacher.bubble), FadeOut(words[1]),
+                  self.teacher.change, "raise_right_hand", words[0].scale, 1.5,
+                  words[0].move_to, self.hold_up_spot)
         self.change_student_modes("thinking", "pondering", "hooray")
         self.wait(3)
 
@@ -1534,8 +1452,7 @@ class TurbulenceGifLabel(Scene):
         title.to_edge(UP)
 
         attribution = TextMobject(
-            "Animation by Gabe Weymouth (@gabrielweymouth)"
-        )
+            "Animation by Gabe Weymouth (@gabrielweymouth)")
         attribution.scale(0.5)
         attribution.to_edge(DOWN)
 
@@ -1586,22 +1503,15 @@ class VortedStretching(ThreeDScene):
         self.wait(5)
         self.play(Transform(circles, tall_circles, run_time=3))
         self.wait(10)
-        self.play(Transform(
-            circles, torus_circles,
-            run_time=3
-        ))
+        self.play(Transform(circles, torus_circles, run_time=3))
         self.wait(10)
 
     def get_cylinder_circles(self, radius, radius_var, max_z):
         return VGroup(*[
             ParametricFunction(
-                lambda t: np.array([
-                    np.cos(TAU * t) * r,
-                    np.sin(TAU * t) * r,
-                    z
-                ]),
-                **self.get_circle_kwargs()
-            )
+                lambda t: np.array(
+                    [np.cos(TAU * t) * r,
+                     np.sin(TAU * t) * r, z]), **self.get_circle_kwargs())
             for z in sorted(max_z * np.random.random(self.n_circles))
             for r in [radius + radius_var * random.random()]
         ]).center()
@@ -1615,9 +1525,7 @@ class VortedStretching(ThreeDScene):
                     np.cos(TAU * t),
                     np.sin(TAU * t),
                     0,
-                ]),
-                **self.get_circle_kwargs()
-            )
+                ]), **self.get_circle_kwargs())
             circle.shift(out_r * RIGHT)
             circle.rotate(
                 TAU * u - PI,
@@ -1634,8 +1542,7 @@ class VortedStretching(ThreeDScene):
             circle.total_time += dt
             diameter = get_norm(
                 circle.template.point_from_proportion(0) -
-                circle.template.point_from_proportion(0.5)
-            )
+                circle.template.point_from_proportion(0.5))
             modulus = np.sqrt(diameter) + 0.1
             alpha = (circle.total_time % modulus) / modulus
             circle.pointwise_become_partial(

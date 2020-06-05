@@ -12,9 +12,8 @@ class ConnectionToOptics(Scene):
             g2.to_edge(RIGHT)
             arrow = TexMobject("\\Rightarrow")
             arrow.scale(1.5)
-            arrow.move_to(interpolate(
-                g1[0].get_right(), g2[0].get_left(), 0.5
-            ))
+            arrow.move_to(interpolate(g1[0].get_right(), g2[0].get_left(),
+                                      0.5))
             arrows.add(arrow)
         everything = VGroup(k_groups, arrows, o_groups)
         everything.to_edge(UP)
@@ -26,10 +25,9 @@ class ConnectionToOptics(Scene):
         width += 2 * MED_SMALL_BUFF
         rects = VGroup()
         for k in [0, 2]:
-            rect = DashedVMobject(Rectangle(
-                height=FRAME_HEIGHT - 1.5,
-                width=width
-            ), num_dashes=100)
+            rect = DashedVMobject(Rectangle(height=FRAME_HEIGHT - 1.5,
+                                            width=width),
+                                  num_dashes=100)
             rect.move_to(everything.target[k])
             rect.to_edge(DOWN, buff=SMALL_BUFF)
             rects.add(rect)
@@ -43,16 +41,10 @@ class ConnectionToOptics(Scene):
         titles[0].align_to(titles[1], UP)
 
         self.play(FadeInFromDown(e_group))
-        self.play(
-            Write(arrows[0]),
-            FadeInFrom(c_group, LEFT)
-        )
+        self.play(Write(arrows[0]), FadeInFrom(c_group, LEFT))
         self.wait()
         self.play(FadeInFromDown(m_group))
-        self.play(
-            Write(arrows[1]),
-            FadeInFrom(a_group, LEFT)
-        )
+        self.play(Write(arrows[1]), FadeInFrom(a_group, LEFT))
         self.wait(4)
         for k in range(2):
             anims = [
@@ -77,19 +69,12 @@ class ConnectionToOptics(Scene):
             "\\frac{1}{2} m_1 (v_1)^2 + "
             "\\frac{1}{2} m_2 (v_2)^2 = "
             "\\text{const.}",
-            tex_to_color_map=tex_to_color_map
-        )
+            tex_to_color_map=tex_to_color_map)
         energy_eq.scale(0.8)
-        momentum_eq = TexMobject(
-            "m_1 v_1 + m_2 v_2 = \\text{const.}",
-            tex_to_color_map=tex_to_color_map
-        )
-        energy_label = TextMobject(
-            "Conservation of energy"
-        )
-        momentum_label = TextMobject(
-            "Conservation of momentum"
-        )
+        momentum_eq = TexMobject("m_1 v_1 + m_2 v_2 = \\text{const.}",
+                                 tex_to_color_map=tex_to_color_map)
+        energy_label = TextMobject("Conservation of energy")
+        momentum_label = TextMobject("Conservation of momentum")
         energy_group = VGroup(energy_label, energy_eq)
         momentum_group = VGroup(momentum_label, momentum_eq)
         groups = VGroup(energy_group, momentum_group)
@@ -102,14 +87,9 @@ class ConnectionToOptics(Scene):
 
     def get_optics_groups(self):
         self.time_tracker = ValueTracker(0)
-        self.time_tracker.add_updater(
-            lambda m, dt: m.increment_value(dt)
-        )
+        self.time_tracker.add_updater(lambda m, dt: m.increment_value(dt))
         self.add(self.time_tracker)
-        return VGroup(
-            self.get_speed_group(),
-            self.get_angle_group()
-        )
+        return VGroup(self.get_speed_group(), self.get_angle_group())
 
     def get_speed_group(self):
         speed_label = TextMobject("Constant speed of light")
@@ -127,19 +107,17 @@ class ConnectionToOptics(Scene):
             alpha *= 1.5
             a = alpha - time_width / 2
             b = alpha + time_width / 2
-            light.pointwise_become_partial(
-                speed_light_template, max(a, 0), min(b, 1)
-            )
-            opacity = speed_label.family_members_with_points()[0].get_fill_opacity()
+            light.pointwise_become_partial(speed_light_template, max(a, 0),
+                                           min(b, 1))
+            opacity = speed_label.family_members_with_points(
+            )[0].get_fill_opacity()
             light.set_stroke(YELLOW, width=3, opacity=opacity)
             # light.stretch(0.5, 0)
             # point = speed_light_template.point_from_proportion(0.25)
             # light.stretch(2, 0, about_point=point)
 
         speed_light.add_updater(update_speed_light)
-        result = VGroup(
-            speed_label, speed_light_template, speed_light
-        )
+        result = VGroup(speed_label, speed_light_template, speed_light)
         return result
 
     def get_angle_group(self):
@@ -158,9 +136,8 @@ class ConnectionToOptics(Scene):
             h_line.get_center(),
             h_line.get_right() + UP,
         ]
-        dashed_lines = VGroup(
-            DashedLine(*points[0:2]), DashedLine(*points[1:3])
-        )
+        dashed_lines = VGroup(DashedLine(*points[0:2]),
+                              DashedLine(*points[1:3]))
         dashed_lines.set_stroke(WHITE, 2)
         v_shape = VMobject()
         v_shape.set_points_as_corners(points)
@@ -187,19 +164,14 @@ class ConnectionToOptics(Scene):
             alpha *= 1.5
             a = alpha - time_width / 2
             b = alpha + time_width / 2
-            beam.pointwise_become_partial(
-                v_shape, max(a, 0), min(b, 1)
-            )
+            beam.pointwise_become_partial(v_shape, max(a, 0), min(b, 1))
             opacity = title.family_members_with_points()[0].get_fill_opacity()
             beam.set_stroke(YELLOW, width=3, opacity=opacity)
 
         beam.add_updater(update_beam)
         title.next_to(v_shape, UP, MED_LARGE_BUFF)
 
-        return VGroup(
-            title, h_line, arcs, thetas,
-            dashed_lines, v_shape, beam
-        )
+        return VGroup(title, h_line, arcs, thetas, dashed_lines, v_shape, beam)
 
 
 class ConnectionToOpticsTransparent(ConnectionToOptics):
@@ -220,27 +192,31 @@ class RearrangeMomentumEquation(ShowMomentumConservation):
 
     def show_initial_dot_product(self):
         equation = self.get_momentum_equation()
-        dot_product = self.get_dot_product(
-            "m_1", "m_2", "v_1", "v_2"
-        )
+        dot_product = self.get_dot_product("m_1", "m_2", "v_1", "v_2")
         dot_product.next_to(equation, DOWN, LARGE_BUFF)
         m_array, dot, v_array, rhs = dot_product
         m_array.get_entries().set_color(BLUE)
         v_array.get_entries().set_color(RED)
 
         self.add(equation)
-        self.play(FadeInFromDown(VGroup(
-            m_array.get_brackets(), dot,
-            v_array.get_brackets(), rhs,
-        )))
-        self.play(TransformFromCopy(
-            equation.get_parts_by_tex("m_"),
-            m_array.get_entries(),
-        ))
-        self.play(TransformFromCopy(
-            equation.get_parts_by_tex("v_"),
-            v_array.get_entries(),
-        ))
+        self.play(
+            FadeInFromDown(
+                VGroup(
+                    m_array.get_brackets(),
+                    dot,
+                    v_array.get_brackets(),
+                    rhs,
+                )))
+        self.play(
+            TransformFromCopy(
+                equation.get_parts_by_tex("m_"),
+                m_array.get_entries(),
+            ))
+        self.play(
+            TransformFromCopy(
+                equation.get_parts_by_tex("v_"),
+                v_array.get_entries(),
+            ))
         self.wait()
 
         self.simple_dot_product = dot_product
@@ -252,10 +228,18 @@ class RearrangeMomentumEquation(ShowMomentumConservation):
 
         new_equation = TexMobject(
             "\\sqrt{m_1}",
-            "\\left(", "\\sqrt{m_1}", "v_1", "\\right)",
-            "+", "\\sqrt{m_2}",
-            "\\left(", "\\sqrt{m_2}", "v_2", "\\right)",
-            "=", "\\text{const.}",
+            "\\left(",
+            "\\sqrt{m_1}",
+            "v_1",
+            "\\right)",
+            "+",
+            "\\sqrt{m_2}",
+            "\\left(",
+            "\\sqrt{m_2}",
+            "v_2",
+            "\\right)",
+            "=",
+            "\\text{const.}",
         )
         new_equation.set_color_by_tex_to_color_map({
             "m_": BLUE,
@@ -270,9 +254,7 @@ class RearrangeMomentumEquation(ShowMomentumConservation):
         dx_dt = x_brace.get_tex("dx / dt")
         dy_dt = y_brace.get_tex("dy / dt")
 
-        new_eq_group = VGroup(
-            new_equation, x_brace, y_brace, dx_dt, dy_dt
-        )
+        new_eq_group = VGroup(new_equation, x_brace, y_brace, dx_dt, dy_dt)
         new_eq_group.generate_target()
 
         new_dot_product = self.get_dot_product()
@@ -282,7 +264,9 @@ class RearrangeMomentumEquation(ShowMomentumConservation):
 
         self.play(
             FadeInFrom(new_equation, UP),
-            simple_dot_product.to_edge, DOWN, LARGE_BUFF,
+            simple_dot_product.to_edge,
+            DOWN,
+            LARGE_BUFF,
         )
         self.wait()
         self.play(
@@ -293,23 +277,22 @@ class RearrangeMomentumEquation(ShowMomentumConservation):
         )
         self.wait()
         self.play(
-            FadeIn(VGroup(
-                m_array.get_brackets(), dot,
-                d_array.get_brackets(), rhs
-            )),
-            MoveToTarget(new_eq_group)
-        )
-        self.play(TransformFromCopy(
-            VGroup(
-                VGroup(new_equation[0]),
-                VGroup(new_equation[6]),
-            ),
-            m_array.get_entries(),
-        ))
-        self.play(TransformFromCopy(
-            VGroup(dx_dt, dy_dt),
-            d_array.get_entries(),
-        ))
+            FadeIn(
+                VGroup(m_array.get_brackets(), dot, d_array.get_brackets(),
+                       rhs)), MoveToTarget(new_eq_group))
+        self.play(
+            TransformFromCopy(
+                VGroup(
+                    VGroup(new_equation[0]),
+                    VGroup(new_equation[6]),
+                ),
+                m_array.get_entries(),
+            ))
+        self.play(
+            TransformFromCopy(
+                VGroup(dx_dt, dy_dt),
+                d_array.get_entries(),
+            ))
         self.wait()
 
 

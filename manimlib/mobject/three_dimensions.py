@@ -77,10 +77,7 @@ class ParametricSurface(VGroup):
                 face.u2 = u2
                 face.v1 = v1
                 face.v2 = v2
-        faces.set_fill(
-            color=self.fill_color,
-            opacity=self.fill_opacity
-        )
+        faces.set_fill(color=self.fill_color, opacity=self.fill_opacity)
         faces.set_stroke(
             color=self.stroke_color,
             width=self.stroke_width,
@@ -111,17 +108,14 @@ class Sphere(ParametricSurface):
     }
 
     def __init__(self, **kwargs):
-        ParametricSurface.__init__(
-            self, self.func, **kwargs
-        )
+        ParametricSurface.__init__(self, self.func, **kwargs)
         self.scale(self.radius)
 
     def func(self, u, v):
-        return np.array([
-            np.cos(v) * np.sin(u),
-            np.sin(v) * np.sin(u),
-            np.cos(u)
-        ])
+        return np.array(
+            [np.cos(v) * np.sin(u),
+             np.sin(v) * np.sin(u),
+             np.cos(u)])
 
 
 class Cube(VGroup):
@@ -146,9 +140,7 @@ class Cube(VGroup):
 
 
 class Prism(Cube):
-    CONFIG = {
-        "dimensions": [3, 2, 1]
-    }
+    CONFIG = {"dimensions": [3, 2, 1]}
 
     def generate_points(self):
         Cube.generate_points(self)

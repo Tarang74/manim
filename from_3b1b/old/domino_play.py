@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 from manimlib.imports import *
 
 
@@ -10,27 +9,28 @@ class SimpleVelocityGraph(GraphScene):
         # "frame_rate" : 4000,
         # "domino_thickness" : 7.5438,
         # "domino_spacing" : 8.701314282,
-        "data_files" : [
+        "data_files": [
             "data07.txt",
             "data13.txt",
             # "data11.txt",
         ],
-        "colors" : [WHITE, BLUE, YELLOW, GREEN, MAROON_B],
-        "x_axis_label" : "$t$",
-        "y_axis_label" : "$v$",
-        "x_min" : 0,
-        "x_max" : 1.8,
-        "x_tick_frequency" : 0.1,
-        "x_labeled_nums" : np.arange(0, 1.8, 0.2),
-        "y_tick_frequency" : 100,
-        "y_min" : 0,
-        "y_max" : 1000,
-        "y_labeled_nums" : list(range(0, 1000, 200)),
-        "x_axis_width" : 12,
-        "graph_origin" : 2.5*DOWN + 5*LEFT,
-        "trailing_average_length" : 20,
-        "include_domino_thickness" : False,
+        "colors": [WHITE, BLUE, YELLOW, GREEN, MAROON_B],
+        "x_axis_label": "$t$",
+        "y_axis_label": "$v$",
+        "x_min": 0,
+        "x_max": 1.8,
+        "x_tick_frequency": 0.1,
+        "x_labeled_nums": np.arange(0, 1.8, 0.2),
+        "y_tick_frequency": 100,
+        "y_min": 0,
+        "y_max": 1000,
+        "y_labeled_nums": list(range(0, 1000, 200)),
+        "x_axis_width": 12,
+        "graph_origin": 2.5 * DOWN + 5 * LEFT,
+        "trailing_average_length": 20,
+        "include_domino_thickness": False,
     }
+
     def construct(self):
         self.setup_axes()
         # self.save_all_images()
@@ -38,13 +38,11 @@ class SimpleVelocityGraph(GraphScene):
             self.init_data(data_file)
             self.draw_dots(color)
             self.add_label_to_last_dot(
-                "%s %s %.2f"%(
-                    data_file[4:6], 
+                "%s %s %.2f" % (
+                    data_file[4:6],
                     "hard" if self.friction == "low" else "felt",
                     self.domino_spacing,
-                ),
-                color
-            )
+                ), color)
             self.draw_lines(color)
 
     def save_all_images(self):
@@ -52,30 +50,25 @@ class SimpleVelocityGraph(GraphScene):
         for i1, i2 in it.combinations(indices, 2):
             to_remove = VGroup()
             for index in i1, i2:
-                index_str = ("%.2f"%float(0.01*index))[-2:]
-                data_file = "data%s.txt"%index_str
+                index_str = ("%.2f" % float(0.01 * index))[-2:]
+                data_file = "data%s.txt" % index_str
                 self.init_data(data_file)
                 color = WHITE if self.friction == "low" else BLUE
                 self.draw_dots(color)
                 self.add_label_to_last_dot(
-                    "%s %s %.2f"%(
-                        data_file[4:6], 
+                    "%s %s %.2f" % (
+                        data_file[4:6],
                         "hard" if self.friction == "low" else "felt",
                         self.domino_spacing,
-                    ),
-                    color
-                )
+                    ), color)
                 self.draw_lines(color)
                 to_remove.add(self.dots, self.lines, self.label)
-            self.save_image("dominos_%d_vs_%d"%(i1, i2))
+            self.save_image("dominos_%d_vs_%d" % (i1, i2))
             self.remove(to_remove)
 
     def init_data(self, data_file):
-        file_name = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "dominos",
-            data_file
-        )
+        file_name = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                 "dominos", data_file)
 
         file = open(file_name, "r")
         frames, notes = [], []
@@ -98,7 +91,7 @@ class SimpleVelocityGraph(GraphScene):
                 try:
                     frames.append(int(entries[0]))
                 except:
-                    continue #How to treat?
+                    continue  #How to treat?
                     # frames.append(frames[-1] + (frames[-1] - frames[-2]))
                 if len(entries) > 1:
                     notes.append(entries[1])
@@ -106,27 +99,27 @@ class SimpleVelocityGraph(GraphScene):
                     notes.append("")
         frames = np.array(frames)
 
-        self.times = (frames - frames[0])/float(frame_rate)
+        self.times = (frames - frames[0]) / float(frame_rate)
         delta_times = self.times[1:] - self.times[:-1]
         if self.include_domino_thickness:
-            distance = domino_spacing+domino_thickness
+            distance = domino_spacing + domino_thickness
         else:
             distance = domino_spacing
-        self.velocities = distance/delta_times
+        self.velocities = distance / delta_times
         self.notes = notes
 
         n = self.trailing_average_length
         self.velocities = np.array([
-            np.mean(self.velocities[max(0, i-n):i])
+            np.mean(self.velocities[max(0, i - n):i])
             for i in range(len(self.velocities))
         ])
         self.domino_spacing = domino_spacing
         self.domino_thickness = domino_thickness
 
-    def draw_dots(self, color = WHITE):
+    def draw_dots(self, color=WHITE):
         dots = VGroup()
         for time, v, note in zip(self.times, self.velocities, self.notes):
-            dot = Dot(color = color)
+            dot = Dot(color=color)
             dot.scale(0.5)
             dot.move_to(self.coords_to_point(time, v))
             self.add(dot)
@@ -135,17 +128,17 @@ class SimpleVelocityGraph(GraphScene):
                 dot.set_color(RED)
         self.dots = dots
 
-    def add_label_to_last_dot(self, label, color = WHITE):
+    def add_label_to_last_dot(self, label, color=WHITE):
         dot = self.dots[-1]
         label = TextMobject(label)
         label.scale(0.75)
-        label.next_to(dot, UP, buff = MED_SMALL_BUFF)
+        label.next_to(dot, UP, buff=MED_SMALL_BUFF)
         label.set_color(color)
         label.shift_onto_screen()
         self.label = label
         self.add(label)
 
-    def draw_lines(self, color = WHITE, stroke_width = 2):
+    def draw_lines(self, color=WHITE, stroke_width=2):
         lines = VGroup()
         for d1, d2 in zip(self.dots, self.dots[1:]):
             line = Line(d1.get_center(), d2.get_center())
@@ -154,8 +147,9 @@ class SimpleVelocityGraph(GraphScene):
         self.add(lines, self.dots)
         self.lines = lines
 
+
 ALL_VELOCITIES = {
-    10 : [
+    10: [
         0.350308642,
         0.3861880046,
         0.8665243271,
@@ -249,7 +243,7 @@ ALL_VELOCITIES = {
         1.823665577,
         1.24562872,
     ],
-    13 : [
+    13: [
         0.2480920273,
         0.3532654568,
         0.549163523,
@@ -341,7 +335,7 @@ ALL_VELOCITIES = {
         1.169490045,
         1.578618576,
     ],
-    14 : [
+    14: [
         0.4905860806,
         0.6236263736,
         0.71391258,
@@ -432,7 +426,7 @@ ALL_VELOCITIES = {
         1.265400605,
         1.143215651,
     ],
-    15 : [
+    15: [
         1.087094156,
         1.223328462,
         1.563141923,
@@ -525,27 +519,28 @@ ALL_VELOCITIES = {
         1.232787187,
         1.107225529,
     ],
-
 }
 # Felt: 8,9,10,11,12,13
 # Hardwood 1-7, 14,15
 
+
 class ContrastTwoGraphs(SimpleVelocityGraph):
     CONFIG = {
-        "velocities1_index" : 13,
-        "velocities2_index" : 14,
-        "x_min" : -1,
-        "x_max" : 10,
-        "y_min" : -0.25,
-        "y_max" : 2,
-        "x_axis_label" : "",
-        "y_axis_label" : "",
-        "x_labeled_nums" : [],
-        "y_labeled_nums" : [],
-        "y_tick_frequency" : 0.25,
-        "x_tick_frequency" : 12,
-        "moving_average_n" : 20,
+        "velocities1_index": 13,
+        "velocities2_index": 14,
+        "x_min": -1,
+        "x_max": 10,
+        "y_min": -0.25,
+        "y_max": 2,
+        "x_axis_label": "",
+        "y_axis_label": "",
+        "x_labeled_nums": [],
+        "y_labeled_nums": [],
+        "y_tick_frequency": 0.25,
+        "x_tick_frequency": 12,
+        "moving_average_n": 20,
     }
+
     def construct(self):
         self.setup_axes()
         velocities1 = ALL_VELOCITIES[self.velocities1_index]
@@ -564,7 +559,7 @@ class ContrastTwoGraphs(SimpleVelocityGraph):
             graph.axes = self.axes.deepcopy()
             graph.add_to_back(graph.axes)
 
-        lower_left = self.axes.get_corner(DOWN+LEFT)
+        lower_left = self.axes.get_corner(DOWN + LEFT)
         self.remove(self.axes)
 
         felt = TextMobject("Felt")
@@ -577,17 +572,13 @@ class ContrastTwoGraphs(SimpleVelocityGraph):
         #Show jaggediness
         graph1.scale(0.5).to_edge(UP)
         graph2.scale(0.5).to_edge(DOWN)
-        felt.next_to(graph1, LEFT, buff = 0.75)
-        hardwood.next_to(graph2, LEFT, buff = 0.75)
+        felt.next_to(graph1, LEFT, buff=0.75)
+        hardwood.next_to(graph2, LEFT, buff=0.75)
 
-        self.play(
-            ShowCreation(graph1, run_time = 3, rate_func=linear),
-            Write(felt)
-        )
-        self.play(
-            ShowCreation(graph2, run_time = 4, rate_func=linear),
-            Write(hardwood)
-        )
+        self.play(ShowCreation(graph1, run_time=3, rate_func=linear),
+                  Write(felt))
+        self.play(ShowCreation(graph2, run_time=4, rate_func=linear),
+                  Write(hardwood))
         self.wait()
 
         for g, sg in (graph1, smoothed_graph1), (graph2, smoothed_graph2):
@@ -598,16 +589,18 @@ class ContrastTwoGraphs(SimpleVelocityGraph):
             target = VGroup(*it.chain(*list(zip(sg_copy.dots, sg_copy.lines))))
             for m, t in zip(mover, target):
                 m.target = t
-            self.play(LaggedStartMap(
-                MoveToTarget, mover,
-                rate_func = lambda t : 0.3*wiggle(t),
-                run_time = 3,
-                lag_ratio = 0.2,
-            ))
+            self.play(
+                LaggedStartMap(
+                    MoveToTarget,
+                    mover,
+                    rate_func=lambda t: 0.3 * wiggle(t),
+                    run_time=3,
+                    lag_ratio=0.2,
+                ))
         twists = TextMobject("Twists?")
         variable_distances = TextMobject("Variable distances")
         for word in twists, variable_distances:
-            word.to_corner(UP+RIGHT)
+            word.to_corner(UP + RIGHT)
         self.play(Write(twists))
         self.wait()
         self.play(ReplacementTransform(twists, variable_distances))
@@ -615,13 +608,9 @@ class ContrastTwoGraphs(SimpleVelocityGraph):
         self.play(FadeOut(variable_distances))
 
         self.revert_to_original_skipping_status()
-        self.play(
-            graph1.scale, 2,
-            graph1.move_to, lower_left, DOWN+LEFT,
-            graph2.scale, 2,
-            graph2.move_to, lower_left, DOWN+LEFT,
-            FadeOut(words)
-        )
+        self.play(graph1.scale, 2, graph1.move_to, lower_left, DOWN + LEFT,
+                  graph2.scale, 2, graph2.move_to, lower_left, DOWN + LEFT,
+                  FadeOut(words))
         self.wait()
         return
 
@@ -630,15 +619,13 @@ class ContrastTwoGraphs(SimpleVelocityGraph):
 
         dots = graph1.dots
         dot1, dot2 = dots[21], dots[41]
-        rect = Rectangle(
-            width = dot2.get_center()[0] - dot1.get_center()[0],
-            height = FRAME_Y_RADIUS - self.x_axis.get_center()[1],
-            stroke_width = 0,
-            fill_color = YELLOW,
-            fill_opacity = 0.5
-        )
+        rect = Rectangle(width=dot2.get_center()[0] - dot1.get_center()[0],
+                         height=FRAME_Y_RADIUS - self.x_axis.get_center()[1],
+                         stroke_width=0,
+                         fill_color=YELLOW,
+                         fill_opacity=0.5)
         rect.move_to(dot2.get_center(), RIGHT)
-        rect.to_edge(UP, buff = 0)
+        rect.to_edge(UP, buff=0)
         pre_rect = rect.copy()
         pre_rect.stretch_to_fit_width(0)
         pre_rect.move_to(rect, RIGHT)
@@ -647,21 +634,19 @@ class ContrastTwoGraphs(SimpleVelocityGraph):
         arrow.next_to(dot2, UP, SMALL_BUFF)
 
         self.play(GrowArrow(arrow))
-        self.play(
-            dot2.shift, MED_SMALL_BUFF*UP,
-            dot2.set_color, PINK,
-            rate_func = wiggle
-        )
+        self.play(dot2.shift,
+                  MED_SMALL_BUFF * UP,
+                  dot2.set_color,
+                  PINK,
+                  rate_func=wiggle)
         self.wait()
         self.play(
             FadeOut(arrow),
             ReplacementTransform(pre_rect, rect),
         )
         self.wait()
-        self.play(
-            Transform(graph1, smoothed_graph1, run_time = 2),
-            Animation(rect)
-        )
+        self.play(Transform(graph1, smoothed_graph1, run_time=2),
+                  Animation(rect))
         self.play(FadeOut(rect))
         self.wait()
         self.play(FadeIn(graph2))
@@ -670,69 +655,66 @@ class ContrastTwoGraphs(SimpleVelocityGraph):
         felt.next_to(dot2, UP, MED_LARGE_BUFF)
         hardwood.next_to(felt, DOWN, LARGE_BUFF)
 
-        self.play(
-            LaggedStartMap(FadeIn, felt),
-            LaggedStartMap(FadeIn, hardwood),
-            run_time = 1
-        )
+        self.play(LaggedStartMap(FadeIn, felt),
+                  LaggedStartMap(FadeIn, hardwood),
+                  run_time=1)
         self.wait()
 
         #Compare regions
-        dot_group1 = VGroup(
-            *graph1.dots[35:75] + graph2.dots[35:75]
-        )
-        dot_group2 = VGroup(
-            *graph1.dots[75:] + graph2.dots[75:]
-        )
-        dot_group3 = VGroup(
-            *graph1.dots[35:] + graph2.dots[35:]
-        )
+        dot_group1 = VGroup(*graph1.dots[35:75] + graph2.dots[35:75])
+        dot_group2 = VGroup(*graph1.dots[75:] + graph2.dots[75:])
+        dot_group3 = VGroup(*graph1.dots[35:] + graph2.dots[35:])
         rect1 = SurroundingRectangle(dot_group1)
         rect2 = SurroundingRectangle(dot_group2)
         rect3 = SurroundingRectangle(dot_group3)
 
         self.play(ShowCreation(rect1))
         for x in range(2):
-            self.play(LaggedStartMap(
-                ApplyMethod, dot_group1,
-                lambda m : (m.scale_in_place, 0.5),
-                rate_func = wiggle,
-                lag_ratio = 0.05,
-                run_time = 3,
-            ))
+            self.play(
+                LaggedStartMap(
+                    ApplyMethod,
+                    dot_group1,
+                    lambda m: (m.scale_in_place, 0.5),
+                    rate_func=wiggle,
+                    lag_ratio=0.05,
+                    run_time=3,
+                ))
         self.wait()
         self.play(ReplacementTransform(rect1, rect2))
         for x in range(2):
-            self.play(LaggedStartMap(
-                ApplyMethod, dot_group2,
-                lambda m : (m.scale_in_place, 0.5),
-                rate_func = wiggle,
-                lag_ratio = 0.05,
-                run_time = 3,
-            ))
+            self.play(
+                LaggedStartMap(
+                    ApplyMethod,
+                    dot_group2,
+                    lambda m: (m.scale_in_place, 0.5),
+                    rate_func=wiggle,
+                    lag_ratio=0.05,
+                    run_time=3,
+                ))
         self.wait()
         self.play(ReplacementTransform(rect1, rect3))
         for x in range(2):
-            self.play(LaggedStartMap(
-                ApplyMethod, dot_group3,
-                lambda m : (m.scale_in_place, 0.5),
-                rate_func = wiggle,
-                lag_ratio = 0.05,
-                run_time = 3,
-            ))
+            self.play(
+                LaggedStartMap(
+                    ApplyMethod,
+                    dot_group3,
+                    lambda m: (m.scale_in_place, 0.5),
+                    rate_func=wiggle,
+                    lag_ratio=0.05,
+                    run_time=3,
+                ))
         self.wait()
-
 
     ###
 
-    def color_graph(self, graph, color1 = BLUE, color2 = WHITE, n_starts = 20):
+    def color_graph(self, graph, color1=BLUE, color2=WHITE, n_starts=20):
         graph.set_color(color2)
         VGroup(*graph.dots[:11] + graph.lines[:10]).set_color(color1)
 
     def get_smoothed_velocity_graph(self, velocities):
         n = self.moving_average_n
         smoothed_vs = np.array([
-            np.mean(velocities[max(0, i-n):i])
+            np.mean(velocities[max(0, i - n):i])
             for i in range(len(velocities))
         ])
         return self.get_velocity_graph(smoothed_vs)
@@ -742,7 +724,7 @@ class ContrastTwoGraphs(SimpleVelocityGraph):
         dots = VGroup(self.get_dot(1, velocities[0]))
         lines = VGroup()
         for x in range(1, n):
-            dots.add(self.get_dot(x+1, velocities[x]))
+            dots.add(self.get_dot(x + 1, velocities[x]))
             lines.add(Line(
                 dots[-2].get_center(),
                 dots[-1].get_center(),
@@ -754,70 +736,62 @@ class ContrastTwoGraphs(SimpleVelocityGraph):
         return graph
 
     def get_dot(self, x, y):
-        dot = Dot(radius = 0.05)
-        dot.move_to(self.coords_to_point(
-            x * float(self.x_max) / self.n_data_points, y
-        ))
+        dot = Dot(radius=0.05)
+        dot.move_to(
+            self.coords_to_point(x * float(self.x_max) / self.n_data_points,
+                                 y))
         return dot
-
-
 
 
 class ShowAllSteadyStateVelocities(SimpleVelocityGraph):
     CONFIG = {
-        "x_axis_label" : "\\text{Domino spacing}",
-        "x_min" : 0,
-        "x_max" : 40,
-        "x_axis_width" : 9,
-        "x_tick_frequency" : 5,
-        "x_labeled_nums" : list(range(0, 50, 10)),
-        "y_min" : 0,
-        "y_max" : 400,
-        "y_labeled_nums" : [],
+        "x_axis_label": "\\text{Domino spacing}",
+        "x_min": 0,
+        "x_max": 40,
+        "x_axis_width": 9,
+        "x_tick_frequency": 5,
+        "x_labeled_nums": list(range(0, 50, 10)),
+        "y_min": 0,
+        "y_max": 400,
+        "y_labeled_nums": [],
         # "y_labeled_nums" : range(200, 1400, 200),
     }
+
     def construct(self):
         self.setup_axes()
         for index in range(1, 20):
-            index_str = ("%.2f"%float(0.01*index))[-2:]
-            data_file = "data%s.txt"%index_str
+            index_str = ("%.2f" % float(0.01 * index))[-2:]
+            data_file = "data%s.txt" % index_str
             self.init_data(data_file)
             color = WHITE if self.friction == "low" else BLUE
-            label = TextMobject(
-                index_str,
-                color = color
-            )
+            label = TextMobject(index_str, color=color)
             label.scale(0.5)
             label.set_color(color)
 
-            dot = Dot(color = color)
+            dot = Dot(color=color)
             dot.scale(0.5)
-            dot.move_to(self.coords_to_point(
-                self.domino_spacing, self.velocities[-1] - 400
-            ))
-            label.next_to(
-                dot, 
-                random.choice([LEFT, RIGHT]), 
-                SMALL_BUFF
-            )
+            dot.move_to(
+                self.coords_to_point(self.domino_spacing,
+                                     self.velocities[-1] - 400))
+            label.next_to(dot, random.choice([LEFT, RIGHT]), SMALL_BUFF)
             self.add(dot)
             self.add(label)
             print(index_str, self.velocities[-1], self.friction)
+
 
 class Test(Scene):
     def construct(self):
         shift_val = 1.5
 
-        domino1 = Rectangle(
-            width = 0.5, height = 3,
-            stroke_width = 0,
-            fill_color = GREEN,
-            fill_opacity = 1
-        )
+        domino1 = Rectangle(width=0.5,
+                            height=3,
+                            stroke_width=0,
+                            fill_color=GREEN,
+                            fill_opacity=1)
         domino1.shift(LEFT)
         domino2 = domino1.copy()
         domino2.set_fill(BLUE_E)
-        domino2.shift(shift_val*RIGHT)
+        domino2.shift(shift_val * RIGHT)
         spacing = shift_val - domino2.get_width()
         dominos = VGroup(domino1, domino2)
         for domino in dominos:
@@ -825,25 +799,21 @@ class Test(Scene):
             dot = Dot(domino.get_center())
             domino.add(line, dot)
 
-        arc1 = Arc(
-            radius = domino1.get_height(),
-            start_angle = np.pi/2,
-            angle = -np.arcsin(spacing / domino1.get_height())
-        )
-        arc1.shift(domino1.get_corner(DOWN+RIGHT))
-        arc2 = Arc(
-            radius = domino1.get_height()/2,
-            start_angle = np.pi/2,
-            angle = -np.arcsin(2*spacing/domino1.get_height())
-        )
+        arc1 = Arc(radius=domino1.get_height(),
+                   start_angle=np.pi / 2,
+                   angle=-np.arcsin(spacing / domino1.get_height()))
+        arc1.shift(domino1.get_corner(DOWN + RIGHT))
+        arc2 = Arc(radius=domino1.get_height() / 2,
+                   start_angle=np.pi / 2,
+                   angle=-np.arcsin(2 * spacing / domino1.get_height()))
         arc2.shift(domino1.get_right())
         arc2.set_color(BLUE)
         arcs = VGroup(arc1, arc2)
-        for arc, vect in zip(arcs, [DOWN+RIGHT, RIGHT]):
+        for arc, vect in zip(arcs, [DOWN + RIGHT, RIGHT]):
             arc_copy = arc.copy()
             point = domino1.get_critical_point(vect)
             arc_copy.add_line_to([point])
-            arc_copy.set_stroke(width = 0)
+            arc_copy.set_stroke(width=0)
             arc_copy.set_fill(
                 arc.get_stroke_color(),
                 0.2,
@@ -854,46 +824,21 @@ class Test(Scene):
         domino1_ghost.fade(0.8)
         self.add(domino1_ghost, dominos, arcs)
 
-        self.play(Rotate(
-            domino1,
-            angle = arc1.angle,
-            about_point = domino1.get_corner(DOWN+RIGHT),
-            rate_func = there_and_back,
-            run_time = 3,
-        ))
-        self.play(Rotate(
-            domino1,
-            angle = arc2.angle,
-            about_point = domino1.get_right(),
-            rate_func = there_and_back,
-            run_time = 3,
-        ))
+        self.play(
+            Rotate(
+                domino1,
+                angle=arc1.angle,
+                about_point=domino1.get_corner(DOWN + RIGHT),
+                rate_func=there_and_back,
+                run_time=3,
+            ))
+        self.play(
+            Rotate(
+                domino1,
+                angle=arc2.angle,
+                about_point=domino1.get_right(),
+                rate_func=there_and_back,
+                run_time=3,
+            ))
 
         print(arc1.angle, arc2.angle)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

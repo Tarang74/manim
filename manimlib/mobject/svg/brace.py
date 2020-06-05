@@ -29,10 +29,8 @@ class Brace(TexMobject):
         target_width = right[0] - left[0]
 
         # Adding int(target_width) qquads gives approximately the right width
-        num_quads = np.clip(
-            int(self.width_multiplier * target_width),
-            self.min_num_quads, self.max_num_quads
-        )
+        num_quads = np.clip(int(self.width_multiplier * target_width),
+                            self.min_num_quads, self.max_num_quads)
         tex_string = "\\underbrace{%s}" % (num_quads * "\\qquad")
         TexMobject.__init__(self, tex_string, **kwargs)
         self.tip_point_index = np.argmin(self.get_all_points()[:, 1])
@@ -43,11 +41,8 @@ class Brace(TexMobject):
 
     def put_at_tip(self, mob, use_next_to=True, **kwargs):
         if use_next_to:
-            mob.next_to(
-                self.get_tip(),
-                np.round(self.get_direction()),
-                **kwargs
-            )
+            mob.next_to(self.get_tip(), np.round(self.get_direction()),
+                        **kwargs)
         else:
             mob.move_to(self.get_tip())
             buff = kwargs.get("buff", DEFAULT_MOBJECT_TO_MOBJECT_BUFFER)
@@ -134,6 +129,4 @@ class BraceLabel(VMobject):
 
 
 class BraceText(BraceLabel):
-    CONFIG = {
-        "label_constructor": TextMobject
-    }
+    CONFIG = {"label_constructor": TextMobject}

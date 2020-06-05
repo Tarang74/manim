@@ -52,16 +52,14 @@ class GeneralizeToComplexFunctions(Scene):
         shown_cos_wave = cos_wave.copy()
         shown_cos_wave.add_updater(
             lambda m: m.pointwise_become_partial(
-                cos_wave, 0,
+                cos_wave,
+                0,
                 np.clip(get_t() / cos_x_max, 0, 1),
-            ),
-        )
+            ), )
 
         dot = Dot()
         dot.set_color(PINK)
-        dot.add_updater(lambda d: d.move_to(
-            y_axis.n2p(func(get_t())),
-        ))
+        dot.add_updater(lambda d: d.move_to(y_axis.n2p(func(get_t())), ))
 
         h_line = always_redraw(lambda: Line(
             dot.get_right(),
@@ -69,9 +67,7 @@ class GeneralizeToComplexFunctions(Scene):
             stroke_width=1,
         ))
 
-        real_words = TextMobject(
-            "Real number\\\\output"
-        )
+        real_words = TextMobject("Real number\\\\output")
         real_words.to_edge(LEFT)
         real_words.shift(2 * UP)
         real_arrow = Arrow()
@@ -79,8 +75,7 @@ class GeneralizeToComplexFunctions(Scene):
             lambda m: m.put_start_and_end_on(
                 real_words.get_corner(DR),
                 dot.get_center(),
-            ).scale(0.9),
-        )
+            ).scale(0.9), )
 
         self.add(t_tracker)
         self.add(axes)
@@ -104,7 +99,8 @@ class GeneralizeToComplexFunctions(Scene):
         for label in y_labels.target:
             label.next_to(
                 y_axis.target.n2p(label.get_value()),
-                DOWN, MED_SMALL_BUFF,
+                DOWN,
+                MED_SMALL_BUFF,
             )
         self.play(
             FadeOut(shown_cos_wave),
@@ -114,7 +110,8 @@ class GeneralizeToComplexFunctions(Scene):
         self.play(
             MoveToTarget(y_axis),
             MoveToTarget(y_labels),
-            real_words.shift, 2 * RIGHT + UP,
+            real_words.shift,
+            2 * RIGHT + UP,
         )
         self.wait()
 
@@ -155,35 +152,19 @@ class GeneralizeToComplexFunctions(Scene):
         v2 = Vector(2 * RIGHT)
         v1.set_color(BLUE)
         v2.set_color(interpolate_color(GREY_BROWN, WHITE, 0.5))
-        v1.add_updater(
-            lambda v: v.set_angle(get_t())
-        )
-        v2.add_updater(
-            lambda v: v.set_angle(-get_t())
-        )
-        v1.add_updater(
-            lambda v: v.shift(plane.n2p(0) - v.get_start())
-        )
+        v1.add_updater(lambda v: v.set_angle(get_t()))
+        v2.add_updater(lambda v: v.set_angle(-get_t()))
+        v1.add_updater(lambda v: v.shift(plane.n2p(0) - v.get_start()))
         # Change?
-        v2.add_updater(
-            lambda v: v.shift(plane.n2p(0) - v.get_start())
-        )
+        v2.add_updater(lambda v: v.shift(plane.n2p(0) - v.get_start()))
 
         ghost_v1 = v1.copy()
         ghost_v1.set_opacity(0.5)
-        ghost_v1.add_updater(
-            lambda v: v.shift(
-                v2.get_end() - v.get_start()
-            )
-        )
+        ghost_v1.add_updater(lambda v: v.shift(v2.get_end() - v.get_start()))
 
         ghost_v2 = v2.copy()
         ghost_v2.set_opacity(0.5)
-        ghost_v2.add_updater(
-            lambda v: v.shift(
-                v1.get_end() - v.get_start()
-            )
-        )
+        ghost_v2.add_updater(lambda v: v.shift(v1.get_end() - v.get_start()))
 
         circle = Circle(color=GREY_BROWN)
         circle.set_stroke(width=1)
@@ -195,20 +176,19 @@ class GeneralizeToComplexFunctions(Scene):
             # "{1 \\over 2}e^{ix} +"
             # "{1 \\over 2}e^{-ix}",
             "2\\cos(x) =",
-            "e^{ix}", "+", "e^{-ix}",
+            "e^{ix}",
+            "+",
+            "e^{-ix}",
             tex_to_color_map={
                 "e^{ix}": v1.get_color(),
                 "e^{-ix}": v2.get_color(),
-            }
-        )
+            })
         formula.next_to(ORIGIN, UP, buff=0.75)
         # formula.add_background_rectangle()
         formula.set_stroke(BLACK, 3, background=True)
         formula.to_edge(LEFT, buff=MED_SMALL_BUFF)
         formula_brace = Brace(formula[1:], UP)
-        formula_words = formula_brace.get_text(
-            "Sum of\\\\rotations"
-        )
+        formula_words = formula_brace.get_text("Sum of\\\\rotations")
         formula_words.set_stroke(BLACK, 3, background=True)
 
         randy = Randolph()
@@ -289,7 +269,8 @@ class ClarifyInputAndOutput(GeneralizeToComplexFunctions):
         input_line = self.get_input_line(rect)
         input_words = TextMobject("Input space")
         input_words.next_to(
-            rect.get_bottom(), UP,
+            rect.get_bottom(),
+            UP,
             SMALL_BUFF,
         )
 
@@ -308,10 +289,7 @@ class ClarifyInputAndOutput(GeneralizeToComplexFunctions):
 
         input_dot = Dot()
         input_dot.set_color(PINK)
-        f_always(
-            input_dot.move_to,
-            lambda: input_line.n2p(get_input())
-        )
+        f_always(input_dot.move_to, lambda: input_line.n2p(get_input()))
 
         input_decimal = DecimalNumber()
         input_decimal.scale(0.7)
@@ -321,9 +299,7 @@ class ClarifyInputAndOutput(GeneralizeToComplexFunctions):
         path = self.get_path()
 
         def get_output_point():
-            return path.point_from_proportion(
-                get_input()
-            )
+            return path.point_from_proportion(get_input())
 
         output_dot = Dot()
         output_dot.match_style(input_dot)
@@ -332,11 +308,7 @@ class ClarifyInputAndOutput(GeneralizeToComplexFunctions):
         output_vector = Vector()
         output_vector.set_color(WHITE)
         output_vector.add_updater(
-            lambda v: v.put_start_and_end_on(
-                plane.n2p(0),
-                get_output_point()
-            )
-        )
+            lambda v: v.put_start_and_end_on(plane.n2p(0), get_output_point()))
 
         output_decimal = DecimalNumber()
         output_decimal.scale(0.7)
@@ -363,10 +335,7 @@ class ClarifyInputAndOutput(GeneralizeToComplexFunctions):
             FadeIn(self.input_decimal),
         )
         for value in 1, 0:
-            self.play(
-                input_tracker.set_value, value,
-                run_time=2
-            )
+            self.play(input_tracker.set_value, value, run_time=2)
         self.wait()
 
     def describe_output(self):
@@ -385,17 +354,12 @@ class ClarifyInputAndOutput(GeneralizeToComplexFunctions):
         traced_path = TracedPath(output_dot.get_center)
         traced_path.match_style(path)
 
-        self.play(
-            ShowCreation(real_line),
-            FadeInFrom(real_words, DOWN)
-        )
+        self.play(ShowCreation(real_line), FadeInFrom(real_words, DOWN))
         self.play(
             FadeOut(real_line),
             FadeOut(real_words),
         )
-        self.play(
-            FadeInFrom(plane.sublabel, UP)
-        )
+        self.play(FadeInFrom(plane.sublabel, UP))
         self.play(
             FadeIn(output_decimal),
             TransformFromCopy(input_dot, output_dot),
@@ -414,9 +378,7 @@ class ClarifyInputAndOutput(GeneralizeToComplexFunctions):
         self.wait()
 
         # Flatten to 1d
-        real_function_word = TextMobject(
-            "Real-valued function"
-        )
+        real_function_word = TextMobject("Real-valued function")
         real_function_word.next_to(ORIGIN, DOWN, MED_LARGE_BUFF)
         path.generate_target()
         path.target.stretch(0, 1)
@@ -427,19 +389,14 @@ class ClarifyInputAndOutput(GeneralizeToComplexFunctions):
             MoveToTarget(path),
         )
         input_tracker.set_value(0)
-        self.play(
-            input_tracker.set_value, 1,
-            **kw
-        )
+        self.play(input_tracker.set_value, 1, **kw)
 
     #
     def get_input_line(self, input_rect):
         input_line = UnitInterval()
         input_line.move_to(input_rect)
         input_line.shift(0.25 * UP)
-        input_line.set_width(
-            input_rect.get_width() - 1
-        )
+        input_line.set_width(input_rect.get_width() - 1)
         input_line.add_numbers(0, 0.5, 1)
         return input_line
 
@@ -456,7 +413,9 @@ class ClarifyInputAndOutput(GeneralizeToComplexFunctions):
 
 class GraphForFlattenedPi(ClarifyInputAndOutput):
     CONFIG = {
-        "camera_config": {"background_color": DARKER_GREY},
+        "camera_config": {
+            "background_color": DARKER_GREY
+        },
     }
 
     def construct(self):
@@ -487,18 +446,18 @@ class GraphForFlattenedPi(ClarifyInputAndOutput):
         axes.center()
 
         axes.x_axis.add_numbers(
-            0.5, 1.0,
+            0.5,
+            1.0,
             number_config={"num_decimal_places": 1},
         )
         axes.y_axis.add_numbers(
-            -1.0, 1.0,
+            -1.0,
+            1.0,
             number_config={"num_decimal_places": 1},
         )
 
         def func(t):
-            return plane.x_axis.p2n(
-                path.point_from_proportion(t)
-            )
+            return plane.x_axis.p2n(path.point_from_proportion(t))
 
         graph = axes.get_graph(func)
         graph.set_color(PINK)
@@ -545,7 +504,8 @@ class SimpleComplexExponentExample(ClarifyInputAndOutput):
         # Testing
         time = self.input_line.x_max
         self.play(
-            self.input_tracker.set_value, time,
+            self.input_tracker.set_value,
+            time,
             run_time=time,
             rate_func=linear,
         )
@@ -578,15 +538,9 @@ class SimpleComplexExponentExample(ClarifyInputAndOutput):
         )
         input_label[0].set_color_by_tex("t", PINK)
         input_label.scale(0.7)
-        input_label.add_updater(
-            lambda m: m.arrange(RIGHT, buff=SMALL_BUFF)
-        )
-        input_label.add_updater(
-            lambda m: m[1].set_value(get_input())
-        )
-        input_label.add_updater(
-            lambda m: m.next_to(input_tip, UP, SMALL_BUFF)
-        )
+        input_label.add_updater(lambda m: m.arrange(RIGHT, buff=SMALL_BUFF))
+        input_label.add_updater(lambda m: m[1].set_value(get_input()))
+        input_label.add_updater(lambda m: m.next_to(input_tip, UP, SMALL_BUFF))
 
         self.input_tracker = input_tracker
         self.input_tip = input_tip
@@ -609,60 +563,44 @@ class SimpleComplexExponentExample(ClarifyInputAndOutput):
                 "e^{i t}" + s,
                 tex_to_color_map={"t": PINK},
                 background_stroke_width=3,
-            )
-            for s in ["", "\\approx"]
+            ) for s in ["", "\\approx"]
         ]
         output_label.scale(1.2)
-        output_label.add_updater(
-            lambda m: m.shift(
-                -m.get_bottom() +
-                get_output_point() +
-                rotate_vector(
-                    0.35 * RIGHT,
-                    get_input(),
-                )
-            )
-        )
+        output_label.add_updater(lambda m: m.shift(-m.get_bottom(
+        ) + get_output_point() + rotate_vector(
+            0.35 * RIGHT,
+            get_input(),
+        )))
 
         output_vector = Vector()
         output_vector.set_opacity(0.75)
-        output_vector.add_updater(
-            lambda m: m.put_start_and_end_on(
-                plane.n2p(0), get_output_point(),
-            )
-        )
+        output_vector.add_updater(lambda m: m.put_start_and_end_on(
+            plane.n2p(0),
+            get_output_point(),
+        ))
 
         t_max = 40
         full_output_path = ParametricFunction(
-            lambda t: plane.n2p(np.exp(complex(0, t))),
-            t_min=0,
-            t_max=t_max
-        )
+            lambda t: plane.n2p(np.exp(complex(0, t))), t_min=0, t_max=t_max)
         output_path = VMobject()
         output_path.set_stroke(YELLOW, 2)
-        output_path.add_updater(
-            lambda m: m.pointwise_become_partial(
-                full_output_path,
-                0, get_input() / t_max,
-            )
-        )
+        output_path.add_updater(lambda m: m.pointwise_become_partial(
+            full_output_path,
+            0,
+            get_input() / t_max,
+        ))
 
         static_output_label.next_to(plane.c2p(1, 1), UR)
-        output_decimal = DecimalNumber(
-            include_sign=True,
-        )
+        output_decimal = DecimalNumber(include_sign=True, )
         output_decimal.scale(0.8)
         output_decimal.set_stroke(BLACK, 3, background=True)
-        output_decimal.add_updater(
-            lambda m: m.set_value(get_output())
-        )
-        output_decimal.add_updater(
-            lambda m: m.next_to(
-                static_output_label,
-                RIGHT, 2 * SMALL_BUFF,
-                aligned_edge=DOWN,
-            )
-        )
+        output_decimal.add_updater(lambda m: m.set_value(get_output()))
+        output_decimal.add_updater(lambda m: m.next_to(
+            static_output_label,
+            RIGHT,
+            2 * SMALL_BUFF,
+            aligned_edge=DOWN,
+        ))
 
         self.add(output_path)
         self.add(output_vector)
@@ -695,11 +633,10 @@ class TRangingFrom0To1(SimpleComplexExponentExample):
         self.setup_input_space()
         self.setup_input_trackers()
 
-        self.play(
-            self.input_tracker.set_value, 1,
-            run_time=10,
-            rate_func=linear
-        )
+        self.play(self.input_tracker.set_value,
+                  1,
+                  run_time=10,
+                  rate_func=linear)
 
     def get_input_line(self, rect):
         result = ClarifyInputAndOutput.get_input_line(self, rect)

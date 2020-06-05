@@ -59,11 +59,11 @@ class OpeningQuote(Scene):
         }
         if isinstance(self.quote, str):
             if self.use_quotation_marks:
-                quote = TextMobject("``%s''" %
-                                    self.quote.strip(), **text_mobject_kwargs)
+                quote = TextMobject("``%s''" % self.quote.strip(),
+                                    **text_mobject_kwargs)
             else:
-                quote = TextMobject("%s" %
-                                    self.quote.strip(), **text_mobject_kwargs)
+                quote = TextMobject("%s" % self.quote.strip(),
+                                    **text_mobject_kwargs)
         else:
             if self.use_quotation_marks:
                 words = [self.text_size + " ``"] + list(self.quote) + ["''"]
@@ -107,8 +107,7 @@ class PatreonThanks(Scene):
         proportion_range = np.linspace(0, 1, num_groups + 1)
         indices = (len(patrons) * proportion_range).astype('int')
         patron_groups = [
-            VGroup(*patrons[i:j])
-            for i, j in zip(indices, indices[1:])
+            VGroup(*patrons[i:j]) for i, j in zip(indices, indices[1:])
         ]
 
         for i, group in enumerate(patron_groups):
@@ -123,22 +122,16 @@ class PatreonThanks(Scene):
         for i, group in enumerate(patron_groups):
             anims = []
             if last_group is not None:
-                self.play(
-                    FadeOut(last_group),
-                    morty.look, UP + LEFT
-                )
+                self.play(FadeOut(last_group), morty.look, UP + LEFT)
             else:
                 anims += [
                     DrawBorderThenFill(patreon_logo),
                 ]
-            self.play(
-                LaggedStartMap(
-                    FadeIn, group,
-                    run_time=2,
-                ),
-                morty.change, "gracious", group.get_corner(UP + LEFT),
-                *anims
-            )
+            self.play(LaggedStartMap(
+                FadeIn,
+                group,
+                run_time=2,
+            ), morty.change, "gracious", group.get_corner(UP + LEFT), *anims)
             self.play(morty.look_at, group.get_corner(DOWN + LEFT))
             self.play(morty.look_at, group.get_corner(UP + RIGHT))
             self.play(morty.look_at, group.get_corner(DOWN + RIGHT))
@@ -154,7 +147,8 @@ class PatreonEndScreen(PatreonThanks, PiCreatureScene):
         "randomize_order": True,
         "capitalize": True,
         "name_y_spacing": 0.6,
-        "thanks_words": "Find value in this? Join me in thanking these patrons:",
+        "thanks_words":
+        "Find value in this? Join me in thanking these patrons:",
     }
 
     def construct(self):
@@ -162,10 +156,7 @@ class PatreonEndScreen(PatreonThanks, PiCreatureScene):
             random.shuffle(self.specific_patrons)
         if self.capitalize:
             self.specific_patrons = [
-                " ".join(map(
-                    lambda s: s.capitalize(),
-                    patron.split(" ")
-                ))
+                " ".join(map(lambda s: s.capitalize(), patron.split(" ")))
                 for patron in self.specific_patrons
             ]
 
@@ -212,10 +203,11 @@ class PatreonEndScreen(PatreonThanks, PiCreatureScene):
         underline.next_to(thanks, DOWN, SMALL_BUFF)
         thanks.add(underline)
 
-        changed_patron_names = list(map(
-            self.modify_patron_name,
-            self.specific_patrons,
-        ))
+        changed_patron_names = list(
+            map(
+                self.modify_patron_name,
+                self.specific_patrons,
+            ))
         changed_patron_names.sort()
         patrons = VGroup(*map(
             TextMobject,
@@ -250,11 +242,9 @@ class PatreonEndScreen(PatreonThanks, PiCreatureScene):
         vect = columns.target.get_center() - columns.get_center()
         distance = get_norm(vect)
         wait_time = 20
-        always_shift(
-            columns,
-            direction=normalize(vect),
-            rate=(distance / wait_time)
-        )
+        always_shift(columns,
+                     direction=normalize(vect),
+                     rate=(distance / wait_time))
 
         self.add(columns, black_rect, line, thanks)
         self.wait(wait_time)
@@ -289,10 +279,7 @@ class LogoGenerationTemplate(MovingCameraScene):
         logo = self.logo
         name = self.channel_name
 
-        self.play(
-            Write(name, run_time=3),
-            *self.get_logo_animations(logo)
-        )
+        self.play(Write(name, run_time=3), *self.get_logo_animations(logo))
         self.wait()
 
     def get_logo_animations(self, logo):
@@ -305,9 +292,7 @@ class ExternallyAnimatedScene(Scene):
 
 
 class TODOStub(Scene):
-    CONFIG = {
-        "message": ""
-    }
+    CONFIG = {"message": ""}
 
     def construct(self):
         self.add(TextMobject("TODO: %s" % self.message))
@@ -367,16 +352,15 @@ class Banner(Scene):
                 pi.look_at(message)
 
     def get_pis(self):
-        return VGroup(
-            Randolph(color=BLUE_E, mode="pondering"),
-            Randolph(color=BLUE_D, mode="hooray"),
-            Randolph(color=BLUE_C, mode="sassy"),
-            Mortimer(color=GREY_BROWN, mode="thinking")
-        )
+        return VGroup(Randolph(color=BLUE_E, mode="pondering"),
+                      Randolph(color=BLUE_D, mode="hooray"),
+                      Randolph(color=BLUE_C, mode="sassy"),
+                      Mortimer(color=GREY_BROWN, mode="thinking"))
 
     def get_probabalistic_message(self):
         return TextMobject(
-            "New video every ", "Sunday ",
+            "New video every ",
+            "Sunday ",
             "(with probability 0.3)",
             tex_to_color_map={"Sunday": YELLOW},
         )

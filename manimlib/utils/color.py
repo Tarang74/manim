@@ -42,10 +42,7 @@ def hex_to_rgb(hex_code):
     hex_part = hex_code[1:]
     if len(hex_part) == 3:
         "".join([2 * c for c in hex_part])
-    return np.array([
-        int(hex_part[i:i + 2], 16) / 255
-        for i in range(0, 6, 2)
-    ])
+    return np.array([int(hex_part[i:i + 2], 16) / 255 for i in range(0, 6, 2)])
 
 
 def invert_color(color):
@@ -91,9 +88,7 @@ def average_color(*colors):
 def random_bright_color():
     color = random_color()
     curr_rgb = color_to_rgb(color)
-    new_rgb = interpolate(
-        curr_rgb, np.ones(len(curr_rgb)), 0.5
-    )
+    new_rgb = interpolate(curr_rgb, np.ones(len(curr_rgb)), 0.5)
     return Color(rgb=new_rgb)
 
 

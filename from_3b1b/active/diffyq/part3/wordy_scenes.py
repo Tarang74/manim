@@ -24,14 +24,8 @@ class ThreeMainObservations(Scene):
                 "1)",
                 "Sine = Nice",
             ),
-            TextMobject(
-                "2)",
-                "Linearity"
-            ),
-            TextMobject(
-                "3)",
-                "Fourier series"
-            ),
+            TextMobject("2)", "Linearity"),
+            TextMobject("3)", "Fourier series"),
         )
         # heart = SuitSymbol("hearts")
         # heart.replace(observations[0][2])
@@ -52,10 +46,12 @@ class ThreeMainObservations(Scene):
         self.add(fourier)
         self.play(ShowCreation(bubble))
         self.wait()
-        self.play(LaggedStart(*[
-            TransformFromCopy(bubble, observation[0])
-            for observation in observations
-        ], lag_ratio=0.2))
+        self.play(
+            LaggedStart(*[
+                TransformFromCopy(bubble, observation[0])
+                for observation in observations
+            ],
+                        lag_ratio=0.2))
         self.play(
             FadeOut(fourier),
             FadeOut(bubble),
@@ -115,9 +111,7 @@ class ThreeConstraints(WriteHeatEquationTemplate):
         title = TexMobject(
             "\\text{Constraints }"
             "T({x}, {t})"
-            "\\text{ must satisfy:}",
-            **self.tex_mobject_config
-        )
+            "\\text{ must satisfy:}", **self.tex_mobject_config)
         title.to_edge(UP)
 
         items = VGroup(
@@ -137,17 +131,14 @@ class ThreeConstraints(WriteHeatEquationTemplate):
         bc_paren.next_to(items[1], DOWN)
 
         self.play(
-            FadeInFromDown(title),
-            FadeOutAndShift(to_remove, UP),
-            equation.scale, 0.6,
-            equation.next_to, items[0], DOWN,
-            equation.shift_onto_screen,
+            FadeInFromDown(title), FadeOutAndShift(to_remove,
+                                                   UP), equation.scale, 0.6,
+            equation.next_to, items[0], DOWN, equation.shift_onto_screen,
             LaggedStartMap(FadeIn, [
                 items[0],
                 items[1][0],
                 items[2][0],
-            ])
-        )
+            ]))
         self.wait()
         self.play(Write(items[1][1]))
         bc_paren.match_y(equation)
@@ -179,21 +170,20 @@ class BorderRect(Scene):
 class SeekIdealized(Scene):
     def construct(self):
         phrases = VGroup(*[
-            TextMobject(
-                "Seek", text, "problems",
-                tex_to_color_map={
-                    "realistic": GREEN,
-                    "{idealized}": YELLOW,
-                    "over-idealized": YELLOW,
-                    "general": BLUE,
-                }
-            )
-            for text in [
-                "realistic",
-                "{idealized}",
-                "over-idealized",
-                "general",
-            ]
+            TextMobject("Seek",
+                        text,
+                        "problems",
+                        tex_to_color_map={
+                            "realistic": GREEN,
+                            "{idealized}": YELLOW,
+                            "over-idealized": YELLOW,
+                            "general": BLUE,
+                        }) for text in [
+                            "realistic",
+                            "{idealized}",
+                            "over-idealized",
+                            "general",
+                        ]
         ])
         phrases.scale(2)
         words = VGroup()
@@ -213,10 +203,7 @@ class SeekIdealized(Scene):
         solutions.move_to(phrases[3][1], UL)
         models = TextMobject("models")
         models.scale(2)
-        models.next_to(
-            words[0], RIGHT, buff=0.35,
-            aligned_edge=DOWN
-        )
+        models.next_to(words[0], RIGHT, buff=0.35, aligned_edge=DOWN)
 
         phrases.center()
         phrase = phrases[0]
@@ -225,12 +212,8 @@ class SeekIdealized(Scene):
         self.add(words[0])
         self.wait()
         words[0].save_state()
-        self.play(
-            words[0].to_edge, DOWN,
-            words[0].set_opacity, 0.5,
-            Transform(phrase, phrases[1]),
-            FadeInFrom(words[1], UP)
-        )
+        self.play(words[0].to_edge, DOWN, words[0].set_opacity, 0.5,
+                  Transform(phrase, phrases[1]), FadeInFrom(words[1], UP))
         self.wait()
         # self.play(
         #     words[1].move_to, words[2], RIGHT,
@@ -239,11 +222,11 @@ class SeekIdealized(Scene):
         # )
         # self.wait()
         self.play(
-            words[1].next_to, arrow, UP,
+            words[1].next_to,
+            arrow,
+            UP,
             ShowCreation(arrow),
-            MaintainPositionRelativeTo(
-                phrase, words[1]
-            ),
+            MaintainPositionRelativeTo(phrase, words[1]),
             FadeInFrom(solutions, LEFT),
             FadeIn(words[3]),
         )
@@ -252,28 +235,21 @@ class SeekIdealized(Scene):
         words[0].generate_target()
         words[0].target.next_to(low_arrow, DOWN)
         words[0].target.set_opacity(1)
-        models.shift(
-            words[0].target.get_center() -
-            words[0].saved_state.get_center()
-        )
-        self.play(
-            MoveToTarget(words[0]),
-            ShowCreation(low_arrow),
-            FadeInFrom(models, LEFT)
-        )
+        models.shift(words[0].target.get_center() -
+                     words[0].saved_state.get_center())
+        self.play(MoveToTarget(words[0]), ShowCreation(low_arrow),
+                  FadeInFrom(models, LEFT))
         self.wait()
 
 
 class SecondDerivativeOfSine(Scene):
     def construct(self):
-        equation = TexMobject(
-            "{d^2 \\over d{x}^2}",
-            "\\cos\\left({x}\\right) =",
-            "-\\cos\\left({x}\\right)",
-            tex_to_color_map={
-                "{x}": GREEN,
-            }
-        )
+        equation = TexMobject("{d^2 \\over d{x}^2}",
+                              "\\cos\\left({x}\\right) =",
+                              "-\\cos\\left({x}\\right)",
+                              tex_to_color_map={
+                                  "{x}": GREEN,
+                              })
 
         self.add(equation)
 
@@ -289,15 +265,11 @@ class EquationAboveSineAnalysis(WriteHeatEquationTemplate):
         rhs = equation[eq_index + 1:]
         t_terms = equation.get_parts_by_tex("{t}")[1:]
         t_terms.save_state()
-        zeros = VGroup(*[
-            TexMobject("0").replace(t, dim_to_match=1)
-            for t in t_terms
-        ])
+        zeros = VGroup(
+            *[TexMobject("0").replace(t, dim_to_match=1) for t in t_terms])
         zeros.align_to(t_terms, DOWN)
-        new_rhs = TexMobject(
-            "=", "-\\alpha \\cdot {T}", "({x}, 0)",
-            **self.tex_mobject_config
-        )
+        new_rhs = TexMobject("=", "-\\alpha \\cdot {T}", "({x}, 0)",
+                             **self.tex_mobject_config)
         # new_rhs.move_to(equation.get_right())
         # new_rhs.next_to(equation, DOWN, MED_LARGE_BUFF)
         # new_rhs.align_to(eq, LEFT)
@@ -316,8 +288,7 @@ class EquationAboveSineAnalysis(WriteHeatEquationTemplate):
         self.play(
             # VGroup(equation, zeros).next_to,
             # new_rhs, LEFT,
-            FadeIn(new_rhs),
-        )
+            FadeIn(new_rhs), )
         self.wait()
         self.play(
             VGroup(
@@ -327,7 +298,8 @@ class EquationAboveSineAnalysis(WriteHeatEquationTemplate):
                 new_rhs[0],
                 new_rhs[-3:],
                 zeros,
-            ).fade, 0.5,
+            ).fade,
+            0.5,
         )
         self.play(ShowCreationThenFadeAround(lhs[:6]))
         self.play(ShowCreationThenFadeAround(new_rhs[1:-3]))
@@ -336,10 +308,11 @@ class EquationAboveSineAnalysis(WriteHeatEquationTemplate):
 
 class ExpVideoWrapper(Scene):
     def construct(self):
-        self.add(FullScreenFadeRectangle(
-            fill_color=DARKER_GREY,
-            fill_opacity=1,
-        ))
+        self.add(
+            FullScreenFadeRectangle(
+                fill_color=DARKER_GREY,
+                fill_opacity=1,
+            ))
 
         screen = ImageMobject("eoc_chapter5_thumbnail")
         screen.set_height(6)
@@ -354,8 +327,7 @@ class ExpVideoWrapper(Scene):
         screen.center()
         self.play(
             # FadeInFrom(title, LEFT),
-            FadeInFrom(screen, DOWN),
-        )
+            FadeInFrom(screen, DOWN), )
         self.wait()
 
 
@@ -382,15 +354,10 @@ class ShowSinExpDerivatives(WriteHeatEquationTemplate):
         new_rhs.next_to(pde, RIGHT)
         new_rhs.align_to(pde.get_part_by_tex("alpha"), DOWN)
 
-        equation1 = TexMobject(
-            "T({x}, {0}) = \\sin\\left({x}\\right)",
-            **self.tex_mobject_config
-        )
-        equation2 = TexMobject(
-            "T({x}, {t}) = \\sin\\left({x}\\right)",
-            "e^{-\\alpha{t}}",
-            **self.tex_mobject_config
-        )
+        equation1 = TexMobject("T({x}, {0}) = \\sin\\left({x}\\right)",
+                               **self.tex_mobject_config)
+        equation2 = TexMobject("T({x}, {t}) = \\sin\\left({x}\\right)",
+                               "e^{-\\alpha{t}}", **self.tex_mobject_config)
         for eq in equation1, equation2:
             eq.next_to(pde, DOWN, MED_LARGE_BUFF)
 
@@ -400,9 +367,7 @@ class ShowSinExpDerivatives(WriteHeatEquationTemplate):
         # Rectangles
         exp_rect = SurroundingRectangle(eq2_part2)
         exp_rect.set_stroke(RED, 3)
-        sin_rect = SurroundingRectangle(
-            eq2_part1[-3:]
-        )
+        sin_rect = SurroundingRectangle(eq2_part1[-3:])
         sin_rect.set_color(BLUE)
 
         VGroup(pde.target, new_rhs).center().to_edge(UP)
@@ -411,10 +376,7 @@ class ShowSinExpDerivatives(WriteHeatEquationTemplate):
         self.add(pde)
         self.add(equation1)
         self.wait()
-        self.play(
-            MoveToTarget(pde),
-            FadeInFrom(new_rhs, LEFT)
-        )
+        self.play(MoveToTarget(pde), FadeInFrom(new_rhs, LEFT))
         self.wait()
         self.play(
             ReplacementTransform(equation1, eq2_part1),
@@ -431,19 +393,13 @@ class ShowSinExpDerivatives(WriteHeatEquationTemplate):
 
         arrow1 = Vector(3 * DOWN + 1 * RIGHT, color=WHITE)
         arrow1.scale(1.2 / arrow1.get_length())
-        arrow1.next_to(
-            eq2_part2.get_corner(DL),
-            DOWN, MED_LARGE_BUFF
-        )
+        arrow1.next_to(eq2_part2.get_corner(DL), DOWN, MED_LARGE_BUFF)
         ddx_label1 = TexMobject(
             "\\partial \\over \\partial {x}",
             **self.tex_mobject_config,
         )
         ddx_label1.scale(0.7)
-        ddx_label1.next_to(
-            arrow1.point_from_proportion(0.8),
-            UR, SMALL_BUFF
-        )
+        ddx_label1.next_to(arrow1.point_from_proportion(0.8), UR, SMALL_BUFF)
 
         pde_ddx = VGroup(
             *pde.get_parts_by_tex("\\partial")[2:],
@@ -455,14 +411,10 @@ class ShowSinExpDerivatives(WriteHeatEquationTemplate):
 
         eq2_part2_rect = SurroundingRectangle(eq2_part2)
 
-        dx = TexMobject(
-            "\\cos\\left({x}\\right)", "e^{-\\alpha {t}}",
-            **self.tex_mobject_config
-        )
-        ddx = TexMobject(
-            "-\\sin\\left({x}\\right)", "e^{-\\alpha {t}}",
-            **self.tex_mobject_config
-        )
+        dx = TexMobject("\\cos\\left({x}\\right)", "e^{-\\alpha {t}}",
+                        **self.tex_mobject_config)
+        ddx = TexMobject("-\\sin\\left({x}\\right)", "e^{-\\alpha {t}}",
+                         **self.tex_mobject_config)
         dx.next_to(arrow1, DOWN)
         dx.align_to(eq2_part2, RIGHT)
         x_shift = arrow1.get_end()[0] - arrow1.get_start()[0]
@@ -474,73 +426,40 @@ class ShowSinExpDerivatives(WriteHeatEquationTemplate):
         dx_arrows = VGroup(arrow1, arrow2)
 
         ddx_label2 = ddx_label1.copy()
-        ddx_label2.shift(
-            arrow2.get_center() - arrow1.get_center()
-        )
+        ddx_label2.shift(arrow2.get_center() - arrow1.get_center())
         ddx.next_to(arrow2, DOWN)
         ddx.align_to(eq2_part2, RIGHT)
         ddx.shift(2 * x_shift * RIGHT)
 
         rhs = equation2[-6:]
 
-        self.play(
-            FadeInFromDown(q_mark)
-        )
-        self.play(
-            ShowCreation(pde_ddx_rect)
-        )
+        self.play(FadeInFromDown(q_mark))
+        self.play(ShowCreation(pde_ddx_rect))
         self.wait()
         self.play(
             LaggedStart(
                 GrowArrow(arrow1),
                 GrowArrow(arrow2),
             ),
-            TransformFromCopy(
-                pde_ddx[0], ddx_label1
-            ),
-            TransformFromCopy(
-                pde_ddx[0], ddx_label2
-            ),
+            TransformFromCopy(pde_ddx[0], ddx_label1),
+            TransformFromCopy(pde_ddx[0], ddx_label2),
         )
         self.wait()
-        self.play(
-            TransformFromCopy(rhs, dx)
-        )
+        self.play(TransformFromCopy(rhs, dx))
         self.wait()
-        self.play(
-            FadeIn(eq2_part2_rect)
-        )
-        self.play(
-            Transform(
-                eq2_part2_rect,
-                SurroundingRectangle(dx[-3:])
-            )
-        )
-        self.play(
-            FadeOut(eq2_part2_rect)
-        )
+        self.play(FadeIn(eq2_part2_rect))
+        self.play(Transform(eq2_part2_rect, SurroundingRectangle(dx[-3:])))
+        self.play(FadeOut(eq2_part2_rect))
         self.wait()
-        self.play(
-            TransformFromCopy(dx, ddx)
-        )
-        self.play(
-            FadeIn(
-                SurroundingRectangle(ddx).match_style(
-                    pde_ddx_rect
-                )
-            )
-        )
+        self.play(TransformFromCopy(dx, ddx))
+        self.play(FadeIn(SurroundingRectangle(ddx).match_style(pde_ddx_rect)))
         self.wait()
 
         # Take partial derivative wrt t
         pde_ddt = pde[:pde.index_of_part_by_tex("=") - 1]
         pde_ddt_rect = SurroundingRectangle(pde_ddt)
 
-        dt_arrow = Arrow(
-            arrow1.get_start(),
-            arrow2.get_end() + RIGHT,
-            buff=0
-        )
+        dt_arrow = Arrow(arrow1.get_start(), arrow2.get_end() + RIGHT, buff=0)
         dt_arrow.flip(UP)
         dt_arrow.next_to(dx_arrows, LEFT, MED_LARGE_BUFF)
 
@@ -550,7 +469,8 @@ class ShowSinExpDerivatives(WriteHeatEquationTemplate):
         )
         dt_label.scale(1)
         dt_label.next_to(
-            dt_arrow.get_center(), UL,
+            dt_arrow.get_center(),
+            UL,
             SMALL_BUFF,
         )
 
@@ -570,27 +490,21 @@ class ShowSinExpDerivatives(WriteHeatEquationTemplate):
             rhs_copy.get_left(),
         ))
 
-        self.play(
-            TransformFromCopy(
-                pde_ddx_rect,
-                pde_ddt_rect,
-            )
-        )
-        self.play(
-            GrowArrow(dt_arrow),
-            TransformFromCopy(
-                pde_ddt,
-                dt_label,
-            )
-        )
+        self.play(TransformFromCopy(
+            pde_ddx_rect,
+            pde_ddt_rect,
+        ))
+        self.play(GrowArrow(dt_arrow), TransformFromCopy(
+            pde_ddt,
+            dt_label,
+        ))
         self.wait()
         self.play(TransformFromCopy(rhs, rhs_copy))
         self.play(FadeIn(minus_alpha_in_exp))
         self.play(
-            ApplyMethod(
-                minus_alpha_in_exp.replace, minus_alpha,
-                path_arc=TAU / 4
-            ),
+            ApplyMethod(minus_alpha_in_exp.replace,
+                        minus_alpha,
+                        path_arc=TAU / 4),
             FadeIn(dot),
         )
         self.play(
@@ -599,19 +513,14 @@ class ShowSinExpDerivatives(WriteHeatEquationTemplate):
         )
         self.wait()
         rhs_copy.add(minus_alpha, dot)
-        self.play(
-            FadeIn(SurroundingRectangle(rhs_copy))
-        )
+        self.play(FadeIn(SurroundingRectangle(rhs_copy)))
         self.wait()
 
         #
         checkmark = TexMobject("\\checkmark")
         checkmark.set_color(GREEN)
         checkmark.move_to(q_mark, DOWN)
-        self.play(
-            FadeInFromDown(checkmark),
-            FadeOutAndShift(q_mark, UP)
-        )
+        self.play(FadeInFromDown(checkmark), FadeOutAndShift(q_mark, UP))
         self.wait()
 
 
@@ -625,10 +534,8 @@ class DerivativesOfLinearFunction(WriteHeatEquationTemplate):
     }
 
     def construct(self):
-        func = TexMobject(
-            "T({x}, {t}) = {c} \\cdot {x}",
-            **self.tex_mobject_config
-        )
+        func = TexMobject("T({x}, {t}) = {c} \\cdot {x}",
+                          **self.tex_mobject_config)
         dx_T = TexMobject("{c}", **self.tex_mobject_config)
         ddx_T = TexMobject("0")
         dt_T = TexMobject("0")
@@ -638,10 +545,7 @@ class DerivativesOfLinearFunction(WriteHeatEquationTemplate):
 
         func.generate_target()
 
-        arrows = VGroup(*[
-            Vector(1.5 * RIGHT, color=WHITE)
-            for x in range(3)
-        ])
+        arrows = VGroup(*[Vector(1.5 * RIGHT, color=WHITE) for x in range(3)])
         dx_arrows = arrows[:2]
         dt_arrow = arrows[2]
         dt_arrow.rotate(-TAU / 4)
@@ -654,18 +558,15 @@ class DerivativesOfLinearFunction(WriteHeatEquationTemplate):
         )
         dx_group.arrange(RIGHT)
         for arrow, char, vect in zip(arrows, "xxt", [UP, UP, RIGHT]):
-            label = TexMobject(
-                "\\partial \\over \\partial {%s}" % char,
-                **self.tex_mobject_config
-            )
+            label = TexMobject("\\partial \\over \\partial {%s}" % char,
+                               **self.tex_mobject_config)
             label.scale(0.7)
             label.next_to(arrow.get_center(), vect)
             arrow.add(label)
 
         dt_arrow.shift(
             func.target[-3:].get_bottom() + MED_SMALL_BUFF * DOWN -
-            dt_arrow.get_start(),
-        )
+            dt_arrow.get_start(), )
         dt_T.next_to(dt_arrow.get_end(), DOWN)
 
         self.play(FadeInFromDown(func))
@@ -687,9 +588,7 @@ class DerivativesOfLinearFunction(WriteHeatEquationTemplate):
 
         # dt
         self.play(Write(dt_arrow))
-        self.play(
-            TransformFromCopy(func[-3:], dt_T)
-        )
+        self.play(TransformFromCopy(func[-3:], dt_T))
         self.wait()
 
 
@@ -702,11 +601,14 @@ class FlatAtBoundaryWords(Scene):
     def get_bc_words(self):
         return TextMobject(
             "Flat at boundary\\\\"
-            "for all", "${t}$", "$> 0$",
+            "for all",
+            "${t}$",
+            "$> 0$",
         )
 
 
-class WriteOutBoundaryCondition(FlatAtBoundaryWords, ThreeConstraints, MovingCameraScene):
+class WriteOutBoundaryCondition(FlatAtBoundaryWords, ThreeConstraints,
+                                MovingCameraScene):
     def construct(self):
         self.force_skipping()
         ThreeConstraints.construct(self)
@@ -733,9 +635,7 @@ class WriteOutBoundaryCondition(FlatAtBoundaryWords, ThreeConstraints, MovingCam
         bc_words.move_to(bc_paren, UP)
         bc_words.set_color_by_tex("{t}", YELLOW)
 
-        self.play(ShowCreationThenFadeAround(
-            VGroup(self.items[0], self.pde)
-        ))
+        self.play(ShowCreationThenFadeAround(VGroup(self.items[0], self.pde)))
         self.play(
             FadeOutAndShift(bc_paren, UP),
             FadeInFrom(bc_words, DOWN),
@@ -756,7 +656,8 @@ class WriteOutBoundaryCondition(FlatAtBoundaryWords, ThreeConstraints, MovingCam
         equation.next_to(bc_words, DOWN, MED_LARGE_BUFF)
 
         self.play(
-            self.camera_frame.shift, 0.8 * DOWN,
+            self.camera_frame.shift,
+            0.8 * DOWN,
         )
         self.play(FadeInFrom(equation, UP))
         self.wait()
@@ -787,21 +688,18 @@ class HeatEquationFrame(WriteHeatEquationTemplate):
         self.add(smaller_rect)
         self.add(equation)
         self.wait()
-        self.play(ShowCreationThenFadeAround(
-            ddx,
-            surrounding_rectangle_config={
-                "stroke_color": GREEN,
-            }
-        ))
+        self.play(
+            ShowCreationThenFadeAround(ddx,
+                                       surrounding_rectangle_config={
+                                           "stroke_color": GREEN,
+                                       }))
         self.wait()
         self.play(ShowCreationThenFadeAround(dt))
         self.wait()
 
 
 class CompareFreqDecays1to2(Scene):
-    CONFIG = {
-        "freqs": [1, 2]
-    }
+    CONFIG = {"freqs": [1, 2]}
 
     def construct(self):
         background = FullScreenFadeRectangle(
@@ -816,16 +714,12 @@ class CompareFreqDecays1to2(Scene):
                 fill_opacity=1,
                 stroke_width=1,
                 stroke_color=WHITE,
-            )
-            for x in range(2)
+            ) for x in range(2)
         ])
         screens.arrange(RIGHT)
         screens.set_width(FRAME_WIDTH - 1)
 
-        formulas = VGroup(*[
-            self.get_formula(freq)
-            for freq in self.freqs
-        ])
+        formulas = VGroup(*[self.get_formula(freq) for freq in self.freqs])
         for formula, screen in zip(formulas, screens):
             formula.next_to(screen, UP)
 
@@ -836,15 +730,13 @@ class CompareFreqDecays1to2(Scene):
 
     def get_formula(self, freq):
         f_str = str(freq)
-        return TexMobject(
-            "\\cos\\left(%s \\cdot {x}\\right)" % f_str,
-            "e^{-\\alpha \\cdot %s^2 \\cdot {t}}" % f_str,
-            tex_to_color_map={
-                "{x}": GREEN,
-                "{t}": YELLOW,
-                f_str: MAROON_B,
-            }
-        )
+        return TexMobject("\\cos\\left(%s \\cdot {x}\\right)" % f_str,
+                          "e^{-\\alpha \\cdot %s^2 \\cdot {t}}" % f_str,
+                          tex_to_color_map={
+                              "{x}": GREEN,
+                              "{t}": YELLOW,
+                              f_str: MAROON_B,
+                          })
 
 
 class CompareFreqDecays1to4(CompareFreqDecays1to2):
@@ -877,26 +769,18 @@ class WorryAboutGenerality(TeacherStudentsScene, WriteHeatEquationTemplate):
         themes.scale(1.5)
         themes.next_to(arrow, DOWN)
 
-        self.play(
-            self.get_student_changes(
-                "sad", "tired", "pleading"
-            ),
-            self.teacher.change, "raise_right_hand",
-            FadeInFromDown(eq)
-        )
+        self.play(self.get_student_changes("sad", "tired", "pleading"),
+                  self.teacher.change, "raise_right_hand", FadeInFromDown(eq))
         self.play(Write(group[1:]))
         self.wait(2)
         self.play(
             ShowCreation(arrow),
             self.get_student_changes(*3 * ["pondering"]),
         )
-        self.play(
-            FadeInFrom(themes, UP),
-            self.get_student_changes(*3 * ["thinking"]),
-            self.teacher.change, "happy"
-        )
+        self.play(FadeInFrom(themes, UP),
+                  self.get_student_changes(*3 * ["thinking"]),
+                  self.teacher.change, "happy")
         self.wait(4)
-
 
     # def get_d1_equation(self):
     #     result = super().get_d1_equation()
@@ -909,9 +793,7 @@ class WorryAboutGenerality(TeacherStudentsScene, WriteHeatEquationTemplate):
     #     return result
 
     def get_diffyq_set(self):
-        words = TextMobject(
-            "Differential\\\\equations"
-        )
+        words = TextMobject("Differential\\\\equations")
         words.scale(1.5)
         words.set_color(BLUE)
         lb = Brace(words, LEFT)

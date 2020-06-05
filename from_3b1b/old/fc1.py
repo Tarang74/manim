@@ -14,22 +14,20 @@ class CrossingOneMillion(TeacherStudentsScene):
         number.scale(3)
         self.look_at(number, run_time=0)
 
-        confetti_spirils = self.confetti_spirils = list(map(
-            turn_animation_into_updater,
-            get_confetti_animations(50)
-        ))
+        confetti_spirils = self.confetti_spirils = list(
+            map(turn_animation_into_updater, get_confetti_animations(50)))
         self.add(*confetti_spirils)
         self.play(
             ChangeDecimalToValue(
-                number, 10**6,
-                position_update_func=lambda m: m.move_to(
-                    UP, LEFT
-                ),
+                number,
+                10**6,
+                position_update_func=lambda m: m.move_to(UP, LEFT),
                 rate_func=bezier([0, 0, 0, 1, 1, 1]),
                 run_time=5,
             ),
             LaggedStartMap(
-                ApplyMethod, self.get_pi_creatures(),
+                ApplyMethod,
+                self.get_pi_creatures(),
                 lambda m: (m.change, "hooray", number),
                 rate_func=squish_rate_func(smooth, 0, 0.5),
                 run_time=4,
@@ -45,18 +43,17 @@ class CrossingOneMillion(TeacherStudentsScene):
             "{:,}".format(remainder.number),
             "to go \\\\ before the real milestone",
         )
-        self.student_says(
-            words,
-            added_anims=[
-                ApplyMethod(self.teacher.change, "hesitant"),
-                self.get_student_changes(
-                    "sassy", "speaking", "happy"
-                ),
-                number.scale, 0.5,
-                number.center,
-                number.to_edge, UP,
-            ]
-        )
+        self.student_says(words,
+                          added_anims=[
+                              ApplyMethod(self.teacher.change, "hesitant"),
+                              self.get_student_changes("sassy", "speaking",
+                                                       "happy"),
+                              number.scale,
+                              0.5,
+                              number.center,
+                              number.to_edge,
+                              UP,
+                          ])
         self.wait()
         self.remove(*self.confetti_spirils)
         remainder.replace(words[1])
@@ -64,11 +61,10 @@ class CrossingOneMillion(TeacherStudentsScene):
         self.play(
             ChangeDecimalToValue(number, 2**20, run_time=3),
             ChangeDecimalToValue(remainder, 0.1, run_time=3),
-            self.teacher.change, "pondering", number,
-            self.get_student_changes(
-                *["pondering"] * 3,
-                look_at_arg=number
-            ),
+            self.teacher.change,
+            "pondering",
+            number,
+            self.get_student_changes(*["pondering"] * 3, look_at_arg=number),
         )
         self.play(
             FadeOut(self.students[1].bubble),
@@ -93,16 +89,12 @@ class CrossingOneMillion(TeacherStudentsScene):
         number.generate_target()
         number.target.next_to(arrow, DOWN)
 
-        self.play(
-            ShowCreation(
-                bubble,
-                rate_func=squish_rate_func(smooth, 0, 0.3)
-            ),
-            Write(q_marks),
-            GrowArrow(arrow),
-            MoveToTarget(number),
-            run_time=3
-        )
+        self.play(ShowCreation(bubble,
+                               rate_func=squish_rate_func(smooth, 0, 0.3)),
+                  Write(q_marks),
+                  GrowArrow(arrow),
+                  MoveToTarget(number),
+                  run_time=3)
         self.wait()
 
 
@@ -110,14 +102,12 @@ class ShareWithFriends(PiCreatureScene):
     def construct(self):
         randy, morty = self.pi_creatures
 
-        self.pi_creature_says(
-            randy,
-            "Wanna see why \\\\" +
-            "$1 - \\frac{1}{3} + \\frac{1}{5}" +
-            "- \\frac{1}{7} + \\cdots = \\frac{\\pi}{4}$?",
-            target_mode="tease",
-            added_anims=[morty.look, UP]
-        )
+        self.pi_creature_says(randy,
+                              "Wanna see why \\\\" +
+                              "$1 - \\frac{1}{3} + \\frac{1}{5}" +
+                              "- \\frac{1}{7} + \\cdots = \\frac{\\pi}{4}$?",
+                              target_mode="tease",
+                              added_anims=[morty.look, UP])
         self.play(morty.change, "maybe", UP)
         self.wait()
 
@@ -138,12 +128,13 @@ class AllFeaturedCreators(MortyPiCreatureScene):
         dots.arrange(DOWN, buff=LARGE_BUFF)
         dots.to_edge(LEFT, buff=2)
 
-        creators = VGroup(*list(map(TextMobject, [
-            "Think Twice",
-            "LeiosOS",
-            "Welch Labs",
-            "Infinity plus one",
-        ])))
+        creators = VGroup(*list(
+            map(TextMobject, [
+                "Think Twice",
+                "LeiosOS",
+                "Welch Labs",
+                "Infinity plus one",
+            ])))
 
         for creator, dot in zip(creators, dots):
             creator.next_to(dot, RIGHT)
@@ -155,31 +146,24 @@ class AllFeaturedCreators(MortyPiCreatureScene):
         rects.set_stroke(WHITE, 2)
         rects.set_fill(BLUE_E, 1)
 
-        think_words = VGroup(*list(map(TextMobject, [
-            "(thinks visually)",
-            "(thinks in terms of communities)",
-            "(thinks in terms of series)",
-            "(thinks playfully)",
-        ])))
+        think_words = VGroup(*list(
+            map(TextMobject, [
+                "(thinks visually)",
+                "(thinks in terms of communities)",
+                "(thinks in terms of series)",
+                "(thinks playfully)",
+            ])))
         for word, creator in zip(think_words, creators):
             # word.move_to(creator, RIGHT)
             # word.align_to(RIGHT, LEFT)
             word.next_to(creator, RIGHT)
             word.set_color(YELLOW)
 
-        self.play(
-            morty.change, "raise_right_hand",
-            Write(title)
-        )
+        self.play(morty.change, "raise_right_hand", Write(title))
         self.wait()
-        self.play(LaggedStartMap(
-            ApplyMethod, dots,
-            lambda m: (m.restore,)
-        ))
-        self.play(
-            LaggedStartMap(FadeIn, rects, lag_ratio=0.7),
-            morty.change, "happy"
-        )
+        self.play(LaggedStartMap(ApplyMethod, dots, lambda m: (m.restore, )))
+        self.play(LaggedStartMap(FadeIn, rects, lag_ratio=0.7), morty.change,
+                  "happy")
         self.add(creators, rects)
         self.wait()
 
@@ -187,7 +171,8 @@ class AllFeaturedCreators(MortyPiCreatureScene):
         for rect, word, mode in zip(rects, think_words, modes):
             self.play(
                 self.get_rect_removal(rect),
-                morty.change, mode,
+                morty.change,
+                mode,
             )
             self.wait()
             self.play(Write(word))
@@ -203,9 +188,7 @@ class AllFeaturedCreators(MortyPiCreatureScene):
 
 
 class GeneralWrapper(Scene):
-    CONFIG = {
-        "title_text": ""
-    }
+    CONFIG = {"title_text": ""}
 
     def construct(self):
         title = TextMobject(self.title_text)
@@ -243,14 +226,8 @@ class EndScreen(PiCreatureScene):
         words.next_to(self.pi_creature, UP)
         words.to_edge(UP)
 
-        self.play(
-            FadeIn(
-                words,
-                run_time=2,
-                lag_ratio=0.5
-            ),
-            self.pi_creature.change_mode, "hooray"
-        )
+        self.play(FadeIn(words, run_time=2, lag_ratio=0.5),
+                  self.pi_creature.change_mode, "hooray")
         self.wait()
         mode_point_pairs = [
             ("raise_left_hand", 5 * LEFT + 3 * UP),

@@ -38,9 +38,7 @@ class FocusOn(Transform):
     def create_target(self):
         little_dot = Dot(radius=0)
         little_dot.set_fill(self.color, opacity=self.opacity)
-        little_dot.add_updater(
-            lambda d: d.move_to(self.focus_point)
-        )
+        little_dot.add_updater(lambda d: d.move_to(self.focus_point))
         return little_dot
 
     def create_starting_mobject(self):
@@ -100,10 +98,7 @@ class Flash(AnimationGroup):
         return lines
 
     def create_line_anims(self):
-        return [
-            ShowCreationThenDestruction(line)
-            for line in self.lines
-        ]
+        return [ShowCreationThenDestruction(line) for line in self.lines]
 
 
 class CircleIndicate(Indicate):
@@ -163,11 +158,7 @@ class ShowCreationThenFadeOut(Succession):
     }
 
     def __init__(self, mobject, **kwargs):
-        super().__init__(
-            ShowCreation(mobject),
-            FadeOut(mobject),
-            **kwargs
-        )
+        super().__init__(ShowCreation(mobject), FadeOut(mobject), **kwargs)
 
 
 class AnimationOnSurroundingRectangle(AnimationGroup):
@@ -188,33 +179,23 @@ class AnimationOnSurroundingRectangle(AnimationGroup):
         rect = self.get_rect()
         rect.add_updater(lambda r: r.move_to(mobject))
 
-        super().__init__(
-            self.rect_animation(rect, **kwargs),
-        )
+        super().__init__(self.rect_animation(rect, **kwargs), )
 
     def get_rect(self):
-        return SurroundingRectangle(
-            self.mobject_to_surround,
-            **self.surrounding_rectangle_config
-        )
+        return SurroundingRectangle(self.mobject_to_surround,
+                                    **self.surrounding_rectangle_config)
 
 
 class ShowPassingFlashAround(AnimationOnSurroundingRectangle):
-    CONFIG = {
-        "rect_animation": ShowPassingFlash
-    }
+    CONFIG = {"rect_animation": ShowPassingFlash}
 
 
 class ShowCreationThenDestructionAround(AnimationOnSurroundingRectangle):
-    CONFIG = {
-        "rect_animation": ShowCreationThenDestruction
-    }
+    CONFIG = {"rect_animation": ShowCreationThenDestruction}
 
 
 class ShowCreationThenFadeAround(AnimationOnSurroundingRectangle):
-    CONFIG = {
-        "rect_animation": ShowCreationThenFadeOut
-    }
+    CONFIG = {"rect_animation": ShowCreationThenFadeOut}
 
 
 class ApplyWave(Homotopy):
@@ -259,14 +240,11 @@ class WiggleOutThenIn(Animation):
 
     def interpolate_submobject(self, submobject, starting_sumobject, alpha):
         submobject.points[:, :] = starting_sumobject.points
-        submobject.scale(
-            interpolate(1, self.scale_value, there_and_back(alpha)),
-            about_point=self.get_scale_about_point()
-        )
-        submobject.rotate(
-            wiggle(alpha, self.n_wiggles) * self.rotation_angle,
-            about_point=self.get_rotate_about_point()
-        )
+        submobject.scale(interpolate(1, self.scale_value,
+                                     there_and_back(alpha)),
+                         about_point=self.get_scale_about_point())
+        submobject.rotate(wiggle(alpha, self.n_wiggles) * self.rotation_angle,
+                          about_point=self.get_rotate_about_point())
 
 
 class TurnInsideOut(Transform):

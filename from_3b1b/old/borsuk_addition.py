@@ -12,11 +12,10 @@ class Introduction(TeacherStudentsScene):
     def construct(self):
         self.play(
             Animation(VectorizedPoint(self.hold_up_spot)),
-            self.teacher.change, "raise_right_hand",
+            self.teacher.change,
+            "raise_right_hand",
         )
-        self.change_student_modes(
-            "angry", "sassy", "pleading"
-        )
+        self.change_student_modes("angry", "sassy", "pleading")
         self.wait()
 
         movements = []
@@ -24,52 +23,37 @@ class Introduction(TeacherStudentsScene):
             student.center_tracker = VectorizedPoint()
             student.center_tracker.move_to(student)
             student.center_tracker.save_state()
-            student.add_updater(
-                lambda m: m.move_to(m.center_tracker)
-            )
-            always_shift(
-                student.center_tracker,
-                direction=DOWN + 3 * LEFT,
-                rate=1.5 * random.random()
-            )
+            student.add_updater(lambda m: m.move_to(m.center_tracker))
+            always_shift(student.center_tracker,
+                         direction=DOWN + 3 * LEFT,
+                         rate=1.5 * random.random())
             movements.append(student.center_tracker)
         self.add(*movements)
-        self.change_student_modes(
-            "pondering", "sad", "concerned_musician",
-            look_at_arg=10 * LEFT + 2 * DOWN
-        )
-        self.teacher_says(
-            "Wait, wait, wait!",
-            target_mode="surprised"
-        )
+        self.change_student_modes("pondering",
+                                  "sad",
+                                  "concerned_musician",
+                                  look_at_arg=10 * LEFT + 2 * DOWN)
+        self.teacher_says("Wait, wait, wait!", target_mode="surprised")
         self.remove(*movements)
         self.play(
             self.get_student_changes(*3 * ["hesitant"]),
-            *[
-                Restore(student.center_tracker)
-                for student in self.students
-            ]
-        )
+            *[Restore(student.center_tracker) for student in self.students])
 
 
 class StudentsWatching(TeacherStudentsScene):
     def construct(self):
         self.play(
             self.teacher.change, "raise_right_hand",
-            self.get_student_changes(
-                *3 * ["thinking"],
-                look_at_arg=self.screen
-            ),
-            VFadeIn(self.pi_creatures, run_time=2)
-        )
+            self.get_student_changes(*3 * ["thinking"],
+                                     look_at_arg=self.screen),
+            VFadeIn(self.pi_creatures, run_time=2))
         self.wait(5)
 
 
 class UnexpectedConnection(Scene):
     def construct(self):
-        primes = TexMobject(
-            "2,", "3,", "5,", "7,", "11,", "13,", "17,", "\\dots"
-        )
+        primes = TexMobject("2,", "3,", "5,", "7,", "11,", "13,", "17,",
+                            "\\dots")
         primes.move_to(2.5 * UP)
 
         circle = Circle(
@@ -90,64 +74,51 @@ class UnexpectedConnection(Scene):
         arrow.scale(1.5)
         arrow.fade(1)
 
-        formula = TexMobject(
-            "\\frac{\\pi^2}{6} = \\prod_{p \\text{ prime}}"
-            "\\frac{1}{1 - p^{-2}}"
-        )
+        formula = TexMobject("\\frac{\\pi^2}{6} = \\prod_{p \\text{ prime}}"
+                             "\\frac{1}{1 - p^{-2}}")
         formula.next_to(arrow.get_center(), RIGHT)
 
         def get_arc():
             angle = radius.get_angle()
-            return Arc(
-                start_angle=0,
-                angle=angle,
-                radius=circle.radius,
-                stroke_color=YELLOW,
-                stroke_width=5
-            ).shift(center)
+            return Arc(start_angle=0,
+                       angle=angle,
+                       radius=circle.radius,
+                       stroke_color=YELLOW,
+                       stroke_width=5).shift(center)
 
         arc = always_redraw(get_arc)
 
         decimal = DecimalNumber(0)
         decimal.add_updater(
-            lambda d: d.move_to(interpolate(
-                radius.get_start(),
-                radius.get_end(),
-                1.5,
-            )),
-        )
-        decimal.add_updater(
-            lambda d: d.set_value(radius.get_angle())
-        )
+            lambda d: d.move_to(
+                interpolate(
+                    radius.get_start(),
+                    radius.get_end(),
+                    1.5,
+                )), )
+        decimal.add_updater(lambda d: d.set_value(radius.get_angle()))
         pi = TexMobject("\\pi")
         pi.scale(2)
         pi.next_to(circle, LEFT)
 
         self.add(circle, radius, center_dot, decimal, arc)
-        self.play(
-            Rotate(radius, PI - 1e-7, about_point=center),
-            LaggedStartMap(FadeInFromDown, primes),
-            run_time=4
-        )
+        self.play(Rotate(radius, PI - 1e-7, about_point=center),
+                  LaggedStartMap(FadeInFromDown, primes),
+                  run_time=4)
         self.remove(decimal)
         self.add(pi)
         self.wait()
-        self.play(
-            Restore(arrow),
-            FadeInFrom(formula, LEFT)
-        )
+        self.play(Restore(arrow), FadeInFrom(formula, LEFT))
         self.wait()
 
 
 class MapOfVideo(MovingCameraScene):
     def construct(self):
-        images = Group(
-            ImageMobject("NecklaceThumbnail"),
-            ImageMobject("BorsukUlamThumbnail"),
-            ImageMobject("TopologyProofThumbnail"),
-            ImageMobject("ContinuousNecklaceThumbnail"),
-            ImageMobject("NecklaceSphereAssociationThumbnail")
-        )
+        images = Group(ImageMobject("NecklaceThumbnail"),
+                       ImageMobject("BorsukUlamThumbnail"),
+                       ImageMobject("TopologyProofThumbnail"),
+                       ImageMobject("ContinuousNecklaceThumbnail"),
+                       ImageMobject("NecklaceSphereAssociationThumbnail"))
         for image in images:
             rect = SurroundingRectangle(image, buff=0)
             rect.set_stroke(WHITE, 3)
@@ -200,9 +171,7 @@ class MapOfVideo(MovingCameraScene):
 
 class MathIsDeep(PiCreatureScene):
     def construct(self):
-        words = TextMobject(
-            "Math", "is", "deep"
-        )
+        words = TextMobject("Math", "is", "deep")
         words.scale(2)
         words.to_edge(UP)
         math = words[0].copy()
@@ -215,16 +184,13 @@ class MathIsDeep(PiCreatureScene):
         num_mobs.next_to(math, DOWN, buff=1.5)
         num_mobs.set_color(YELLOW)
         top_arrows = VGroup(*[
-            Arrow(c.get_bottom(), n.get_top())
-            for c, n in zip(math, num_mobs)
+            Arrow(c.get_bottom(), n.get_top()) for c, n in zip(math, num_mobs)
         ])
         n_sum = Integer(sum(numbers))
         n_sum.scale(1.5)
         n_sum.next_to(num_mobs, DOWN, buff=1.5)
-        low_arrows = VGroup(*[
-            Arrow(n.get_bottom(), n_sum.get_top())
-            for n in num_mobs
-        ])
+        low_arrows = VGroup(
+            *[Arrow(n.get_bottom(), n_sum.get_top()) for n in num_mobs])
         VGroup(top_arrows, low_arrows).set_color(WHITE)
 
         n_sum_border = n_sum.deepcopy()
@@ -241,13 +207,12 @@ class MathIsDeep(PiCreatureScene):
 
         self.play(
             LaggedStartMap(
-                FadeInFromLarge, words,
+                FadeInFromLarge,
+                words,
                 scale_factor=1.5,
                 run_time=0.6,
                 lag_ratio=0.6,
-            ),
-            self.pi_creature.change, "pondering"
-        )
+            ), self.pi_creature.change, "pondering")
         self.play(
             TransformFromCopy(math, num_mobs),
             *map(GrowArrow, top_arrows),
@@ -255,7 +220,8 @@ class MathIsDeep(PiCreatureScene):
         self.wait()
         self.play(
             TransformFromCopy(num_mobs, VGroup(n_sum)),
-            self.pi_creature.change, "thinking",
+            self.pi_creature.change,
+            "thinking",
             *map(GrowArrow, low_arrows),
         )
         self.play(LaggedStartMap(ShowCreationThenDestruction, n_sum_border))
@@ -266,42 +232,45 @@ class MathIsDeep(PiCreatureScene):
 class MinimizeSharding(Scene):
     def construct(self):
         piece_groups = VGroup(*[
-            VGroup(*[
-                self.get_piece()
-                for x in range(3)
-            ]).arrange(RIGHT, buff=SMALL_BUFF)
+            VGroup(*[self.get_piece()
+                     for x in range(3)]).arrange(RIGHT, buff=SMALL_BUFF)
             for y in range(4)
         ]).arrange(RIGHT, buff=SMALL_BUFF)
 
         self.add(piece_groups)
         self.play(*[
-            ApplyMethod(mob.space_out_submobjects, 0.7)
-            for mob in piece_groups
+            ApplyMethod(mob.space_out_submobjects, 0.7) for mob in piece_groups
         ])
         self.wait()
         group1 = piece_groups[:2]
         group2 = piece_groups[2:]
         self.play(
-            group1.arrange, DOWN,
-            group1.next_to, ORIGIN, LEFT, LARGE_BUFF,
-            group2.arrange, DOWN,
-            group2.next_to, ORIGIN, RIGHT, LARGE_BUFF,
+            group1.arrange,
+            DOWN,
+            group1.next_to,
+            ORIGIN,
+            LEFT,
+            LARGE_BUFF,
+            group2.arrange,
+            DOWN,
+            group2.next_to,
+            ORIGIN,
+            RIGHT,
+            LARGE_BUFF,
         )
         self.wait()
 
     def get_piece(self):
         jagged_spots = [
-            ORIGIN, 2 * UP + RIGHT, 4 * UP + LEFT, 6 * UP,
+            ORIGIN,
+            2 * UP + RIGHT,
+            4 * UP + LEFT,
+            6 * UP,
         ]
-        corners = list(it.chain(
-            jagged_spots,
-            [6 * UP + 10 * RIGHT],
-            [
-                p + 10 * RIGHT
-                for p in reversed(jagged_spots)
-            ],
-            [ORIGIN]
-        ))
+        corners = list(
+            it.chain(jagged_spots, [6 * UP + 10 * RIGHT],
+                     [p + 10 * RIGHT for p in reversed(jagged_spots)],
+                     [ORIGIN]))
         piece = VMobject().set_points_as_corners(corners)
         piece.set_width(1)
         piece.center()
@@ -350,19 +319,18 @@ class TopologyWordBreak(Scene):
         classes.shift(2 * RIGHT)
 
         genus_labels = VGroup(*[
-            TextMobject("Genus %d:" % d).scale(1.5).next_to(
-                classes[d], LEFT, MED_LARGE_BUFF
-            )
+            TextMobject("Genus %d:" %
+                        d).scale(1.5).next_to(classes[d], LEFT, MED_LARGE_BUFF)
             for d in range(3)
         ])
         genus_labels.shift(SMALL_BUFF * UP)
 
         self.play(Write(word))
-        self.play(LaggedStartMap(
-            ApplyMethod, word,
-            lambda m: (m.set_color, m.target_color),
-            run_time=1
-        ))
+        self.play(
+            LaggedStartMap(ApplyMethod,
+                           word,
+                           lambda m: (m.set_color, m.target_color),
+                           run_time=1))
         self.play(
             LaggedStartMap(MoveToTarget, word),
             LaggedStartMap(FadeIn, signs),
@@ -372,9 +340,7 @@ class TopologyWordBreak(Scene):
 
 
 class TopologyProofLand(GeometryProofLand):
-    CONFIG = {
-        "text": "Topology proof land"
-    }
+    CONFIG = {"text": "Topology proof land"}
 
 
 class GreenLine(Scene):
@@ -400,9 +366,7 @@ class FunctionGInSymbols(Scene):
                 ("{g}", GREEN),
             ]
             for tex, color in pairs:
-                tex_mob.set_color_by_tex(
-                    tex, color, substring=False
-                )
+                tex_mob.set_color_by_tex(tex, color, substring=False)
 
         f_of_p = TexMobject("f", "(", p_tex, ")")
         f_of_p.shift(2.5 * LEFT + 2.5 * UP)
@@ -451,10 +415,7 @@ class FunctionGInSymbols(Scene):
         self.wait(2)
         self.play(WiggleOutThenIn(f))
         self.wait()
-        self.play(
-            FadeOutAndShift(dec_rhs, DOWN),
-            FadeInFromDown(f_of_neg_p)
-        )
+        self.play(FadeOutAndShift(dec_rhs, DOWN), FadeInFromDown(f_of_neg_p))
         self.wait()
 
         # Rearrange
@@ -464,12 +425,9 @@ class FunctionGInSymbols(Scene):
         group.arrange(RIGHT, buff=SMALL_BUFF)
         group.next_to(equals, LEFT)
 
-        self.play(
-            MoveToTarget(f_of_p, path_arc=PI),
-            MoveToTarget(f_of_neg_p, path_arc=-PI),
-            FadeInFromLarge(minus),
-            FadeInFrom(zero_zero, LEFT)
-        )
+        self.play(MoveToTarget(f_of_p, path_arc=PI),
+                  MoveToTarget(f_of_neg_p, path_arc=-PI),
+                  FadeInFromLarge(minus), FadeInFrom(zero_zero, LEFT))
         self.wait()
 
         # Define g
@@ -478,27 +436,18 @@ class FunctionGInSymbols(Scene):
         g_of_p.next_to(def_eq, LEFT)
         rect = SurroundingRectangle(VGroup(g_of_p, f_of_neg_p))
         rect.set_stroke(width=1)
-        seeking_text = TexMobject(
-            "\\text{Looking for }", p_tex, "\\text{ where}"
-        )
+        seeking_text = TexMobject("\\text{Looking for }", p_tex,
+                                  "\\text{ where}")
         color_tex(seeking_text)
         seeking_text.next_to(zero_zero, DOWN, MED_LARGE_BUFF)
         seeking_text.to_edge(LEFT)
-        g_equals_zero = VGroup(
-            g_of_p.copy(), equals, zero_zero
-        )
+        g_equals_zero = VGroup(g_of_p.copy(), equals, zero_zero)
         g_equals_zero.generate_target()
         g_equals_zero.target.arrange(RIGHT, SMALL_BUFF)
         g_equals_zero.target.next_to(seeking_text, DOWN)
 
-        self.play(
-            FadeInFromLarge(g_of_p),
-            FadeInFrom(def_eq, LEFT)
-        )
-        self.play(
-            FadeInFromDown(seeking_text),
-            MoveToTarget(g_equals_zero)
-        )
+        self.play(FadeInFromLarge(g_of_p), FadeInFrom(def_eq, LEFT))
+        self.play(FadeInFromDown(seeking_text), MoveToTarget(g_equals_zero))
         self.play(ShowCreation(rect))
         self.wait()
         self.play(FadeOut(rect))
@@ -507,9 +456,21 @@ class FunctionGInSymbols(Scene):
         g_of_neg_p = TexMobject("{g}", "(", neg_p_tex, ")")
         eq2 = TexMobject("=")
         rhs = TexMobject(
-            "f", "(", neg_p_tex, ")", "-",
-            "f", "(", p_tex, ")", "=",
-            "-", "{g}", "(", p_tex, ")",
+            "f",
+            "(",
+            neg_p_tex,
+            ")",
+            "-",
+            "f",
+            "(",
+            p_tex,
+            ")",
+            "=",
+            "-",
+            "{g}",
+            "(",
+            p_tex,
+            ")",
         )
         for mob in g_of_neg_p, rhs:
             color_tex(mob)
@@ -520,12 +481,8 @@ class FunctionGInSymbols(Scene):
         neg_g_of_p.save_state()
         neg_g_of_p.next_to(eq2, RIGHT, SMALL_BUFF)
 
-        self.play(
-            FadeIn(g_of_neg_p),
-            FadeIn(eq2),
-            FadeIn(neg_g_of_p),
-            VGroup(seeking_text, g_equals_zero).shift, 1.5 * DOWN
-        )
+        self.play(FadeIn(g_of_neg_p), FadeIn(eq2), FadeIn(neg_g_of_p),
+                  VGroup(seeking_text, g_equals_zero).shift, 1.5 * DOWN)
         self.wait()
         self.play(ShowCreationThenFadeAround(g_of_neg_p[2]))
         self.wait()
@@ -533,10 +490,8 @@ class FunctionGInSymbols(Scene):
         self.wait()
         self.play(neg_g_of_p.restore)
         rects = VGroup(*map(SurroundingRectangle, [f_of_p, f_of_neg_p]))
-        self.play(LaggedStartMap(
-            ShowCreationThenDestruction, rects,
-            lag_ratio=0.8
-        ))
+        self.play(
+            LaggedStartMap(ShowCreationThenDestruction, rects, lag_ratio=0.8))
         self.play(
             TransformFromCopy(f_of_p, rhs[5:9]),
             TransformFromCopy(f_of_neg_p, rhs[:4]),
@@ -578,7 +533,8 @@ class FunctionGInputSpace(SpecialThreeDScene):
         start_point = self.get_start_point()
 
         arrow = Arrow(
-            start_point + (LEFT + OUT + UP), start_point,
+            start_point + (LEFT + OUT + UP),
+            start_point,
             color=BLUE,
             buff=MED_LARGE_BUFF,
         )
@@ -593,16 +549,11 @@ class FunctionGInputSpace(SpecialThreeDScene):
         self.play(Write(sphere, run_time=3))
         self.add(dot)
         self.add_fixed_orientation_mobjects(p_label)
-        self.play(
-            point_mob.move_to, start_point,
-            GrowArrow(arrow),
-            FadeInFrom(p_label, IN)
-        )
+        self.play(point_mob.move_to, start_point, GrowArrow(arrow),
+                  FadeInFrom(p_label, IN))
         self.wait()
-        self.play(
-            arrow.scale, 0, {"about_point": arrow.get_end()},
-            p_label.next_to, dot, OUT + LEFT, SMALL_BUFF
-        )
+        self.play(arrow.scale, 0, {"about_point": arrow.get_end()},
+                  p_label.next_to, dot, OUT + LEFT, SMALL_BUFF)
         p_label.add_updater(lambda p: p.next_to(dot, OUT + LEFT, SMALL_BUFF))
         self.wait(4)
 
@@ -613,16 +564,11 @@ class FunctionGInputSpace(SpecialThreeDScene):
 
     def show_antipodal_point(self):
         path = self.get_antipodal_path()
-        end_dot = always_redraw(
-            lambda: self.get_dot(
-                path[-1].point_from_proportion(1)
-            ).set_color(RED)
-        )
+        end_dot = always_redraw(lambda: self.get_dot(path[
+            -1].point_from_proportion(1)).set_color(RED))
 
         neg_p = TexMobject("-\\vec{\\textbf{p}}")
-        neg_p.add_updater(
-            lambda p: p.next_to(end_dot, UP + RIGHT + IN)
-        )
+        neg_p.add_updater(lambda p: p.next_to(end_dot, UP + RIGHT + IN))
         neg_p.set_color(RED)
         neg_p.set_shade_in_3d(True)
 
@@ -634,16 +580,9 @@ class FunctionGInputSpace(SpecialThreeDScene):
         )
         self.wait()
         self.add_fixed_orientation_mobjects(neg_p)
-        self.play(
-            FadeInFromLarge(end_dot),
-            Write(neg_p)
-        )
+        self.play(FadeInFromLarge(end_dot), Write(neg_p))
         self.wait(4)
-        self.move_camera(
-            phi=70 * DEGREES,
-            theta=-120 * DEGREES,
-            run_time=2
-        )
+        self.move_camera(phi=70 * DEGREES, theta=-120 * DEGREES, run_time=2)
         self.wait(7)
         # Flip
         self.move_camera(
@@ -670,10 +609,8 @@ class FunctionGInputSpace(SpecialThreeDScene):
         self.play(point_mob.move_to, equator[0].point_from_proportion(0))
         self.play(ShowCreation(equator, run_time=4))
         for x in range(2):
-            self.play(
-                Rotate(point_mob, PI, about_point=ORIGIN, axis=OUT),
-                run_time=4
-            )
+            self.play(Rotate(point_mob, PI, about_point=ORIGIN, axis=OUT),
+                      run_time=4)
             self.wait(3)
         self.play(
             FadeOut(self.dot),
@@ -685,54 +622,44 @@ class FunctionGInputSpace(SpecialThreeDScene):
     def deform_towards_north_pole(self):
         equator = self.equator
 
-        self.play(UpdateFromAlphaFunc(
-            equator,
-            lambda m, a: m.become(self.get_lat_line(a * PI / 2)),
-            run_time=16
-        ))
+        self.play(
+            UpdateFromAlphaFunc(
+                equator,
+                lambda m, a: m.become(self.get_lat_line(a * PI / 2)),
+                run_time=16))
         self.wait()
 
     #
     def init_tracked_point(self):
         self.tracked_point = VectorizedPoint([0, 0, 2])
         self.tracked_point.add_updater(
-            lambda p: p.move_to(2 * normalize(p.get_center()))
-        )
+            lambda p: p.move_to(2 * normalize(p.get_center())))
         self.add(self.tracked_point)
 
     def init_dot(self):
         self.dot = always_redraw(
-            lambda: self.get_dot(self.tracked_point.get_center())
-        )
+            lambda: self.get_dot(self.tracked_point.get_center()))
 
     def get_start_path(self):
-        path = ParametricFunction(
-            lambda t: np.array([
-                -np.sin(TAU * t + TAU / 4),
-                np.cos(2 * TAU * t + TAU / 4),
-                0
-            ]),
-            color=RED
-        )
+        path = ParametricFunction(lambda t: np.array(
+            [-np.sin(TAU * t + TAU / 4),
+             np.cos(2 * TAU * t + TAU / 4), 0]),
+                                  color=RED)
         path.scale(0.5)
         path.shift(0.5 * OUT)
         path.rotate(60 * DEGREES, RIGHT, about_point=ORIGIN)
-        path.shift(
-            self.get_start_point() - path.point_from_proportion(0)
-        )
+        path.shift(self.get_start_point() - path.point_from_proportion(0))
         path.apply_function(lambda p: 2 * normalize(p))
         return path
 
     def get_antipodal_path(self):
         start = self.get_start_point()
-        path = ParametricFunction(
-            lambda t: 2.03 * np.array([
-                0,
-                np.sin(PI * t),
-                np.cos(PI * t),
-            ]),
-            color=YELLOW
-        )
+        path = ParametricFunction(lambda t: 2.03 * np.array([
+            0,
+            np.sin(PI * t),
+            np.cos(PI * t),
+        ]),
+                                  color=YELLOW)
         path.apply_matrix(z_to_vector(start))
 
         dashed_path = DashedVMobject(path)
@@ -755,29 +682,26 @@ class FunctionGInputSpace(SpecialThreeDScene):
         dashed_equator.set_shade_in_3d(True)
         return dashed_equator
 
-    def draw_path(self, path,
+    def draw_path(self,
+                  path,
                   run_time=4,
                   dot_follow=True,
                   uncreate=False,
-                  added_anims=None
-                  ):
+                  added_anims=None):
         added_anims = added_anims or []
         point_mob = self.tracked_point
         anims = [ShowCreation(path)]
         if dot_follow:
-            anims.append(UpdateFromFunc(
-                point_mob,
-                lambda p: p.move_to(path.point_from_proportion(1))
-            ))
+            anims.append(
+                UpdateFromFunc(
+                    point_mob,
+                    lambda p: p.move_to(path.point_from_proportion(1))))
         self.add(path, self.dot)
         self.play(*anims, run_time=run_time)
 
         if uncreate:
             self.wait()
-            self.play(
-                Uncreate(path),
-                run_time=run_time
-            )
+            self.play(Uncreate(path), run_time=run_time)
 
     def modify_path(self, path):
         return path
@@ -802,13 +726,11 @@ class FunctionGOutputSpace(FunctionGInputSpace):
         self.deform_towards_north_pole()
 
     def setup(self):
-        axes = self.axes = Axes(
-            x_min=-2.5,
-            x_max=2.5,
-            y_min=-2.5,
-            y_max=2.5,
-            axis_config={'unit_size': 1.5}
-        )
+        axes = self.axes = Axes(x_min=-2.5,
+                                x_max=2.5,
+                                y_min=-2.5,
+                                y_max=2.5,
+                                axis_config={'unit_size': 1.5})
         for axis in axes:
             numbers = list(range(-2, 3))
             numbers.remove(0)
@@ -836,20 +758,18 @@ class FunctionGOutputSpace(FunctionGInputSpace):
         dc = dot.copy()
         self.play(
             FadeInFrom(dc, 2 * UP, remover=True),
-            UpdateFromFunc(fp_label, lambda fp: fp.next_to(dc, UL, SMALL_BUFF))
-        )
+            UpdateFromFunc(fp_label,
+                           lambda fp: fp.next_to(dc, UL, SMALL_BUFF)))
         self.add(dot)
-        fp_label.add_updater(
-            lambda fp: fp.next_to(dot, UL, SMALL_BUFF)
-        )
+        fp_label.add_updater(lambda fp: fp.next_to(dot, UL, SMALL_BUFF))
         self.wait(2)
 
-    def draw_path(self, path,
+    def draw_path(self,
+                  path,
                   run_time=4,
                   dot_follow=True,
                   uncreate=False,
-                  added_anims=None
-                  ):
+                  added_anims=None):
         added_anims = added_anims or []
         point_mob = self.tracked_point
         shadow_path = path.deepcopy().fade(1)
@@ -859,26 +779,23 @@ class FunctionGOutputSpace(FunctionGInputSpace):
             ShowCreation(shadow_path),
         ]
         if dot_follow:
-            anims.append(UpdateFromFunc(
-                point_mob,
-                lambda p: p.move_to(shadow_path.point_from_proportion(1))
-            ))
+            anims.append(
+                UpdateFromFunc(
+                    point_mob,
+                    lambda p: p.move_to(shadow_path.point_from_proportion(1))))
         self.add(flat_path, self.dot)
         self.play(*anims, run_time=run_time)
 
         if uncreate:
             self.wait()
             self.remove(shadow_path)
-            self.play(
-                Uncreate(flat_path),
-                run_time=run_time
-            )
+            self.play(Uncreate(flat_path), run_time=run_time)
 
     def show_antipodal_point(self):
         dot = self.dot
         pre_path = VMobject().set_points_smoothly([
-            ORIGIN, DOWN, DOWN + 2 * RIGHT,
-            3 * RIGHT + 0.5 * UP, 0.5 * RIGHT, ORIGIN
+            ORIGIN, DOWN, DOWN + 2 * RIGHT, 3 * RIGHT + 0.5 * UP, 0.5 * RIGHT,
+            ORIGIN
         ])
         pre_path.rotate(-45 * DEGREES, about_point=ORIGIN)
         pre_path.shift(dot.get_center())
@@ -905,34 +822,30 @@ class FunctionGOutputSpace(FunctionGInputSpace):
             Write(f_neg_p),
         )
         self.wait(6)
-        self.play(
-            FadeOut(VGroup(path, equals, f_neg_p))
-        )
+        self.play(FadeOut(VGroup(path, equals, f_neg_p)))
         dot.clear_updaters()
         self.add(fp_label, gp_label)
         gp_label.set_background_stroke(width=0)
         self.play(
-            dot.move_to, ORIGIN,
+            dot.move_to,
+            ORIGIN,
             VFadeOut(fp_label),
             VFadeIn(gp_label),
         )
         self.wait(4)
-        self.play(
-            dot.move_to, self.odd_func(self.get_start_point())
-        )
+        self.play(dot.move_to, self.odd_func(self.get_start_point()))
         # Flip, 2 second for flip, 7 seconds after
         path = self.get_antipodal_path()
         path.apply_function(self.odd_func)
         end_dot = Dot(color=RED)
         end_dot.move_to(path[-1].point_from_proportion(1))
-        g_neg_p = TexMobject(
-            "g", "(", "-\\vec{\\textbf{p}}", ")"
-        )
+        g_neg_p = TexMobject("g", "(", "-\\vec{\\textbf{p}}", ")")
         g_neg_p[0].set_color(GREEN)
         g_neg_p[2].set_color(RED)
         g_neg_p.next_to(end_dot, UR, SMALL_BUFF)
         reflection_line = DashedLine(
-            dot.get_center(), end_dot.get_center(),
+            dot.get_center(),
+            end_dot.get_center(),
             stroke_width=0,
         )
         vector = Vector(dot.get_center())
@@ -942,9 +855,8 @@ class FunctionGOutputSpace(FunctionGInputSpace):
         self.play(
             ShowCreationThenDestruction(reflection_line, run_time=2),
             TransformFromCopy(dot, end_dot),
-            ReplacementTransform(
-                gp_label.deepcopy().clear_updaters(), g_neg_p
-            ),
+            ReplacementTransform(gp_label.deepcopy().clear_updaters(),
+                                 g_neg_p),
         )
         self.wait()
         self.play(FadeIn(vector))
@@ -966,23 +878,18 @@ class FunctionGOutputSpace(FunctionGInputSpace):
         equator_start = equator[0].point_from_proportion(0)
 
         # To address
-        self.play(
-            point_mob.move_to, equator_start,
-            dot.move_to, self.odd_func(equator_start)
-        )
-        dot.add_updater(lambda m: m.move_to(
-            self.odd_func(point_mob.get_center())
-        ))
+        self.play(point_mob.move_to, equator_start, dot.move_to,
+                  self.odd_func(equator_start))
+        dot.add_updater(
+            lambda m: m.move_to(self.odd_func(point_mob.get_center())))
         self.play(
             ShowCreation(equator),
             ShowCreation(flat_eq),
             run_time=4,
         )
         for x in range(2):
-            self.play(
-                Rotate(point_mob, PI, about_point=ORIGIN, axis=OUT),
-                run_time=4
-            )
+            self.play(Rotate(point_mob, PI, about_point=ORIGIN, axis=OUT),
+                      run_time=4)
             self.wait(3)
         self.play(
             FadeOut(self.dot),
@@ -999,19 +906,14 @@ class FunctionGOutputSpace(FunctionGInputSpace):
         self.play(
             UpdateFromAlphaFunc(
                 equator,
-                lambda m, a: m.become(self.get_lat_line(a * PI / 2)).set_stroke(width=0),
-                run_time=16
-            ),
+                lambda m, a: m.become(self.get_lat_line(a * PI / 2)
+                                      ).set_stroke(width=0),
+                run_time=16),
             UpdateFromFunc(
-                flat_eq,
-                lambda m: m.become(
-                    equator.deepcopy().apply_function(self.odd_func).set_stroke(
-                        color=RED, width=3
-                    )
-                )
-            )
-        )
+                flat_eq, lambda m: m.become(equator.deepcopy().apply_function(
+                    self.odd_func).set_stroke(color=RED, width=3))))
         self.wait()
+
     #
 
     def func(self, point):
@@ -1048,10 +950,8 @@ class RotationOfEquatorGraphInOuputSpace(FunctionGOutputSpace):
         self.play(FadeIn(vector))
         self.add(vector_copy)
         self.play(
-            Rotate(
-                VGroup(flat_eq, vector),
-                PI, about_point=ORIGIN, run_time=5
-        ))
+            Rotate(VGroup(flat_eq, vector), PI, about_point=ORIGIN,
+                   run_time=5))
         self.play(FadeOut(vector), FadeOut(vector_copy))
 
 
@@ -1100,10 +1000,7 @@ class DrawSphere(SpecialThreeDScene):
         self.move_camera(phi=70 * DEGREES, run_time=0)
         self.begin_ambient_camera_rotation()
         self.add_fixed_in_frame_mobjects(question)
-        self.play(
-            Write(sphere),
-            FadeInFromDown(question)
-        )
+        self.play(Write(sphere), FadeInFromDown(question))
         self.wait(4)
 
 
@@ -1128,14 +1025,12 @@ class DivisionOfUnity(Scene):
             brace.add(label)
 
         self.add(line, lower_brace)
-        self.play(LaggedStartMap(
-            ShowCreation, v_lines[1:3],
-            lag_ratio=0.8,
-            run_time=1
-        ))
-        self.play(LaggedStartMap(
-            GrowFromCenter, upper_braces
-        ))
+        self.play(
+            LaggedStartMap(ShowCreation,
+                           v_lines[1:3],
+                           lag_ratio=0.8,
+                           run_time=1))
+        self.play(LaggedStartMap(GrowFromCenter, upper_braces))
         self.wait()
 
 
@@ -1151,15 +1046,15 @@ class ThreeDSpace(ThreeDScene):
         lines = VGroup(*[
             VGroup(*[
                 Line(
-                    radius * IN, radius * OUT,
+                    radius * IN,
+                    radius * OUT,
                     stroke_color=WHITE,
                     stroke_width=1,
                     stroke_opacity=0.5,
                 ).shift(x * RIGHT + y * UP)
                 for x in np.arange(-radius, radius + density, density)
                 for y in np.arange(-radius, radius + density, density)
-            ]).rotate(n * 120 * DEGREES, axis=[1, 1, 1])
-            for n in range(3)
+            ]).rotate(n * 120 * DEGREES, axis=[1, 1, 1]) for n in range(3)
         ])
 
         self.play(Write(lines))
@@ -1204,7 +1099,8 @@ class BorsukEndScreen(PatreonEndScreen):
             "Ripta Pasay",
             "Felipe Diniz",
         ],
-        "n_patron_columns": 2,
+        "n_patron_columns":
+        2,
     }
 
 

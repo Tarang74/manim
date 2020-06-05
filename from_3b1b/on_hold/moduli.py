@@ -19,11 +19,9 @@ class TriangleModuliSpace(Scene):
     }
 
     def setup(self):
-        self.plane = NumberPlane(
-            axis_config={
-                "unit_size": 2,
-            }
-        )
+        self.plane = NumberPlane(axis_config={
+            "unit_size": 2,
+        })
 
     def construct(self):
         self.show_meaning_of_similar()
@@ -39,7 +37,8 @@ class TriangleModuliSpace(Scene):
         subtitle.scale(1.5)
         subtitle.next_to(title, DOWN, MED_SMALL_BUFF)
 
-        question = TextMobject("What ", "is ", "a\\\\", "moduli ", "space", "?")
+        question = TextMobject("What ", "is ", "a\\\\", "moduli ", "space",
+                               "?")
         question.scale(2)
 
         # Setup all triangles
@@ -50,26 +49,22 @@ class TriangleModuliSpace(Scene):
         all_triangles.to_edge(DOWN)
 
         # Triangles pop up...
-        self.play(
-            LaggedStartMap(FadeInFromDown, question),
-        )
+        self.play(LaggedStartMap(FadeInFromDown, question), )
         self.wait()
 
         self.play(
             ReplacementTransform(
                 question.get_part_by_tex("space"),
                 title.get_part_by_tex("Space"),
-            ),
-            FadeOut(question[:-2]),
-            FadeOut(question[-1]),
+            ), FadeOut(question[:-2]), FadeOut(question[-1]),
             FadeIn(title[1:]),
             LaggedStartMap(
-                DrawBorderThenFill, all_triangles,
+                DrawBorderThenFill,
+                all_triangles,
                 rate_func=bezier([0, 0, 1.5, 1, 1]),
                 run_time=5,
                 lag_ratio=0.05,
-            )
-        )
+            ))
         self.wait()
 
         # ...Then divide into classes
@@ -88,8 +83,7 @@ class TriangleModuliSpace(Scene):
                 height=height,
                 width=max_width + 0.25,
                 stroke_width=2,
-            ).move_to(tri_class, UP)
-            for tri_class in tri_classes.target
+            ).move_to(tri_class, UP) for tri_class in tri_classes.target
         ])
         rects.shift(MED_SMALL_BUFF * UP)
 
@@ -104,13 +98,14 @@ class TriangleModuliSpace(Scene):
 
         # Dots
         per_class_dots = VGroup(*[
-            TexMobject("\\vdots").move_to(
-                tri_class
-            ).set_y(rects.get_bottom()[1] + 0.4)
+            TexMobject("\\vdots").move_to(tri_class).set_y(
+                rects.get_bottom()[1] + 0.4)
             for tri_class in tri_classes.target
         ])
         all_class_dots = TexMobject("\\dots").next_to(
-            rects, RIGHT, MED_SMALL_BUFF,
+            rects,
+            RIGHT,
+            MED_SMALL_BUFF,
         )
 
         self.play(
@@ -143,26 +138,32 @@ class TriangleModuliSpace(Scene):
 
         self.play(
             FadeOutAndShift(VGroup(title, subtitle), UP),
-            tri1.next_to, sim_sign, LEFT, 0.75,
-            tri2.next_to, sim_sign, RIGHT, 0.75,
+            tri1.next_to,
+            sim_sign,
+            LEFT,
+            0.75,
+            tri2.next_to,
+            sim_sign,
+            RIGHT,
+            0.75,
         )
-        self.play(
-            FadeInFromDown(sim_sign),
-            Write(similar_word, run_time=1)
-        )
+        self.play(FadeInFromDown(sim_sign), Write(similar_word, run_time=1))
         self.wait()
 
         # Move into place
         tri1_copy = tri1.copy()
         self.play(
-            tri1_copy.next_to, tri2,
-            RIGHT, LARGE_BUFF,
+            tri1_copy.next_to,
+            tri2,
+            RIGHT,
+            LARGE_BUFF,
             path_arc=90 * DEGREES,
         )
         self.play(Rotate(tri1_copy, tri2.angle - tri1.angle))
         self.play(tri1_copy.scale, tri2.scalar / tri1.scalar)
         self.play(
-            tri1_copy.move_to, tri2,
+            tri1_copy.move_to,
+            tri2,
         )
         tri1_copy.set_color(YELLOW)
         self.play(
@@ -205,8 +206,11 @@ class TriangleModuliSpace(Scene):
         self.play(tri1_copy.move_to, tri3)
         self.play(Rotate(tri1_copy, 90 * DEGREES))
         self.play(
-            tri1_copy.match_height, tri3,
-            tri1_copy.move_to, tri3, RIGHT,
+            tri1_copy.match_height,
+            tri3,
+            tri1_copy.move_to,
+            tri3,
+            RIGHT,
         )
         self.play(WiggleOutThenIn(tri1_copy, n_wiggles=10))
         self.play(FadeOut(tri1_copy))
@@ -235,12 +239,12 @@ class TriangleModuliSpace(Scene):
         self.play(
             ShowCreationThenDestruction(new_title_underline),
             LaggedStartMap(
-                ApplyMethod, rects,
+                ApplyMethod,
+                rects,
                 lambda m: (m.set_stroke, YELLOW, 5),
                 rate_func=there_and_back,
                 run_time=1,
-            )
-        )
+            ))
         self.wait()
         self.play(Write(new_title[0]))
         self.wait()
@@ -253,9 +257,7 @@ class TriangleModuliSpace(Scene):
         dots = VGroup(*[
             Dot(color=tri.get_color()).move_to(
                 self.get_triangle_x(tri) * RIGHT +
-                self.get_triangle_y(tri) * UP,
-            )
-            for tri_class in tri_classes
+                self.get_triangle_y(tri) * UP, ) for tri_class in tri_classes
             for tri in tri_class[0]
         ])
         dots.space_out_submobjects(2)
@@ -263,20 +265,20 @@ class TriangleModuliSpace(Scene):
 
         self.play(
             DrawBorderThenFill(blob),
-            new_title.shift, LEFT,
+            new_title.shift,
+            LEFT,
         )
 
-        self.play(LaggedStart(
-            *[
-                ReplacementTransform(
-                    tri_class.copy().set_fill(opacity=0),
-                    dot
-                )
-                for tri_class, dot in zip(tri_classes, dots)
-            ],
-            run_time=3,
-            lag_ratio=0.3,
-        ))
+        self.play(
+            LaggedStart(
+                *[
+                    ReplacementTransform(tri_class.copy().set_fill(opacity=0),
+                                         dot)
+                    for tri_class, dot in zip(tri_classes, dots)
+                ],
+                run_time=3,
+                lag_ratio=0.3,
+            ))
 
         # Isolate one triangle
 
@@ -285,8 +287,10 @@ class TriangleModuliSpace(Scene):
         angle = PI + angle_of_vector(verts[1] - verts[2])
 
         self.play(
-            tri.rotate, -angle,
-            tri.set_width, self.example_triangle_width,
+            tri.rotate,
+            -angle,
+            tri.set_width,
+            self.example_triangle_width,
             tri.center,
             FadeOut(tri_classes[0][1:]),
             FadeOut(tri_classes[1:]),
@@ -345,7 +349,8 @@ class TriangleModuliSpace(Scene):
 
         # Rescale
         self.add(side_trackers)
-        self.play(LaggedStartMap(FadeIn, side_labels, lag_ratio=0.3, run_time=1))
+        self.play(
+            LaggedStartMap(FadeIn, side_labels, lag_ratio=0.3, run_time=1))
         self.add(side_labels)
         self.wait()
         self.play(triangle.set_width, unit_factor)
@@ -370,12 +375,8 @@ class TriangleModuliSpace(Scene):
             var.move_to(num, vect)
             var.brace = Brace(num, UP)
             var.brace.num = num
-            var.brace.add_updater(
-                lambda m: m.next_to(m.num, UP, buff=buff)
-            )
-            var.add_updater(
-                lambda m: m.next_to(m.brace, UP, buff=buff)
-            )
+            var.brace.add_updater(lambda m: m.next_to(m.num, UP, buff=buff))
+            var.add_updater(lambda m: m.next_to(m.brace, UP, buff=buff))
 
             var.suspend_updating()
             var.brace.suspend_updating()
@@ -396,16 +397,14 @@ class TriangleModuliSpace(Scene):
             y_label.brace,
         )
 
-        axes = Axes(
-            x_min=-0.25,
-            x_max=1.5,
-            y_min=-0.25,
-            y_max=1.5,
-            axis_config={
-                "tick_frequency": 0.25,
-                "unit_size": 3,
-            }
-        )
+        axes = Axes(x_min=-0.25,
+                    x_max=1.5,
+                    y_min=-0.25,
+                    y_max=1.5,
+                    axis_config={
+                        "tick_frequency": 0.25,
+                        "unit_size": 3,
+                    })
         x_axis = axes.x_axis
         y_axis = axes.y_axis
 
@@ -414,7 +413,8 @@ class TriangleModuliSpace(Scene):
 
         for axis, vect in [(x_axis, DOWN), (y_axis, LEFT)]:
             axis.add_numbers(
-                0.5, 1.0,
+                0.5,
+                1.0,
                 number_config={"num_decimal_places": 1},
                 direction=vect,
             )
@@ -422,8 +422,11 @@ class TriangleModuliSpace(Scene):
         axes.to_corner(DR, buff=LARGE_BUFF)
 
         self.play(
-            to_move.to_corner, UL, {"buff": LARGE_BUFF},
-            to_move.shift, MED_LARGE_BUFF * DOWN,
+            to_move.to_corner,
+            UL,
+            {"buff": LARGE_BUFF},
+            to_move.shift,
+            MED_LARGE_BUFF * DOWN,
             Write(axes),
         )
 
@@ -431,8 +434,10 @@ class TriangleModuliSpace(Scene):
         coords = VGroup(b_label.copy(), a_label.copy())
 
         x_coord, y_coord = coords
-        x_coord.add_updater(lambda m: m.set_value(b_side.get_length() / unit_factor))
-        y_coord.add_updater(lambda m: m.set_value(a_side.get_length() / unit_factor))
+        x_coord.add_updater(
+            lambda m: m.set_value(b_side.get_length() / unit_factor))
+        y_coord.add_updater(
+            lambda m: m.set_value(a_side.get_length() / unit_factor))
 
         def get_coord_values():
             return [c.get_value() for c in coords]
@@ -441,25 +446,20 @@ class TriangleModuliSpace(Scene):
             return axes.c2p(*get_coord_values())
 
         dot = always_redraw(
-            lambda: triangle.copy().set_width(0.1).move_to(get_ms_point())
-        )
+            lambda: triangle.copy().set_width(0.1).move_to(get_ms_point()))
 
-        y_line = always_redraw(
-            lambda: DashedLine(
-                x_axis.n2p(x_coord.get_value()),
-                get_ms_point(),
-                color=y_color,
-                stroke_width=1,
-            )
-        )
-        x_line = always_redraw(
-            lambda: DashedLine(
-                y_axis.n2p(y_coord.get_value()),
-                get_ms_point(),
-                color=x_color,
-                stroke_width=1,
-            )
-        )
+        y_line = always_redraw(lambda: DashedLine(
+            x_axis.n2p(x_coord.get_value()),
+            get_ms_point(),
+            color=y_color,
+            stroke_width=1,
+        ))
+        x_line = always_redraw(lambda: DashedLine(
+            y_axis.n2p(y_coord.get_value()),
+            get_ms_point(),
+            color=x_color,
+            stroke_width=1,
+        ))
 
         coord_label = TexMobject("(", "0.00", ",", "0.00", ")")
         cl_buff = 0
@@ -504,8 +504,18 @@ class TriangleModuliSpace(Scene):
 
         # Show box
         t2c = {"x": x_color, "y": y_color}
-        ineq1 = TexMobject("0", "\\le ", "x", "\\le", "1", tex_to_color_map=t2c)
-        ineq2 = TexMobject("0", "\\le ", "y", "\\le", "1", tex_to_color_map=t2c)
+        ineq1 = TexMobject("0",
+                           "\\le ",
+                           "x",
+                           "\\le",
+                           "1",
+                           tex_to_color_map=t2c)
+        ineq2 = TexMobject("0",
+                           "\\le ",
+                           "y",
+                           "\\le",
+                           "1",
+                           tex_to_color_map=t2c)
 
         ineqs = VGroup(ineq1, ineq2)
         ineqs.scale(1.5)
@@ -524,13 +534,8 @@ class TriangleModuliSpace(Scene):
         box_outline.set_stroke(YELLOW, 3)
 
         self.add(box, axes, x_line, y_line, coord_label, dot)
-        self.play(
-            FadeIn(box),
-            LaggedStartMap(FadeInFromDown, ineqs)
-        )
-        self.play(
-            ShowCreationThenFadeOut(box_outline)
-        )
+        self.play(FadeIn(box), LaggedStartMap(FadeInFromDown, ineqs))
+        self.play(ShowCreationThenFadeOut(box_outline))
         self.wait()
 
         # x >= y slice
@@ -603,11 +608,11 @@ class TriangleModuliSpace(Scene):
         self.play(
             ShowCreation(xpy1_line),
             # FadeInFrom(xpy1_label, DOWN),
-            FadeInFrom(xpy1_ineq, UP)
-        )
+            FadeInFrom(xpy1_ineq, UP))
         self.wait()
         self.play(
-            tip_tracker.set_y, triangle.get_bottom()[1] + 0.01,
+            tip_tracker.set_y,
+            triangle.get_bottom()[1] + 0.01,
             FadeIn(tt_line),
         )
         self.wait()
@@ -615,13 +620,15 @@ class TriangleModuliSpace(Scene):
         self.add(ms_region, axes, x_line, y_line, coord_label, dot)
         self.play(
             FadeIn(ms_region),
-            region.set_fill, DARK_GREY,
+            region.set_fill,
+            DARK_GREY,
         )
         self.wait()
 
         # Move tip around
         self.play(
-            tip_tracker.shift, UP + RIGHT,
+            tip_tracker.shift,
+            UP + RIGHT,
             FadeOut(tt_line),
         )
         self.wait()
@@ -629,7 +636,8 @@ class TriangleModuliSpace(Scene):
         self.wait()
         self.play(tip_tracker.shift, UP + 0.7 * LEFT, run_time=2)
         self.wait()
-        equilateral_point = triangle.get_bottom() + unit_factor * 0.5 * np.sqrt(3) * UP
+        equilateral_point = triangle.get_bottom(
+        ) + unit_factor * 0.5 * np.sqrt(3) * UP
         self.play(
             tip_tracker.move_to,
             equilateral_point,
@@ -651,9 +659,7 @@ class TriangleModuliSpace(Scene):
         ms_arrow.shift(0.1 * RIGHT)
         ms_arrow.scale(0.95)
 
-        self.play(
-            FadeInFrom(ms_words, LEFT),
-        )
+        self.play(FadeInFrom(ms_words, LEFT), )
         self.play(ShowCreation(ms_arrow))
         self.wait()
 
@@ -685,7 +691,8 @@ class TriangleModuliSpace(Scene):
         ineqs = VGroup(ineq, xpy1_ineq)
 
         self.play(
-            tip_tracker.move_to, new_tip,
+            tip_tracker.move_to,
+            new_tip,
             FadeOut(ms_words),
             FadeOut(ms_arrow),
         )
@@ -694,9 +701,7 @@ class TriangleModuliSpace(Scene):
             FadeInFrom(right_words, UP),
             FadeOutAndShift(ineqs, DOWN),
         )
-        self.play(
-            ShowCreationThenFadeOut(elbow_circle),
-        )
+        self.play(ShowCreationThenFadeOut(elbow_circle), )
 
         # Show circular arc
         pythag_eq = TexMobject("x^2 + y^2", "=", "1", tex_to_color_map=t2c)
@@ -710,9 +715,7 @@ class TriangleModuliSpace(Scene):
         )
         arc.replace(box)
 
-        self.play(
-            FadeInFrom(pythag_eq, UP),
-        )
+        self.play(FadeInFrom(pythag_eq, UP), )
         self.add(arc, arc)
         self.play(ShowCreation(arc))
         self.wait()
@@ -751,10 +754,13 @@ class TriangleModuliSpace(Scene):
         lt = TexMobject("<").replace(eq)
         lt.set_color(self.obtuse_color)
 
-        self.add(acute_region, coord_label, x_line, y_line, xpy1_line, x_eq_y_line, dot)
+        self.add(acute_region, coord_label, x_line, y_line, xpy1_line,
+                 x_eq_y_line, dot)
         self.play(
-            tip_tracker.shift, 0.5 * UP,
-            coord_label.set_opacity, 0,
+            tip_tracker.shift,
+            0.5 * UP,
+            coord_label.set_opacity,
+            0,
             FadeOut(elbow),
             FadeIn(acute_region),
             FadeOutAndShift(right_words, UP),
@@ -765,9 +771,11 @@ class TriangleModuliSpace(Scene):
         self.wait()
         self.play(tip_tracker.shift, 0.5 * RIGHT)
         self.wait()
-        self.add(obtuse_region, coord_label, x_line, y_line, xpy1_line, x_eq_y_line, dot)
+        self.add(obtuse_region, coord_label, x_line, y_line, xpy1_line,
+                 x_eq_y_line, dot)
         self.play(
-            tip_tracker.shift, 1.5 * DOWN,
+            tip_tracker.shift,
+            1.5 * DOWN,
             FadeIn(obtuse_region),
             FadeOutAndShift(acute_words, DOWN),
             FadeOutAndShift(gt, DOWN),
@@ -789,17 +797,16 @@ class TriangleModuliSpace(Scene):
             FadeOut(lt),
         )
         self.play(
-            tip_tracker.move_to, equilateral_point + 0.25 * DL,
+            tip_tracker.move_to,
+            equilateral_point + 0.25 * DL,
             path_arc=30 * DEGREES,
             run_time=8,
         )
 
     #
     def get_triangles_and_classes(self):
-        original_triangles = VGroup(*[
-            self.get_random_triangle()
-            for x in range(5)
-        ])
+        original_triangles = VGroup(
+            *[self.get_random_triangle() for x in range(5)])
         original_triangles.submobjects[4] = self.get_random_triangle()  # Hack
         all_triangles = VGroup()
         tri_classes = VGroup()
@@ -888,7 +895,7 @@ class TriangleModuliSpace(Scene):
             return self.obtuse_color
         elif x**2 + y**2 > 1:
             return self.acute_color
-        assert(False)  # Should not get here
+        assert (False)  # Should not get here
 
     def get_triangle_xy(self, triangle):
         A, B, C = triangle.get_start_anchors()[:3]

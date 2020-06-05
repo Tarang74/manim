@@ -16,12 +16,10 @@ class ReconfigurableScene(Scene):
         self.states = []
         self.num_recursions = 0
 
-    def transition_to_alt_config(
-        self,
-        return_to_original_configuration=True,
-        transformation_kwargs=None,
-        **new_config
-    ):
+    def transition_to_alt_config(self,
+                                 return_to_original_configuration=True,
+                                 transformation_kwargs=None,
+                                 **new_config):
         if transformation_kwargs is None:
             transformation_kwargs = {}
         original_state = self.get_state()
@@ -29,30 +27,22 @@ class ReconfigurableScene(Scene):
         self.states.append(state_copy)
         if not self.allow_recursion:
             return
-        alt_scene = self.__class__(
-            skip_animations=True,
-            allow_recursion=False,
-            **new_config
-        )
+        alt_scene = self.__class__(skip_animations=True,
+                                   allow_recursion=False,
+                                   **new_config)
         alt_state = alt_scene.states[len(self.states) - 1]
 
         if return_to_original_configuration:
             self.clear()
-            self.transition_between_states(
-                state_copy, alt_state,
-                **transformation_kwargs
-            )
-            self.transition_between_states(
-                state_copy, original_state,
-                **transformation_kwargs
-            )
+            self.transition_between_states(state_copy, alt_state,
+                                           **transformation_kwargs)
+            self.transition_between_states(state_copy, original_state,
+                                           **transformation_kwargs)
             self.clear()
             self.add(*original_state)
         else:
-            self.transition_between_states(
-                original_state, alt_state,
-                **transformation_kwargs
-            )
+            self.transition_between_states(original_state, alt_state,
+                                           **transformation_kwargs)
             self.__dict__.update(new_config)
 
     def get_state(self):

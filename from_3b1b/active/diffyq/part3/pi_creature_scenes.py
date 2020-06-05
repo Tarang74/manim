@@ -7,7 +7,8 @@ class IveHeardOfThis(TeacherStudentsScene):
         point = VectorizedPoint()
         point.move_to(3 * RIGHT + 2 * UP)
         self.student_says(
-            "I've heard\\\\", "of this!",
+            "I've heard\\\\",
+            "of this!",
             student_index=1,
             target_mode="hooray",
             bubble_kwargs={
@@ -17,14 +18,15 @@ class IveHeardOfThis(TeacherStudentsScene):
             },
             run_time=1,
         )
-        self.change_student_modes(
-            "thinking", "hooray", "thinking",
-            look_at_arg=point,
-            added_anims=[self.teacher.change, "happy"]
-        )
+        self.change_student_modes("thinking",
+                                  "hooray",
+                                  "thinking",
+                                  look_at_arg=point,
+                                  added_anims=[self.teacher.change, "happy"])
         self.wait(3)
         self.student_says(
-            "But who\\\\", "cares?",
+            "But who\\\\",
+            "cares?",
             student_index=1,
             target_mode="maybe",
             bubble_kwargs={
@@ -34,11 +36,11 @@ class IveHeardOfThis(TeacherStudentsScene):
             },
             run_time=1,
         )
-        self.change_student_modes(
-            "pondering", "maybe", "pondering",
-            look_at_arg=point,
-            added_anims=[self.teacher.change, "guilty"]
-        )
+        self.change_student_modes("pondering",
+                                  "maybe",
+                                  "pondering",
+                                  look_at_arg=point,
+                                  added_anims=[self.teacher.change, "guilty"])
         self.wait(5)
 
 
@@ -86,38 +88,30 @@ class InFouriersShoes(PiCreatureScene, WriteHeatEquationTemplate):
         )
         self.play(
             Animation(triangle),
-            ApplyMethod(
-                time_line.shift,
-                time_line.n2p(2019) - time_line.n2p(1822),
-                run_time=5
-            ),
+            ApplyMethod(time_line.shift,
+                        time_line.n2p(2019) - time_line.n2p(1822),
+                        run_time=5),
         )
         self.wait()
 
 
 class SineCurveIsUnrealistic(TeacherStudentsScene):
     def construct(self):
-        self.student_says(
-            "But that would\\\\never happen!",
-            student_index=1,
-            bubble_kwargs={
-                "direction": RIGHT,
-                "height": 3,
-                "width": 4,
-            },
-            target_mode="angry"
-        )
-        self.change_student_modes(
-            "guilty", "angry", "hesitant",
-            added_anims=[
-                self.teacher.change, "tease"
-            ]
-        )
+        self.student_says("But that would\\\\never happen!",
+                          student_index=1,
+                          bubble_kwargs={
+                              "direction": RIGHT,
+                              "height": 3,
+                              "width": 4,
+                          },
+                          target_mode="angry")
+        self.change_student_modes("guilty",
+                                  "angry",
+                                  "hesitant",
+                                  added_anims=[self.teacher.change, "tease"])
         self.wait(3)
-        self.play(
-            RemovePiCreatureBubble(self.students[1]),
-            self.teacher.change, "raise_right_hand"
-        )
+        self.play(RemovePiCreatureBubble(self.students[1]),
+                  self.teacher.change, "raise_right_hand")
         self.change_all_student_modes(
             "pondering",
             look_at_arg=3 * UP,
@@ -127,49 +121,31 @@ class SineCurveIsUnrealistic(TeacherStudentsScene):
 
 class IfOnly(TeacherStudentsScene):
     def construct(self):
-        self.teacher_says(
-            "If only!",
-            target_mode="angry"
-        )
-        self.change_all_student_modes(
-            "confused",
-            look_at_arg=self.screen
-        )
+        self.teacher_says("If only!", target_mode="angry")
+        self.change_all_student_modes("confused", look_at_arg=self.screen)
         self.wait(3)
 
 
 class SoWeGotNowhere(TeacherStudentsScene):
     def construct(self):
-        self.student_says(
-            "So we've gotten\\\\nowhere!",
-            target_mode="angry",
-            added_anims=[
-                self.teacher.change, "guilty"
-            ]
-        )
+        self.student_says("So we've gotten\\\\nowhere!",
+                          target_mode="angry",
+                          added_anims=[self.teacher.change, "guilty"])
         self.change_all_student_modes("angry")
         self.wait()
-        text = TexMobject(
-            "&\\text{Actually,}\\\\",
-            "&\\sin\\left({x}\\right)"
-            "e^{-\\alpha {t}}\\\\",
-            "&\\text{isn't far off.}",
-            tex_to_color_map={
-                "{x}": GREEN,
-                "{t}": YELLOW,
-            }
-        )
+        text = TexMobject("&\\text{Actually,}\\\\", "&\\sin\\left({x}\\right)"
+                          "e^{-\\alpha {t}}\\\\",
+                          "&\\text{isn't far off.}",
+                          tex_to_color_map={
+                              "{x}": GREEN,
+                              "{t}": YELLOW,
+                          })
         text.scale(0.8)
-        self.teacher_says(
-            text,
-            content_introduction_class=FadeIn,
-            bubble_kwargs={
-                "width": 4,
-                "height": 3.5,
-            }
-        )
-        self.change_all_student_modes(
-            "pondering",
-            look_at_arg=self.screen
-        )
+        self.teacher_says(text,
+                          content_introduction_class=FadeIn,
+                          bubble_kwargs={
+                              "width": 4,
+                              "height": 3.5,
+                          })
+        self.change_all_student_modes("pondering", look_at_arg=self.screen)
         self.wait(3)

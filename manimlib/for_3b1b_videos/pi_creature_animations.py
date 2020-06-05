@@ -15,9 +15,7 @@ from manimlib.utils.rate_functions import there_and_back
 
 
 class Blink(ApplyMethod):
-    CONFIG = {
-        "rate_func": squish_rate_func(there_and_back)
-    }
+    CONFIG = {"rate_func": squish_rate_func(there_and_back)}
 
     def __init__(self, pi_creature, **kwargs):
         ApplyMethod.__init__(self, pi_creature.blink, **kwargs)
@@ -38,11 +36,9 @@ class PiCreatureBubbleIntroduction(AnimationGroup):
 
     def __init__(self, pi_creature, *content, **kwargs):
         digest_config(self, kwargs)
-        bubble = pi_creature.get_bubble(
-            *content,
-            bubble_class=self.bubble_class,
-            **self.bubble_kwargs
-        )
+        bubble = pi_creature.get_bubble(*content,
+                                        bubble_class=self.bubble_class,
+                                        **self.bubble_kwargs)
         Group(bubble, bubble.content).shift_onto_screen()
 
         pi_creature.generate_target()
@@ -52,15 +48,11 @@ class PiCreatureBubbleIntroduction(AnimationGroup):
 
         change_mode = MoveToTarget(pi_creature, **self.change_mode_kwargs)
         bubble_creation = self.bubble_creation_class(
-            bubble, **self.bubble_creation_kwargs
-        )
+            bubble, **self.bubble_creation_kwargs)
         content_introduction = self.content_introduction_class(
-            bubble.content, **self.content_introduction_kwargs
-        )
-        AnimationGroup.__init__(
-            self, change_mode, bubble_creation, content_introduction,
-            **kwargs
-        )
+            bubble.content, **self.content_introduction_kwargs)
+        AnimationGroup.__init__(self, change_mode, bubble_creation,
+                                content_introduction, **kwargs)
 
 
 class PiCreatureSays(PiCreatureBubbleIntroduction):
@@ -107,7 +99,8 @@ class FlashThroughClass(Animation):
 
     def __init__(self, mobject, mode="linear", **kwargs):
         if not isinstance(mobject, PiCreatureClass):
-            raise Exception("FlashThroughClass mobject must be a PiCreatureClass")
+            raise Exception(
+                "FlashThroughClass mobject must be a PiCreatureClass")
         digest_config(self, kwargs)
         self.indices = list(range(mobject.height * mobject.width))
         if mode == "random":

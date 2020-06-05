@@ -19,10 +19,7 @@ class SomeOfYouWatching(TeacherStudentsScene):
         for student in self.students:
             student.change("pondering", screen)
 
-        self.student_says(
-            "Well...yeah",
-            target_mode="tease"
-        )
+        self.student_says("Well...yeah", target_mode="tease")
         self.wait(3)
 
 
@@ -36,16 +33,12 @@ class FormulasAreLies(PiCreatureScene):
             "\\sqrt{\\,": WHITE,
         }
         kwargs = {"tex_to_color_map": t2c}
-        period_eq = TexMobject(
-            "\\text{Period} = 2\\pi \\sqrt{\\,{L} / {g}}",
-            **kwargs
-        )
+        period_eq = TexMobject("\\text{Period} = 2\\pi \\sqrt{\\,{L} / {g}}",
+                               **kwargs)
         theta_eq = TexMobject(
             "\\theta(t) = \\theta_0 \\cos\\left("
             "\\sqrt{\\,{L} / {g}} \\cdot t"
-            "\\right)",
-            **kwargs
-        )
+            "\\right)", **kwargs)
         equations = VGroup(theta_eq, period_eq)
         equations.arrange(DOWN, buff=LARGE_BUFF)
 
@@ -74,13 +67,10 @@ class FormulasAreLies(PiCreatureScene):
         you.change("pondering", period_eq)
         self.wait()
         theta_eq.remove(*theta_eq.sqrt_part)
-        self.play(
-            TransformFromCopy(
-                period_eq.sqrt_part,
-                theta_eq.sqrt_part,
-            ),
-            FadeIn(theta_eq)
-        )
+        self.play(TransformFromCopy(
+            period_eq.sqrt_part,
+            theta_eq.sqrt_part,
+        ), FadeIn(theta_eq))
         theta_eq.add(*theta_eq.sqrt_part)
         self.play(
             FadeInFrom(theta0_words, LEFT),
@@ -90,10 +80,12 @@ class FormulasAreLies(PiCreatureScene):
         self.play(you.change, "confused")
         self.wait()
         self.play(
-            you.change, "angry",
+            you.change,
+            "angry",
             ShowCreation(bubble),
             FadeInFromPoint(bubble.content, you.mouth),
-            equations.to_edge, LEFT,
+            equations.to_edge,
+            LEFT,
             FadeOut(arrow),
             FadeOut(theta0_words),
         )
@@ -114,20 +106,14 @@ class SoWhatIsThetaThen(TeacherStudentsScene):
         ode.to_corner(UL)
         self.add(ode)
 
-        self.student_says(
-            "Okay, but then\\\\"
-            "what \\emph{is} $\\theta(t)$?"
-        )
+        self.student_says("Okay, but then\\\\" "what \\emph{is} $\\theta(t)$?")
         self.wait()
         self.play(self.teacher.change, "happy")
         self.wait(2)
         self.teacher_says(
             "First, you must appreciate\\\\"
             "a deep truth...",
-            added_anims=[self.get_student_changes(
-                *3 * ["confused"]
-            )]
-        )
+            added_anims=[self.get_student_changes(*3 * ["confused"])])
         self.wait(4)
 
 
@@ -141,20 +127,26 @@ class ProveTeacherWrong(TeacherStudentsScene):
             }
         }
         func = TexMobject(
-            "{\\theta}(t)", "=",
-            "\\theta_0", "\\cos(\\sqrt{g / L} \\cdot t)",
+            "{\\theta}(t)",
+            "=",
+            "\\theta_0",
+            "\\cos(\\sqrt{g / L} \\cdot t)",
             **tex_config,
         )
         d_func = TexMobject(
-            "{\\dot\\theta}(t)", "=",
+            "{\\dot\\theta}(t)",
+            "=",
             "-\\left(\\sqrt{g / L}\\right)",
-            "\\theta_0", "\\sin(\\sqrt{g / L} \\cdot t)",
+            "\\theta_0",
+            "\\sin(\\sqrt{g / L} \\cdot t)",
             **tex_config,
         )
         dd_func = TexMobject(
-            "{\\ddot\\theta}(t)", "=",
+            "{\\ddot\\theta}(t)",
+            "=",
             "-\\left(g / L\\right)",
-            "\\theta_0", "\\cos(\\sqrt{g / L} \\cdot t)",
+            "\\theta_0",
+            "\\cos(\\sqrt{g / L} \\cdot t)",
             **tex_config,
         )
         # ode = TexMobject(
@@ -186,32 +178,27 @@ class ProveTeacherWrong(TeacherStudentsScene):
             path_arc=PI / 2,
         )
         q_marks = VGroup(*[
-            TexMobject("?").scale(1.5).next_to(
-                arrow.point_from_proportion(a),
-                UP
-            )
-            for a in np.linspace(0.2, 0.8, 5)
+            TexMobject("?").scale(1.5).next_to(arrow.point_from_proportion(
+                a), UP) for a in np.linspace(0.2, 0.8, 5)
         ])
-        cycle_animation(VFadeInThenOut(
-            q_marks,
-            lag_ratio=0.2,
-            run_time=4,
-            rate_func=squish_rate_func(smooth, 0, 0.5)
-        ))
+        cycle_animation(
+            VFadeInThenOut(q_marks,
+                           lag_ratio=0.2,
+                           run_time=4,
+                           rate_func=squish_rate_func(smooth, 0, 0.5)))
 
         self.play(
-            func.next_to, group, UP,
-            LaggedStartMap(
-                FadeInFrom, group,
-                lambda m: (m, UP)
-            ),
-            teacher.change, "guilty",
-            you.change, "sassy",
+            func.next_to,
+            group,
+            UP,
+            LaggedStartMap(FadeInFrom, group, lambda m: (m, UP)),
+            teacher.change,
+            "guilty",
+            you.change,
+            "sassy",
         )
 
-        rect = SurroundingRectangle(
-            VGroup(group, func)
-        )
+        rect = SurroundingRectangle(VGroup(group, func))
         dashed_rect = DashedVMobject(rect, num_dashes=75)
         animated_rect = AnimatedBoundary(dashed_rect, cycle_rate=1)
 
@@ -220,13 +207,10 @@ class ProveTeacherWrong(TeacherStudentsScene):
         self.play(
             ShowCreation(arrow),
             # FadeInFromDown(q_mark),
-            self.get_student_changes("confused", "confused")
-        )
+            self.get_student_changes("confused", "confused"))
         self.wait(4)
-        self.change_student_modes(
-            *3 * ["pondering"],
-            self.teacher.change, "maybe"
-        )
+        self.change_student_modes(*3 * ["pondering"], self.teacher.change,
+                                  "maybe")
         self.wait(8)
 
 
@@ -261,20 +245,14 @@ class PhysicistPhaseSpace(PiCreatureScene):
 
         self.add(name, physy)
 
-        self.play(
-            physy.change, "angry",
-            Write(axes),
-            FadeInFromDown(title)
-        )
+        self.play(physy.change, "angry", Write(axes), FadeInFromDown(title))
         self.wait(2)
-        self.play(
-            GrowFromPoint(x_label, physy.get_corner(UR)),
-            physy.change, "raise_right_hand",
-            axes.x_axis.get_right()
-        )
+        self.play(GrowFromPoint(x_label, physy.get_corner(UR)), physy.change,
+                  "raise_right_hand", axes.x_axis.get_right())
         self.play(
             GrowFromPoint(y_label, physy.get_corner(UR)),
-            physy.look_at, axes.y_axis.get_top(),
+            physy.look_at,
+            axes.y_axis.get_top(),
         )
         self.wait(3)
 
@@ -297,17 +275,15 @@ class AskAboutActuallySolving(TeacherStudentsScene):
             added_anims=[morty.change, "thinking"],
         )
         self.change_student_modes(
-            "confused", "sassy", "confused",
+            "confused",
+            "sassy",
+            "confused",
             look_at_arg=ode,
         )
         self.wait()
-        self.teacher_says(
-            "What do you mean\\\\ by ``solve''?",
-            target_mode="speaking",
-            added_anims=[self.get_student_changes(
-                *3 * ["erm"]
-            )]
-        )
+        self.teacher_says("What do you mean\\\\ by ``solve''?",
+                          target_mode="speaking",
+                          added_anims=[self.get_student_changes(*3 * ["erm"])])
         self.play(self.students[1].change, "angry")
         self.wait(3)
 
@@ -325,13 +301,11 @@ class HungerForExactness(TeacherStudentsScene):
         self.add(ode)
 
         proposed_solution = TexMobject(
-            "\\theta_0\\cos((\\sqrt{g/L})t)e^{-\\mu t}"
-        )
-        proposed_solution.next_to(
-            you.get_corner(UL), UP, buff=0.7
-        )
+            "\\theta_0\\cos((\\sqrt{g/L})t)e^{-\\mu t}")
+        proposed_solution.next_to(you.get_corner(UL), UP, buff=0.7)
         proposed_solution_rect = SurroundingRectangle(
-            proposed_solution, buff=MED_SMALL_BUFF,
+            proposed_solution,
+            buff=MED_SMALL_BUFF,
         )
         proposed_solution_rect.set_color(BLUE)
         proposed_solution_rect.round_corners()
@@ -342,38 +316,26 @@ class HungerForExactness(TeacherStudentsScene):
                 \\frac{\\sqrt{2g + Lc_1} (t + c_2)}{2\\sqrt{L}},
                 \\frac{4g}{2g + Lc_1}
             \\right)
-            """,
-        )
+            """, )
         solution_p1.to_corner(UL)
         solution_p2 = TexMobject(
-            "c_1, c_2 = \\text{Constants depending on initial conditions}"
-        )
+            "c_1, c_2 = \\text{Constants depending on initial conditions}")
         solution_p2.set_color(LIGHT_GREY)
         solution_p2.scale(0.75)
-        solution_p3 = TexMobject(
-            """
+        solution_p3 = TexMobject("""
             \\text{am}(u, k) =
             \\int_0^u \\text{dn}(v, k)\\,dv
-            """
-        )
-        solution_p3.name = TextMobject(
-            "(Jacobi amplitude function)"
-        )
-        solution_p4 = TexMobject(
-            """
+            """)
+        solution_p3.name = TextMobject("(Jacobi amplitude function)")
+        solution_p4 = TexMobject("""
             \\text{dn}(u, k) =
             \\sqrt{1 - k^2 \\sin^2(\\phi)}
-            """
-        )
-        solution_p4.name = TextMobject(
-            "(Jacobi elliptic function)"
-        )
+            """)
+        solution_p4.name = TextMobject("(Jacobi elliptic function)")
         solution_p5 = TextMobject("Where $\\phi$ satisfies")
-        solution_p6 = TexMobject(
-            """
+        solution_p6 = TexMobject("""
             u = \\int_0^\\phi \\frac{dt}{\\sqrt{1 - k^2 \\sin^2(t)}}
-            """
-        )
+            """)
 
         solution = VGroup(
             solution_p1,
@@ -413,33 +375,41 @@ class HungerForExactness(TeacherStudentsScene):
                 target_mode="raise_left_hand",
                 look_at_arg=proposed_solution,
             ),
-            teacher.change, "pondering",
-            students[0].change, "pondering",
-            students[1].change, "hesitant",
+            teacher.change,
+            "pondering",
+            students[0].change,
+            "pondering",
+            students[1].change,
+            "hesitant",
         )
         self.play(ShowCreation(proposed_solution_rect))
         self.play(
-            proposed_solution.shift, 3 * RIGHT,
-            proposed_solution_rect.shift, 3 * RIGHT,
-            you.change, "raise_right_hand", teacher.eyes,
+            proposed_solution.shift,
+            3 * RIGHT,
+            proposed_solution_rect.shift,
+            3 * RIGHT,
+            you.change,
+            "raise_right_hand",
+            teacher.eyes,
         )
         self.wait(3)
 
-        self.play(
-            FadeOut(proposed_solution),
-            FadeOut(proposed_solution_rect),
-            ode.move_to, self.hold_up_spot, DOWN,
-            ode.shift, LEFT,
-            teacher.change, "raise_right_hand",
-            self.get_student_changes(*3 * ["pondering"])
-        )
+        self.play(FadeOut(proposed_solution), FadeOut(proposed_solution_rect),
+                  ode.move_to, self.hold_up_spot, DOWN, ode.shift, LEFT,
+                  teacher.change, "raise_right_hand",
+                  self.get_student_changes(*3 * ["pondering"]))
         self.wait()
         ode.save_state()
         self.play(
-            left_part.move_to, friction_part, RIGHT,
-            left_part.match_y, left_part,
-            friction_part.to_corner, DR,
-            friction_part.fade, 0.5,
+            left_part.move_to,
+            friction_part,
+            RIGHT,
+            left_part.match_y,
+            left_part,
+            friction_part.to_corner,
+            DR,
+            friction_part.fade,
+            0.5,
         )
         self.wait()
 
@@ -450,21 +420,19 @@ class HungerForExactness(TeacherStudentsScene):
                 self.get_student_changes(
                     *3 * [mode],
                     look_at_arg=part,
-                )
-            )
+                ))
             self.wait()
         self.wait(3)
         self.change_student_modes("tired", "sad", "concerned_musician")
         self.wait(4)
         self.look_at(solution)
         self.wait(5)
-        self.play(
-            FadeOutAndShift(solution, 2 * LEFT),
-            Restore(ode),
-            self.get_student_changes(
-                "sick", "angry", "tired",
-            )
-        )
+        self.play(FadeOutAndShift(solution, 2 * LEFT), Restore(ode),
+                  self.get_student_changes(
+                      "sick",
+                      "angry",
+                      "tired",
+                  ))
         self.wait(3)
 
         mystery = TexMobject(
@@ -474,14 +442,9 @@ class HungerForExactness(TeacherStudentsScene):
         mystery.scale(2)
         mystery.to_edge(UP)
         mystery.set_stroke(width=0, background=True)
-        mystery_boundary = AnimatedBoundary(
-            mystery, stroke_width=1
-        )
+        mystery_boundary = AnimatedBoundary(mystery, stroke_width=1)
 
-        self.play(
-            FadeInFromDown(mystery),
-            self.teacher.change, "pondering"
-        )
+        self.play(FadeInFromDown(mystery), self.teacher.change, "pondering")
         self.add(mystery_boundary, mystery)
         self.change_all_student_modes("sad")
         self.look_at(mystery)
@@ -495,12 +458,12 @@ class HungerForExactness(TeacherStudentsScene):
             target_mode="speaking",
             added_anims=[
                 FadeOut(mystery),
-                FadeOut(mystery_boundary),
-                ode.to_corner, UR
-            ]
-        )
+                FadeOut(mystery_boundary), ode.to_corner, UR
+            ])
         self.change_student_modes(
-            "hooray", "sassy", "sassy",
+            "hooray",
+            "sassy",
+            "sassy",
             look_at_arg=students[0].eyes.get_corner(UR),
         )
         self.wait(2)
@@ -509,7 +472,5 @@ class HungerForExactness(TeacherStudentsScene):
 class ItGetsWorse(TeacherStudentsScene):
     def construct(self):
         self.teacher_says("It gets\\\\worse")
-        self.change_student_modes(
-            "hesitant", "pleading", "erm"
-        )
+        self.change_student_modes("hesitant", "pleading", "erm")
         self.wait(5)

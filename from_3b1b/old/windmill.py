@@ -8,7 +8,9 @@ class IntroduceIMO(Scene):
         "use_real_images": True,
         # "use_real_images": False,
         "include_labels": False,
-        "camera_config": {"background_color": DARKER_GREY},
+        "camera_config": {
+            "background_color": DARKER_GREY
+        },
         "random_seed": 6,
         "year": 2019,
         "n_flag_rows": 10,
@@ -24,7 +26,9 @@ class IntroduceIMO(Scene):
 
     def add_title(self):
         title = TextMobject(
-            "International ", "Mathematical ", "Olympiad",
+            "International ",
+            "Mathematical ",
+            "Olympiad",
         )
         title.scale(1.25)
         logo = ImageMobject("imo_logo")
@@ -47,11 +51,11 @@ class IntroduceIMO(Scene):
 
         self.play(
             LaggedStartMap(
-                FadeInFromDown, random_flags,
+                FadeInFromDown,
+                random_flags,
                 run_time=2,
                 lag_ratio=0.03,
-            )
-        )
+            ))
         self.remove(random_flags)
         self.add(flags)
         self.wait()
@@ -82,22 +86,24 @@ class IntroduceIMO(Scene):
         student_groups.target.match_y(flags)
         student_groups.target.to_edge(RIGHT, buff=0.25)
 
-        self.play(LaggedStart(
-            *[
-                ReplacementTransform(
-                    student.preimage, student
-                )
-                for student in all_students
-            ],
-            run_time=2,
-            lag_ratio=0.2,
-        ))
+        self.play(
+            LaggedStart(
+                *[
+                    ReplacementTransform(student.preimage, student)
+                    for student in all_students
+                ],
+                run_time=2,
+                lag_ratio=0.2,
+            ))
         self.wait()
         if self.reorganize_students:
             self.play(
                 MoveToTarget(student_groups),
-                flags.space_out_submobjects, 0.75,
-                flags.to_edge, LEFT, MED_SMALL_BUFF,
+                flags.space_out_submobjects,
+                0.75,
+                flags.to_edge,
+                LEFT,
+                MED_SMALL_BUFF,
             )
             self.wait()
 
@@ -141,7 +147,8 @@ class IntroduceIMO(Scene):
         old_height = us_flag.get_height()
         us_flag.label.set_width(0.8 * us_flag.get_width())
         us_flag.label.next_to(
-            us_flag, DOWN,
+            us_flag,
+            DOWN,
             buff=0.2 * us_flag.get_height(),
         )
         us_flag.label.set_opacity(0)
@@ -154,15 +161,12 @@ class IntroduceIMO(Scene):
         self.remove(us_flag)
         self.play(
             LaggedStart(
-                *[
-                    FadeOutAndShift(flag, DOWN)
-                    for flag in random_flags
-                ],
+                *[FadeOutAndShift(flag, DOWN) for flag in random_flags],
                 lag_ratio=0.05,
-                run_time=1.5
-            ),
+                run_time=1.5),
             MoveToTarget(us_flag),
-            student_groups[1:].fade, 0.9,
+            student_groups[1:].fade,
+            0.9,
         )
         self.wait()
 
@@ -193,29 +197,25 @@ class IntroduceIMO(Scene):
             countries_with_counts = json.load(fp)
         with open(os.path.join("assets", "country_codes.json")) as fp:
             country_codes = json.load(fp)
-            country_to_code2 = dict([
-                (country.lower(), code2.lower())
-                for country, code2, code3 in country_codes
-            ])
-            country_to_code3 = dict([
-                (country.lower(), code3.lower())
-                for country, code2, code3 in country_codes
-            ])
+            country_to_code2 = dict([(country.lower(), code2.lower())
+                                     for country, code2, code3 in country_codes
+                                     ])
+            country_to_code3 = dict([(country.lower(), code3.lower())
+                                     for country, code2, code3 in country_codes
+                                     ])
 
         images = Group()
         for country, count in countries_with_counts:
             country = country.lower()
 
-            alt_names = [
-                ("united states of america", "united states"),
-                ("people's republic of china", "china"),
-                ("macau", "macao"),
-                ("syria", "syrian arab republic"),
-                ("north macedonia", "macedonia, the former yugoslav republic of"),
-                ("tanzania", "united republic of tanzania"),
-                ("vietnam", "viet nam"),
-                ("ivory coast", "cote d'ivoire")
-            ]
+            alt_names = [("united states of america", "united states"),
+                         ("people's republic of china", "china"),
+                         ("macau", "macao"), ("syria", "syrian arab republic"),
+                         ("north macedonia",
+                          "macedonia, the former yugoslav republic of"),
+                         ("tanzania", "united republic of tanzania"),
+                         ("vietnam", "viet nam"),
+                         ("ivory coast", "cote d'ivoire")]
             for n1, n2 in alt_names:
                 if country == n1:
                     country = n2
@@ -228,8 +228,7 @@ class IntroduceIMO(Scene):
                 image = ImageMobject(os.path.join("flags", short_code))
                 image.set_width(1)
                 label = VGroup(*[
-                    TextMobject(l)
-                    for l in country_to_code3[country].upper()
+                    TextMobject(l) for l in country_to_code3[country].upper()
                 ])
                 label.arrange(RIGHT, buff=0.05, aligned_edge=DOWN)
                 label.set_height(0.25)
@@ -289,8 +288,11 @@ class ShowTinyTao(IntroduceIMO):
 
         self.play(image.set_opacity, 1)
         self.play(
-            image.set_height, 5,
-            image.to_corner, DR, {"buff": MED_SMALL_BUFF},
+            image.set_height,
+            5,
+            image.to_corner,
+            DR,
+            {"buff": MED_SMALL_BUFF},
         )
         self.wait()
         self.play(FadeOut(image))
@@ -355,8 +357,8 @@ class ShowTest(Scene):
             score.to_edge(RIGHT)
             scores.add(score)
             score[0].add_updater(lambda m: m.set_color(
-                interpolate_color(RED, GREEN, m.get_value() / 7)
-            ))
+                interpolate_color(RED, GREEN,
+                                  m.get_value() / 7)))
 
         # Introduce test
         self.play(
@@ -364,8 +366,7 @@ class ShowTest(Scene):
                 FadeInFrom(test[0], 2 * RIGHT),
                 FadeInFrom(test[1], 2 * LEFT),
                 lag_ratio=0.3,
-            )
-        )
+            ))
         self.wait()
         self.play(
             MoveToTarget(test, lag_ratio=0.2),
@@ -386,23 +387,16 @@ class ShowTest(Scene):
             run_time=1,
         )
         self.play(
-            LaggedStart(*[
-                FadeInFrom(word, LEFT)
-                for word in proof_words
-            ]),
-            LaggedStart(*[
-                GrowArrow(arrow)
-                for arrow in proof_arrows
-            ]),
+            LaggedStart(*[FadeInFrom(word, LEFT) for word in proof_words]),
+            LaggedStart(*[GrowArrow(arrow) for arrow in proof_arrows]),
         )
         self.wait()
         self.play(FadeIn(scores))
         self.play(
-            LaggedStart(*[
-                ChangeDecimalToValue(score[0], 7)
-                for score in scores
-            ], lag_ratio=0.2, rate_func=rush_into)
-        )
+            LaggedStart(
+                *[ChangeDecimalToValue(score[0], 7) for score in scores],
+                lag_ratio=0.2,
+                rate_func=rush_into))
         self.wait()
 
         self.scores = scores
@@ -442,8 +436,7 @@ class ShowTest(Scene):
 
 
 class USProcessAlt(IntroduceIMO):
-    CONFIG = {
-    }
+    CONFIG = {}
 
     def construct(self):
         self.add_flag_and_label()
@@ -486,14 +479,11 @@ class USProcessAlt(IntroduceIMO):
                 hours=4.5,
                 n_students=500,
             ),
-            self.get_test(
-                ["Mathematical ", "Olympiad ", "Program"],
-                n_questions=None,
-                time_string="3 weeks",
-                hours=None,
-                n_students=60
-            )
-        )
+            self.get_test(["Mathematical ", "Olympiad ", "Program"],
+                          n_questions=None,
+                          time_string="3 weeks",
+                          hours=None,
+                          n_students=60))
         amc, aime, usamo, mop = tests
         arrows = VGroup()
 
@@ -520,16 +510,12 @@ class USProcessAlt(IntroduceIMO):
                 int_mob = test.nq_label[0]
                 n = int_mob.get_value()
                 int_mob.set_value(0)
-                self.play(
-                    ChangeDecimalToValue(int_mob, n),
-                    FadeIn(test.nq_label[1:])
-                )
+                self.play(ChangeDecimalToValue(int_mob, n),
+                          FadeIn(test.nq_label[1:]))
             else:
                 self.play(FadeIn(test.nq_label))
 
-            self.play(
-                FadeIn(test.t_label)
-            )
+            self.play(FadeIn(test.t_label))
             self.wait()
 
             test.generate_target()
@@ -550,12 +536,11 @@ class USProcessAlt(IntroduceIMO):
         self.revert_to_original_skipping_status()
         self.play(
             LaggedStartMap(
-                FadeInFrom, tests,
+                FadeInFrom,
+                tests,
                 lambda m: (m, LEFT),
             ),
-            LaggedStartMap(
-                GrowArrow, arrows[:-1]
-            ),
+            LaggedStartMap(GrowArrow, arrows[:-1]),
             lag_ratio=0.4,
         )
         self.wait()
@@ -573,10 +558,7 @@ class USProcessAlt(IntroduceIMO):
         group.to_corner(UR)
         group.shift(2 * LEFT)
 
-        students = VGroup(*[
-            PiCreature()
-            for x in range(6)
-        ])
+        students = VGroup(*[PiCreature() for x in range(6)])
         students.arrange_in_grid(n_cols=3, buff=LARGE_BUFF)
         students.set_height(2)
         students.next_to(group, DOWN)
@@ -590,17 +572,15 @@ class USProcessAlt(IntroduceIMO):
         self.play(
             FadeInFromDown(group),
             LaggedStartMap(
-                Restore, students,
+                Restore,
+                students,
                 run_time=3,
                 lag_ratio=0.3,
-            )
-        )
+            ))
         self.play(
             LaggedStart(*[
-                ApplyMethod(student.change, "hooray")
-                for student in students
-            ])
-        )
+                ApplyMethod(student.change, "hooray") for student in students
+            ]))
         for x in range(3):
             self.play(Blink(random.choice(students)))
         self.wait()
@@ -628,17 +608,15 @@ class USProcessAlt(IntroduceIMO):
         self.remove(name)
         self.add(short_name)
 
-    def get_test(self, name_parts, n_questions, time_string, hours, n_students):
+    def get_test(self, name_parts, n_questions, time_string, hours,
+                 n_students):
         T_COLOR = GREEN_B
         Q_COLOR = YELLOW
 
         name = TextMobject(*name_parts)
         short_name = TextMobject(*[np[0] for np in name_parts])
         if n_questions:
-            nq_label = VGroup(
-                Integer(n_questions),
-                TextMobject("questions")
-            )
+            nq_label = VGroup(Integer(n_questions), TextMobject("questions"))
             nq_label.arrange(RIGHT)
         else:
             nq_label = TextMobject("Lots of training")
@@ -655,12 +633,10 @@ class USProcessAlt(IntroduceIMO):
         clock.minute_hand.set_opacity(0)
         clock.set_stroke(WHITE, 2)
         if hours:
-            sector = Sector(
-                start_angle=TAU / 4,
-                angle=-TAU * (hours / 12),
-                outer_radius=clock.get_width() / 2,
-                arc_center=clock.get_center()
-            )
+            sector = Sector(start_angle=TAU / 4,
+                            angle=-TAU * (hours / 12),
+                            outer_radius=clock.get_width() / 2,
+                            arc_center=clock.get_center())
             sector.set_fill(T_COLOR, 0.5)
             sector.set_stroke(T_COLOR, 2)
             clock.add(sector)
@@ -712,9 +688,12 @@ class USProcessAlt(IntroduceIMO):
 
 class Describe2011IMO(IntroduceIMO):
     CONFIG = {
-        "year": 2011,
-        "use_real_images": True,
-        "n_flag_rows": 10,
+        "year":
+        2011,
+        "use_real_images":
+        True,
+        "n_flag_rows":
+        10,
         "student_data": [
             [1, "Lisa Sauermann", "de", [7, 7, 7, 7, 7, 7]],
             [2, "Jeck Lim", "sg", [7, 5, 7, 7, 7, 7]],
@@ -760,10 +739,7 @@ class Describe2011IMO(IntroduceIMO):
         flags.set_height(5)
         flags.to_corner(DL)
 
-        student_groups = VGroup(*[
-            self.get_students(flag)
-            for flag in flags
-        ])
+        student_groups = VGroup(*[self.get_students(flag) for flag in flags])
         student_groups.arrange_in_grid(
             n_rows=self.n_flag_rows,
             buff=SMALL_BUFF,
@@ -773,14 +749,9 @@ class Describe2011IMO(IntroduceIMO):
         student_groups.next_to(self.title, DOWN)
         flags.align_to(student_groups, UP)
 
-        all_students = VGroup(*it.chain(*[
-            [
-                student
-                for student in group
-                if student.get_fill_opacity() > 0
-            ]
-            for group in student_groups
-        ]))
+        all_students = VGroup(*it.chain(
+            *[[student for student in group if student.get_fill_opacity() > 0]
+              for group in student_groups]))
 
         # Counters
         student_counter = VGroup(
@@ -799,10 +770,7 @@ class Describe2011IMO(IntroduceIMO):
 
         student_counter.add_updater(update_counter)
 
-        flag_counter = VGroup(
-            Integer(0),
-            TextMobject("Countries")
-        )
+        flag_counter = VGroup(Integer(0), TextMobject("Countries"))
         flag_counter.set = flags
         flag_counter.next_to(student_counter, LEFT, buff=0.75)
         flag_counter.align_to(student_counter[0], DOWN)
@@ -854,21 +822,21 @@ class Describe2011IMO(IntroduceIMO):
         self.add(full_rect, numbers)
         self.play(
             FadeIn(full_rect),
-            randy.change, "sassy",
+            randy.change,
+            "sassy",
             VFadeIn(randy),
         )
         self.play(
             ShowCreation(lines),
-            randy.change, "pondering",
+            randy.change,
+            "pondering",
         )
         self.play(Blink(randy))
         self.play(
             randy.change, "thinking",
-            LaggedStart(*[
-                FadeInFrom(word, UP)
-                for word in words
-            ], run_time=3, lag_ratio=0.5)
-        )
+            LaggedStart(*[FadeInFrom(word, UP) for word in words],
+                        run_time=3,
+                        lag_ratio=0.5))
         self.play(Blink(randy))
         self.play(
             FadeOut(randy),
@@ -886,32 +854,26 @@ class Describe2011IMO(IntroduceIMO):
         student = student_groups[10][0]
         flag = flags[10]
 
-        students_to_fade = VGroup(*filter(
-            lambda s: s is not student,
-            all_students
-        ))
-        flags_to_fade = Group(*filter(
-            lambda s: s is not flag,
-            flags
-        ))
+        students_to_fade = VGroup(
+            *filter(lambda s: s is not student, all_students))
+        flags_to_fade = Group(*filter(lambda s: s is not flag, flags))
 
         grid = self.get_score_grid()
         grid.shift(3 * DOWN)
         title_row = grid.rows[0]
         top_row = grid.rows[1]
 
-        self.play(
-            LaggedStartMap(FadeOutAndShiftDown, students_to_fade),
-            LaggedStartMap(FadeOutAndShiftDown, flags_to_fade),
-            ChangeDecimalToValue(student_counter[0], 1),
-            FadeOut(flag_counter),
-            run_time=2
-        )
+        self.play(LaggedStartMap(FadeOutAndShiftDown, students_to_fade),
+                  LaggedStartMap(FadeOutAndShiftDown, flags_to_fade),
+                  ChangeDecimalToValue(student_counter[0], 1),
+                  FadeOut(flag_counter),
+                  run_time=2)
         student_counter[1][0][-1].fade(1)
         self.play(
             Write(top_row[0]),
             ReplacementTransform(student, top_row[1][1]),
-            flag.replace, top_row[1][0],
+            flag.replace,
+            top_row[1][0],
         )
         self.remove(flag)
         self.add(top_row[1])
@@ -921,36 +883,30 @@ class Describe2011IMO(IntroduceIMO):
         )
         self.wait()
         self.play(
-            LaggedStart(*[
-                FadeInFrom(row, UP)
-                for row in grid.rows[2:4]
-            ]),
-            LaggedStart(*[
-                ShowCreation(line)
-                for line in grid.h_lines[:2]
-            ]),
+            LaggedStart(*[FadeInFrom(row, UP) for row in grid.rows[2:4]]),
+            LaggedStart(*[ShowCreation(line) for line in grid.h_lines[:2]]),
             lag_ratio=0.5,
         )
         self.wait()
         self.play(
-            ShowCreationThenFadeAround(
-                Group(title_row[3], grid.rows[3][3]),
-            )
-        )
+            ShowCreationThenFadeAround(Group(title_row[3], grid.rows[3][3]), ))
         self.wait()
         student_counter.clear_updaters()
         self.play(
             FadeOutAndShift(self.title, UP),
             FadeOutAndShift(student_counter, UP),
-            grid.rows[:4].shift, 3 * UP,
-            grid.h_lines[:3].shift, 3 * UP,
+            grid.rows[:4].shift,
+            3 * UP,
+            grid.h_lines[:3].shift,
+            3 * UP,
         )
         remaining_rows = grid.rows[4:]
         remaining_lines = grid.h_lines[3:]
         Group(remaining_rows, remaining_lines).shift(3 * UP)
         self.play(
             LaggedStartMap(
-                FadeInFrom, remaining_rows,
+                FadeInFrom,
+                remaining_rows,
                 lambda m: (m, UP),
             ),
             LaggedStartMap(ShowCreation, remaining_lines),
@@ -962,16 +918,10 @@ class Describe2011IMO(IntroduceIMO):
     def get_score_grid(self):
         data = self.student_data
 
-        ranks = VGroup(*[
-            Integer(row[0])
-            for row in data
-        ])
+        ranks = VGroup(*[Integer(row[0]) for row in data])
 
         # Combine students with flags
-        students = VGroup(*[
-            TextMobject(row[1])
-            for row in data
-        ])
+        students = VGroup(*[TextMobject(row[1]) for row in data])
         flags = Group(*[
             ImageMobject("flags/{}.png".format(row[2])).set_height(0.3)
             for row in data
@@ -981,10 +931,7 @@ class Describe2011IMO(IntroduceIMO):
             for flag, student in zip(flags, students)
         ])
 
-        score_rows = VGroup(*[
-            VGroup(*map(Integer, row[3]))
-            for row in data
-        ])
+        score_rows = VGroup(*[VGroup(*map(Integer, row[3])) for row in data])
         colors = color_gradient([RED, YELLOW, GREEN], 8)
         for score_row in score_rows:
             for score in score_row:
@@ -993,19 +940,16 @@ class Describe2011IMO(IntroduceIMO):
         titles = VGroup(*[
             VectorizedPoint(),
             VectorizedPoint(),
-            *[
-                TextMobject("P{}".format(i))
-                for i in range(1, 7)
-            ]
+            *[TextMobject("P{}".format(i)) for i in range(1, 7)]
         ])
         titles.arrange(RIGHT, buff=MED_LARGE_BUFF)
         titles[2:].shift(students.get_width() * RIGHT)
-        rows = Group(titles, *[
-            Group(rank, student, *score_row)
-            for rank, flag, student, score_row in zip(
-                ranks, flags, students, score_rows
-            )
-        ])
+        rows = Group(
+            titles, *[
+                Group(rank, student, *score_row)
+                for rank, flag, student, score_row in zip(
+                    ranks, flags, students, score_rows)
+            ])
         rows.arrange(DOWN)
         rows.to_edge(UP)
         for row in rows:
@@ -1060,9 +1004,7 @@ class AskWhatsOnTest(ShowTest, MovingCameraScene):
             end = arrow.get_end()
             start = arrow.get_start()
             arrow.put_start_and_end_on(
-                interpolate(question.get_left(), start, 0.1),
-                end
-            )
+                interpolate(question.get_left(), start, 0.1), end)
 
         self.play(
             FadeOut(scores),
@@ -1073,7 +1015,8 @@ class AskWhatsOnTest(ShowTest, MovingCameraScene):
         self.wait()
         self.play(
             FadeInFrom(research, DOWN),
-            question.shift, 2 * UP,
+            question.shift,
+            2 * UP,
         )
         self.wait()
 
@@ -1091,7 +1034,8 @@ class AskWhatsOnTest(ShowTest, MovingCameraScene):
             FadeInFromDown(clock),
         )
         self.play(
-            randy.change, "pondering",
+            randy.change,
+            "pondering",
             ClockPassesTime(clock, run_time=5, hours_passed=5),
         )
         self.play(
@@ -1101,13 +1045,8 @@ class AskWhatsOnTest(ShowTest, MovingCameraScene):
             VFadeOut(randy),
             LaggedStartMap(
                 FadeOut,
-                VGroup(
-                    research,
-                    *arrows,
-                    *self.problem_rects,
-                    self.time_labels[0]
-                )
-            ),
+                VGroup(research, *arrows, *self.problem_rects,
+                       self.time_labels[0])),
         )
 
         # Second part
@@ -1120,9 +1059,7 @@ class AskWhatsOnTest(ShowTest, MovingCameraScene):
         frame.target.scale(0.35)
         frame.target.move_to(lil_rect)
 
-        self.play(
-            FadeInFromDown(self.test[1]),
-        )
+        self.play(FadeInFromDown(self.test[1]), )
         self.wait()
         self.play(
             FadeIn(big_rect),
@@ -1144,13 +1081,11 @@ class ReadQuestions(Scene):
 
         clump_sizes = [1, 2, 3, 2, 1, 2]
         partial_sums = list(np.cumsum(clump_sizes))
-        clumps = VGroup(*[
-            lines[i:j]
-            for i, j in zip(
+        clumps = VGroup(
+            *[lines[i:j] for i, j in zip(
                 [0] + partial_sums,
                 partial_sums,
-            )
-        ])
+            )])
 
         faders = []
         for clump in clumps:
@@ -1180,6 +1115,7 @@ class ReadQuestions(Scene):
 
 # Windmill scenes
 
+
 class WindmillScene(Scene):
     CONFIG = {
         "dot_config": {
@@ -1203,20 +1139,13 @@ class WindmillScene(Scene):
     }
 
     def get_random_point_set(self, n_points=11, width=6, height=6):
-        return np.array([
-            [
-                -width / 2 + np.random.random() * width,
-                -height / 2 + np.random.random() * height,
-                0
-            ]
-            for n in range(n_points)
-        ])
+        return np.array([[
+            -width / 2 + np.random.random() * width,
+            -height / 2 + np.random.random() * height, 0
+        ] for n in range(n_points)])
 
     def get_dots(self, points):
-        return VGroup(*[
-            Dot(point, **self.dot_config)
-            for point in points
-        ])
+        return VGroup(*[Dot(point, **self.dot_config) for point in points])
 
     def get_windmill(self, points, pivot=None, angle=TAU / 4):
         line = Line(LEFT, RIGHT)
@@ -1253,10 +1182,8 @@ class WindmillScene(Scene):
     def next_pivot_and_angle(self, windmill):
         curr_angle = windmill.get_angle()
         pivot = windmill.pivot
-        non_pivots = list(filter(
-            lambda p: not np.all(p == pivot),
-            windmill.point_set
-        ))
+        non_pivots = list(
+            filter(lambda p: not np.all(p == pivot), windmill.point_set))
 
         angles = np.array([
             -(angle_of_vector(point - pivot) - curr_angle) % PI
@@ -1338,9 +1265,8 @@ class WindmillScene(Scene):
 
     def add_dot_color_updater(self, dots, windmill, **kwargs):
         for dot in dots:
-            dot.add_updater(lambda d: self.update_dot_color(
-                d, windmill, **kwargs
-            ))
+            dot.add_updater(
+                lambda d: self.update_dot_color(d, windmill, **kwargs))
 
     def update_dot_color(self, dot, windmill, color1=BLUE, color2=GREY_BROWN):
         perp = rotate_vector(windmill.get_vector(), TAU / 4)
@@ -1357,8 +1283,7 @@ class WindmillScene(Scene):
             # interpolate_color(dot.get_fill_color(), WHITE, 0.5),
             WHITE,
             width=2,
-            background=True
-        )
+            background=True)
 
     def get_hit_flash(self, point):
         flash = Flash(
@@ -1377,7 +1302,11 @@ class WindmillScene(Scene):
             lag_ratio=0,
         )
 
-    def get_pivot_counters(self, windmill, counter_height=0.25, buff=0.2, color=WHITE):
+    def get_pivot_counters(self,
+                           windmill,
+                           counter_height=0.25,
+                           buff=0.2,
+                           color=WHITE):
         points = windmill.point_set
         counters = VGroup()
         for point in points:
@@ -1400,10 +1329,7 @@ class WindmillScene(Scene):
         counter.is_pivot = counter.will_be_pivot
 
     def get_orientation_arrows(self, windmill, n_tips=20):
-        tips = VGroup(*[
-            ArrowTip(start_angle=0)
-            for x in range(n_tips)
-        ])
+        tips = VGroup(*[ArrowTip(start_angle=0) for x in range(n_tips)])
         tips.stretch(0.75, 1)
         tips.scale(0.5)
 
@@ -1411,9 +1337,7 @@ class WindmillScene(Scene):
         tips.match_color(windmill)
         tips.set_stroke(BLACK, 1, background=True)
         for tip, a in zip(tips, np.linspace(0, 1, n_tips)):
-            tip.shift(
-                windmill.point_from_proportion(a) - tip.points[0]
-            )
+            tip.shift(windmill.point_from_proportion(a) - tip.points[0])
         return tips
 
     def get_left_right_colorings(self, windmill, opacity=0.3):
@@ -1477,13 +1401,16 @@ class IntroduceWindmill(WindmillScene):
             FadeInFrom(braces[0], RIGHT),
             FadeInFrom(braces[1], LEFT),
         )
-        self.play(
-            LaggedStartMap(FadeInFromLarge, dots)
-        )
+        self.play(LaggedStartMap(FadeInFromLarge, dots))
         self.wait()
         self.play(
-            S.next_to, dots, LEFT,
-            {"buff": 2, "aligned_edge": UP},
+            S.next_to,
+            dots,
+            LEFT,
+            {
+                "buff": 2,
+                "aligned_edge": UP
+            },
             FadeOut(braces),
             FadeOut(eq),
         )
@@ -1507,7 +1434,8 @@ class IntroduceWindmill(WindmillScene):
         self.play(
             ShowCreation(line),
             FadeInFrom(words, LEFT),
-            dots[-1].set_color, RED,
+            dots[-1].set_color,
+            RED,
         )
         self.wait()
         self.play(
@@ -1516,11 +1444,11 @@ class IntroduceWindmill(WindmillScene):
         )
         self.play(
             FadeOutAndShift(
-                dots[-1], 3 * RIGHT,
+                dots[-1],
+                3 * RIGHT,
                 path_arc=-PI / 4,
                 rate_func=running_start,
-            )
-        )
+            ))
         dots.remove(dots[-1])
         self.wait()
 
@@ -1544,10 +1472,8 @@ class IntroduceWindmill(WindmillScene):
         p_label.next_to(p0, RIGHT)
         p_label.match_color(pivot_dot)
 
-        arcs = VGroup(*[
-            Arc(angle=-45 * DEGREES, radius=1.5)
-            for x in range(2)
-        ])
+        arcs = VGroup(
+            *[Arc(angle=-45 * DEGREES, radius=1.5) for x in range(2)])
         arcs[1].rotate(PI, about_point=ORIGIN)
         for arc in arcs:
             arc.add_tip(tip_length=0.2)
@@ -1563,7 +1489,8 @@ class IntroduceWindmill(WindmillScene):
         self.play(
             TransformFromCopy(pivot_dot, p_label),
             GrowFromCenter(pivot_dot),
-            dots.set_color, WHITE,
+            dots.set_color,
+            WHITE,
         )
         self.wait()
         self.play(*map(ShowCreation, arcs))
@@ -1574,18 +1501,16 @@ class IntroduceWindmill(WindmillScene):
         self.play(
             *[
                 Rotate(
-                    mob, -0.99 * angle,
+                    mob,
+                    -0.99 * angle,
                     about_point=p0,
                     rate_func=linear,
-                )
-                for mob in [windmill, arcs, l_label]
+                ) for mob in [windmill, arcs, l_label]
             ],
             VFadeOut(l_label),
         )
         self.add_sound(self.hit_sound)
-        self.play(
-            self.get_hit_flash(next_pivot)
-        )
+        self.play(self.get_hit_flash(next_pivot))
         self.wait()
 
         self.pivot2 = next_pivot
@@ -1678,10 +1603,8 @@ class ContrastToOtherOlympiadProblems(AskWhatsOnTest):
         )
         self.wait()
         for i in [2, 0, 3, 5]:
-            self.play(
-                frame.move_to, rects[i],
-                Transform(big_rect, big_rects[i])
-            )
+            self.play(frame.move_to, rects[i],
+                      Transform(big_rect, big_rects[i]))
             self.wait()
 
     def get_all_rects(self, test):
@@ -1722,9 +1645,7 @@ class WindmillExample30Points(WindmillScene):
         self.add(windmill)
         self.add(dots)
         self.add(pivot_dot)
-        self.add(self.get_pivot_counters(
-            windmill, **self.counter_config
-        ))
+        self.add(self.get_pivot_counters(windmill, **self.counter_config))
 
         self.let_windmill_run(windmill, self.run_time)
 
@@ -1743,9 +1664,7 @@ class WindmillExample15Points(WindmillExample30Points):
 
 class TheQuestion(Scene):
     def construct(self):
-        words = TextMobject(
-            "Will each point be hit infinitely many times?"
-        )
+        words = TextMobject("Will each point be hit infinitely many times?")
         words.set_width(FRAME_WIDTH - 1)
         words.to_edge(UP)
 
@@ -1756,10 +1675,8 @@ class SpiritOfIMO(PiCreatureScene):
     def construct(self):
         randy = self.pi_creature
 
-        problems = VGroup(*[
-            TextMobject("P{})".format(i))
-            for i in range(1, 7)
-        ])
+        problems = VGroup(
+            *[TextMobject("P{})".format(i)) for i in range(1, 7)])
         problems.arrange_in_grid(n_cols=2, buff=LARGE_BUFF)
         problems.scale(1.5)
         problems[3:].shift(1.5 * RIGHT)
@@ -1779,21 +1696,17 @@ class SpiritOfIMO(PiCreatureScene):
             light = self.get_light(light_bulb.get_center())
             lights.add(light)
 
-        self.play(
-            LaggedStartMap(FadeInFromDown, problems)
-        )
+        self.play(LaggedStartMap(FadeInFromDown, problems))
         self.play(
             LaggedStartMap(
-                FadeIn, light_bulbs,
+                FadeIn,
+                light_bulbs,
                 run_time=1,
             ),
-            LaggedStartMap(
-                LaggedStartMap, lights,
-                lambda l: (VFadeInThenOut, l),
-                run_time=3
-            ),
-            randy.change, "thinking"
-        )
+            LaggedStartMap(LaggedStartMap,
+                           lights,
+                           lambda l: (VFadeInThenOut, l),
+                           run_time=3), randy.change, "thinking")
         self.wait()
         self.pi_creature_thinks(
             "Oh, I've\\\\seen this...",
@@ -1810,8 +1723,7 @@ class SpiritOfIMO(PiCreatureScene):
                 arc_center=point,
                 fill_opacity=(1 / (r1 + 1)**2),
                 fill_color=YELLOW,
-            )
-            for r1, r2 in zip(radii[1:], radii[2:])
+            ) for r1, r2 in zip(radii[1:], radii[2:])
         ])
         return result
 
@@ -1837,12 +1749,9 @@ class HarderThanExpected(TeacherStudentsScene):
         words.scale(1.5)
         words.next_to(line, DOWN, LARGE_BUFF)
 
-        self.play(
-            FadeInFromDown(title),
-            ShowCreation(line),
-            self.teacher.change, "raise_right_hand",
-            self.get_student_changes("pondering", "confused", "sassy")
-        )
+        self.play(FadeInFromDown(title), ShowCreation(line),
+                  self.teacher.change, "raise_right_hand",
+                  self.get_student_changes("pondering", "confused", "sassy"))
         self.wait()
         self.play(
             FadeInFrom(words, UP),
@@ -1858,10 +1767,7 @@ class TraditionalDifficulty(ContrastToOtherOlympiadProblems):
         for rect in rects:
             rect.reverse_points()
 
-        big_rects = VGroup(*[
-            FullScreenFadeRectangle()
-            for x in range(3)
-        ])
+        big_rects = VGroup(*[FullScreenFadeRectangle() for x in range(3)])
         for br, r1, r2 in zip(big_rects, rects, rects[3:]):
             br.append_vectorized_mobject(r1)
             br.append_vectorized_mobject(r2)
@@ -1938,7 +1844,12 @@ class PerfectScoreData(Describe2011IMO):
     CONFIG = {
         "n_students": 563,
         "n_perfect_scores_per_problem": [
-            345, 22, 51, 267, 170, 6,
+            345,
+            22,
+            51,
+            267,
+            170,
+            6,
         ],
         "full_bar_width": 7,
     }
@@ -1963,9 +1874,7 @@ class PerfectScoreData(Describe2011IMO):
         bar.next_to(title, DOWN, buff=0.3)
         counter = self.get_bar_counter(bar)
         counter_label = TextMobject("Students")
-        counter_label.add_updater(
-            lambda m: m.next_to(counter, RIGHT)
-        )
+        counter_label.add_updater(lambda m: m.next_to(counter, RIGHT))
 
         self.add(counter, counter_label)
         self.play(
@@ -1977,17 +1886,13 @@ class PerfectScoreData(Describe2011IMO):
     def add_subtitle(self):
         title = self.title
 
-        subtitle = TextMobject(
-            "Number of perfect scores on each problem:"
-        )
+        subtitle = TextMobject("Number of perfect scores on each problem:")
         subtitle.scale(1.25)
         subtitle.set_color(GREEN)
         subtitle.next_to(title, DOWN, buff=LARGE_BUFF)
 
-        problems = VGroup(*[
-            TextMobject("P{})".format(i))
-            for i in range(1, 7)
-        ])
+        problems = VGroup(
+            *[TextMobject("P{})".format(i)) for i in range(1, 7)])
         problems.arrange_in_grid(n_cols=2, buff=LARGE_BUFF)
         problems[3:].shift(5 * RIGHT)
         problems.next_to(subtitle, DOWN, LARGE_BUFF)
@@ -2003,20 +1908,17 @@ class PerfectScoreData(Describe2011IMO):
     def show_data(self):
         problems = self.problems
         bars = VGroup(*[
-            self.get_bar(n, p.get_right() + SMALL_BUFF * RIGHT)
-            for n, p in zip(
-                self.n_perfect_scores_per_problem,
-                problems,
-            )
+            self.get_bar(n,
+                         p.get_right() + SMALL_BUFF * RIGHT) for n, p in zip(
+                             self.n_perfect_scores_per_problem,
+                             problems,
+                         )
         ])
         counters = VGroup(*map(self.get_bar_counter, bars))
 
         self.play(
             VFadeIn(counters),
-            *[
-                self.get_bar_growth_anim(bar)
-                for bar in bars
-            ],
+            *[self.get_bar_growth_anim(bar) for bar in bars],
         )
         counters.set_fill(WHITE, 1)
         self.wait()
@@ -2026,16 +1928,14 @@ class PerfectScoreData(Describe2011IMO):
 
     def analyze_data(self):
         problems = VGroup(*[
-            VGroup(p, pb, pc)
-            for p, pb, pc in zip(
+            VGroup(p, pb, pc) for p, pb, pc in zip(
                 self.problems,
                 self.problem_bars,
                 self.problem_counters,
             )
         ])
         rects = VGroup(*[
-            SurroundingRectangle(p, color=p[1].get_color())
-            for p in problems
+            SurroundingRectangle(p, color=p[1].get_color()) for p in problems
         ])
 
         rect = rects[1].copy()
@@ -2058,10 +1958,8 @@ class PerfectScoreData(Describe2011IMO):
         bar.set_stroke(width=0)
         bar.set_fill(WHITE, 1)
         bar.set_height(0.25)
-        bar.set_width(
-            self.full_bar_width * number / self.n_students,
-            stretch=True
-        )
+        bar.set_width(self.full_bar_width * number / self.n_students,
+                      stretch=True)
         bar.move_to(left_side, LEFT)
 
         def update_bar_color(bar):
@@ -2075,6 +1973,7 @@ class PerfectScoreData(Describe2011IMO):
             else:
                 alpha = 2 * (frac - 0.5)
                 bar.set_color(interpolate_color(GREEN, BLUE, alpha))
+
         bar.add_updater(update_bar_color)
         return bar
 
@@ -2089,11 +1988,8 @@ class PerfectScoreData(Describe2011IMO):
 
     def get_bar_counter(self, bar):
         counter = Integer()
-        counter.add_updater(
-            lambda m: m.set_value(
-                self.n_students * bar.get_width() / self.full_bar_width
-            )
-        )
+        counter.add_updater(lambda m: m.set_value(
+            self.n_students * bar.get_width() / self.full_bar_width))
         counter.add_updater(lambda m: m.next_to(bar, RIGHT, SMALL_BUFF))
         return counter
 
@@ -2127,11 +2023,11 @@ class SixOnSix(Describe2011IMO):
         subtitle.next_to(title, DOWN)
 
         six_rect, two_rect = [
-            SurroundingRectangle(VGroup(
-                grid.rows[0][index],
-                grid.rows[-1][index],
-            ))
-            for index in [7, 3]
+            SurroundingRectangle(
+                VGroup(
+                    grid.rows[0][index],
+                    grid.rows[-1][index],
+                )) for index in [7, 3]
         ]
 
         self.play(
@@ -2141,10 +2037,8 @@ class SixOnSix(Describe2011IMO):
         )
         self.play(ShowCreation(six_rect))
         self.wait()
-        self.play(
-            ReplacementTransform(six_rect, two_rect),
-            FadeInFrom(subtitle, UP)
-        )
+        self.play(ReplacementTransform(six_rect, two_rect),
+                  FadeInFrom(subtitle, UP))
         self.wait()
 
 
@@ -2175,7 +2069,8 @@ class TryOutSimplestExamples(WindmillScene):
         self.play(
             ShowCreation(windmill),
             LaggedStartMap(
-                FadeInFromLarge, dots,
+                FadeInFromLarge,
+                dots,
                 scale_factor=10,
                 run_time=1,
                 lag_ratio=0.4,
@@ -2205,16 +2100,16 @@ class TryOutSimplestExamples(WindmillScene):
         words.move_to(0.7 * DOWN, DOWN)
 
         self.add(dot, self.pivot_dot)
-        self.play(
-            FadeInFromLarge(dot, scale_factor=10)
-        )
+        self.play(FadeInFromLarge(dot, scale_factor=10))
         windmill.point_set.append(dot.get_center())
         windmill.rot_speed = TAU / 4
         self.let_windmill_run(windmill, 4)
 
         # Shift point
         self.play(
-            dot.next_to, words, DOWN,
+            dot.next_to,
+            words,
+            DOWN,
             FadeInFrom(words, RIGHT),
         )
         windmill.point_set[3] = dot.get_center()
@@ -2230,7 +2125,8 @@ class TryOutSimplestExamples(WindmillScene):
 
         windmill.suspend_updating()
         self.play(
-            windmill.move_to, dots[-1],
+            windmill.move_to,
+            dots[-1],
             FadeOut(self.never_hit_words),
         )
         windmill.pivot = dots[-1].get_center()
@@ -2238,20 +2134,14 @@ class TryOutSimplestExamples(WindmillScene):
 
         counters = self.get_pivot_counters(windmill)
         self.play(
-            LaggedStart(*[
-                FadeInFrom(counter, DOWN)
-                for counter in counters
-            ])
-        )
+            LaggedStart(*[FadeInFrom(counter, DOWN) for counter in counters]))
         self.wait()
 
         windmill.rot_speed = TAU / 8
         self.let_windmill_run(windmill, 16)
         highlight = windmill.copy()
         highlight.set_stroke(YELLOW, 4)
-        self.play(
-            ShowCreationThenDestruction(highlight),
-        )
+        self.play(ShowCreationThenDestruction(highlight), )
         self.let_windmill_run(windmill, 8)
 
 
@@ -2273,11 +2163,9 @@ class FearedCase(WindmillScene):
         )
         pivot_dot = self.get_pivot_dot(windmill)
         # self.add_dot_color_updater(dots, windmill)
-        counters = self.get_pivot_counters(
-            windmill,
-            counter_height=0.15,
-            buff=0.1
-        )
+        counters = self.get_pivot_counters(windmill,
+                                           counter_height=0.15,
+                                           buff=0.1)
 
         self.add(windmill)
         self.add(dots)
@@ -2307,11 +2195,9 @@ class WhereItStartsItEnds(WindmillScene):
         sorted_points = sorted(list(points), key=lambda p: p[1])
         dots = self.get_dots(points)
 
-        windmill = self.get_windmill(
-            points,
-            sorted_points[self.n_points // 2],
-            angle=0
-        )
+        windmill = self.get_windmill(points,
+                                     sorted_points[self.n_points // 2],
+                                     angle=0)
         pivot_dot = self.get_pivot_dot(windmill)
 
         sf = 1.25
@@ -2395,10 +2281,7 @@ class WhereItStartsItEnds(WindmillScene):
     def get_middle_rects(self):
         middle_rects = VGroup(*[
             SurroundingRectangle(words[1])
-            for words in [
-                self.start_words,
-                self.end_words
-            ]
+            for words in [self.start_words, self.end_words]
         ])
         middle_rects.set_color(TEAL)
         return middle_rects
@@ -2464,9 +2347,12 @@ class FormalizeMiddle(WhereItStartsItEnds):
         self.play(Write(pst), run_time=1)
         self.wait()
         self.play(
-            mid_words.scale, 0.75,
-            mid_words.set_opacity, 0.25,
-            mid_words.to_corner, DL,
+            mid_words.scale,
+            0.75,
+            mid_words.set_opacity,
+            0.25,
+            mid_words.to_corner,
+            DL,
             FadeInFromDown(steps[0]),
         )
         self.wait()
@@ -2482,12 +2368,8 @@ class FormalizeMiddle(WhereItStartsItEnds):
         steps.target.arrange(DOWN, buff=0.2)
         steps.target.to_corner(UR)
 
-        self.play(
-            FadeOut(pst),
-            MoveToTarget(steps),
-            Restore(mid_words),
-            FadeOut(arrows)
-        )
+        self.play(FadeOut(pst), MoveToTarget(steps), Restore(mid_words),
+                  FadeOut(arrows))
         self.wait()
 
         self.tip_words = steps
@@ -2575,8 +2457,12 @@ class FormalizeMiddle(WhereItStartsItEnds):
         rects.resume_updating()
         self.wait()
         self.play(
-            counters.space_out_submobjects, 0.8,
-            counters.next_to, mid_words, DOWN, LARGE_BUFF,
+            counters.space_out_submobjects,
+            0.8,
+            counters.next_to,
+            mid_words,
+            DOWN,
+            LARGE_BUFF,
             FadeOut(label_sets),
         )
         eq = TexMobject("=")
@@ -2594,15 +2480,10 @@ class FormalizeMiddle(WhereItStartsItEnds):
         counters = self.counters
 
         sf = 1.0
-        words = TextMobject(
-            "Assume odd \\# points"
-        )
+        words = TextMobject("Assume odd \\# points")
         words.scale(sf)
         words.to_corner(UL)
-        example = VGroup(
-            TextMobject("Example:"),
-            Integer(0)
-        )
+        example = VGroup(TextMobject("Example:"), Integer(0))
         example.arrange(RIGHT)
         example.scale(sf)
         example.next_to(words, DOWN)
@@ -2620,32 +2501,26 @@ class FormalizeMiddle(WhereItStartsItEnds):
 
         self.play(
             ShowCreationThenFadeAround(dots[k]),
-            self.pivot_dot.set_color, WHITE,
+            self.pivot_dot.set_color,
+            WHITE,
         )
 
         self.play(FadeInFrom(example, UP))
-        self.play(
-            ShowIncreasingSubsets(dot_rects),
-            ChangingDecimal(
-                example[1],
-                lambda a: len(dot_rects)
-            ),
-            rate_func=linear
-        )
+        self.play(ShowIncreasingSubsets(dot_rects),
+                  ChangingDecimal(example[1], lambda a: len(dot_rects)),
+                  rate_func=linear)
         self.wait()
 
         self.remove(dot_rects)
         self.play(
             ShowCreationThenFadeOut(dot_rects[:k]),
             ShowCreationThenFadeOut(
-                SurroundingRectangle(counters[0], color=BLUE)
-            ),
+                SurroundingRectangle(counters[0], color=BLUE)),
         )
         self.play(
             ShowCreationThenFadeOut(dot_rects[-k:]),
             ShowCreationThenFadeOut(
-                SurroundingRectangle(counters[1], color=GREY_BROWN)
-            ),
+                SurroundingRectangle(counters[1], color=GREY_BROWN)),
         )
         self.wait()
         self.play(
@@ -2671,11 +2546,9 @@ class SecondColoringExample(WindmillScene):
         sorted_points = sorted(list(points), key=lambda p: p[0])
 
         dots = self.get_dots(points)
-        windmill = self.get_windmill(
-            points,
-            pivot=sorted_points[self.n_points // 2],
-            angle=PI / 2
-        )
+        windmill = self.get_windmill(points,
+                                     pivot=sorted_points[self.n_points // 2],
+                                     angle=PI / 2)
         pivot_dot = self.get_pivot_dot(windmill)
         pivot_dot.set_color(WHITE)
         rects = self.get_left_right_colorings(windmill)
@@ -2701,8 +2574,7 @@ class SecondColoringExample(WindmillScene):
                 buff=SMALL_BUFF,
                 max_tip_length_to_length_ratio=0.15,
                 max_stroke_width_to_length_ratio=3,
-            )
-            for count in counts
+            ) for count in counts
         ])
 
         self.add(rects, windmill, dots, pivot_dot)
@@ -2723,9 +2595,7 @@ class TalkThroughPivotChange(WindmillScene):
         self.change_pivot()
 
     def setup_windmill(self):
-        points = self.points = np.array([
-            DR, UR, UL, DL, 0.5 * LEFT
-        ])
+        points = self.points = np.array([DR, UR, UL, DL, 0.5 * LEFT])
         points *= 3
         self.dots = self.get_dots(points)
         self.windmill = self.get_windmill(points, points[-1])
@@ -2751,11 +2621,7 @@ class TalkThroughPivotChange(WindmillScene):
         arrow = Arrow(words.get_bottom(), new_pivot, buff=0.2)
 
         self.play(
-            Rotate(
-                windmill, -0.9 * angle,
-                run_time=3,
-                rate_func=linear
-            ),
+            Rotate(windmill, -0.9 * angle, run_time=3, rate_func=linear),
             Write(words, run_time=1),
             ShowCreation(arrow),
         )
@@ -2812,10 +2678,9 @@ class TalkThroughPivotChange(WindmillScene):
         new_pivot_word.next_to(blue_rect, LEFT)
         old_pivot_word = TextMobject("Old pivot")
         old_pivot = windmill.pivot
-        old_pivot_word.next_to(
-            old_pivot, LEFT,
-            buff=SMALL_BUFF + MED_SMALL_BUFF
-        )
+        old_pivot_word.next_to(old_pivot,
+                               LEFT,
+                               buff=SMALL_BUFF + MED_SMALL_BUFF)
 
         self.play(
             FadeOut(self.above_below_words),
@@ -2833,12 +2698,12 @@ class TalkThroughPivotChange(WindmillScene):
                 windmill,
                 angle=-windmill.rot_speed,
                 rate_func=linear,
-            )
-        )
+            ))
         self.wait()
         self.play(
             TransformFromCopy(new_pivot_word, old_pivot_word),
-            blue_rect.move_to, old_pivot,
+            blue_rect.move_to,
+            old_pivot,
         )
         self.wait(2)
 
@@ -2847,12 +2712,9 @@ class TalkThroughPivotChange(WindmillScene):
         brown_rect.set_color(GREY_BROWN)
 
         self.play(TransformFromCopy(blue_rect, brown_rect))
-        self.play(
-            blue_rect.move_to, windmill.pivot,
-            blue_rect.set_color, GREY_BROWN,
-            old_pivot_word.move_to, new_pivot_word,
-            FadeOutAndShift(new_pivot_word, DL)
-        )
+        self.play(blue_rect.move_to, windmill.pivot, blue_rect.set_color,
+                  GREY_BROWN, old_pivot_word.move_to, new_pivot_word,
+                  FadeOutAndShift(new_pivot_word, DL))
         self.let_windmill_run(windmill, 1)
         self.wait()
         self.play(
@@ -2865,10 +2727,8 @@ class TalkThroughPivotChange(WindmillScene):
 
 class InsightNumber1(Scene):
     def construct(self):
-        words = TextMobject(
-            "Key insight 1: ",
-            "\\# Points on either side is constant"
-        )
+        words = TextMobject("Key insight 1: ",
+                            "\\# Points on either side is constant")
         words[0].set_color(YELLOW)
         words.set_width(FRAME_WIDTH - 1)
         self.play(FadeInFromDown(words))
@@ -2933,12 +2793,8 @@ class Rotate180Argument(WindmillScene):
         circle.replace(rot_arrow, dim_to_match=1)
         circle.set_stroke(WHITE, 1)
 
-        rot_arrow.add_updater(
-            lambda m: m.set_angle(windmill.get_angle())
-        )
-        rot_arrow.add_updater(
-            lambda m: m.move_to(circle)
-        )
+        rot_arrow.add_updater(lambda m: m.set_angle(windmill.get_angle()))
+        rot_arrow.add_updater(lambda m: m.move_to(circle))
 
         def update_count(c):
             new_val = 90 - windmill.get_angle() * 360 / TAU
@@ -2956,9 +2812,7 @@ class Rotate180Argument(WindmillScene):
         rect.set_stroke(WHITE, 1)
         title.shift(MED_SMALL_BUFF * LEFT)
 
-        self.rotation_label = VGroup(
-            rect, words, counter, circle, rot_arrow
-        )
+        self.rotation_label = VGroup(rect, words, counter, circle, rot_arrow)
 
         self.add(self.rotation_label)
 
@@ -2987,18 +2841,15 @@ class Rotate180Argument(WindmillScene):
         lines.shuffle()
 
         self.add(lines, dots, rotation_label)
-        self.play(
-            ShowCreation(lines, lag_ratio=0.5, run_time=3)
-        )
+        self.play(ShowCreation(lines, lag_ratio=0.5, run_time=3))
         self.wait()
 
         self.rects.suspend_updating()
         for rect in self.rects:
-            self.play(
-                rect.set_opacity, 0,
-                rate_func=there_and_back,
-                run_time=2
-            )
+            self.play(rect.set_opacity,
+                      0,
+                      rate_func=there_and_back,
+                      run_time=2)
         self.rects.resume_updating()
         self.wait()
 
@@ -3007,13 +2858,12 @@ class Rotate180Argument(WindmillScene):
 
         def update_pivot(w):
             w.pivot = pivot_tracker.get_center()
+
         windmill.add_updater(update_pivot)
 
         for x in range(4):
             point = random.choice(points)
-            self.play(
-                pivot_tracker.move_to, point
-            )
+            self.play(pivot_tracker.move_to, point)
             self.wait()
         self.play(Restore(pivot_tracker))
         self.play(FadeOut(lines))
@@ -3030,7 +2880,9 @@ class Rotate180ArgumentFast(Rotate180Argument):
 class EvenCase(Rotate180Argument):
     CONFIG = {
         "n_points": 10,
-        "dot_config": {"radius": 0.075},
+        "dot_config": {
+            "radius": 0.075
+        },
     }
 
     def construct(self):
@@ -3075,13 +2927,12 @@ class EvenCase(Rotate180Argument):
         self.add(windmill, dots, pivot_dot)
 
         self.add_dot_color_updater(dots, windmill)
-        self.add(region_rects, question, counter_group, windmill, dots, pivot_dot)
+        self.add(region_rects, question, counter_group, windmill, dots,
+                 pivot_dot)
 
-        self.play(
-            ShowIncreasingSubsets(dot_rects),
-            ChangingDecimal(counter, lambda a: len(dot_rects)),
-            rate_func=linear
-        )
+        self.play(ShowIncreasingSubsets(dot_rects),
+                  ChangingDecimal(counter, lambda a: len(dot_rects)),
+                  rate_func=linear)
         self.play(FadeOut(dot_rects))
         self.wait()
 
@@ -3138,7 +2989,8 @@ class EvenCase(Rotate180Argument):
         )
         self.play(
             ShowCreation(pivot_rect),
-            ChangeDecimalToValue(browns_counter, len(brown_rects) + 1),
+            ChangeDecimalToValue(browns_counter,
+                                 len(brown_rects) + 1),
             FadeOut(pivot_dot),
         )
         self.wait()
@@ -3149,18 +3001,14 @@ class EvenCase(Rotate180Argument):
         )
         self.wait()
 
-        blues_counter.add_updater(
-            lambda c: c.set_value(len(list(filter(
-                lambda d: d.get_fill_color() == Color(BLUE),
-                dots
-            ))))
-        )
-        browns_counter.add_updater(
-            lambda c: c.set_value(len(list(filter(
-                lambda d: d.get_fill_color() == Color(GREY_BROWN),
-                dots
-            ))))
-        )
+        blues_counter.add_updater(lambda c: c.set_value(
+            len(list(filter(lambda d: d.get_fill_color() == Color(BLUE), dots))
+                )))
+        browns_counter.add_updater(lambda c: c.set_value(
+            len(
+                list(
+                    filter(lambda d: d.get_fill_color() == Color(GREY_BROWN),
+                           dots)))))
 
         self.windmill = windmill
         self.dots = dots
@@ -3187,10 +3035,7 @@ class EvenCase(Rotate180Argument):
 
         windmill.add_updater(update_pivot)
 
-        self.play(
-            pivot_tracker.move_to, points[n // 2],
-            run_time=2
-        )
+        self.play(pivot_tracker.move_to, points[n // 2], run_time=2)
         self.play(FadeInFrom(p_label, LEFT))
         self.wait()
         windmill.remove_updater(update_pivot)
@@ -3202,7 +3047,8 @@ class EvenCase(Rotate180Argument):
         self.play(
             FadeOut(self.question),
             FadeIn(self.rotation_label),
-            self.counter_group.to_edge, UP,
+            self.counter_group.to_edge,
+            UP,
         )
 
 
@@ -3227,7 +3073,8 @@ class TwoTakeaways(TeacherStudentsScene):
         self.play(
             ShowCreation(line),
             GrowFromPoint(title, self.hold_up_spot),
-            self.teacher.change, "raise_right_hand",
+            self.teacher.change,
+            "raise_right_hand",
         )
         self.change_all_student_modes("pondering")
         self.wait()
@@ -3243,8 +3090,10 @@ class TwoTakeaways(TeacherStudentsScene):
         self.wait()
         for i, j in [(0, 1), (1, 0)]:
             self.play(
-                items[i].become, items[i].big,
-                items[j].become, items[j].small,
+                items[i].become,
+                items[i].big,
+                items[j].become,
+                items[j].small,
             )
             self.wait()
 
@@ -3274,10 +3123,13 @@ class EasyToFoolYourself(PiCreatureScene):
         self.add(morty)
         self.play(
             ShowCreation(bubble),
-            morty.change, "pondering",
+            morty.change,
+            "pondering",
         )
         self.play(
-            bubble[3].set_fill, GREEN_SCREEN, 0.5,
+            bubble[3].set_fill,
+            GREEN_SCREEN,
+            0.5,
         )
         self.wait()
         self.play(morty.change, "thinking")
@@ -3286,11 +3138,9 @@ class EasyToFoolYourself(PiCreatureScene):
             ShowCreation(fool_arrow),
         )
         self.wait()
-        self.pi_creature_says(
-            "Isn't it\\\\obvious?",
-            target_mode="maybe",
-            added_anims=[FadeOut(bubble)]
-        )
+        self.pi_creature_says("Isn't it\\\\obvious?",
+                              target_mode="maybe",
+                              added_anims=[FadeOut(bubble)])
         self.wait(4)
 
         #
@@ -3302,7 +3152,8 @@ class EasyToFoolYourself(PiCreatureScene):
 
         self.play(
             FadeInFromLarge(words),
-            morty.change, "guilty",
+            morty.change,
+            "guilty",
         )
         self.wait()
 
@@ -3330,25 +3181,25 @@ class FailureToEmpathize(PiCreatureScene):
         big_bubble.set_fill(DARKER_GREY)
         big_bubble.to_corner(UR)
 
-        equation = TexMobject(
-            "\\sum_{k=1}^n (2k - 1) = n^2"
-        )
+        equation = TexMobject("\\sum_{k=1}^n (2k - 1) = n^2")
         self.pi_creature_thinks(
-            randy, equation,
+            randy,
+            equation,
             target_mode="confused",
             look_at_arg=equation,
         )
-        randy_group = VGroup(
-            randy, randy.bubble,
-            randy.bubble.content
-        )
+        randy_group = VGroup(randy, randy.bubble, randy.bubble.content)
         self.wait()
         self.play(
             DrawBorderThenFill(big_bubble),
-            morty.change, "confused",
-            randy_group.scale, 0.5,
-            randy_group.move_to, big_bubble.get_bubble_center(),
-            randy_group.shift, 0.5 * DOWN + RIGHT,
+            morty.change,
+            "confused",
+            randy_group.scale,
+            0.5,
+            randy_group.move_to,
+            big_bubble.get_bubble_center(),
+            randy_group.shift,
+            0.5 * DOWN + RIGHT,
         )
         self.wait()
         self.play(morty.change, "maybe")
@@ -3358,12 +3209,13 @@ class FailureToEmpathize(PiCreatureScene):
         morty_group = VGroup(morty, big_bubble)
         ap = 5 * RIGHT + 2.5 * UP
         self.add(morty_group, randy_group)
-        self.play(
-            morty_group.scale, 2, {"about_point": ap},
-            morty_group.fade, 1,
-            randy_group.scale, 2, {"about_point": ap},
-            run_time=2
-        )
+        self.play(morty_group.scale,
+                  2, {"about_point": ap},
+                  morty_group.fade,
+                  1,
+                  randy_group.scale,
+                  2, {"about_point": ap},
+                  run_time=2)
         self.wait()
 
     def create_pi_creatures(self):
@@ -3451,7 +3303,8 @@ class DifficultyEstimateVsReality(Scene):
 
         self.play(
             LaggedStartMap(
-                FadeInFrom, x_labels,
+                FadeInFrom,
+                x_labels,
                 lambda m: (m, UP),
                 run_time=2,
             ),
@@ -3476,18 +3329,19 @@ class DifficultyEstimateVsReality(Scene):
 
 class KeepInMindWhenTeaching(TeacherStudentsScene):
     def construct(self):
-        self.teacher_says(
-            "I don't know\\\\what you know!",
-            target_mode="pleading"
-        )
+        self.teacher_says("I don't know\\\\what you know!",
+                          target_mode="pleading")
         self.wait(2)
         self.play(
             PiCreatureSays(
-                self.students[0], "We know",
+                self.students[0],
+                "We know",
                 target_mode="hooray",
             ),
-            self.students[1].change, "happy",
-            self.students[2].change, "happy",
+            self.students[1].change,
+            "happy",
+            self.students[2].change,
+            "happy",
         )
         self.wait(2)
 
@@ -3495,8 +3349,7 @@ class KeepInMindWhenTeaching(TeacherStudentsScene):
 class VastSpaceOfConsiderations(Scene):
     def construct(self):
         considerations = VGroup(*[
-            TextMobject(phrase)
-            for phrase in [
+            TextMobject(phrase) for phrase in [
                 "Define ``outer'' points",
                 "Convex hulls",
                 "Linear equations",
@@ -3509,18 +3362,14 @@ class VastSpaceOfConsiderations(Scene):
         considerations.arrange(DOWN, buff=MED_LARGE_BUFF, aligned_edge=LEFT)
         considerations.to_edge(LEFT)
 
-        self.play(LaggedStart(*[
-            FadeInFrom(mob, UP)
-            for mob in considerations
-        ], run_time=3, lag_ratio=0.2))
+        self.play(
+            LaggedStart(*[FadeInFrom(mob, UP) for mob in considerations],
+                        run_time=3,
+                        lag_ratio=0.2))
 
 
 class WhatStaysConstantWrapper(Scene):
-    CONFIG = {
-        "camera_config": {
-            "background_color": DARKER_GREY
-        }
-    }
+    CONFIG = {"camera_config": {"background_color": DARKER_GREY}}
 
     def construct(self):
         rect = ScreenRectangle()
@@ -3571,12 +3420,14 @@ class CountHoles(Scene):
         equation_text.set_color(YELLOW)
 
         self.play(LaggedStartMap(
-            FadeInFromDown, labels,
+            FadeInFromDown,
+            labels,
             lag_ratio=0.5,
         ))
         self.wait()
         self.play(
-            labels[1].shift, 4 * RIGHT,
+            labels[1].shift,
+            4 * RIGHT,
             FadeOut(labels[0::2]),
         )
         self.play(
@@ -3605,9 +3456,7 @@ class LorenzTransform(Scene):
         c_lines.scale(FRAME_HEIGHT)
         c_lines.set_stroke(YELLOW, 3)
 
-        equation = TexMobject(
-            "d\\tau^2 = dt^2 - dx^2"
-        )
+        equation = TexMobject("d\\tau^2 = dt^2 - dx^2")
         equation.scale(1.7)
         equation.to_corner(UL, buff=MED_SMALL_BUFF)
         equation.shift(2.75 * DOWN)
@@ -3616,13 +3465,12 @@ class LorenzTransform(Scene):
         self.add(back_grid, grid, c_lines)
         self.add(equation)
         beta = 0.4
-        self.play(
-            grid.apply_matrix, np.array([
-                [1, beta],
-                [beta, 1],
-            ]) / (1 - beta**2),
-            run_time=2
-        )
+        self.play(grid.apply_matrix,
+                  np.array([
+                      [1, beta],
+                      [beta, 1],
+                  ]) / (1 - beta**2),
+                  run_time=2)
         self.wait()
 
 
@@ -3666,28 +3514,24 @@ class TerryTaoQuote(Scene):
             Write(name),
         )
         self.wait()
-        self.play(
-            FadeInFrom(tiny_tao, LEFT)
-        )
+        self.play(FadeInFrom(tiny_tao, LEFT))
         self.wait()
         self.play(FadeOut(tiny_tao))
 
         #
         self.play(
-            FadeIn(
-                quote,
-                lag_ratio=0.05,
-                run_time=5,
-                rate_func=bezier([0, 0, 1, 1])
-            )
-        )
+            FadeIn(quote,
+                   lag_ratio=0.05,
+                   run_time=5,
+                   rate_func=bezier([0, 0, 1, 1])))
         self.wait()
         story_line = Line()
         story_line.match_width(quote.story_part)
         story_line.next_to(quote.story_part, DOWN, buff=0)
         story_line.set_color(TEAL),
         self.play(
-            quote.story_part.set_color, TEAL,
+            quote.story_part.set_color,
+            TEAL,
             ShowCreation(story_line),
             lag_ratio=0.2,
         )
@@ -3695,17 +3539,15 @@ class TerryTaoQuote(Scene):
 
     def get_quote(self):
         story_words = "fables, stories, and anecdotes"
-        quote = TextMobject(
-            """
+        quote = TextMobject("""
             \\Large
             ``Mathematical problems, or puzzles, are important to real mathematics
             (like solving real-life problems), just as fables, stories, and anecdotes
             are important to the young in understanding real life.''\\\\
             """,
-            alignment="",
-            arg_separator=" ",
-            substrings_to_isolate=[story_words]
-        )
+                            alignment="",
+                            arg_separator=" ",
+                            substrings_to_isolate=[story_words])
         quote.story_part = quote.get_part_by_tex(story_words)
         quote.set_width(FRAME_WIDTH - 2.5)
         quote.to_edge(UP)
@@ -3732,8 +3574,7 @@ class WindmillFairyTale(Scene):
                 FadeInFrom(paths[2], RIGHT),
                 lag_ratio=0.2,
                 run_time=3,
-            )
-        )
+            ))
 
 
 class SolveAProblemOneDay(SpiritOfIMO, PiCreatureScene):
@@ -3758,23 +3599,21 @@ class SolveAProblemOneDay(SpiritOfIMO, PiCreatureScene):
 
         self.play(
             ShowCreation(bubble),
-            randy.change, "pondering",
+            randy.change,
+            "pondering",
         )
-        self.play(
-            FadeInFrom(you, LEFT),
-            GrowArrow(arrow)
-        )
+        self.play(FadeInFrom(you, LEFT), GrowArrow(arrow))
         self.wait(2)
         self.play(
             FadeInFromDown(light_bulb),
-            randy.change, "hooray",
+            randy.change,
+            "hooray",
         )
         self.play(
-            LaggedStartMap(
-                VFadeInThenOut, light,
-                run_time=2
-            ),
-            randy.change, "thinking", light,
+            LaggedStartMap(VFadeInThenOut, light, run_time=2),
+            randy.change,
+            "thinking",
+            light,
         )
         self.wait(2)
 
@@ -3801,15 +3640,14 @@ class QuixoteReference(Scene):
 
         self.add(rect)
         # self.add(windmill)
-        self.play(LaggedStart(
-            DrawBorderThenFill(windmill),
-            DrawBorderThenFill(
-                quixote,
-                stroke_width=1,
-            ),
-            lag_ratio=0.4,
-            run_time=3
-        ))
+        self.play(
+            LaggedStart(DrawBorderThenFill(windmill),
+                        DrawBorderThenFill(
+                            quixote,
+                            stroke_width=1,
+                        ),
+                        lag_ratio=0.4,
+                        run_time=3))
         self.wait()
 
 
@@ -3996,7 +3834,8 @@ class Thumbnail(WindmillScene):
         points[6] += 3 * RIGHT
 
         windmill = self.get_windmill(
-            points, points[1],
+            points,
+            points[1],
             angle=45 * DEGREES,
         )
         dots = self.get_dots(points)
@@ -4017,8 +3856,7 @@ class Thumbnail(WindmillScene):
                 angle=90 * DEGREES,
                 radius=1.5,
                 stroke_width=10,
-            ).add_tip(tip_length=0.7)
-            for a in [0, PI]
+            ).add_tip(tip_length=0.7) for a in [0, PI]
         ])
         arcs.move_to(windmill.pivot)
         arcs.set_color([LIGHT_GREY, WHITE])
@@ -4077,11 +3915,13 @@ class Thumbnail(WindmillScene):
             sorted_dots.sort(lambda p: np.dot(p, DR))
 
             self.play(
-                polygon1.shift, FRAME_WIDTH * LEFT,
-                polygon2.shift, FRAME_WIDTH * RIGHT,
+                polygon1.shift,
+                FRAME_WIDTH * LEFT,
+                polygon2.shift,
+                FRAME_WIDTH * RIGHT,
                 LaggedStart(*[
-                    ApplyMethod(mob.scale, 0)
-                    for mob in [sorted_dots[6], *flash.mobject, windmill, pivot_dot]
+                    ApplyMethod(mob.scale, 0) for mob in
+                    [sorted_dots[6], *flash.mobject, windmill, pivot_dot]
                 ]),
                 LaggedStart(*[
                     ApplyMethod(dot.to_edge, LEFT, {"buff": -1})
@@ -4091,14 +3931,8 @@ class Thumbnail(WindmillScene):
                     ApplyMethod(dot.to_edge, RIGHT, {"buff": -1})
                     for dot in sorted_dots[7:]
                 ]),
-                LaggedStart(*[
-                    FadeOutAndShift(word, RIGHT)
-                    for word in words
-                ]),
-                LaggedStart(*[
-                    FadeOutAndShift(word, LEFT)
-                    for word in words2
-                ]),
+                LaggedStart(*[FadeOutAndShift(word, RIGHT) for word in words]),
+                LaggedStart(*[FadeOutAndShift(word, LEFT) for word in words2]),
                 LaggedStartMap(
                     Uncreate,
                     VGroup(arrow, arrow2, *arcs),

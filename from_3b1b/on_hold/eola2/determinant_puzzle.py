@@ -15,9 +15,17 @@ class WorkOutNumerically(Scene):
 
     def add_question(self):
         equation = self.original_equation = TexMobject(
-            "\\det(", "M_1", "M_2", ")", "=",
-            "\\det(", "M_1", ")",
-            "\\det(", "M_2", ")",
+            "\\det(",
+            "M_1",
+            "M_2",
+            ")",
+            "=",
+            "\\det(",
+            "M_1",
+            ")",
+            "\\det(",
+            "M_2",
+            ")",
         )
         equation.set_color_by_tex_to_color_map({
             "M_1": self.M1_COLOR,
@@ -41,9 +49,16 @@ class WorkOutNumerically(Scene):
         M2.set_color(self.M2_COLOR)
         self.M2_copy = M2.copy()
         eq_parts = TexMobject(
-            "\\det", "\\big(", "\\big)", "=",
-            "\\det", "\\big(", "\\big)",
-            "\\det", "\\big(", "\\big)",
+            "\\det",
+            "\\big(",
+            "\\big)",
+            "=",
+            "\\det",
+            "\\big(",
+            "\\big)",
+            "\\det",
+            "\\big(",
+            "\\big)",
         )
         for part in eq_parts.get_parts_by_tex("\\big"):
             part.scale(2)
@@ -53,9 +68,12 @@ class WorkOutNumerically(Scene):
             for part in eq_parts.get_parts_by_tex("\\big(")
         ]
         equation = self.equation_with_numbers = VGroup(*it.chain(
-            eq_parts[:i1], [M1, M2],
-            eq_parts[i1:i2], [self.M1_copy],
-            eq_parts[i2:i3], [self.M2_copy],
+            eq_parts[:i1],
+            [M1, M2],
+            eq_parts[i1:i2],
+            [self.M1_copy],
+            eq_parts[i2:i3],
+            [self.M2_copy],
             eq_parts[i3:],
         ))
         equation.arrange(RIGHT, buff=SMALL_BUFF)
@@ -69,14 +87,10 @@ class WorkOutNumerically(Scene):
         M1, M2 = self.M1_copy, self.M2_copy
 
         line1 = VGroup(
-            TexMobject(
-                "\\big(", "2", "\\cdot", "2", "-",
-                "(-1)", "\\cdot", "1", "\\big)"
-            ),
-            TexMobject(
-                "\\big(", "-1", "\\cdot", "1", "-",
-                "4", "\\cdot", "1", "\\big)"
-            ),
+            TexMobject("\\big(", "2", "\\cdot", "2", "-", "(-1)", "\\cdot",
+                       "1", "\\big)"),
+            TexMobject("\\big(", "-1", "\\cdot", "1", "-", "4", "\\cdot", "1",
+                       "\\big)"),
         )
         line1.arrange(RIGHT, buff=SMALL_BUFF)
         line1[0].set_color(self.M1_COLOR)
@@ -102,12 +116,10 @@ class WorkOutNumerically(Scene):
             ])
             self.play(
                 LaggedStartMap(FadeIn, non_numbers, run_time=1),
-                LaggedStartMap(
-                    ReplacementTransform,
-                    matrix_numbers,
-                    lambda m: (m, next(numbers_iter)),
-                    path_arc=TAU / 6
-                ),
+                LaggedStartMap(ReplacementTransform,
+                               matrix_numbers,
+                               lambda m: (m, next(numbers_iter)),
+                               path_arc=TAU / 6),
             )
         self.play(LaggedStartMap(FadeIn, lines[1:], run_time=3))
 
@@ -135,8 +147,7 @@ class WorkOutNumerically(Scene):
 
         self.play(FadeIn(empty_det_tex))
         self.play(*[
-            ReplacementTransform(M.copy(), matrix)
-            for M in (self.M1, self.M2)
+            ReplacementTransform(M.copy(), matrix) for M in (self.M1, self.M2)
         ])
         self.play(LaggedStartMap(FadeIn, group[1:]))
         self.wait()
@@ -144,14 +155,9 @@ class WorkOutNumerically(Scene):
 
 class LetsGoInOneSentence(TeacherStudentsScene):
     def construct(self):
-        self.teacher_says(
-            "Here we go, \\\\", "one sentence!"
-        )
+        self.teacher_says("Here we go, \\\\", "one sentence!")
         self.change_all_student_modes("hooray")
-        self.teacher_says(
-            "Or three...", "",
-            target_mode="guilty"
-        )
+        self.teacher_says("Or three...", "", target_mode="guilty")
         self.change_all_student_modes("sassy")
         self.wait(4)
 
@@ -166,17 +172,21 @@ class SuccessiveLinearTransformations(LinearTransformationScene):
         self.create_product_and_inverse()
         self.scale_area_successively()
         self.apply_transformations_successively()
-        self.scale_area_successively(
-            "\\det(M_2)", "\\det(M_1)", "\\det(M_1 M_2)",
-            reset=False
-        )
+        self.scale_area_successively("\\det(M_2)",
+                                     "\\det(M_1)",
+                                     "\\det(M_1 M_2)",
+                                     reset=False)
         # self.show_det_as_scaling_factor()
 
     def create_product_and_inverse(self):
         self.matrix_product = np.dot(self.matrix_1, self.matrix_2)
         self.matrix_product_inverse = np.linalg.inv(self.matrix_product)
 
-    def scale_area_successively(self, tex2="3", tex1="5", tex_prod="15", reset=True):
+    def scale_area_successively(self,
+                                tex2="3",
+                                tex1="5",
+                                tex_prod="15",
+                                reset=True):
         self.add_unit_square()
         t1 = "$%s \\, \\cdot $" % tex1
         t2 = "$%s \\, \\cdot $" % tex2
@@ -191,11 +201,8 @@ class SuccessiveLinearTransformations(LinearTransformationScene):
         area = areas[0]
         self.add_moving_mobject(area, areas[1])
 
-        self.play(
-            FadeIn(self.square),
-            Write(area),
-            Animation(self.basis_vectors)
-        )
+        self.play(FadeIn(self.square), Write(area),
+                  Animation(self.basis_vectors))
         self.apply_matrix(self.matrix_2)
         self.wait()
         self.add_moving_mobject(area, areas[2])
@@ -207,26 +214,19 @@ class SuccessiveLinearTransformations(LinearTransformationScene):
         brace_tex = brace.get_tex(tex_prod, buff=SMALL_BUFF)
         brace_tex.scale(0.8, about_edge=UP)
 
-        self.play(
-            GrowFromCenter(brace),
-            Write(brace_tex)
-        )
+        self.play(GrowFromCenter(brace), Write(brace_tex))
         self.wait()
         if reset:
-            self.play(
-                FadeOut(VGroup(self.square, area, brace, brace_tex)),
-                Animation(self.plane),
-                Animation(self.basis_vectors)
-            )
+            self.play(FadeOut(VGroup(self.square, area, brace, brace_tex)),
+                      Animation(self.plane), Animation(self.basis_vectors))
             self.transformable_mobjects.remove(self.square)
             self.moving_mobjects = []
             self.reset_plane()
         self.wait()
 
     def apply_transformations_successively(self):
-        M1, M2, all_space = expression = TexMobject(
-            "M_1", "M_2", "\\text{(All 2d space)}"
-        )
+        M1, M2, all_space = expression = TexMobject("M_1", "M_2",
+                                                    "\\text{(All 2d space)}")
         expression.set_color_by_tex_to_color_map({
             "M_1": TEAL,
             "M_2": PINK,
@@ -241,10 +241,7 @@ class SuccessiveLinearTransformations(LinearTransformationScene):
         M1.fade(1)
 
         # Apply one after the other
-        self.play(
-            FocusOn(M2, run_time=1),
-            FadeIn(VGroup(M2, all_space))
-        )
+        self.play(FocusOn(M2, run_time=1), FadeIn(VGroup(M2, all_space)))
         self.add_foreground_mobjects(M2, all_space)
         self.apply_matrix(self.matrix_2)
         self.wait()
@@ -263,10 +260,7 @@ class SuccessiveLinearTransformations(LinearTransformationScene):
         rp.next_to(matrices.target, LEFT, SMALL_BUFF)
 
         self.reset_plane()
-        self.play(
-            MoveToTarget(matrices),
-            *list(map(GrowFromCenter, parens))
-        )
+        self.play(MoveToTarget(matrices), *list(map(GrowFromCenter, parens)))
         self.apply_matrix(self.matrix_product)
         self.wait()
         self.reset_plane()

@@ -10,23 +10,21 @@ class WhatDoesItReallyMean(TeacherStudentsScene):
     }
 
     def construct(self):
-        student_q = TextMobject(
-            "What does", "``probability''\\\\",
-            "\\emph{actually}", "mean?"
-        )
+        student_q = TextMobject("What does", "``probability''\\\\",
+                                "\\emph{actually}", "mean?")
         student_q.set_color_by_tex("probability", YELLOW)
         self.student_says(student_q, target_mode="sassy")
         self.wait()
-        self.play(
-            self.students[1].change_mode, "confused"
-        )
+        self.play(self.students[1].change_mode, "confused")
         self.wait(2)
         student_bubble = self.students[1].bubble
         self.students[1].bubble = None
         student_bubble.add(student_bubble.content)
         self.play(
-            student_bubble.scale, 0.5,
-            student_bubble.to_corner, UL,
+            student_bubble.scale,
+            0.5,
+            student_bubble.to_corner,
+            UL,
         )
         self.teacher_says(
             "Don't worry -- philosophy\\\\ can come later!",

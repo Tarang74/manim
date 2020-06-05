@@ -6,14 +6,10 @@ from manimlib.scene.scene import Scene
 
 # TODO, is this depricated?
 class SceneFromVideo(Scene):
-    def construct(self, file_name,
-                  freeze_last_frame=True,
-                  time_range=None):
+    def construct(self, file_name, freeze_last_frame=True, time_range=None):
         cap = cv2.VideoCapture(file_name)
-        self.shape = (
-            int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)),
-            int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH))
-        )
+        self.shape = (int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)),
+                      int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)))
         fps = cap.get(cv2.cv.CV_CAP_PROP_FPS)
         self.camera.frame_rate = fps
         frame_count = int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT))
@@ -39,14 +35,12 @@ class SceneFromVideo(Scene):
 
     def apply_gaussian_blur(self, ksize=(5, 5), sigmaX=5):
         self.frames = [
-            cv2.GaussianBlur(frame, ksize, sigmaX)
-            for frame in self.frames
+            cv2.GaussianBlur(frame, ksize, sigmaX) for frame in self.frames
         ]
 
     def apply_edge_detection(self, threshold1=50, threshold2=100):
         edged_frames = [
-            cv2.Canny(frame, threshold1, threshold2)
-            for frame in self.frames
+            cv2.Canny(frame, threshold1, threshold2) for frame in self.frames
         ]
         for index in range(len(self.frames)):
             for i in range(3):

@@ -59,9 +59,7 @@ class Transform(Animation):
     def check_target_mobject_validity(self):
         if self.target_mobject is None:
             message = "{}.create_target not properly implemented"
-            raise Exception(
-                message.format(self.__class__.__name__)
-            )
+            raise Exception(message.format(self.__class__.__name__))
 
     def clean_up_from_scene(self, scene):
         super().clean_up_from_scene(scene)
@@ -72,10 +70,8 @@ class Transform(Animation):
     def update_config(self, **kwargs):
         Animation.update_config(self, **kwargs)
         if "path_arc" in kwargs:
-            self.path_func = path_along_arc(
-                kwargs["path_arc"],
-                kwargs.get("path_arc_axis", OUT)
-            )
+            self.path_func = path_along_arc(kwargs["path_arc"],
+                                            kwargs.get("path_arc_axis", OUT))
 
     def get_all_mobjects(self):
         return [
@@ -87,8 +83,7 @@ class Transform(Animation):
 
     def get_all_families_zipped(self):
         return zip(*[
-            mob.family_members_with_points()
-            for mob in [
+            mob.family_members_with_points() for mob in [
                 self.mobject,
                 self.starting_mobject,
                 self.target_copy,
@@ -96,10 +91,7 @@ class Transform(Animation):
         ])
 
     def interpolate_submobject(self, submob, start, target_copy, alpha):
-        submob.interpolate(
-            start, target_copy,
-            alpha, self.path_func
-        )
+        submob.interpolate(start, target_copy, alpha, self.path_func)
         return self
 
 
@@ -113,7 +105,6 @@ class TransformFromCopy(Transform):
     """
     Performs a reversed Transform
     """
-
     def __init__(self, mobject, target_mobject, **kwargs):
         super().__init__(target_mobject, mobject, **kwargs)
 
@@ -122,15 +113,11 @@ class TransformFromCopy(Transform):
 
 
 class ClockwiseTransform(Transform):
-    CONFIG = {
-        "path_arc": -np.pi
-    }
+    CONFIG = {"path_arc": -np.pi}
 
 
 class CounterclockwiseTransform(Transform):
-    CONFIG = {
-        "path_arc": np.pi
-    }
+    CONFIG = {"path_arc": np.pi}
 
 
 class MoveToTarget(Transform):
@@ -140,10 +127,8 @@ class MoveToTarget(Transform):
 
     def check_validity_of_input(self, mobject):
         if not hasattr(mobject, "target"):
-            raise Exception(
-                "MoveToTarget called on mobject"
-                "without attribute 'target'"
-            )
+            raise Exception("MoveToTarget called on mobject"
+                            "without attribute 'target'")
 
 
 class ApplyMethod(Transform):
@@ -163,11 +148,9 @@ class ApplyMethod(Transform):
 
     def check_validity_of_input(self, method):
         if not inspect.ismethod(method):
-            raise Exception(
-                "Whoops, looks like you accidentally invoked "
-                "the method you want to animate"
-            )
-        assert(isinstance(method.__self__, Mobject))
+            raise Exception("Whoops, looks like you accidentally invoked "
+                            "the method you want to animate")
+        assert (isinstance(method.__self__, Mobject))
 
     def create_target(self):
         method = self.method
@@ -184,9 +167,7 @@ class ApplyMethod(Transform):
 
 
 class ApplyPointwiseFunction(ApplyMethod):
-    CONFIG = {
-        "run_time": DEFAULT_POINTWISE_FUNCTION_RUN_TIME
-    }
+    CONFIG = {"run_time": DEFAULT_POINTWISE_FUNCTION_RUN_TIME}
 
     def __init__(self, function, mobject, **kwargs):
         super().__init__(mobject.apply_function, function, **kwargs)
@@ -198,9 +179,7 @@ class ApplyPointwiseFunctionToCenter(ApplyPointwiseFunction):
         super().__init__(mobject.move_to, **kwargs)
 
     def begin(self):
-        self.method_args = [
-            self.function(self.mobject.get_center())
-        ]
+        self.method_args = [self.function(self.mobject.get_center())]
         super().begin()
 
 
@@ -232,7 +211,9 @@ class ApplyFunction(Transform):
     def create_target(self):
         target = self.function(self.mobject.copy())
         if not isinstance(target, Mobject):
-            raise Exception("Functions passed to ApplyFunction must return object of type Mobject")
+            raise Exception(
+                "Functions passed to ApplyFunction must return object of type Mobject"
+            )
         return target
 
 
@@ -267,6 +248,7 @@ class ApplyComplexFunction(ApplyMethod):
         self.path_arc = np.log(func1).imag
         super().init_path_func()
 
+
 ###
 
 
@@ -293,9 +275,7 @@ class Swap(CyclicReplace):
 
 # TODO, this may be depricated...worth reimplementing?
 class TransformAnimations(Transform):
-    CONFIG = {
-        "rate_func": squish_rate_func(smooth)
-    }
+    CONFIG = {"rate_func": squish_rate_func(smooth)}
 
     def __init__(self, start_anim, end_anim, **kwargs):
         digest_config(self, kwargs, locals())
@@ -306,14 +286,15 @@ class TransformAnimations(Transform):
         for anim in start_anim, end_anim:
             anim.set_run_time(self.run_time)
 
-        if start_anim.starting_mobject.get_num_points() != end_anim.starting_mobject.get_num_points():
+        if start_anim.starting_mobject.get_num_points(
+        ) != end_anim.starting_mobject.get_num_points():
             start_anim.starting_mobject.align_data(end_anim.starting_mobject)
             for anim in start_anim, end_anim:
                 if hasattr(anim, "target_mobject"):
                     anim.starting_mobject.align_data(anim.target_mobject)
 
-        Transform.__init__(self, start_anim.mobject,
-                           end_anim.mobject, **kwargs)
+        Transform.__init__(self, start_anim.mobject, end_anim.mobject,
+                           **kwargs)
         # Rewire starting and ending mobjects
         start_anim.mobject = self.starting_mobject
         end_anim.mobject = self.target_mobject

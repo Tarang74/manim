@@ -6,7 +6,6 @@ from active_projects.diffyq.part1.phase_space import IntroduceVectorField
 from from_3b1b.old.div_curl import PhaseSpaceOfPopulationModel
 from from_3b1b.old.div_curl import ShowTwoPopulations
 
-
 # Scenes
 
 
@@ -17,10 +16,8 @@ class VectorFieldTest(Scene):
         )
         mu_tracker = ValueTracker(1)
         field = VectorField(
-            lambda p: pendulum_vector_field_func(
-                plane.point_to_coords(p),
-                mu=mu_tracker.get_value()
-            ),
+            lambda p: pendulum_vector_field_func(plane.point_to_coords(p),
+                                                 mu=mu_tracker.get_value()),
             delta_x=0.5,
             delta_y=0.5,
             max_magnitude=6,
@@ -101,7 +98,9 @@ class TourOfDifferentialEquations(MovingCameraScene):
             "fill_opacity": 1,
             "fill_color": BLACK,
         },
-        "camera_config": {"background_color": DARKER_GREY},
+        "camera_config": {
+            "background_color": DARKER_GREY
+        },
         "zoomed_thumbnail_index": 0,
     }
 
@@ -113,8 +112,7 @@ class TourOfDifferentialEquations(MovingCameraScene):
 
     def add_title(self):
         title = TextMobject(
-            "A Tourist's Guide \\\\to Differential\\\\Equations"
-        )
+            "A Tourist's Guide \\\\to Differential\\\\Equations")
         title.scale(1.5)
         title.to_corner(UR)
         self.add(title)
@@ -148,23 +146,18 @@ class TourOfDifferentialEquations(MovingCameraScene):
         self.add_matrix_exponent(thumbnails[3])
         self.add_laplace_symbol(thumbnails[4])
 
-        self.play(
-            ShowCreation(
-                line,
-                rate_func=lambda t: np.clip(t * (n + 1) / n, 0, 1)
-            ),
-            LaggedStart(*[
-                GrowFromCenter(
-                    thumbnail,
-                    rate_func=squish_rate_func(
-                        smooth,
-                        0, 0.7,
-                    )
-                )
-                for thumbnail in thumbnails
-            ], lag_ratio=1),
-            run_time=5
-        )
+        self.play(ShowCreation(
+            line, rate_func=lambda t: np.clip(t * (n + 1) / n, 0, 1)),
+                  LaggedStart(*[
+                      GrowFromCenter(thumbnail,
+                                     rate_func=squish_rate_func(
+                                         smooth,
+                                         0,
+                                         0.7,
+                                     )) for thumbnail in thumbnails
+                  ],
+                              lag_ratio=1),
+                  run_time=5)
         self.play(Write(dots))
         self.wait()
 
@@ -205,8 +198,7 @@ class TourOfDifferentialEquations(MovingCameraScene):
                 VGroup(self.thumbnails).copy().fade(1),
                 diffEq,
                 lag_ratio=0.01,
-            )
-        )
+            ))
         self.wait()
 
     #
@@ -257,20 +249,14 @@ class TourOfDifferentialEquations(MovingCameraScene):
         thumbnail.add(waves)
 
     def get_square_wave_approx(self, N, color):
-        return FunctionGraph(
-            lambda x: sum([
-                (1 / n) * np.sin(n * PI * x)
-                for n in range(1, 2 * N + 3, 2)
-            ]),
-            x_min=0,
-            x_max=2,
-            color=color
-        )
+        return FunctionGraph(lambda x: sum([(1 / n) * np.sin(n * PI * x)
+                                            for n in range(1, 2 * N + 3, 2)]),
+                             x_min=0,
+                             x_max=2,
+                             color=color)
 
     def add_laplace_symbol(self, thumbnail):
-        mob = TexMobject(
-            "\\mathcal{L}\\left\\{f(t)\\right\\}"
-        )
+        mob = TexMobject("\\mathcal{L}\\left\\{f(t)\\right\\}")
         mob.set_width(0.8 * thumbnail.get_width())
         mob.move_to(thumbnail)
         thumbnail.add(mob)
@@ -319,9 +305,7 @@ class ShowGravityAcceleration(Scene):
             # delta_y=2,
         )
         gravity_field.set_opacity(0.5)
-        gravity_field.sort_submobjects(
-            lambda p: -p[1],
-        )
+        gravity_field.sort_submobjects(lambda p: -p[1], )
         self.add(gravity_field)
 
     def add_title(self):
@@ -341,17 +325,16 @@ class ShowGravityAcceleration(Scene):
                 lambda v: v.set_opacity(1).scale(1.2),
                 vector,
                 rate_func=there_and_back,
-            )
-            for vector in field
-        ]), run_time=2, lag_ratio=0.001)
+            ) for vector in field
+        ]),
+                  run_time=2,
+                  lag_ratio=0.001)
         self.add(self.title)
 
     def show_g_value(self):
         title = self.title
-        g_eq = self.g_eq = TexMobject(
-            "-9.8", "{\\text{m/s}", "\\over", "\\text{s}}",
-            **Lg_formula_config
-        )
+        g_eq = self.g_eq = TexMobject("-9.8", "{\\text{m/s}", "\\over",
+                                      "\\text{s}}", **Lg_formula_config)
         g_eq.add_background_rectangle_to_submobjects()
         g_eq.scale(2)
         g_eq.center()
@@ -359,20 +342,20 @@ class ShowGravityAcceleration(Scene):
 
         self.add(num)
         self.wait(0.75)
-        self.play(
-            FadeInFrom(ms, 0.25 * DOWN, run_time=0.5)
-        )
+        self.play(FadeInFrom(ms, 0.25 * DOWN, run_time=0.5))
         self.wait(0.25)
-        self.play(LaggedStart(
-            GrowFromPoint(per, per.get_left()),
-            FadeInFrom(s, 0.5 * UP),
-            lag_ratio=0.7,
-            run_time=0.75
-        ))
+        self.play(
+            LaggedStart(GrowFromPoint(per, per.get_left()),
+                        FadeInFrom(s, 0.5 * UP),
+                        lag_ratio=0.7,
+                        run_time=0.75))
         self.wait()
         self.play(
-            g_eq.scale, 0.5,
-            g_eq.next_to, title, DOWN,
+            g_eq.scale,
+            0.5,
+            g_eq.next_to,
+            title,
+            DOWN,
         )
 
     def show_trajectory(self):
@@ -393,14 +376,13 @@ class ShowGravityAcceleration(Scene):
         dashed_graph.set_stroke(WHITE, 1)
 
         ball.move_to(graph.get_start())
-        randy.add_updater(
-            lambda m, dt: m.rotate(dt).move_to(ball)
-        )
+        randy.add_updater(lambda m, dt: m.rotate(dt).move_to(ball))
         times = np.arange(0, total_time + 1)
 
         velocity_graph = ParametricFunction(
             lambda t: v0 + g * t,
-            t_min=0, t_max=total_time,
+            t_min=0,
+            t_max=total_time,
         )
         v_point = VectorizedPoint()
         v_point.move_to(velocity_graph.get_start())
@@ -415,6 +397,7 @@ class ShowGravityAcceleration(Scene):
             result.shift(ball.get_center())
             result.set_stroke(width=2, family=False)
             return result
+
         v_vect = always_redraw(get_v_vect)
         self.add(v_vect)
 
@@ -423,19 +406,14 @@ class ShowGravityAcceleration(Scene):
             fill_color=WHITE,
             fill_opacity=0.2,
         )
-        flash = FadeOut(
-            flash_rect,
-            rate_func=squish_rate_func(smooth, 0, 0.1)
-        )
+        flash = FadeOut(flash_rect, rate_func=squish_rate_func(smooth, 0, 0.1))
 
         time_label = TextMobject("Time = ")
         time_label.shift(MED_SMALL_BUFF * LEFT)
         time_tracker = ValueTracker(0)
         time = DecimalNumber(0)
         time.next_to(time_label, RIGHT)
-        time.add_updater(lambda d, dt: d.set_value(
-            time_tracker.get_value()
-        ))
+        time.add_updater(lambda d, dt: d.set_value(time_tracker.get_value()))
         time_group = VGroup(time_label, time)
         time_group.center().to_edge(DOWN)
         self.add(time_group)
@@ -456,20 +434,15 @@ class ShowGravityAcceleration(Scene):
 
             dashed_graph.save_state()
             kw = {
-                "rate_func": lambda alpha: interpolate(
-                    t1 / total_time,
-                    t2 / total_time,
-                    alpha
-                )
+                "rate_func":
+                lambda alpha: interpolate(t1 / total_time, t2 / total_time,
+                                          alpha)
             }
             anims = [
                 ShowCreation(dashed_graph, **kw),
                 MoveAlongPath(ball, graph, **kw),
                 MoveAlongPath(v_point, velocity_graph, **kw),
-                ApplyMethod(
-                    time_tracker.increment_value, 1,
-                    rate_func=linear
-                ),
+                ApplyMethod(time_tracker.increment_value, 1, rate_func=linear),
             ]
             if self.flash:
                 anims.append(flash)
@@ -498,20 +471,15 @@ class ShowGravityAcceleration(Scene):
                 v2.get_end(),
                 buff=0.01,
                 color=YELLOW,
-            ).set_opacity(0.5)
-            for v1, v2 in zip(v_vects, v_vects[1:])
+            ).set_opacity(0.5) for v1, v2 in zip(v_vects, v_vects[1:])
         ])
         brace = Brace(Line(ORIGIN, UP), RIGHT)
         braces = VGroup(*[
             brace.copy().match_height(arrow).next_to(
-                arrow, RIGHT, buff=0.2 * SMALL_BUFF
-            )
-            for arrow in delta_vects
+                arrow, RIGHT, buff=0.2 * SMALL_BUFF) for arrow in delta_vects
         ])
         amounts = VGroup(*[
-            TextMobject("9.8 m/s").scale(0.5).next_to(
-                brace, RIGHT, SMALL_BUFF
-            )
+            TextMobject("9.8 m/s").scale(0.5).next_to(brace, RIGHT, SMALL_BUFF)
             for brace in braces
         ])
 
@@ -582,9 +550,7 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
             "y_max": 35,
             "y_axis_config": {
                 "unit_size": 0.1,
-                "numbers_with_elongated_ticks": range(
-                    -30, 35, 10
-                ),
+                "numbers_with_elongated_ticks": range(-30, 35, 10),
                 "tick_size": 0.05,
                 "numbers_to_show": range(-30, 31, 10),
                 "tip_width": 0.15,
@@ -635,9 +601,7 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
         graph_template.set_stroke(width=2)
         traj_template = graph_template.copy()
         traj_template.stretch(0, 0)
-        traj_template.move_to(
-            axes.coords_to_point(0, 0), DOWN
-        )
+        traj_template.move_to(axes.coords_to_point(0, 0), DOWN)
         traj_template.shift(offset_vector)
         traj_template.set_stroke(width=0.5)
 
@@ -645,17 +609,15 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
         graph.set_stroke(BLUE, 2)
         traj = VMobject()
         traj.set_stroke(WHITE, 0.5)
-        graph.add_updater(lambda g: g.pointwise_become_partial(
-            graph_template, 0, get_t() / total_time
-        ))
-        traj.add_updater(lambda t: t.pointwise_become_partial(
-            traj_template, 0, get_t() / total_time
-        ))
+        graph.add_updater(
+            lambda g: g.pointwise_become_partial(graph_template, 0,
+                                                 get_t() / total_time))
+        traj.add_updater(
+            lambda t: t.pointwise_become_partial(traj_template, 0,
+                                                 get_t() / total_time))
 
         def get_ball_point():
-            return axes.coords_to_point(
-                0, y_func(get_t())
-            ) + offset_vector
+            return axes.coords_to_point(0, y_func(get_t())) + offset_vector
 
         f_always(ball.move_to, get_ball_point)
 
@@ -667,12 +629,11 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
 
         y_label = TexMobject("y", "(t)")
         y_label.set_color_by_tex("y", BLUE)
-        y_label.add_updater(
-            lambda m: m.next_to(
-                graph.get_last_point(),
-                UR, SMALL_BUFF,
-            )
-        )
+        y_label.add_updater(lambda m: m.next_to(
+            graph.get_last_point(),
+            UR,
+            SMALL_BUFF,
+        ))
 
         # Velocity
         def v_func(t):
@@ -683,12 +644,14 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
                 axes.y_axis.unit_size * v_func(get_t()) * UP,
                 color=RED,
             )
-        v_vect = always_redraw(
-            lambda: get_v_vect().shift(get_ball_point())
-        )
+
+        v_vect = always_redraw(lambda: get_v_vect().shift(get_ball_point()))
         v_brace = always_redraw(lambda: Brace(v_vect, LEFT))
         dy_dt_label = TexMobject(
-            "{d", "y", "\\over dt}", "(t)",
+            "{d",
+            "y",
+            "\\over dt}",
+            "(t)",
         )
         dy_dt_label.scale(0.8)
         dy_dt_label.set_color_by_tex("y", BLUE)
@@ -696,57 +659,56 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
         y_dot_label.set_color_by_tex("\\dot y", RED)
         for label in dy_dt_label, y_dot_label:
             label.add_updater(lambda m: m.next_to(
-                v_brace, LEFT, SMALL_BUFF,
+                v_brace,
+                LEFT,
+                SMALL_BUFF,
             ))
 
         graphed_v_vect = always_redraw(
-            lambda: get_v_vect().shift(
-                axes.coords_to_point(get_t(), 0)
-            )
-        )
+            lambda: get_v_vect().shift(axes.coords_to_point(get_t(), 0)))
         v_graph_template = axes.get_graph(
-            v_func, x_max=total_time,
+            v_func,
+            x_max=total_time,
         )
         v_graph = VMobject()
         v_graph.set_stroke(RED, 2)
         v_graph.add_updater(lambda m: m.pointwise_become_partial(
             v_graph_template,
-            0, get_t() / total_time,
+            0,
+            get_t() / total_time,
         ))
 
         # Acceleration
         def get_a_vect():
-            return Vector(
-                axes.y_axis.unit_size * g * DOWN
-            )
+            return Vector(axes.y_axis.unit_size * g * DOWN)
 
         a_vect = get_a_vect()
         a_vect.add_updater(lambda a: a.move_to(
-            get_ball_point(), UP,
+            get_ball_point(),
+            UP,
         ))
         a_brace = Brace(a_vect, RIGHT)
         always(a_brace.next_to, a_vect, RIGHT, SMALL_BUFF)
-        d2y_dt2_label = TexMobject(
-            "d^2", "{y}", "\\over dt}", "(t)"
-        )
+        d2y_dt2_label = TexMobject("d^2", "{y}", "\\over dt}", "(t)")
         d2y_dt2_label.scale(0.8)
         d2y_dt2_label.set_color_by_tex(
-            "y", BLUE,
+            "y",
+            BLUE,
         )
         y_ddot_label = TexMobject("\\ddot y", "(t)")
         y_ddot_label.set_color_by_tex("\\ddot y", YELLOW)
         for label in d2y_dt2_label, y_ddot_label:
-            label.add_updater(lambda m: m.next_to(
-                a_brace, RIGHT, SMALL_BUFF
-            ))
+            label.add_updater(lambda m: m.next_to(a_brace, RIGHT, SMALL_BUFF))
         a_graph = axes.get_graph(
-            lambda t: -g, x_max=total_time,
+            lambda t: -g,
+            x_max=total_time,
         )
         a_graph.set_stroke(YELLOW, 2)
 
         graphed_a_vect = get_a_vect()
         graphed_a_vect.add_updater(lambda a: a.move_to(
-            axes.coords_to_point(get_t(), 0), UP,
+            axes.coords_to_point(get_t(), 0),
+            UP,
         ))
 
         self.set_variables_as_attrs(
@@ -808,18 +770,14 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
                 self.dy_dt_label,
                 self.y_dot_label,
             ),
-            ShowCreationThenFadeAround(
-                self.y_dot_label,
-            ),
+            ShowCreationThenFadeAround(self.y_dot_label, ),
         )
         self.play(
             ReplacementTransform(
                 self.d2y_dt2_label,
                 self.y_ddot_label,
             ),
-            ShowCreationThenFadeAround(
-                self.y_ddot_label,
-            ),
+            ShowCreationThenFadeAround(self.y_ddot_label, ),
         )
 
     def show_equation(self):
@@ -830,7 +788,8 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
         equation = VGroup(
             new_y_ddot,
             *TexMobject(
-                "=", "-g",
+                "=",
+                "-g",
                 tex_to_color_map={"-g": YELLOW},
             ),
         )
@@ -862,25 +821,33 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
         v_graph.shift(-offset)
 
         tex_question, answer1, answer2 = derivs = [
-            TexMobject(
-                "{d", "(", *term, ")", "\\over", "dt}", "(t)",
-                "=", "-g",
-                tex_to_color_map={
-                    "-g": YELLOW,
-                    "v_0": RED,
-                    "?": RED,
-                }
-            )
-            for term in [
-                ("?", "?", "?", "?"),
-                ("-g", "t"),
-                ("-g", "t", "+", "v_0",),
-            ]
+            TexMobject("{d",
+                       "(",
+                       *term,
+                       ")",
+                       "\\over",
+                       "dt}",
+                       "(t)",
+                       "=",
+                       "-g",
+                       tex_to_color_map={
+                           "-g": YELLOW,
+                           "v_0": RED,
+                           "?": RED,
+                       }) for term in [
+                           ("?", "?", "?", "?"),
+                           ("-g", "t"),
+                           (
+                               "-g",
+                               "t",
+                               "+",
+                               "v_0",
+                           ),
+                       ]
         ]
         for x in range(2):
-            answer1.submobjects.insert(
-                4, VectorizedPoint(answer1[4].get_left())
-            )
+            answer1.submobjects.insert(4,
+                                       VectorizedPoint(answer1[4].get_left()))
         for deriv in derivs:
             deriv.next_to(equation, DOWN, MED_LARGE_BUFF)
 
@@ -897,21 +864,21 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
         v0_label.set_color(RED)
         v0_label.next_to(v0_dot, UR, buff=0)
 
-        y_dot_equation = TexMobject(
-            "{\\dot y}", "(t)", "=",
-            "-g", "t", "+", "v_0",
-            tex_to_color_map={
-                "{\\dot y}": RED,
-                "-g": YELLOW,
-                "v_0": RED,
-            }
-        )
+        y_dot_equation = TexMobject("{\\dot y}",
+                                    "(t)",
+                                    "=",
+                                    "-g",
+                                    "t",
+                                    "+",
+                                    "v_0",
+                                    tex_to_color_map={
+                                        "{\\dot y}": RED,
+                                        "-g": YELLOW,
+                                        "v_0": RED,
+                                    })
         y_dot_equation.to_corner(UR)
 
-        self.play(
-            FadeInFrom(tex_question, DOWN),
-            FadeInFrom(question, UP)
-        )
+        self.play(FadeInFrom(tex_question, DOWN), FadeInFrom(question, UP))
         self.wait()
         self.add(v_graph, question)
         self.play(
@@ -921,7 +888,8 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
         self.wait()
         self.play(
             ReplacementTransform(answer1, answer2),
-            v_graph.shift, offset,
+            v_graph.shift,
+            offset,
         )
         self.play(
             FadeInFromLarge(v0_dot),
@@ -930,10 +898,12 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
         self.wait()
         self.play(
             TransformFromCopy(
-                answer2[2:6], y_dot_equation[3:],
+                answer2[2:6],
+                y_dot_equation[3:],
             ),
             Write(y_dot_equation[:3]),
-            equation.shift, LEFT,
+            equation.shift,
+            LEFT,
         )
         self.play(
             FadeOut(question),
@@ -956,53 +926,61 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
             ("-", "(1/2)", "g", "t^2", "+", "v_0", "t", "+", "y_0"),
         ]
         tex_question, answer1, answer2 = derivs = [
-            TexMobject(
-                "{d", "(", *term, ")", "\\over", "dt}", "(t)",
-                "=",
-                "-g", "t", "+", "v_0",
-                tex_to_color_map={
-                    "g": YELLOW,
-                    "v_0": RED,
-                    "?": BLUE,
-                    "y_0": BLUE,
-                }
-            )
-            for term in all_terms
+            TexMobject("{d",
+                       "(",
+                       *term,
+                       ")",
+                       "\\over",
+                       "dt}",
+                       "(t)",
+                       "=",
+                       "-g",
+                       "t",
+                       "+",
+                       "v_0",
+                       tex_to_color_map={
+                           "g": YELLOW,
+                           "v_0": RED,
+                           "?": BLUE,
+                           "y_0": BLUE,
+                       }) for term in all_terms
         ]
         answer1.scale(0.8)
         answer2.scale(0.8)
         for deriv, terms in zip(derivs, all_terms):
             for x in range(len(all_terms[-1]) - len(terms)):
                 n = 2 + len(terms)
-                deriv.submobjects.insert(
-                    n, VectorizedPoint(deriv[n].get_left())
-                )
-            deriv.next_to(
-                VGroup(equation, y_dot_equation),
-                DOWN, MED_LARGE_BUFF + SMALL_BUFF
-            )
+                deriv.submobjects.insert(n,
+                                         VectorizedPoint(deriv[n].get_left()))
+            deriv.next_to(VGroup(equation, y_dot_equation), DOWN,
+                          MED_LARGE_BUFF + SMALL_BUFF)
             deriv.shift_onto_screen()
             deriv.add_background_rectangle_to_submobjects()
 
-        y_equation = TexMobject(
-            "y", "(t)", "=",
-            "-", "(1/2)", "g", "t^2",
-            "+", "v_0", "t",
-            "+", "y_0",
-            tex_to_color_map={
-                "y": BLUE,
-                "g": YELLOW,
-                "v_0": RED,
-            }
-        )
+        y_equation = TexMobject("y",
+                                "(t)",
+                                "=",
+                                "-",
+                                "(1/2)",
+                                "g",
+                                "t^2",
+                                "+",
+                                "v_0",
+                                "t",
+                                "+",
+                                "y_0",
+                                tex_to_color_map={
+                                    "y": BLUE,
+                                    "g": YELLOW,
+                                    "v_0": RED,
+                                })
         y_equation.next_to(
             VGroup(equation, y_dot_equation),
-            DOWN, MED_LARGE_BUFF,
+            DOWN,
+            MED_LARGE_BUFF,
         )
 
-        self.play(
-            FadeInFrom(tex_question, DOWN),
-        )
+        self.play(FadeInFrom(tex_question, DOWN), )
         self.wait()
         self.add(graph, tex_question)
         self.play(
@@ -1016,7 +994,8 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
         g_updaters = graph.updaters
         graph.clear_updaters()
         self.play(
-            graph.shift, 2 * DOWN,
+            graph.shift,
+            2 * DOWN,
             rate_func=there_and_back,
             run_time=2,
         )
@@ -1025,10 +1004,7 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
         br = BackgroundRectangle(y_equation)
         self.play(
             FadeIn(br),
-            ReplacementTransform(
-                answer2[2:11],
-                y_equation[3:]
-            ),
+            ReplacementTransform(answer2[2:11], y_equation[3:]),
             FadeIn(y_equation[:3]),
             FadeOut(answer2[:2]),
             FadeOut(answer2[11:]),
@@ -1041,7 +1017,8 @@ class SimpleProjectileEquation(ShowGravityAcceleration):
         self.t_tracker.set_value(0)
         self.play(
             ApplyMethod(
-                self.t_tracker.set_value, 5,
+                self.t_tracker.set_value,
+                5,
                 rate_func=linear,
                 run_time=self.total_time,
             ),
@@ -1070,30 +1047,48 @@ class UniversalGravityLawSymbols(Scene):
         x2_tex = "\\vec{\\textbf{x}}_2"
         a1_tex = "\\vec{\\textbf{a}}_1"
         new_brown = interpolate_color(LIGHT_GREY, LIGHT_BROWN, 0.5)
-        law = TexMobject(
-            "F_1", "=", "m_1", a1_tex, "=",
-            "G", "m_1", "m_2",
-            "\\left({", x2_tex, "-", x1_tex, "\\over",
-            "||", x2_tex, "-", x1_tex, "||", "}\\right)",
-            "\\left({", "1", "\\over",
-            "||", x2_tex, "-", x1_tex, "||^2", "}\\right)",
-            tex_to_color_map={
-                x1_tex: BLUE_C,
-                "m_1": BLUE_C,
-                x2_tex: new_brown,
-                "m_2": new_brown,
-                a1_tex: YELLOW,
-            }
-        )
+        law = TexMobject("F_1",
+                         "=",
+                         "m_1",
+                         a1_tex,
+                         "=",
+                         "G",
+                         "m_1",
+                         "m_2",
+                         "\\left({",
+                         x2_tex,
+                         "-",
+                         x1_tex,
+                         "\\over",
+                         "||",
+                         x2_tex,
+                         "-",
+                         x1_tex,
+                         "||",
+                         "}\\right)",
+                         "\\left({",
+                         "1",
+                         "\\over",
+                         "||",
+                         x2_tex,
+                         "-",
+                         x1_tex,
+                         "||^2",
+                         "}\\right)",
+                         tex_to_color_map={
+                             x1_tex: BLUE_C,
+                             "m_1": BLUE_C,
+                             x2_tex: new_brown,
+                             "m_2": new_brown,
+                             a1_tex: YELLOW,
+                         })
         law.to_edge(UP)
 
         force = law[:4]
         constants = law[4:8]
         unit_vect = law[8:19]
         inverse_square = law[19:]
-        parts = VGroup(
-            force, unit_vect, inverse_square
-        )
+        parts = VGroup(force, unit_vect, inverse_square)
 
         words = VGroup(
             TextMobject("Force on\\\\mass 1"),
@@ -1114,17 +1109,11 @@ class UniversalGravityLawSymbols(Scene):
             braces.add(brace)
             rects.add(rect)
 
-        self.play(
-            ShowCreationThenFadeOut(rects[0]),
-            GrowFromCenter(braces[0]),
-            FadeInFrom(words[0], UP)
-        )
+        self.play(ShowCreationThenFadeOut(rects[0]), GrowFromCenter(braces[0]),
+                  FadeInFrom(words[0], UP))
         self.wait()
-        self.play(
-            ShowCreationThenFadeOut(rects[1]),
-            GrowFromCenter(braces[1]),
-            FadeInFrom(words[1], UP)
-        )
+        self.play(ShowCreationThenFadeOut(rects[1]), GrowFromCenter(braces[1]),
+                  FadeInFrom(words[1], UP))
         self.wait()
         self.play(
             ShowCreationThenFadeOut(rects[2]),
@@ -1141,13 +1130,9 @@ class UniversalGravityLawSymbols(Scene):
                 v1_tex: RED,
             }
         }
-        x_deriv = TexMobject(
-            "{d", x1_tex, "\\over", "dt}", "=", v1_tex, **kw
-        )
+        x_deriv = TexMobject("{d", x1_tex, "\\over", "dt}", "=", v1_tex, **kw)
         x_deriv.to_corner(UL)
-        v_deriv = TexMobject(
-            "{d", v1_tex, "\\over", "dt}", "=", **kw
-        )
+        v_deriv = TexMobject("{d", v1_tex, "\\over", "dt}", "=", **kw)
 
         # Make way
         law.generate_target()
@@ -1161,7 +1146,9 @@ class UniversalGravityLawSymbols(Scene):
         self.play(
             FadeInFromDown(x_deriv),
             MoveToTarget(law),
-            braces[1:].align_to, lt, RIGHT,
+            braces[1:].align_to,
+            lt,
+            RIGHT,
             MaintainPositionRelativeTo(words[1:], braces[1:]),
             FadeOut(words[0]),
             FadeOut(braces[0]),
@@ -1173,11 +1160,11 @@ class UniversalGravityLawSymbols(Scene):
                 x_deriv.get_part_by_tex(v1_tex),
                 v_deriv.get_part_by_tex(v1_tex),
             ),
-            Write(VGroup(*filter(
-                lambda m: m is not v_deriv.get_part_by_tex(v1_tex),
-                v_deriv,
-            )))
-        )
+            Write(
+                VGroup(*filter(
+                    lambda m: m is not v_deriv.get_part_by_tex(v1_tex),
+                    v_deriv,
+                ))))
 
         x_parts = law.get_parts_by_tex(x1_tex)
         self.play(
@@ -1186,14 +1173,8 @@ class UniversalGravityLawSymbols(Scene):
                 x_parts.copy(),
                 remover=True,
                 path_arc=30 * DEGREES,
-            )
-        )
-        self.play(
-            LaggedStartMap(
-                ShowCreationThenFadeAround,
-                x_parts
-            )
-        )
+            ))
+        self.play(LaggedStartMap(ShowCreationThenFadeAround, x_parts))
         self.wait()
 
 
@@ -1208,15 +1189,23 @@ class ExampleTypicalODE(TeacherStudentsScene):
                 },
             ),
             get_ode(),
-            TexMobject(
-                "{\\partial T", "\\over", "\\partial t} = ",
-                "{\\partial^2 T", "\\over", "\\partial x^2}", "+",
-                "{\\partial^2 T", "\\over", "\\partial y^2}", "+",
-                "{\\partial^2 T", "\\over", "\\partial z^2}",
-                tex_to_color_map={
-                    "T": RED,
-                }
-            ),
+            TexMobject("{\\partial T",
+                       "\\over",
+                       "\\partial t} = ",
+                       "{\\partial^2 T",
+                       "\\over",
+                       "\\partial x^2}",
+                       "+",
+                       "{\\partial^2 T",
+                       "\\over",
+                       "\\partial y^2}",
+                       "+",
+                       "{\\partial^2 T",
+                       "\\over",
+                       "\\partial z^2}",
+                       tex_to_color_map={
+                           "T": RED,
+                       }),
         )
         examples[1].get_parts_by_tex("theta").set_color(GREEN)
         examples.arrange(DOWN, buff=MED_LARGE_BUFF)
@@ -1224,7 +1213,8 @@ class ExampleTypicalODE(TeacherStudentsScene):
 
         self.play(
             FadeInFrom(examples[0], UP),
-            self.teacher.change, "raise_right_hand",
+            self.teacher.change,
+            "raise_right_hand",
         )
         self.play(
             FadeInFrom(examples[1], UP),
@@ -1233,9 +1223,7 @@ class ExampleTypicalODE(TeacherStudentsScene):
                 look_at_arg=examples,
             ),
         )
-        self.play(
-            FadeInFrom(examples[2], UP)
-        )
+        self.play(FadeInFrom(examples[2], UP))
         self.wait(5)
 
 
@@ -1280,7 +1268,9 @@ class DefineODE(Scene):
             "mu": 0.3,
         },
         "axes_config": {
-            "y_axis_config": {"unit_size": 0.75},
+            "y_axis_config": {
+                "unit_size": 0.75
+            },
             "y_max": PI,
             "y_min": -PI,
             "x_max": 10,
@@ -1324,10 +1314,7 @@ class DefineODE(Scene):
         equation.next_to(de_word, DOWN)
         thetas = equation.get_parts_by_tex("\\theta")
 
-        lines = VGroup(*[
-            Line(v, 1.2 * v)
-            for v in compass_directions(25)
-        ])
+        lines = VGroup(*[Line(v, 1.2 * v) for v in compass_directions(25)])
         lines.replace(equation, stretch=True)
         lines.scale(1.5)
         lines.set_stroke(YELLOW)
@@ -1342,17 +1329,16 @@ class DefineODE(Scene):
                 run_time=1.5,
                 time_width=0.9,
                 n_segments=5,
-            )
-        )
+            ))
         self.play(FadeInFromDown(de_word))
         self.wait(2)
         self.play(
             LaggedStartMap(
-                ApplyMethod, thetas,
+                ApplyMethod,
+                thetas,
                 lambda m: (m.shift, 0.25 * DOWN),
                 rate_func=there_and_back,
-            )
-        )
+            ))
         self.wait()
 
         self.de_word = de_word
@@ -1368,28 +1354,23 @@ class DefineODE(Scene):
         ])
         q_marks.set_stroke(width=0, background=True)
         self.play(
-            VFadeOut(graph),
-            FadeOut(pendulum),
+            VFadeOut(graph), FadeOut(pendulum),
             LaggedStart(*[
                 UpdateFromAlphaFunc(
                     q_mark,
                     lambda m, a: m.set_height(0.5 * (1 + a)).set_fill(
-                        opacity=there_and_back(a)
-                    ),
-                )
-                for q_mark in q_marks
-            ], lag_ratio=0.01, run_time=2)
-        )
+                        opacity=there_and_back(a)),
+                ) for q_mark in q_marks
+            ],
+                        lag_ratio=0.01,
+                        run_time=2))
         self.remove(q_marks)
 
     def show_value_slope_curvature(self):
         axes = self.axes
         p = self.pendulum
-        graph = axes.get_graph(
-            lambda t: p.initial_theta * np.cos(
-                np.sqrt(p.gravity / p.length) * t
-            ) * np.exp(-p.mu * t / 2)
-        )
+        graph = axes.get_graph(lambda t: p.initial_theta * np.cos(
+            np.sqrt(p.gravity / p.length) * t) * np.exp(-p.mu * t / 2))
 
         tex_config = {
             "tex_to_color_map": {
@@ -1400,10 +1381,7 @@ class DefineODE(Scene):
             "height": 0.5,
         }
         theta, d_theta, dd_theta = [
-            TexMobject(
-                "{" + s + "\\theta}(t)",
-                **tex_config
-            )
+            TexMobject("{" + s + "\\theta}(t)", **tex_config)
             for s in ("", "\\dot", "\\ddot")
         ]
 
@@ -1419,10 +1397,10 @@ class DefineODE(Scene):
         def get_v_line():
             point = get_point(get_t())
             x_point = axes.x_axis.number_to_point(
-                axes.x_axis.point_to_number(point)
-            )
+                axes.x_axis.point_to_number(point))
             return DashedLine(
-                x_point, point,
+                x_point,
+                point,
                 dash_length=0.025,
                 stroke_color=BLUE,
                 stroke_width=2,
@@ -1430,7 +1408,8 @@ class DefineODE(Scene):
 
         def get_tangent_line(curve, alpha):
             line = Line(
-                ORIGIN, 1.5 * RIGHT,
+                ORIGIN,
+                1.5 * RIGHT,
                 color=RED,
                 stroke_width=1.5,
             )
@@ -1444,17 +1423,13 @@ class DefineODE(Scene):
             return line
 
         def get_slope_line():
-            return get_tangent_line(
-                graph, get_t() / axes.x_max
-            )
+            return get_tangent_line(graph, get_t() / axes.x_max)
 
         def get_curve():
             curve = VMobject()
             t = get_t()
-            curve.set_points_smoothly([
-                get_point(t + a)
-                for a in np.linspace(-0.5, 0.5, 11)
-            ])
+            curve.set_points_smoothly(
+                [get_point(t + a) for a in np.linspace(-0.5, 0.5, 11)])
             curve.set_stroke(YELLOW, 1)
             return curve
 
@@ -1493,14 +1468,10 @@ class DefineODE(Scene):
 
         a_tracker = ValueTracker(0)
         curve_copy = curve.copy()
-        changing_slope = always_redraw(
-            lambda: get_tangent_line(
-                curve_copy,
-                a_tracker.get_value(),
-            ).set_stroke(
-                opacity=there_and_back(a_tracker.get_value())
-            )
-        )
+        changing_slope = always_redraw(lambda: get_tangent_line(
+            curve_copy,
+            a_tracker.get_value(),
+        ).set_stroke(opacity=there_and_back(a_tracker.get_value())))
         self.add(curve, dot)
         self.play(
             ShowCreation(curve),
@@ -1509,15 +1480,14 @@ class DefineODE(Scene):
         )
         self.add(changing_slope)
         self.play(
-            a_tracker.set_value, 1,
+            a_tracker.set_value,
+            1,
             run_time=3,
         )
         self.remove(changing_slope, a_tracker)
 
         self.t_tracker = t_tracker
-        self.curvature_group = VGroup(
-            v_line, slope_line, curve, dot
-        )
+        self.curvature_group = VGroup(v_line, slope_line, curve, dot)
         self.curvature_group_labels = VGroup(thetas, words)
         self.fake_graph = graph
 
@@ -1530,7 +1500,8 @@ class DefineODE(Scene):
         t_rects = VGroup(*map(SurroundingRectangle, ts))  # Rawr
         x_axis = axes.x_axis
         x_axis_line = Line(
-            x_axis.get_start(), x_axis.get_end(),
+            x_axis.get_start(),
+            x_axis.get_end(),
             stroke_color=YELLOW,
             stroke_width=5,
         )
@@ -1545,18 +1516,10 @@ class DefineODE(Scene):
         ordinary_underline.next_to(ordinary, DOWN, SMALL_BUFF)
         ordinary_underline.set_color(YELLOW)
 
-        self.play(
-            ShowCreationThenFadeOut(
-                t_rects,
-                lag_ratio=0.8
-            ),
-            ShowCreationThenFadeOut(x_axis_line)
-        )
-        self.play(
-            MoveToTarget(de_word),
-            FadeInFrom(ordinary, RIGHT),
-            GrowFromCenter(ordinary_underline)
-        )
+        self.play(ShowCreationThenFadeOut(t_rects, lag_ratio=0.8),
+                  ShowCreationThenFadeOut(x_axis_line))
+        self.play(MoveToTarget(de_word), FadeInFrom(ordinary, RIGHT),
+                  GrowFromCenter(ordinary_underline))
         self.play(FadeOut(ordinary_underline))
         self.wait()
 
@@ -1566,14 +1529,13 @@ class DefineODE(Scene):
         ode_initials.generate_target()
         ode_initials.target.scale(1.2)
         ode_initials.target.set_color(PINK)
-        ode_initials.target.arrange(
-            RIGHT, buff=0.5 * SMALL_BUFF, aligned_edge=DOWN
-        )
+        ode_initials.target.arrange(RIGHT,
+                                    buff=0.5 * SMALL_BUFF,
+                                    aligned_edge=DOWN)
         ode_initials.target.to_edge(UP, buff=MED_SMALL_BUFF)
 
-        ode_remaining_letters = VGroup(*it.chain(*[
-            word[1:] for word in ode_word
-        ]))
+        ode_remaining_letters = VGroup(*it.chain(
+            *[word[1:] for word in ode_word]))
         ode_remaining_letters.generate_target()
         for mob in ode_remaining_letters.target:
             mob.shift(0.2 * UP)
@@ -1604,9 +1566,7 @@ class DefineODE(Scene):
         )
         self.wait()
         self.play(FocusOn(second_deriv))
-        self.play(
-            Indicate(second_deriv, color=YELLOW),
-        )
+        self.play(Indicate(second_deriv, color=YELLOW), )
         self.wait()
 
         self.second_order_word = so
@@ -1619,8 +1579,7 @@ class DefineODE(Scene):
             TexMobject(
                 "\\dddot {x}(t) + \\dot {x}(t)^2 = 0",
                 **tex_config,
-            )
-        )
+            ))
         example4 = VGroup(
             TextMobject("Fourth order ODE"),
             TexMobject(
@@ -1629,8 +1588,7 @@ class DefineODE(Scene):
                 "b \\ddot {x}(t) {x}(t)",
                 "= 1",
                 **tex_config,
-            )
-        )
+            ))
         for example in [example3, example4]:
             example[0].scale(1.2)
             example.arrange(DOWN, buff=MED_LARGE_BUFF)
@@ -1653,11 +1611,7 @@ class DefineODE(Scene):
         self.wait(2)
 
     def get_main_example(self):
-        return VGroup(
-            self.second_order_word,
-            self.ode_initials,
-            self.equation
-        )
+        return VGroup(self.second_order_word, self.ode_initials, self.equation)
 
     def show_changing_curvature_group(self):
         t_tracker = self.t_tracker
@@ -1675,7 +1629,8 @@ class DefineODE(Scene):
         self.play(FadeOut(labels))
         self.add(dashed_graph, curvature_group)
         self.play(
-            t_tracker.set_value, 10,
+            t_tracker.set_value,
+            10,
             ShowCreation(dashed_graph),
             run_time=15,
             rate_func=linear,
@@ -1728,16 +1683,18 @@ class SecondOrderEquationExample(DefineODE):
         so_line.match_width(so_word)
         so_line.next_to(so_word, DOWN, buff=SMALL_BUFF)
 
-        equation = TexMobject(
-            "{\\ddot x}(t)", "=",
-            "-\\mu", "{\\dot x}(t)",
-            "-", "\\omega", "{x}(t)",
-            tex_to_color_map={
-                "{x}": BLUE,
-                "{\\dot x}": RED,
-                "{\\ddot x}": YELLOW,
-            }
-        )
+        equation = TexMobject("{\\ddot x}(t)",
+                              "=",
+                              "-\\mu",
+                              "{\\dot x}(t)",
+                              "-",
+                              "\\omega",
+                              "{x}(t)",
+                              tex_to_color_map={
+                                  "{x}": BLUE,
+                                  "{\\dot x}": RED,
+                                  "{\\ddot x}": YELLOW,
+                              })
         equation.next_to(de_word, DOWN)
 
         dd_x_part = equation[:2]
@@ -1758,8 +1715,7 @@ class SecondOrderEquationExample(DefineODE):
     def show_value_slope_curvature(self):
         axes = self.axes
         graph = axes.get_graph(
-            lambda t: -2.5 * np.cos(2 * t) * np.exp(-0.2 * t)
-        )
+            lambda t: -2.5 * np.cos(2 * t) * np.exp(-0.2 * t))
 
         tex_config = {
             "tex_to_color_map": {
@@ -1770,10 +1726,7 @@ class SecondOrderEquationExample(DefineODE):
             "height": 0.5,
         }
         x, d_x, dd_x = [
-            TexMobject(
-                "{" + s + "x}(t)",
-                **tex_config
-            )
+            TexMobject("{" + s + "x}(t)", **tex_config)
             for s in ("", "\\dot ", "\\ddot ")
         ]
 
@@ -1789,10 +1742,10 @@ class SecondOrderEquationExample(DefineODE):
         def get_v_line():
             point = get_point(get_t())
             x_point = axes.x_axis.number_to_point(
-                axes.x_axis.point_to_number(point)
-            )
+                axes.x_axis.point_to_number(point))
             return DashedLine(
-                x_point, point,
+                x_point,
+                point,
                 dash_length=0.025,
                 stroke_color=BLUE,
                 stroke_width=2,
@@ -1800,7 +1753,8 @@ class SecondOrderEquationExample(DefineODE):
 
         def get_tangent_line(curve, alpha):
             line = Line(
-                ORIGIN, 1.5 * RIGHT,
+                ORIGIN,
+                1.5 * RIGHT,
                 color=RED,
                 stroke_width=1.5,
             )
@@ -1814,17 +1768,13 @@ class SecondOrderEquationExample(DefineODE):
             return line
 
         def get_slope_line():
-            return get_tangent_line(
-                graph, get_t() / axes.x_max
-            )
+            return get_tangent_line(graph, get_t() / axes.x_max)
 
         def get_curve():
             curve = VMobject()
             t = get_t()
-            curve.set_points_smoothly([
-                get_point(t + a)
-                for a in np.linspace(-0.5, 0.5, 11)
-            ])
+            curve.set_points_smoothly(
+                [get_point(t + a) for a in np.linspace(-0.5, 0.5, 11)])
             curve.set_stroke(YELLOW, 1)
             return curve
 
@@ -1863,14 +1813,10 @@ class SecondOrderEquationExample(DefineODE):
 
         a_tracker = ValueTracker(0)
         curve_copy = curve.copy()
-        changing_slope = always_redraw(
-            lambda: get_tangent_line(
-                curve_copy,
-                a_tracker.get_value(),
-            ).set_stroke(
-                opacity=there_and_back(a_tracker.get_value())
-            )
-        )
+        changing_slope = always_redraw(lambda: get_tangent_line(
+            curve_copy,
+            a_tracker.get_value(),
+        ).set_stroke(opacity=there_and_back(a_tracker.get_value())))
         self.add(curve, dot)
         self.play(
             ShowCreation(curve),
@@ -1879,15 +1825,14 @@ class SecondOrderEquationExample(DefineODE):
         )
         self.add(changing_slope)
         self.play(
-            a_tracker.set_value, 1,
+            a_tracker.set_value,
+            1,
             run_time=3,
         )
         self.remove(changing_slope, a_tracker)
 
         self.t_tracker = t_tracker
-        self.curvature_group = VGroup(
-            v_line, slope_line, curve, dot
-        )
+        self.curvature_group = VGroup(v_line, slope_line, curve, dot)
         self.curvature_group_labels = VGroup(xs, words)
         self.fake_graph = graph
 
@@ -1896,6 +1841,7 @@ class SecondOrderEquationExample(DefineODE):
             self.equation,
             self.title,
         )
+
 
 # class VisualizeHeightSlopeCurvature(DefineODE):
 #     CONFIG = {
@@ -1914,9 +1860,7 @@ class SecondOrderEquationExample(DefineODE):
 
 
 class ODEvsPDEinFrames(Scene):
-    CONFIG = {
-        "camera_config": {"background_color": DARKER_GREY}
-    }
+    CONFIG = {"camera_config": {"background_color": DARKER_GREY}}
 
     def construct(self):
         frames = VGroup(*[
@@ -1925,8 +1869,7 @@ class ODEvsPDEinFrames(Scene):
                 fill_opacity=1,
                 fill_color=BLACK,
                 stroke_width=0,
-            )
-            for x in range(2)
+            ) for x in range(2)
         ])
         frames.arrange(RIGHT, buff=LARGE_BUFF)
         frames.shift(0.5 * DOWN)
@@ -1936,8 +1879,7 @@ class ODEvsPDEinFrames(Scene):
                 frame,
                 cycle_rate=0.2,
                 max_stroke_width=1,
-            )
-            for frame in frames
+            ) for frame in frames
         ])
 
         titles = VGroup(
@@ -1947,15 +1889,9 @@ class ODEvsPDEinFrames(Scene):
             TextMobject("Partial", "Differential", "Equations"),
         )
         for title, frame in zip(titles, frames):
-            title.arrange(
-                DOWN,
-                buff=MED_SMALL_BUFF,
-                aligned_edge=LEFT
-            )
+            title.arrange(DOWN, buff=MED_SMALL_BUFF, aligned_edge=LEFT)
             title.next_to(frame, UP, MED_LARGE_BUFF)
-            title.initials = VGroup(*[
-                part[0] for part in title
-            ])
+            title.initials = VGroup(*[part[0] for part in title])
         titles[0][1].shift(0.05 * UP)
 
         # ODE content
@@ -1966,22 +1902,18 @@ class ODEvsPDEinFrames(Scene):
         one_input = TextMobject("One input")
         one_input.next_to(frames[0].get_bottom(), UP)
         o_arrows = VGroup(*[
-            Arrow(
-                one_input.get_top(),
-                t.get_bottom(),
-                buff=0.2,
-                color=WHITE,
-                max_tip_length_to_length_ratio=0.075,
-                path_arc=pa
-            )
-            for t, pa in zip(ts, [-0.7, 0, 0.7])
+            Arrow(one_input.get_top(),
+                  t.get_bottom(),
+                  buff=0.2,
+                  color=WHITE,
+                  max_tip_length_to_length_ratio=0.075,
+                  path_arc=pa) for t, pa in zip(ts, [-0.7, 0, 0.7])
         ])
         o_arrows.set_stroke(width=3)
         frames[0].add(ode, one_input, o_arrows)
 
         # PDE content
-        pde = TexMobject(
-            """
+        pde = TexMobject("""
             \\frac{\\partial T}{\\partial t}
             {(x, y, t)} =
             \\frac{\\partial^2 T}{\\partial x^2}
@@ -1989,36 +1921,25 @@ class ODEvsPDEinFrames(Scene):
             \\frac{\\partial^2 T}{\\partial y^2}
             {(x, y, t)}
             """,
-            tex_to_color_map={"{(x, y, t)}": WHITE}
-        )
+                         tex_to_color_map={"{(x, y, t)}": WHITE})
         pde.set_width(frames[1].get_width() - MED_LARGE_BUFF)
         pde.next_to(frames[1].get_top(), DOWN)
         inputs = pde.get_parts_by_tex("{(x, y, t)}")
         multi_input = TextMobject("Multiple inputs")
         multi_input.next_to(frames[1].get_bottom(), UP)
         p_arrows = VGroup(*[
-            Arrow(
-                multi_input.get_top(),
-                mob.get_bottom(),
-                buff=0.2,
-                color=WHITE,
-                max_tip_length_to_length_ratio=0.075,
-                path_arc=pa
-            )
-            for mob, pa in zip(inputs, [-0.7, 0, 0.7])
+            Arrow(multi_input.get_top(),
+                  mob.get_bottom(),
+                  buff=0.2,
+                  color=WHITE,
+                  max_tip_length_to_length_ratio=0.075,
+                  path_arc=pa) for mob, pa in zip(inputs, [-0.7, 0, 0.7])
         ])
         p_arrows.set_stroke(width=3)
         frames[1].add(pde, multi_input, p_arrows)
 
-        self.add(
-            frames[0],
-            animated_frames[0],
-            titles[0]
-        )
-        self.play(
-            Write(one_input),
-            ShowCreation(o_arrows, lag_ratio=0.5)
-        )
+        self.add(frames[0], animated_frames[0], titles[0])
+        self.play(Write(one_input), ShowCreation(o_arrows, lag_ratio=0.5))
         self.wait(2)
         self.play(titles[0].initials.set_color, BLUE)
         self.wait(7)
@@ -2035,9 +1956,7 @@ class ODEvsPDEinFrames(Scene):
 
 
 class ReferencePiCollisionStateSpaces(Scene):
-    CONFIG = {
-        "camera_config": {"background_color": DARKER_GREY}
-    }
+    CONFIG = {"camera_config": {"background_color": DARKER_GREY}}
 
     def construct(self):
         title = TextMobject("The block collision puzzle")
@@ -2051,8 +1970,7 @@ class ReferencePiCollisionStateSpaces(Scene):
                 fill_opacity=1,
                 fill_color=BLACK,
                 stroke_width=0,
-            )
-            for x in range(2)
+            ) for x in range(2)
         ])
         frames.arrange(RIGHT, buff=LARGE_BUFF)
         boundary = AnimatedBoundary(frames)
@@ -2062,33 +1980,33 @@ class ReferencePiCollisionStateSpaces(Scene):
 
 class XComponentArrows(Scene):
     def construct(self):
-        field = VectorField(
-            lambda p: np.array([p[1], 0, 0])
-        )
+        field = VectorField(lambda p: np.array([p[1], 0, 0]))
         field.set_opacity(0.75)
         for u in (1, -1):
             field.sort(lambda p: u * p[0])
-            self.play(LaggedStartMap(
-                GrowArrow, field,
-                lag_ratio=0.1,
-                run_time=1
-            ))
+            self.play(
+                LaggedStartMap(GrowArrow, field, lag_ratio=0.1, run_time=1))
             self.play(FadeOut(field))
 
 
 class BreakingSecondOrderIntoTwoFirstOrder(IntroduceVectorField):
     def construct(self):
         ode = TexMobject(
-            "{\\ddot\\theta}", "(t)", "=",
-            "-\\mu", "{\\dot\\theta}", "(t)"
-            "-(g / L)\\sin\\big(", "{\\theta}", "(t)\\big)",
+            "{\\ddot\\theta}",
+            "(t)",
+            "=",
+            "-\\mu",
+            "{\\dot\\theta}",
+            "(t)"
+            "-(g / L)\\sin\\big(",
+            "{\\theta}",
+            "(t)\\big)",
             tex_to_color_map={
                 "{\\ddot\\theta}": RED,
                 "{\\dot\\theta}": YELLOW,
                 "{\\theta}": BLUE,
                 # "{t}": WHITE,
-            }
-        )
+            })
         so_word = TextMobject("Second order ODE")
         sys_word = TextMobject("System of two first order ODEs")
 
@@ -2102,10 +2020,8 @@ class BreakingSecondOrderIntoTwoFirstOrder(IntroduceVectorField):
         system2.move_to(system1)
 
         theta_dots = VGroup(*filter(
-            lambda m: (
-                isinstance(m, SingleStringTexMobject) and
-                "{\\dot\\theta}" == m.get_tex_string()
-            ),
+            lambda m: (isinstance(m, SingleStringTexMobject) and
+                       "{\\dot\\theta}" == m.get_tex_string()),
             system1.get_family(),
         ))
 
@@ -2115,15 +2031,15 @@ class BreakingSecondOrderIntoTwoFirstOrder(IntroduceVectorField):
 
         self.play(
             TransformFromCopy(
-                ode[3:], system1[3].get_entries()[1],
+                ode[3:],
+                system1[3].get_entries()[1],
             ),
             TransformFromCopy(ode[2], system1[2]),
             TransformFromCopy(
                 ode[:2], VGroup(
                     system1[0],
                     system1[1].get_entries()[1],
-                )
-            ),
+                )),
         )
         self.play(
             FadeIn(system1[1].get_brackets()),
@@ -2131,17 +2047,14 @@ class BreakingSecondOrderIntoTwoFirstOrder(IntroduceVectorField):
             FadeIn(system1[3].get_brackets()),
             FadeIn(system1[3].get_entries()[0]),
         )
-        self.play(
-            FadeInFromDown(sys_word)
-        )
+        self.play(FadeInFromDown(sys_word))
         self.wait()
-        self.play(LaggedStartMap(
-            ShowCreationThenFadeAround,
-            theta_dots,
-            surrounding_rectangle_config={
-                "color": PINK,
-            }
-        ))
+        self.play(
+            LaggedStartMap(ShowCreationThenFadeAround,
+                           theta_dots,
+                           surrounding_rectangle_config={
+                               "color": PINK,
+                           }))
 
         self.play(ReplacementTransform(system1, system2))
         self.wait()
@@ -2152,17 +2065,17 @@ class BreakingSecondOrderIntoTwoFirstOrder(IntroduceVectorField):
             self.get_vector_symbol(
                 tex1 + "(t)",
                 tex2 + "(t)",
-            ),
-            TexMobject("="),
+            ), TexMobject("="),
             self.get_vector_symbol(
-                tex2 + "(t)",
-                "".join([
-                    "-\\mu", tex2, "(t)",
+                tex2 + "(t)", "".join([
+                    "-\\mu",
+                    tex2,
+                    "(t)",
                     "-(g / L) \\sin\\big(",
-                    tex1, "(t)", "\\big)",
-                ])
-            )
-        )
+                    tex1,
+                    "(t)",
+                    "\\big)",
+                ])))
         system.arrange(RIGHT)
         return system
 
@@ -2180,21 +2093,17 @@ class FromODEToVectorField(Scene):
             }
         }
         vect = get_vector_symbol(
-            "x(t)", "y(t)", "z(t)",
+            "x(t)",
+            "y(t)",
+            "z(t)",
             **matrix_config,
         )
-        d_vect = get_vector_symbol(
-            "\\sigma\\big(y(t) - x(t)\\big)",
-            "x(t)\\big(\\rho - z(t)\\big) - y(t)",
-            "x(t)y(t) - \\beta z(t)",
-            **matrix_config
-        )
+        d_vect = get_vector_symbol("\\sigma\\big(y(t) - x(t)\\big)",
+                                   "x(t)\\big(\\rho - z(t)\\big) - y(t)",
+                                   "x(t)y(t) - \\beta z(t)", **matrix_config)
         equation = VGroup(
-            TexMobject("d \\over dt").scale(1.5),
-            vect,
-            TexMobject("="),
-            d_vect
-        )
+            TexMobject("d \\over dt").scale(1.5), vect, TexMobject("="),
+            d_vect)
         equation.scale(0.8)
         equation.arrange(RIGHT)
         equation.to_edge(UP)
@@ -2248,9 +2157,7 @@ class ThreeBodiesInSpace(SpecialThreeDScene):
 
         for mass, color, center in zip(masses, colors, centers):
             body = self.get_sphere(
-                checkerboard_colors=[
-                    color, color
-                ],
+                checkerboard_colors=[color, color],
                 color=color,
                 stroke_width=0.1,
             )
@@ -2262,9 +2169,7 @@ class ThreeBodiesInSpace(SpecialThreeDScene):
             body.point = center
             body.move_to(center)
 
-            body.velocity = self.get_initial_velocity(
-                center, centers, mass
-            )
+            body.velocity = self.get_initial_velocity(center, centers, mass)
 
             vect = self.get_velocity_vector_mob(body)
 
@@ -2272,36 +2177,26 @@ class ThreeBodiesInSpace(SpecialThreeDScene):
             velocity_vectors.add(vect)
 
         total_mass = np.sum([body.mass for body in bodies])
-        center_of_mass = reduce(op.add, [
-            body.mass * body.get_center() / total_mass
-            for body in bodies
-        ])
-        average_momentum = reduce(op.add, [
-            body.mass * body.velocity / total_mass
-            for body in bodies
-        ])
+        center_of_mass = reduce(
+            op.add,
+            [body.mass * body.get_center() / total_mass for body in bodies])
+        average_momentum = reduce(
+            op.add,
+            [body.mass * body.velocity / total_mass for body in bodies])
         for body in bodies:
             body.shift(-center_of_mass)
             body.velocity -= average_momentum
 
     def get_initial_positions(self):
         return [
-            np.dot(
-                4 * (np.random.random(3) - 0.5),
-                [RIGHT, UP, OUT]
-            )
+            np.dot(4 * (np.random.random(3) - 0.5), [RIGHT, UP, OUT])
             for x in range(len(self.masses))
         ]
 
     def get_initial_velocity(self, center, centers, mass):
-        to_others = [
-            center - center2
-            for center2 in centers
-        ]
-        velocity = 0.2 * mass * normalize(np.cross(*filter(
-            lambda diff: get_norm(diff) > 0,
-            to_others
-        )))
+        to_others = [center - center2 for center2 in centers]
+        velocity = 0.2 * mass * normalize(
+            np.cross(*filter(lambda diff: get_norm(diff) > 0, to_others)))
         return velocity
 
     def add_trajectories(self):
@@ -2345,6 +2240,7 @@ class ThreeBodiesInSpace(SpecialThreeDScene):
             #         2 / length,
             #         about_point=vect.get_start(),
             #     )
+
         return always_redraw(draw_vector)
 
     def update_bodies(self, bodies, dt):
@@ -2400,10 +2296,7 @@ class TwoBodiesInSpace(ThreeBodiesInSpace):
 
     def get_initial_positions(self):
         return [
-            np.dot(
-                6 * (np.random.random(3) - 0.5),
-                [RIGHT, UP, ORIGIN]
-            )
+            np.dot(6 * (np.random.random(3) - 0.5), [RIGHT, UP, ORIGIN])
             for x in range(len(self.masses))
         ]
 
@@ -2411,10 +2304,8 @@ class TwoBodiesInSpace(ThreeBodiesInSpace):
         return 0.75 * normalize(np.cross(center, OUT))
 
     def add_velocity_vectors(self):
-        vectors = VGroup(*[
-            self.get_velocity_vector(body)
-            for body in self.bodies
-        ])
+        vectors = VGroup(
+            *[self.get_velocity_vector(body) for body in self.bodies])
         self.velocity_vectors = vectors
         self.add(vectors)
 
@@ -2426,12 +2317,11 @@ class TwoBodiesInSpace(ThreeBodiesInSpace):
                 max_stroke_width_to_length_ratio=3,
             )
             v.set_stroke(width=3)
-            v.shift(
-                b.point + b.radius * normalize(b.velocity) -
-                v.get_start(),
-            )
+            v.shift(b.point + b.radius * normalize(b.velocity) -
+                    v.get_start(), )
             v.set_shade_in_3d(True)
             return v
+
         return always_redraw(lambda: create_vector(body))
 
     def add_force_vectors(self):
@@ -2452,12 +2342,10 @@ class TwoBodiesInSpace(ThreeBodiesInSpace):
                 max_stroke_width_to_length_ratio=3,
             )
             v.set_stroke(width=3)
-            v.shift(
-                b1.point + b1.radius * normalize(F) -
-                v.get_start(),
-            )
+            v.shift(b1.point + b1.radius * normalize(F) - v.get_start(), )
             v.set_shade_in_3d(True)
             return v
+
         return always_redraw(lambda: create_vector(body1, body2))
 
 
@@ -2506,27 +2394,24 @@ class LoveExample(PiCreatureScene):
         self.add(hearts)
         self.play(
             LaggedStartMap(
-                UpdateFromAlphaFunc, hearts,
-                lambda heart: (
-                    heart,
-                    lambda h, a: h.set_opacity(
-                        there_and_back(a)
-                    ).shift(0.02 * UP)
-                ),
+                UpdateFromAlphaFunc,
+                hearts,
+                lambda heart: (heart, lambda h, a: h.set_opacity(
+                    there_and_back(a)).shift(0.02 * UP)),
                 lag_ratio=0.01,
                 run_time=3,
                 suspend_mobject_updating=False,
             ),
-            ApplyMethod(
-                you.change, 'hooray', tau.eyes,
-                run_time=2,
-                rate_func=squish_rate_func(smooth, 0.5, 1)
-            ),
-            ApplyMethod(
-                tau.change, 'hooray', you.eyes,
-                run_time=2,
-                rate_func=squish_rate_func(smooth, 0.5, 1)
-            ),
+            ApplyMethod(you.change,
+                        'hooray',
+                        tau.eyes,
+                        run_time=2,
+                        rate_func=squish_rate_func(smooth, 0.5, 1)),
+            ApplyMethod(tau.change,
+                        'hooray',
+                        you.eyes,
+                        run_time=2,
+                        rate_func=squish_rate_func(smooth, 0.5, 1)),
         )
         self.remove(hearts)
         self.wait()
@@ -2537,13 +2422,14 @@ class LoveExample(PiCreatureScene):
         self.add_love_number_lines()
         self.tie_creature_state_to_ps_point()
 
-        self.play(Rotating(
-            self.ps_point,
-            radians=-7 * TAU / 8,
-            about_point=ORIGIN,
-            run_time=10,
-            rate_func=linear,
-        ))
+        self.play(
+            Rotating(
+                self.ps_point,
+                radians=-7 * TAU / 8,
+                about_point=ORIGIN,
+                run_time=10,
+                rate_func=linear,
+            ))
         self.wait()
 
     def break_down_your_rule(self):
@@ -2558,12 +2444,15 @@ class LoveExample(PiCreatureScene):
 
         self.play(GrowArrow(up_arrow))
         self.play(
-            self.tau.love_eyes.scale, 1.25,
-            self.tau.love_eyes.set_color, BLUE_C,
+            self.tau.love_eyes.scale,
+            1.25,
+            self.tau.love_eyes.set_color,
+            BLUE_C,
             rate_func=there_and_back,
         )
         self.play(
-            ps_point.shift, 6 * RIGHT,
+            ps_point.shift,
+            6 * RIGHT,
             run_time=2,
         )
         self.wait()
@@ -2573,7 +2462,8 @@ class LoveExample(PiCreatureScene):
             GrowArrow(down_arrow),
         )
         self.play(
-            ps_point.shift, 11 * LEFT,
+            ps_point.shift,
+            11 * LEFT,
             run_time=3,
         )
         self.wait()
@@ -2591,11 +2481,8 @@ class LoveExample(PiCreatureScene):
             TransformFromCopy(label2[0], h2),
         )
         self.wait()
-        self.play(
-            equation.scale, 0.5,
-            equation.to_corner, UL,
-            FadeOut(down_arrow)
-        )
+        self.play(equation.scale, 0.5, equation.to_corner, UL,
+                  FadeOut(down_arrow))
 
     def break_down_their_rule(self):
         label1 = self.love_1_label
@@ -2622,19 +2509,22 @@ class LoveExample(PiCreatureScene):
 
         self.play(GrowArrow(up_arrow))
         self.play(
-            ps_point.shift, 13 * UP,
+            ps_point.shift,
+            13 * UP,
             run_time=3,
         )
         self.wait()
         self.play(
-            ps_point.shift, 11 * RIGHT,
+            ps_point.shift,
+            11 * RIGHT,
         )
         self.play(
             FadeOut(up_arrow),
             GrowArrow(down_arrow),
         )
         self.play(
-            ps_point.shift, 13 * DOWN,
+            ps_point.shift,
+            13 * DOWN,
             run_time=3,
         )
         self.wait()
@@ -2657,10 +2547,16 @@ class LoveExample(PiCreatureScene):
 
     def add_love_decimals(self):
         self.love_1_label = self.add_love_decimal(
-            1, self.get_love1, self.you.get_color(), -3,
+            1,
+            self.get_love1,
+            self.you.get_color(),
+            -3,
         )
         self.love_2_label = self.add_love_decimal(
-            2, self.get_love2, self.tau.get_color(), 3,
+            2,
+            self.get_love2,
+            self.tau.get_color(),
+            3,
         )
 
     def add_love_decimal(self, index, value_func, color, x_coord):
@@ -2694,13 +2590,11 @@ class LoveExample(PiCreatureScene):
         nl2.next_to(self.love_2_label, DOWN)
 
         dot1 = Dot(color=self.you.get_color())
-        dot1.add_updater(lambda d: d.move_to(
-            nl1.number_to_point(self.get_love1())
-        ))
+        dot1.add_updater(
+            lambda d: d.move_to(nl1.number_to_point(self.get_love1())))
         dot2 = Dot(color=self.tau.get_color())
-        dot2.add_updater(lambda d: d.move_to(
-            nl2.number_to_point(self.get_love2())
-        ))
+        dot2.add_updater(
+            lambda d: d.move_to(nl2.number_to_point(self.get_love2())))
 
         self.add(nl1, nl2, dot1, dot2)
 
@@ -2713,9 +2607,7 @@ class LoveExample(PiCreatureScene):
             heart.scale(1.25)
             heart.set_stroke(BLACK, 1)
             hearts.add(heart)
-        hearts.add_updater(
-            lambda m: m.move_to(eyes)
-        )
+        hearts.add_updater(lambda m: m.move_to(eyes))
         return hearts
 
     def tie_creature_state_to_ps_point(self):
@@ -2740,13 +2632,15 @@ class LoveExample(PiCreatureScene):
         def update_you(y):
             love = self.get_love1()
 
-            cutoff_values = [
-                -5, -3, -1, 1, 3, 5
-            ]
+            cutoff_values = [-5, -3, -1, 1, 3, 5]
             modes = [
-                "angry", "sassy", "hesitant",
+                "angry",
+                "sassy",
+                "hesitant",
                 "plain",
-                "happy", "hooray", "surprised",
+                "happy",
+                "hooray",
+                "surprised",
             ]
 
             if love < cutoff_values[0]:
@@ -2784,10 +2678,7 @@ class LoveExample(PiCreatureScene):
             #     you_bottom + 0.025 * love * RIGHT, DOWN,
             # )
 
-            l_alpha = np.clip(
-                inverse_interpolate(5, 5.5, love),
-                0, 1
-            )
+            l_alpha = np.clip(inverse_interpolate(5, 5.5, love), 0, 1)
             y.eyes.set_opacity(1 - l_alpha)
             y.love_eyes.set_opacity(l_alpha)
 
@@ -2796,13 +2687,8 @@ class LoveExample(PiCreatureScene):
         def update_tau(t):
             love = self.get_love2()
 
-            cutoff_values = [
-                -5, -1.7, 1.7, 5
-            ]
-            modes = [
-                "angry", "confused", "plain",
-                "hooray", "hooray"
-            ]
+            cutoff_values = [-5, -1.7, 1.7, 5]
+            modes = ["angry", "confused", "plain", "hooray", "hooray"]
 
             if love < cutoff_values[0]:
                 t.change(modes[0])
@@ -2839,10 +2725,7 @@ class LoveExample(PiCreatureScene):
             if love < -4:
                 t.look_at(RIGHT_SIDE)
 
-            l_alpha = np.clip(
-                inverse_interpolate(5, 5.5, love),
-                0, 1
-            )
+            l_alpha = np.clip(inverse_interpolate(5, 5.5, love), 0, 1)
             t.eyes.set_opacity(1 - l_alpha)
             t.love_eyes.set_opacity(l_alpha)
 
@@ -2865,10 +2748,8 @@ class ComparePhysicsToLove(Scene):
         love.scale(0.5)
         love.arrange(DOWN, buff=MED_LARGE_BUFF, aligned_edge=LEFT)
         love.move_to(DOWN)
-        hearts = VGroup(*filter(
-            lambda sm: isinstance(sm, SuitSymbol),
-            love.get_family()
-        ))
+        hearts = VGroup(
+            *filter(lambda sm: isinstance(sm, SuitSymbol), love.get_family()))
 
         arrow = DoubleArrow(love.get_top(), ode.get_bottom())
 
@@ -2889,9 +2770,7 @@ class ComparePhysicsToLove(Scene):
 
 
 class FramesComparingPhysicsToLove(Scene):
-    CONFIG = {
-        "camera_config": {"background_color": DARKER_GREY}
-    }
+    CONFIG = {"camera_config": {"background_color": DARKER_GREY}}
 
     def construct(self):
         ode = get_ode()
@@ -2910,8 +2789,7 @@ class FramesComparingPhysicsToLove(Scene):
                 fill_color=BLACK,
                 fill_opacity=1,
                 stroke_width=0,
-            )
-            for x in range(2)
+            ) for x in range(2)
         ])
         frames.arrange(RIGHT, buff=LARGE_BUFF)
         frames.shift(DOWN)
@@ -2958,10 +2836,7 @@ class InaccurateComputation(Scene):
             word.next_to(h_line, UP)
             word.shift(i * FRAME_WIDTH * RIGHT / 3)
 
-        lines = VGroup(*[
-            DashedLine(TOP, BOTTOM)
-            for x in range(4)
-        ])
+        lines = VGroup(*[DashedLine(TOP, BOTTOM) for x in range(4)])
         lines.arrange(RIGHT)
         lines.stretch_to_fit_width(FRAME_WIDTH)
 
@@ -2980,14 +2855,12 @@ class InaccurateComputation(Scene):
                 "01001001",
                 "00001111",
                 "11011011",
-            ),
-            TexMobject(
+            ), TexMobject(
                 "01011100",
                 "01101001",
                 "00101110",
                 "00011001",
-            )
-        )
+            ))
         for mob in bit_strings:
             mob.arrange(DOWN, buff=SMALL_BUFF)
             for word in mob:
@@ -2995,12 +2868,8 @@ class InaccurateComputation(Scene):
                     if bit == "0":
                         submob.set_color(LIGHT_GREY)
         errors = VGroup(
-            TexMobject(
-                "\\approx 8.7422 \\times 10^{-8}"
-            ),
-            TexMobject(
-                "\\approx 5{,}289{,}803{,}032.00",
-            ),
+            TexMobject("\\approx 8.7422 \\times 10^{-8}"),
+            TexMobject("\\approx 5{,}289{,}803{,}032.00", ),
         )
         errors.set_color(RED)
 

@@ -1,6 +1,5 @@
 from manimlib.imports import *
 
-
 Lg_formula_config = {
     "tex_to_color_map": {
         "\\theta_0": WHITE,
@@ -27,7 +26,8 @@ def get_ode():
         }
     }
     ode = TexMobject(
-        "{\\ddot\\theta}({t})", "=",
+        "{\\ddot\\theta}({t})",
+        "=",
         "-{\\mu} {\\dot\\theta}({t})",
         "-{g \\over L} \\sin\\big({\\theta}({t})\\big)",
         **tex_config,
@@ -36,13 +36,16 @@ def get_ode():
 
 
 def get_period_formula():
-    return TexMobject(
-        "2\\pi", "\\sqrt{\\,", "L", "/", "g", "}",
-        tex_to_color_map={
-            "L": BLUE,
-            "g": YELLOW,
-        }
-    )
+    return TexMobject("2\\pi",
+                      "\\sqrt{\\,",
+                      "L",
+                      "/",
+                      "g",
+                      "}",
+                      tex_to_color_map={
+                          "L": BLUE,
+                          "g": YELLOW,
+                      })
 
 
 def pendulum_vector_field_func(point, mu=0.1, g=9.8, L=3):
@@ -95,12 +98,9 @@ def get_heart_var_deriv(index):
 
 
 def get_love_equation1():
-    equation = VGroup(
-        get_heart_var_deriv(1),
-        TexMobject("=").scale(2),
-        TexMobject("a").scale(2),
-        get_heart_var(2)
-    )
+    equation = VGroup(get_heart_var_deriv(1),
+                      TexMobject("=").scale(2),
+                      TexMobject("a").scale(2), get_heart_var(2))
     equation.arrange(RIGHT)
     equation[-1].shift(SMALL_BUFF * DL)
     return equation

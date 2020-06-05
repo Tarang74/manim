@@ -29,24 +29,21 @@ class MillionFlips(Scene):
 
         proportions = np.random.normal(0.5, 0.5 * 0.1, 100)
         hundred_boxes = VGroup(*[
-            Square(
-                stroke_width=1,
-                stroke_color=WHITE,
-                fill_opacity=1,
-                fill_color=interpolate_color(COLOR_HEADS, COLOR_TAILS, prop)
-            )
-            for prop in proportions
+            Square(stroke_width=1,
+                   stroke_color=WHITE,
+                   fill_opacity=1,
+                   fill_color=interpolate_color(COLOR_HEADS, COLOR_TAILS,
+                                                prop)) for prop in proportions
         ])
         self.organize_group(hundred_boxes)
 
         ten_k_proportions = np.random.normal(0.5, 0.5 * 0.01, 100)
         ten_k_boxes = VGroup(*[
-            Square(
-                stroke_width=1,
-                stroke_color=WHITE,
-                fill_opacity=1,
-                fill_color=interpolate_color(COLOR_HEADS, COLOR_TAILS, prop)
-            )
+            Square(stroke_width=1,
+                   stroke_color=WHITE,
+                   fill_opacity=1,
+                   fill_color=interpolate_color(COLOR_HEADS, COLOR_TAILS,
+                                                prop))
             for prop in ten_k_proportions
         ])
         self.organize_group(ten_k_boxes)
@@ -59,11 +56,8 @@ class MillionFlips(Scene):
                 self.increment(n_heads_count)
             self.wait(small_wait_time)
 
-        self.play(
-            FadeIn(hundred_boxes[0]),
-            coins.set_stroke, {"width": 0},
-            coins.replace, hundred_boxes[0]
-        )
+        self.play(FadeIn(hundred_boxes[0]), coins.set_stroke, {"width": 0},
+                  coins.replace, hundred_boxes[0])
         hundred_boxes[0].add(coins)
         for box, prop in list(zip(hundred_boxes, proportions))[1:]:
             self.add(box)
@@ -71,11 +65,8 @@ class MillionFlips(Scene):
             self.increment(n_heads_count, int(np.round(prop * 100)))
             self.wait(small_wait_time)
 
-        self.play(
-            FadeIn(ten_k_boxes[0]),
-            hundred_boxes.set_stroke, {"width": 0},
-            hundred_boxes.replace, ten_k_boxes[0]
-        )
+        self.play(FadeIn(ten_k_boxes[0]), hundred_boxes.set_stroke,
+                  {"width": 0}, hundred_boxes.replace, ten_k_boxes[0])
         ten_k_boxes[0].add(hundred_boxes)
         for box, prop in list(zip(ten_k_boxes, ten_k_proportions))[1:]:
             self.add(box)
@@ -99,8 +90,11 @@ class MillionFlips(Scene):
 class PropHeadsWithinThousandth(Scene):
     def construct(self):
         prob = TexMobject(
-            "P(499{,}000 \\le", "\\# \\text{H}", "\\le 501{,}000)",
-            "\\approx", "0.9545",
+            "P(499{,}000 \\le",
+            "\\# \\text{H}",
+            "\\le 501{,}000)",
+            "\\approx",
+            "0.9545",
         )
         prob[1].set_color(RED)
         prob[-1].set_color(YELLOW)
@@ -110,8 +104,11 @@ class PropHeadsWithinThousandth(Scene):
 class PropHeadsWithinHundredth(Scene):
     def construct(self):
         prob = TexMobject(
-            "P(490{,}000 \\le", "\\# \\text{H}", "\\le 510{,}000)",
-            "\\approx", "0.99999999\\dots",
+            "P(490{,}000 \\le",
+            "\\# \\text{H}",
+            "\\le 510{,}000)",
+            "\\approx",
+            "0.99999999\\dots",
         )
         prob[1].set_color(RED)
         prob[-1].set_color(YELLOW)

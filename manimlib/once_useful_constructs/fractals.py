@@ -32,7 +32,9 @@ def fractalify(vmobject, order=3, *args, **kwargs):
     return vmobject
 
 
-def fractalification_iteration(vmobject, dimension=1.05, num_inserted_anchors_range=list(range(1, 4))):
+def fractalification_iteration(vmobject,
+                               dimension=1.05,
+                               num_inserted_anchors_range=list(range(1, 4))):
     num_points = vmobject.get_num_points()
     if num_points > 0:
         # original_anchors = vmobject.get_anchors()
@@ -63,8 +65,8 @@ def fractalification_iteration(vmobject, dimension=1.05, num_inserted_anchors_ra
         new_anchors.append(original_anchors[-1])
         vmobject.set_points_as_corners(new_anchors)
     vmobject.submobjects = [
-        fractalification_iteration(
-            submob, dimension, num_inserted_anchors_range)
+        fractalification_iteration(submob, dimension,
+                                   num_inserted_anchors_range)
         for submob in vmobject.submobjects
     ]
     return vmobject
@@ -97,10 +99,7 @@ class SelfSimilarFractal(VMobject):
             result = self.get_seed_shape()
         else:
             lower_order = self.get_order_n_self(order - 1)
-            subparts = [
-                lower_order.copy()
-                for x in range(self.num_subparts)
-            ]
+            subparts = [lower_order.copy() for x in range(self.num_subparts)]
             self.arrange_subparts(*subparts)
             result = VGroup(*subparts)
 
@@ -118,7 +117,9 @@ class SelfSimilarFractal(VMobject):
 class Sierpinski(SelfSimilarFractal):
     def get_seed_shape(self):
         return Polygon(
-            RIGHT, np.sqrt(3) * UP, LEFT,
+            RIGHT,
+            np.sqrt(3) * UP,
+            LEFT,
         )
 
     def arrange_subparts(self, *subparts):
@@ -139,7 +140,8 @@ class DiamondFractal(SelfSimilarFractal):
 
     def arrange_subparts(self, *subparts):
         # VGroup(*subparts).rotate(np.pi/4)
-        for part, vect in zip(subparts, compass_directions(start_vect=UP + RIGHT)):
+        for part, vect in zip(subparts,
+                              compass_directions(start_vect=UP + RIGHT)):
             part.next_to(ORIGIN, vect, buff=0)
         VGroup(*subparts).rotate(np.pi / 4, about_point=ORIGIN)
 
@@ -164,9 +166,7 @@ class PentagonalPiCreatureFractal(PentagonalFractal):
     def init_colors(self):
         SelfSimilarFractal.init_colors(self)
         internal_pis = [
-            pi
-            for pi in self.get_family()
-            if isinstance(pi, PiCreature)
+            pi for pi in self.get_family() if isinstance(pi, PiCreature)
         ]
         colors = color_gradient(self.colors, len(internal_pis))
         for pi, color in zip(internal_pis, colors):
@@ -185,24 +185,36 @@ class PentagonalPiCreatureFractal(PentagonalFractal):
 
 class PiCreatureFractal(VMobject):
     CONFIG = {
-        "order": 7,
-        "scale_val": 2.5,
-        "start_mode": "hooray",
-        "height": 6,
+        "order":
+        7,
+        "scale_val":
+        2.5,
+        "start_mode":
+        "hooray",
+        "height":
+        6,
         "colors": [
-            BLUE_D, BLUE_B, MAROON_B, MAROON_D, GREY,
-            YELLOW, RED, GREY_BROWN, RED, RED_E,
+            BLUE_D,
+            BLUE_B,
+            MAROON_B,
+            MAROON_D,
+            GREY,
+            YELLOW,
+            RED,
+            GREY_BROWN,
+            RED,
+            RED_E,
         ],
-        "random_seed": 0,
-        "stroke_width": 0,
+        "random_seed":
+        0,
+        "stroke_width":
+        0,
     }
 
     def init_colors(self):
         VMobject.init_colors(self)
         internal_pis = [
-            pi
-            for pi in self.get_family()
-            if isinstance(pi, PiCreature)
+            pi for pi in self.get_family() if isinstance(pi, PiCreature)
         ]
         random.seed(self.random_seed)
         for pi in reversed(internal_pis):
@@ -222,17 +234,9 @@ class PiCreatureFractal(VMobject):
             new_creatures = []
             for creature in creatures:
                 for eye, vect in zip(creature.eyes, [LEFT, RIGHT]):
-                    new_creature = PiCreature(
-                        mode=random.choice(modes)
-                    )
-                    new_creature.set_height(
-                        self.scale_val * eye.get_height()
-                    )
-                    new_creature.next_to(
-                        eye, vect,
-                        buff=0,
-                        aligned_edge=DOWN
-                    )
+                    new_creature = PiCreature(mode=random.choice(modes))
+                    new_creature.set_height(self.scale_val * eye.get_height())
+                    new_creature.next_to(eye, vect, buff=0, aligned_edge=DOWN)
                     new_creatures.append(new_creature)
                 creature.look_at(random.choice(new_creatures))
             self.add_to_back(VGroup(*new_creatures))
@@ -244,9 +248,7 @@ class PiCreatureFractal(VMobject):
 
 
 class WonkyHexagonFractal(SelfSimilarFractal):
-    CONFIG = {
-        "num_subparts": 7
-    }
+    CONFIG = {"num_subparts": 7}
 
     def get_seed_shape(self):
         return RegularPolygon(n=6)
@@ -266,10 +268,7 @@ class WonkyHexagonFractal(SelfSimilarFractal):
 
 
 class CircularFractal(SelfSimilarFractal):
-    CONFIG = {
-        "num_subparts": 3,
-        "colors": [GREEN, BLUE, GREY]
-    }
+    CONFIG = {"num_subparts": 3, "colors": [GREEN, BLUE, GREY]}
 
     def get_seed_shape(self):
         return Circle()
@@ -280,12 +279,10 @@ class CircularFractal(SelfSimilarFractal):
             self.been_here = True
         for i, part in enumerate(subparts):
             theta = np.pi / self.num_subparts
-            part.next_to(
-                ORIGIN, UP,
-                buff=self.height / (2 * np.tan(theta))
-            )
+            part.next_to(ORIGIN, UP, buff=self.height / (2 * np.tan(theta)))
             part.rotate(i * 2 * np.pi / self.num_subparts, about_point=ORIGIN)
         self.num_subparts -= 1
+
 
 ######## Space filling curves ############
 
@@ -295,9 +292,8 @@ class JaggedCurvePiece(VMobject):
         if self.get_num_curves() == 0:
             self.set_points(np.zeros((1, 3)))
         anchors = self.get_anchors()
-        indices = np.linspace(
-            0, len(anchors) - 1, n + len(anchors)
-        ).astype('int')
+        indices = np.linspace(0,
+                              len(anchors) - 1, n + len(anchors)).astype('int')
         self.set_points_as_corners(anchors[indices])
 
 
@@ -322,9 +318,7 @@ class FractalCurve(VMobject):
             alphas = np.linspace(0, 1, self.num_submobjects)
             for alpha_pair in zip(alphas, alphas[1:]):
                 submobject = JaggedCurvePiece()
-                submobject.pointwise_become_partial(
-                    self, *alpha_pair
-                )
+                submobject.pointwise_become_partial(self, *alpha_pair)
                 self.add(submobject)
             self.points = np.zeros((0, 3))
 
@@ -396,23 +390,16 @@ class SelfSimilarSpaceFillingCurve(FractalCurve):
         """
         copy = np.array(points)
         if str(offset) in self.offset_to_rotation_axis:
-            copy = rotate(
-                copy,
-                axis=self.offset_to_rotation_axis[str(offset)]
-            )
+            copy = rotate(copy, axis=self.offset_to_rotation_axis[str(offset)])
         copy /= self.scale_factor,
         copy += offset * self.radius * self.radius_scale_factor
         return copy
 
     def refine_into_subparts(self, points):
         transformed_copies = [
-            self.transform(points, offset)
-            for offset in self.offsets
+            self.transform(points, offset) for offset in self.offsets
         ]
-        return reduce(
-            lambda a, b: np.append(a, b, axis=0),
-            transformed_copies
-        )
+        return reduce(lambda a, b: np.append(a, b, axis=0), transformed_copies)
 
     def get_anchor_points(self):
         points = np.zeros((1, 3))
@@ -462,6 +449,7 @@ class HilbertCurve3D(SelfSimilarSpaceFillingCurve):
             str(RIGHT + UP + IN): (RIGHT + UP + IN, 2 * np.pi / 3),
         },
     }
+
     # Rewrote transform method to include the rotation angle
 
     def transform(self, points, offset):
@@ -497,8 +485,10 @@ class PeanoCurve(SelfSimilarSpaceFillingCurve):
             str(DOWN): RIGHT,
             str(RIGHT): UP,
         },
-        "scale_factor": 3,
-        "radius_scale_factor": 2.0 / 3,
+        "scale_factor":
+        3,
+        "radius_scale_factor":
+        2.0 / 3,
     }
 
 
@@ -515,9 +505,12 @@ class TriangleFillingCurve(SelfSimilarSpaceFillingCurve):
             str(ORIGIN): RIGHT,
             str(UP / 3.): UP,
         },
-        "scale_factor": 2,
-        "radius_scale_factor": 1.5,
+        "scale_factor":
+        2,
+        "radius_scale_factor":
+        1.5,
     }
+
 
 # class HexagonFillingCurve(SelfSimilarSpaceFillingCurve):
 #     CONFIG = {
@@ -546,9 +539,7 @@ class TriangleFillingCurve(SelfSimilarSpaceFillingCurve):
 class UtahFillingCurve(SelfSimilarSpaceFillingCurve):
     CONFIG = {
         "colors": [WHITE, BLUE_D],
-        "axis_offset_pairs": [
-
-        ],
+        "axis_offset_pairs": [],
         "scale_factor": 3,
         "radius_scale_factor": 2 / (3 * np.sqrt(3)),
     }
@@ -613,9 +604,7 @@ class KochSnowFlake(LindenmayerCurve):
 
 
 class KochCurve(KochSnowFlake):
-    CONFIG = {
-        "axiom": "A--"
-    }
+    CONFIG = {"axiom": "A--"}
 
 
 class QuadraticKoch(LindenmayerCurve):
@@ -633,9 +622,7 @@ class QuadraticKoch(LindenmayerCurve):
 
 
 class QuadraticKochIsland(QuadraticKoch):
-    CONFIG = {
-        "axiom": "A+A+A+A"
-    }
+    CONFIG = {"axiom": "A+A+A+A"}
 
 
 class StellarCurve(LindenmayerCurve):
@@ -670,7 +657,5 @@ class SnakeCurve(FractalCurve):
             if y % 2 == 0:
                 x_range.reverse()
             for x in x_range:
-                result.append(
-                    lower_left + x * step * RIGHT + y * step * UP
-                )
+                result.append(lower_left + x * step * RIGHT + y * step * UP)
         return result

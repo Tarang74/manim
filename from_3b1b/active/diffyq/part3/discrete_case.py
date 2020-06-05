@@ -18,9 +18,7 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
             (4, 0.3),
         ],
         "v_line_class": DashedLine,
-        "v_line_config": {
-
-        },
+        "v_line_config": {},
         "step_size": 1,
         "wait_time": 15,
         "alpha": 0.25,
@@ -40,11 +38,7 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
                 mob.set_stroke(width=1)
 
         step_size = self.step_size
-        xs = np.arange(
-            axes.x_min,
-            axes.x_max + step_size,
-            step_size
-        )
+        xs = np.arange(axes.x_min, axes.x_max + step_size, step_size)
 
         dots = self.dots = self.get_dots(axes, xs)
         self.v_lines = self.get_v_lines(dots)
@@ -69,9 +63,7 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
         r_arrow.move_to(rd.get_right(), LEFT)
         arrows = VGroup(l_arrow, r_arrow)
         q_marks = VGroup(*[
-            TexMobject("?").scale(1.5).next_to(
-                arrow, arrow.get_vector()
-            )
+            TexMobject("?").scale(1.5).next_to(arrow, arrow.get_vector())
             for arrow in arrows
         ])
 
@@ -79,24 +71,19 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
         q_marks.set_color(YELLOW)
 
         blocking_rects = VGroup(*[
-            BackgroundRectangle(VGroup(
-                *dots[i:-i],
-                *self.rod_pieces[i:-i]
-            ))
+            BackgroundRectangle(VGroup(*dots[i:-i], *self.rod_pieces[i:-i]))
             for i in [1, 2]
         ])
         for rect in blocking_rects:
             rect.stretch(1.1, dim=1, about_edge=UP)
 
         self.play(FadeIn(blocking_rects[0]))
-        self.play(
-            LaggedStartMap(ShowCreation, arrows),
-            LaggedStart(*[
-                FadeInFrom(q_mark, -arrow.get_vector())
-                for q_mark, arrow in zip(q_marks, arrows)
-            ]),
-            run_time=1.5
-        )
+        self.play(LaggedStartMap(ShowCreation, arrows),
+                  LaggedStart(*[
+                      FadeInFrom(q_mark, -arrow.get_vector())
+                      for q_mark, arrow in zip(q_marks, arrows)
+                  ]),
+                  run_time=1.5)
         self.wait()
 
         # Point to inward neighbor
@@ -105,8 +92,7 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
                 d1.get_center(),
                 VGroup(d1, d2).get_center(),
                 buff=0,
-            ).match_style(l_arrow)
-            for d1, d2 in [(ld, ld_in), (rd, rd_in)]
+            ).match_style(l_arrow) for d1, d2 in [(ld, ld_in), (rd, rd_in)]
         ])
         new_arrows.match_style(arrows)
 
@@ -114,17 +100,12 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
         r_brace = Brace(VGroup(rd, rd_in), DOWN)
         braces = VGroup(l_brace, r_brace)
         for brace in braces:
-            brace.align_to(
-                self.axes.x_axis.get_center(), UP
-            )
+            brace.align_to(self.axes.x_axis.get_center(), UP)
             brace.shift(SMALL_BUFF * DOWN)
             brace.add(brace.get_tex("\\Delta x"))
 
-        self.play(
-            ReplacementTransform(arrows, new_arrows),
-            FadeOut(q_marks),
-            ReplacementTransform(*blocking_rects)
-        )
+        self.play(ReplacementTransform(arrows, new_arrows), FadeOut(q_marks),
+                  ReplacementTransform(*blocking_rects))
         self.wait()
         self.play(FadeInFrom(braces, UP))
         self.wait()
@@ -136,13 +117,8 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
 
     def add_clock(self):
         super().add_clock()
-        self.time_label.add_updater(
-            lambda d, dt: d.increment_value(dt)
-        )
-        VGroup(
-            self.clock,
-            self.time_label
-        ).shift(2 * LEFT)
+        self.time_label.add_updater(lambda d, dt: d.increment_value(dt))
+        VGroup(self.clock, self.time_label).shift(2 * LEFT)
 
     def let_evolve(self):
         dots = self.dots
@@ -154,16 +130,12 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
                 self.clock,
                 run_time=wait_time,
                 hours_passed=wait_time,
-            ),
-        )
+            ), )
 
     #
 
     def get_dots(self, axes, xs):
-        dots = VGroup(*[
-            Dot(axes.c2p(x, self.temp_func(x, 0)))
-            for x in xs
-        ])
+        dots = VGroup(*[Dot(axes.c2p(x, self.temp_func(x, 0))) for x in xs])
 
         max_width = 0.8 * self.step_size
         for dot in dots:
@@ -174,10 +146,8 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
         return dots
 
     def get_v_lines(self, dots):
-        return always_redraw(lambda: VGroup(*[
-            self.get_v_line(dot)
-            for dot in dots
-        ]))
+        return always_redraw(
+            lambda: VGroup(*[self.get_v_line(dot) for dot in dots]))
 
     def get_v_line(self, dot):
         x_axis = self.axes.x_axis
@@ -185,7 +155,8 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
         x = x_axis.p2n(bottom)
         proj_point = x_axis.n2p(x)
         return self.v_line_class(
-            proj_point, bottom,
+            proj_point,
+            bottom,
             **self.v_line_config,
         )
 
@@ -201,9 +172,7 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
             piece.move_to(dot)
             piece.set_y(axis.get_center()[1])
             piece.dot = dot
-            piece.add_updater(
-                lambda p: p.match_color(p.dot)
-            )
+            piece.add_updater(lambda p: p.match_color(p.dot))
             pieces.add(piece)
         return pieces
 
@@ -217,24 +186,14 @@ class ShowNewRuleAtDiscreteBoundary(DiscreteSetup):
             x0, x1, x2 = [p[0] for p in points]
             dx = x1 - x0
             y0, y1, y2 = [p[1] for p in points]
-            
-            self.update_dot(
-                dot=ds[1],
-                dt=dt,
-                mean_diff=0.5 * (y2 - 2 * y1 + y0) / dx
-            )
+
+            self.update_dot(dot=ds[1],
+                            dt=dt,
+                            mean_diff=0.5 * (y2 - 2 * y1 + y0) / dx)
             if ds[0] is dots[0]:
-                self.update_dot(
-                    dot=ds[0],
-                    dt=dt,
-                    mean_diff=(y1 - y0) / dx
-                )
+                self.update_dot(dot=ds[0], dt=dt, mean_diff=(y1 - y0) / dx)
             elif ds[-1] is dots[-1]:
-                self.update_dot(
-                    dot=ds[-1],
-                    dt=dt,
-                    mean_diff=(y1 - y2) / dx
-                )
+                self.update_dot(dot=ds[-1], dt=dt, mean_diff=(y1 - y2) / dx)
 
     def update_dot(self, dot, dt, mean_diff):
         dot.shift(mean_diff * self.alpha * dt * UP)
@@ -271,17 +230,12 @@ class FlatEdgesForDiscreteEvolution(DiscreteEvolutionPoint1):
     }
 
     def let_evolve(self):
-        lines = VGroup(*[
-            Line(LEFT, RIGHT)
-            for x in range(2)
-        ])
+        lines = VGroup(*[Line(LEFT, RIGHT) for x in range(2)])
         lines.set_width(1.5)
         lines.set_stroke(WHITE, 5, opacity=0.5)
         lines.add_updater(self.update_lines)
 
-        turn_animation_into_updater(
-            ShowCreation(lines, run_time=2)
-        )
+        turn_animation_into_updater(ShowCreation(lines, run_time=2))
         self.add(lines)
 
         super().let_evolve()

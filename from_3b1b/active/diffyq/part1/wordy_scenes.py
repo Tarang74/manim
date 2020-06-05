@@ -5,14 +5,18 @@ from active_projects.diffyq.part1.shared_constructs import *
 class SmallAngleApproximationTex(Scene):
     def construct(self):
         approx = TexMobject(
-            "\\sin", "(", "\\theta", ") \\approx \\theta",
+            "\\sin",
+            "(",
+            "\\theta",
+            ") \\approx \\theta",
             tex_to_color_map={"\\theta": RED},
             arg_separator="",
         )
 
         implies = TexMobject("\\Downarrow")
         period = TexMobject(
-            "\\text{Period}", "\\approx",
+            "\\text{Period}",
+            "\\approx",
             "2\\pi \\sqrt{\\,{L} / {g}}",
             **Lg_formula_config,
         )
@@ -28,10 +32,7 @@ class SmallAngleApproximationTex(Scene):
         approx_words.next_to(approx_brace, UP, SMALL_BUFF)
 
         self.add(approx, approx_brace, approx_words)
-        self.play(
-            Write(implies),
-            FadeInFrom(period, LEFT)
-        )
+        self.play(Write(implies), FadeInFrom(period, LEFT))
         self.wait()
 
 
@@ -51,7 +52,8 @@ class StrogatzQuote(Scene):
             LaggedStartMap(
                 # FadeInFromLarge,
                 # quote[:-1].family_members_with_points(),
-                Restore, movers,
+                Restore,
+                movers,
                 lag_ratio=0.005,
                 run_time=2,
             )
@@ -83,8 +85,7 @@ class StrogatzQuote(Scene):
             """ + author,
             alignment="",
             arg_separator=" ",
-            substrings_to_isolate=[law_words, language_words, author]
-        )
+            substrings_to_isolate=[law_words, language_words, author])
         quote.law_part = quote.get_part_by_tex(law_words)
         quote.language_part = quote.get_part_by_tex(language_words)
         quote.author_part = quote.get_part_by_tex(author)
@@ -110,13 +111,11 @@ class WriteInRadians(Scene):
 
 class XEqLThetaToCorner(Scene):
     def construct(self):
-        equation = TexMobject(
-            "x = L\\theta",
-            tex_to_color_map={
-                "x": GREEN,
-                "\\theta": BLUE,
-            }
-        )
+        equation = TexMobject("x = L\\theta",
+                              tex_to_color_map={
+                                  "x": GREEN,
+                                  "\\theta": BLUE,
+                              })
         equation.move_to(DOWN + 3 * RIGHT)
         self.add(equation)
         self.play(equation.to_corner, DL, {"buff": LARGE_BUFF})
@@ -124,17 +123,13 @@ class XEqLThetaToCorner(Scene):
 
 
 class ComingUp(Scene):
-    CONFIG = {
-        "camera_config": {"background_color": DARKER_GREY}
-    }
+    CONFIG = {"camera_config": {"background_color": DARKER_GREY}}
 
     def construct(self):
-        frame = ScreenRectangle(
-            stroke_width=0,
-            fill_color=BLACK,
-            fill_opacity=1,
-            height=6
-        )
+        frame = ScreenRectangle(stroke_width=0,
+                                fill_color=BLACK,
+                                fill_opacity=1,
+                                height=6)
         title = TextMobject("Coming up")
         title.scale(1.5)
         title.to_edge(UP)
@@ -150,19 +145,19 @@ class InputLabel(Scene):
         label.scale(1.25)
         arrow = Vector(UP)
         arrow.next_to(label, UP)
-        self.play(
-            FadeInFrom(label, UP),
-            GrowArrow(arrow)
-        )
+        self.play(FadeInFrom(label, UP), GrowArrow(arrow))
         self.wait()
 
 
 class ReallyHardToSolve(Scene):
     def construct(self):
         words = TextMobject(
-            "They're", "really\\\\",
-            "freaking", "hard\\\\",
-            "to", "solve\\\\",
+            "They're",
+            "really\\\\",
+            "freaking",
+            "hard\\\\",
+            "to",
+            "solve\\\\",
         )
         words.set_height(6)
 
@@ -225,17 +220,13 @@ class ReasonForSolution(Scene):
         solution.next_to(s_word, DOWN, MED_LARGE_BUFF)
         equation.align_to(solution, DOWN)
 
-        axes = Axes(
-            x_min=-1,
-            x_max=5.5,
-            y_min=-1,
-            y_max=4.5,
-            y_axis_config={"unit_size": 0.5}
-        )
+        axes = Axes(x_min=-1,
+                    x_max=5.5,
+                    y_min=-1,
+                    y_max=4.5,
+                    y_axis_config={"unit_size": 0.5})
         axes.set_stroke(width=2)
-        graph_line = axes.get_graph(
-            lambda x: np.exp(0.4 * x)
-        )
+        graph_line = axes.get_graph(lambda x: np.exp(0.4 * x))
         graph_line.set_stroke(width=2)
         graph = VGroup(axes, graph_line)
         graph.scale(0.5)
@@ -244,13 +235,10 @@ class ReasonForSolution(Scene):
         computation = TexMobject(
             # "\\displaystyle "
             "e^x = \\sum_{n=0}^\\infty "
-            "\\frac{x^n}{n!}"
-        )
+            "\\frac{x^n}{n!}")
         computation.next_to(c_word, DOWN)
 
-        first_examples = VGroup(
-            equation, solution, graph, computation
-        )
+        first_examples = VGroup(equation, solution, graph, computation)
 
         # Second example
         ode = get_ode()
@@ -271,37 +259,21 @@ class ReasonForSolution(Scene):
 
         self.add(eq_word)
         self.add(equation)
-        self.play(
-            FadeInFrom(s_word, LEFT),
-            GrowArrow(arrows[0]),
-            TransformFromCopy(equation, solution)
-        )
+        self.play(FadeInFrom(s_word, LEFT), GrowArrow(arrows[0]),
+                  TransformFromCopy(equation, solution))
         self.wait()
-        self.play(
-            FadeInFrom(c_word, UL),
-            GrowArrow(arrows[2]),
-            FadeInFrom(computation, UP)
-        )
+        self.play(FadeInFrom(c_word, UL), GrowArrow(arrows[2]),
+                  FadeInFrom(computation, UP))
         self.wait()
-        self.play(
-            FadeInFrom(u_word, DL),
-            GrowArrow(arrows[1]),
-            FadeInFromDown(graph)
-        )
+        self.play(FadeInFrom(u_word, DL), GrowArrow(arrows[1]),
+                  FadeInFromDown(graph))
         self.wait(2)
 
-        self.play(
-            FadeOut(first_examples),
-            FadeIn(second_examples[:2])
-        )
+        self.play(FadeOut(first_examples), FadeIn(second_examples[:2]))
         self.wait()
-        self.play(
-            arrows.fade, 0.75,
-            s_word.fade, 0.75,
-            second_examples[1].fade, 0.75,
-            ShowCreation(new_arrows[0]),
-            FadeIn(second_examples[2])
-        )
+        self.play(arrows.fade, 0.75, s_word.fade, 0.75,
+                  second_examples[1].fade, 0.75, ShowCreation(new_arrows[0]),
+                  FadeIn(second_examples[2]))
         self.play(
             ShowCreation(new_arrows[1]),
             Animation(second_examples),
@@ -317,10 +289,7 @@ class WritePhaseSpace(Scene):
         word.to_edge(UP)
         word.add_background_rectangle()
 
-        lines = VGroup(*[
-            Line(v, 1.3 * v)
-            for v in compass_directions(50)
-        ])
+        lines = VGroup(*[Line(v, 1.3 * v) for v in compass_directions(50)])
         lines.replace(word, stretch=True)
         lines.scale(1.5)
         lines.set_stroke(YELLOW)
@@ -334,8 +303,7 @@ class WritePhaseSpace(Scene):
                 run_time=1.5,
                 time_width=0.9,
                 n_segments=5,
-            )
-        )
+            ))
         self.wait()
 
 
@@ -343,7 +311,8 @@ class GleickQuote(Scene):
     def construct(self):
         quote = TextMobject(
             "``[Phase space is] one of the most\\\\",
-            "powerful inventions", "of modern science.''\\\\",
+            "powerful inventions",
+            "of modern science.''\\\\",
         )
         quote.power_part = quote.get_part_by_tex("power")
         book = ImageMobject("ChaosBookCover")
@@ -362,10 +331,7 @@ class GleickQuote(Scene):
         )
         self.wait()
         self.play(Write(quote))
-        self.play(Write(
-            quote.power_part.copy().set_color(BLUE),
-            run_time=1
-        ))
+        self.play(Write(quote.power_part.copy().set_color(BLUE), run_time=1))
         self.wait()
 
 
@@ -384,26 +350,24 @@ class ShowSineValues(Scene):
     def construct(self):
         angle_tracker = ValueTracker(60 * DEGREES)
         get_angle = angle_tracker.get_value
-        formula = always_redraw(
-            lambda: self.get_sine_formula(get_angle())
-        )
+        formula = always_redraw(lambda: self.get_sine_formula(get_angle()))
         self.add(formula)
 
         self.play(
-            angle_tracker.set_value, 0,
+            angle_tracker.set_value,
+            0,
             run_time=3,
         )
         self.wait()
         self.play(
-            angle_tracker.set_value, 90 * DEGREES,
+            angle_tracker.set_value,
+            90 * DEGREES,
             run_time=3,
         )
         self.wait()
 
     def get_sine_formula(self, angle):
-        sin, lp, rp = TexMobject(
-            "\\sin", "(", ") = "
-        )
+        sin, lp, rp = TexMobject("\\sin", "(", ") = ")
         input_part = Integer(
             angle / DEGREES,
             unit="^\\circ",
@@ -413,9 +377,7 @@ class ShowSineValues(Scene):
             np.sin(input_part.get_value() * DEGREES),
             num_decimal_places=3,
         )
-        result = VGroup(
-            sin, lp, input_part, rp, output_part
-        )
+        result = VGroup(sin, lp, input_part, rp, output_part)
         result.arrange(RIGHT, buff=SMALL_BUFF)
         sin.scale(1.1, about_edge=DOWN)
         lp.align_to(rp, UP)
@@ -429,7 +391,9 @@ class SetAsideSeekingSolution(Scene):
         q1 = TextMobject("Find an exact solution")
         q1.set_color(YELLOW)
         q2 = TexMobject(
-            "\\text{What is }", "\\theta", "(t)",
+            "\\text{What is }",
+            "\\theta",
+            "(t)",
             "\\text{'s personality?}",
             tex_to_color_map={"\\theta": BLUE},
             arg_separator="",
@@ -445,8 +409,11 @@ class SetAsideSeekingSolution(Scene):
         self.add(q1)
         self.wait()
         self.play(
-            q1.scale, 0.3,
-            q1.to_corner, UR, MED_SMALL_BUFF,
+            q1.scale,
+            0.3,
+            q1.to_corner,
+            UR,
+            MED_SMALL_BUFF,
         )
         self.play(FadeInFrom(q2, DOWN))
         self.play(
@@ -455,19 +422,15 @@ class SetAsideSeekingSolution(Scene):
         )
         self.play(eyes.look_at, q2.get_left())
         self.play(eyes.look_at, q2.get_right())
-        self.play(
-            eyes.blink,
-            rate_func=squish_rate_func(there_and_back)
-        )
+        self.play(eyes.blink, rate_func=squish_rate_func(there_and_back))
         self.wait()
         self.play(
-            eyes.change_mode, "confused",
-            eyes.look_at, ode.get_left(),
+            eyes.change_mode,
+            "confused",
+            eyes.look_at,
+            ode.get_left(),
         )
-        self.play(
-            eyes.blink,
-            rate_func=squish_rate_func(there_and_back)
-        )
+        self.play(eyes.blink, rate_func=squish_rate_func(there_and_back))
 
 
 class ThreeBodyTitle(Scene):
@@ -485,21 +448,14 @@ class ThreeBodySymbols(Scene):
         self.count_coords()
 
     def init_coord_groups(self):
-        kwargs = {
-            "bracket_v_buff": 2 * SMALL_BUFF
-        }
+        kwargs = {"bracket_v_buff": 2 * SMALL_BUFF}
         positions = VGroup(*[
-            get_vector_symbol(*[
-                "{}_{}".format(s, i)
-                for s in "xyz"
-            ], **kwargs)
+            get_vector_symbol(*["{}_{}".format(s, i) for s in "xyz"], **kwargs)
             for i in range(1, 4)
         ])
         velocities = VGroup(*[
-            get_vector_symbol(*[
-                "p^{}_{}".format(s, i)
-                for s in "xyz"
-            ], **kwargs)
+            get_vector_symbol(*["p^{}_{}".format(s, i)
+                                for s in "xyz"], **kwargs)
             for i in range(1, 4)
         ])
         groups = VGroup(positions, velocities)
@@ -528,35 +484,29 @@ class ThreeBodySymbols(Scene):
         for group in groups:
             rect_group = VGroup(*[
                 SurroundingRectangle(
-                    VGroup(*[
-                        tm.coords[i]
-                        for tm in group
-                    ]),
+                    VGroup(*[tm.coords[i] for tm in group]),
                     color=WHITE,
                     stroke_width=2,
-                )
-                for i in range(3)
+                ) for i in range(3)
             ])
             rect_groups.add(rect_group)
 
         self.play(
             *[
                 LaggedStartMap(
-                    FadeInFrom, group,
+                    FadeInFrom,
+                    group,
                     lambda m: (m, UP),
                     run_time=1,
-                )
-                for group in groups
+                ) for group in groups
             ],
             *map(FadeInFromDown, words),
         )
         for rect_group in rect_groups:
-            self.play(
-                ShowCreationThenFadeOut(
-                    rect_group,
-                    lag_ratio=0.5,
-                )
-            )
+            self.play(ShowCreationThenFadeOut(
+                rect_group,
+                lag_ratio=0.5,
+            ))
         self.wait()
 
     def count_coords(self):
@@ -565,9 +515,7 @@ class ThreeBodySymbols(Scene):
             for tex_mob in group:
                 for coord in tex_mob.coords:
                     coord_copy = coord.copy()
-                    coord_copy.set_stroke(
-                        WHITE, 2, background=True
-                    )
+                    coord_copy.set_stroke(WHITE, 2, background=True)
                     coord_copies.add(coord_copy)
 
         count = Integer()
@@ -579,15 +527,13 @@ class ThreeBodySymbols(Scene):
         )
         count_group.scale(1.5)
         count_group.next_to(
-            self.coord_groups, RIGHT,
+            self.coord_groups,
+            RIGHT,
             aligned_edge=DOWN,
         )
+        count.add_updater(lambda m: m.set_value(len(coord_copies)))
         count.add_updater(
-            lambda m: m.set_value(len(coord_copies))
-        )
-        count.add_updater(
-            lambda m: m.next_to(count_word[0][0], LEFT, aligned_edge=DOWN)
-        )
+            lambda m: m.next_to(count_word[0][0], LEFT, aligned_edge=DOWN))
 
         self.add(count_group)
         self.play(
@@ -612,19 +558,13 @@ class ThreeBodyEquation(Scene):
             }
         }
         equations = VGroup(*[
-            TexMobject(
-                "{d^2", t1, "\\over dt^2}", "=",
-                "G", "\\left("
-                "{" + m2, "(", t2, "-", t1, ")"
-                "\\over"
-                "||", t2, "-", t1, "||^3}",
-                "+",
-                "{" + m3, "(", t3, "-", t1, ")"
-                "\\over"
-                "||", t3, "-", t1, "||^3}",
-                "\\right)",
-                **kw
-            )
+            TexMobject("{d^2", t1, "\\over dt^2}", "=", "G", "\\left("
+                       "{" + m2, "(", t2, "-", t1, ")"
+                       "\\over"
+                       "||", t2, "-", t1, "||^3}", "+", "{" +
+                       m3, "(", t3, "-", t1, ")"
+                       "\\over"
+                       "||", t3, "-", t1, "||^3}", "\\right)", **kw)
             for t1, t2, t3, m1, m2, m3 in [
                 (x1, x2, x3, "m_1", "m_2", "m_3"),
                 (x2, x3, x1, "m_2", "m_3", "m_1"),
@@ -633,11 +573,13 @@ class ThreeBodyEquation(Scene):
         ])
         equations.arrange(DOWN, buff=LARGE_BUFF)
 
-        self.play(LaggedStartMap(
-            FadeInFrom, equations,
-            lambda m: (m, UP),
-            lag_ratio=0.2,
-        ))
+        self.play(
+            LaggedStartMap(
+                FadeInFrom,
+                equations,
+                lambda m: (m, UP),
+                lag_ratio=0.2,
+            ))
         self.wait()
 
 
@@ -690,8 +632,7 @@ class RevisitQuote(StrogatzQuote, PiCreatureScene):
         quote.scale(0.8, about_edge=UL)
 
         new_langauge_part = TextMobject(
-            "\\Large Language of differential equations"
-        )
+            "\\Large Language of differential equations")
         new_langauge_part.to_edge(UP)
         new_langauge_part.match_style(quote.language_part)
 
@@ -700,23 +641,21 @@ class RevisitQuote(StrogatzQuote, PiCreatureScene):
         self.play(
             FadeInFrom(quote[:-1], DOWN),
             FadeInFrom(quote[-1:], LEFT),
-            randy.change, "raise_right_hand",
+            randy.change,
+            "raise_right_hand",
         )
         self.play(Blink(randy))
         self.play(randy.change, "angry")
-        self.play(
-            Blink(randy),
-            VFadeOut(randy, run_time=3)
-        )
+        self.play(Blink(randy), VFadeOut(randy, run_time=3))
         mover = VGroup(quote.language_part)
         self.add(quote, mover)
         self.play(
             ReplacementTransform(
-                mover, new_langauge_part,
+                mover,
+                new_langauge_part,
             ),
             *[
-                FadeOut(part)
-                for part in quote
+                FadeOut(part) for part in quote
                 if part is not quote.language_part
             ],
             run_time=2,

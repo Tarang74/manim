@@ -13,7 +13,6 @@ Note: One should NOT import from this file for main library code, it is meant on
 as a convenience for scripts creating scenes for videos.
 """
 
-
 from manimlib.constants import *
 
 from manimlib.animation.animation import *

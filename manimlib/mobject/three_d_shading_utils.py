@@ -45,12 +45,8 @@ def get_3d_vmob_unit_normal(vmob, point_index):
 
 
 def get_3d_vmob_start_corner_unit_normal(vmob):
-    return get_3d_vmob_unit_normal(
-        vmob, get_3d_vmob_start_corner_index(vmob)
-    )
+    return get_3d_vmob_unit_normal(vmob, get_3d_vmob_start_corner_index(vmob))
 
 
 def get_3d_vmob_end_corner_unit_normal(vmob):
-    return get_3d_vmob_unit_normal(
-        vmob, get_3d_vmob_end_corner_index(vmob)
-    )
+    return get_3d_vmob_unit_normal(vmob, get_3d_vmob_end_corner_index(vmob))

@@ -34,15 +34,10 @@ class FourierCirclesScene(Scene):
     }
 
     def setup(self):
-        self.slow_factor_tracker = ValueTracker(
-            self.slow_factor
-        )
+        self.slow_factor_tracker = ValueTracker(self.slow_factor)
         self.vector_clock = ValueTracker(0)
         self.vector_clock.add_updater(
-            lambda m, dt: m.increment_value(
-                self.get_slow_factor() * dt
-            )
-        )
+            lambda m, dt: m.increment_value(self.get_slow_factor() * dt))
         self.add(self.vector_clock)
 
     def get_slow_factor(self):
@@ -115,14 +110,8 @@ class FourierCirclesScene(Scene):
 
     def get_circles(self, vectors):
         return VGroup(*[
-            self.get_circle(
-                vector,
-                color=color
-            )
-            for vector, color in zip(
-                vectors,
-                self.get_color_iterator()
-            )
+            self.get_circle(vector, color=color)
+            for vector, color in zip(vectors, self.get_color_iterator())
         ])
 
     def get_circle(self, vector, color=BLUE):
@@ -144,9 +133,7 @@ class FourierCirclesScene(Scene):
 
         path = ParametricFunction(
             lambda t: center + reduce(op.add, [
-                complex_to_R3(
-                    coef * np.exp(TAU * 1j * freq * t)
-                )
+                complex_to_R3(coef * np.exp(TAU * 1j * freq * t))
                 for coef, freq in zip(coefs, freqs)
             ]),
             t_min=0,
@@ -193,18 +180,13 @@ class FourierCirclesScene(Scene):
                              right_shift_rate=5):
         path = self.get_vector_sum_path(vectors)
         wave = ParametricFunction(
-            lambda t: op.add(
-                right_shift_rate * t * LEFT,
-                path.function(t)[1] * UP
-            ),
+            lambda t: op.add(right_shift_rate * t * LEFT,
+                             path.function(t)[1] * UP),
             t_min=path.t_min,
             t_max=path.t_max,
             color=color,
         )
-        wave_copies = VGroup(*[
-            wave.copy()
-            for x in range(n_copies)
-        ])
+        wave_copies = VGroup(*[wave.copy() for x in range(n_copies)])
         wave_copies.arrange(RIGHT, buff=0)
         top_point = wave_copies.get_top()
         wave.creation = ShowCreation(
@@ -213,18 +195,15 @@ class FourierCirclesScene(Scene):
             rate_func=linear,
         )
         cycle_animation(wave.creation)
-        wave.add_updater(lambda m: m.shift(
-            (m.get_left()[0] - left_x) * LEFT
-        ))
+        wave.add_updater(lambda m: m.shift((m.get_left()[0] - left_x) * LEFT))
 
         def update_wave_copies(wcs):
-            index = int(
-                wave.creation.total_time * self.get_slow_factor()
-            )
+            index = int(wave.creation.total_time * self.get_slow_factor())
             wcs[:index].match_style(wave)
             wcs[index:].set_stroke(width=0)
             wcs.next_to(wave, RIGHT, buff=0)
             wcs.align_to(top_point, UP)
+
         wave_copies.add_updater(update_wave_copies)
 
         return VGroup(wave, wave_copies)
@@ -244,10 +223,7 @@ class FourierCirclesScene(Scene):
             freqs = self.get_freqs()
         dt = 1 / n_samples
         ts = np.arange(0, 1, dt)
-        samples = np.array([
-            path.point_from_proportion(t)
-            for t in ts
-        ])
+        samples = np.array([path.point_from_proportion(t) for t in ts])
         samples -= self.center_point
         complex_samples = samples[:, 0] + 1j * samples[:, 1]
 
@@ -274,9 +250,7 @@ class FourierSeriesIntroBackground4(FourierCirclesScene):
         circles = self.get_circles()
         path = self.get_drawn_path(circles)
         wave = self.get_y_component_wave(circles)
-        h_line = always_redraw(
-            lambda: self.get_wave_y_line(circles, wave)
-        )
+        h_line = always_redraw(lambda: self.get_wave_y_line(circles, wave))
 
         # Why?
         circles.update(-1 / self.camera.frame_rate)
@@ -400,9 +374,7 @@ class FourierOfTexPaths(FourierOfPiSymbol, MovingCameraScene):
                 sp_mob = VMobject()
                 sp_mob.set_points(subpath)
                 coefs = self.get_coefficients_of_path(sp_mob)
-                new_vectors = self.get_rotating_vectors(
-                    coefficients=coefs
-                )
+                new_vectors = self.get_rotating_vectors(coefficients=coefs)
                 new_circles = self.get_circles(new_vectors)
                 self.set_decreasing_stroke_widths(new_circles)
 
@@ -419,27 +391,23 @@ class FourierOfTexPaths(FourierOfPiSymbol, MovingCameraScene):
                 self.play(
                     Transform(vectors, static_vectors, remover=True),
                     Transform(circles, static_circles, remover=True),
-                    frame.set_height, 1.5 * name.get_height(),
-                    frame.move_to, path,
+                    frame.set_height,
+                    1.5 * name.get_height(),
+                    frame.move_to,
+                    path,
                 )
 
                 self.add(new_vectors, new_circles)
                 self.vector_clock.set_value(0)
-                self.play(
-                    ShowCreation(drawn_path),
-                    rate_func=linear,
-                    run_time=self.time_per_symbol
-                )
+                self.play(ShowCreation(drawn_path),
+                          rate_func=linear,
+                          run_time=self.time_per_symbol)
                 self.remove(new_vectors, new_circles)
                 self.add(static_vectors, static_circles)
 
                 vectors = static_vectors
                 circles = static_circles
-        self.play(
-            FadeOut(vectors),
-            Restore(frame),
-            run_time=2
-        )
+        self.play(FadeOut(vectors), Restore(frame), run_time=2)
         self.wait(3)
 
 
@@ -500,9 +468,7 @@ class FourierOfIP(FourierOfTrebleClef):
 
 
 class FourierOfEighthNote(FourierOfTrebleClef):
-    CONFIG = {
-        "file_name": "EighthNote"
-    }
+    CONFIG = {"file_name": "EighthNote"}
 
 
 class FourierOfN(FourierOfTrebleClef):
@@ -668,19 +634,14 @@ class ExplainCircleAnimations(FourierCirclesScene):
             tracker.freq = circle.freq
             tracker.circle = circle
 
-        center_trackers.submobjects.sort(
-            key=lambda m: m.freq
-        )
+        center_trackers.submobjects.sort(key=lambda m: m.freq)
         center_trackers.generate_target()
         right_buff = 1.45
         center_trackers.target.arrange(RIGHT, buff=right_buff)
         center_trackers.target.to_edge(UP, buff=1.25)
 
         self.add(top_circles)
-        self.play(
-            MoveToTarget(center_trackers),
-            run_time=2
-        )
+        self.play(MoveToTarget(center_trackers), run_time=2)
         self.wait(4)
 
         self.top_circles = top_circles
@@ -696,10 +657,7 @@ class ExplainCircleAnimations(FourierCirclesScene):
             freq_numbers.add(number)
             ct.circle.number = number
 
-        ld, rd = [
-            TexMobject("\\dots")
-            for x in range(2)
-        ]
+        ld, rd = [TexMobject("\\dots") for x in range(2)]
         ld.next_to(freq_numbers, LEFT, MED_LARGE_BUFF)
         rd.next_to(freq_numbers, RIGHT, MED_LARGE_BUFF)
         freq_numbers.add_to_back(ld)
@@ -710,17 +668,12 @@ class ExplainCircleAnimations(FourierCirclesScene):
         freq_word.set_color(YELLOW)
         freq_word.next_to(freq_numbers, DOWN, MED_LARGE_BUFF)
 
-        self.play(
-            LaggedStartMap(
-                FadeInFromDown, freq_numbers
-            )
-        )
-        self.play(
-            Write(freq_word),
-            LaggedStartMap(
-                ShowCreationThenFadeAround, freq_numbers,
-            )
-        )
+        self.play(LaggedStartMap(FadeInFromDown, freq_numbers))
+        self.play(Write(freq_word),
+                  LaggedStartMap(
+                      ShowCreationThenFadeAround,
+                      freq_numbers,
+                  ))
         self.wait(2)
 
         self.freq_numbers = freq_numbers
@@ -729,17 +682,11 @@ class ExplainCircleAnimations(FourierCirclesScene):
     def show_examples_for_frequencies(self):
         top_circles = self.top_circles
         c1, c2, c3 = [
-            list(filter(
-                lambda c: c.freq == k,
-                top_circles
-            ))[0]
+            list(filter(lambda c: c.freq == k, top_circles))[0]
             for k in (1, 2, 3)
         ]
 
-        neg_circles = VGroup(*filter(
-            lambda c: c.freq < 0,
-            top_circles
-        ))
+        neg_circles = VGroup(*filter(lambda c: c.freq < 0, top_circles))
 
         for c in [c1, c2, c3, *neg_circles]:
             c.rect = SurroundingRectangle(c)
@@ -749,25 +696,18 @@ class ExplainCircleAnimations(FourierCirclesScene):
             WiggleOutThenIn(c2.number),
         )
         self.wait(2)
-        self.play(
-            ReplacementTransform(c2.rect, c1.rect),
-        )
+        self.play(ReplacementTransform(c2.rect, c1.rect), )
         self.play(FadeOut(c1.rect))
         self.wait()
         self.play(
             ShowCreation(c3.rect),
             WiggleOutThenIn(c3.number),
         )
-        self.play(
-            FadeOut(c3.rect),
-        )
+        self.play(FadeOut(c3.rect), )
         self.wait(2)
         self.play(
-            LaggedStart(*[
-                ShowCreationThenFadeOut(c.rect)
-                for c in neg_circles
-            ])
-        )
+            LaggedStart(
+                *[ShowCreationThenFadeOut(c.rect) for c in neg_circles]))
         self.wait(3)
         self.play(FadeOut(self.freq_word))
 
@@ -779,30 +719,25 @@ class ExplainCircleAnimations(FourierCirclesScene):
         original_circles = top_circles.copy()
         self.play(
             FadeIn(top_vectors),
-            top_circles.set_opacity, 0,
+            top_circles.set_opacity,
+            0,
         )
         self.wait(3)
-        self.play(
-            top_circles.match_style, original_circles
-        )
+        self.play(top_circles.match_style, original_circles)
         self.remove(top_vectors)
 
         self.top_vectors = top_vectors
 
     def show_vector_sum(self):
         trackers = self.center_trackers.copy()
-        trackers.sort(
-            submob_func=lambda t: abs(t.circle.freq - 0.1)
-        )
-        plane = self.plane = NumberPlane(
-            x_min=-3,
-            x_max=3,
-            y_min=-2,
-            y_max=2,
-            axis_config={
-                "stroke_color": LIGHT_GREY,
-            }
-        )
+        trackers.sort(submob_func=lambda t: abs(t.circle.freq - 0.1))
+        plane = self.plane = NumberPlane(x_min=-3,
+                                         x_max=3,
+                                         y_min=-2,
+                                         y_max=2,
+                                         axis_config={
+                                             "stroke_color": LIGHT_GREY,
+                                         })
         plane.set_stroke(width=1)
         plane.fade(0.5)
         plane.move_to(self.center_point)
@@ -810,7 +745,8 @@ class ExplainCircleAnimations(FourierCirclesScene):
         self.play(
             FadeOut(self.drawn_path),
             FadeOut(self.circles),
-            self.slow_factor_tracker.set_value, 0.05,
+            self.slow_factor_tracker.set_value,
+            0.05,
         )
         self.add(plane, self.path)
         self.play(FadeIn(plane))
@@ -831,20 +767,15 @@ class ExplainCircleAnimations(FourierCirclesScene):
             self.add(tracker, tracker.circle)
             start_point = tracker.get_location()
             self.play(
-                UpdateFromAlphaFunc(
-                    tracker, lambda t, a: t.move_to(
-                        interpolate(
-                            start_point,
-                            tracker.new_location_func(),
-                            a,
-                        )
-                    ),
-                    run_time=2
-                )
-            )
-            tracker.add_updater(lambda t: t.move_to(
-                t.new_location_func()
-            ))
+                UpdateFromAlphaFunc(tracker,
+                                    lambda t, a: t.move_to(
+                                        interpolate(
+                                            start_point,
+                                            tracker.new_location_func(),
+                                            a,
+                                        )),
+                                    run_time=2))
+            tracker.add_updater(lambda t: t.move_to(t.new_location_func()))
             self.wait(2)
             last_tracker = tracker
 
@@ -863,8 +794,7 @@ class ExplainCircleAnimations(FourierCirclesScene):
                 if c.freq == tc.freq:
                     tc.rotate(
                         angle_of_vector(c.get_start() - c.get_center()) -
-                        angle_of_vector(tc.get_start() - tc.get_center())
-                    )
+                        angle_of_vector(tc.get_start() - tc.get_center()))
         self.wait(10)
 
     def tweak_starting_vectors(self):
@@ -884,16 +814,11 @@ class ExplainCircleAnimations(FourierCirclesScene):
                 if circle.freq == top_circle.freq:
                     new_top_circle = circle.copy()
                     new_top_circle.center_func = top_circle.get_center
-                    new_top_vector = self.get_rotating_vector(
-                        new_top_circle
-                    )
+                    new_top_vector = self.get_rotating_vector(new_top_circle)
                     new_top_circles.add(new_top_circle)
                     new_top_vectors.add(new_top_vector)
 
-        self.play(
-            self.slow_factor_tracker.set_value, 0,
-            FadeOut(drawn_path)
-        )
+        self.play(self.slow_factor_tracker.set_value, 0, FadeOut(drawn_path))
         self.wait()
         self.play(
             ReplacementTransform(top_circles, new_top_circles),
@@ -902,7 +827,8 @@ class ExplainCircleAnimations(FourierCirclesScene):
             run_time=3,
         )
         new_drawn_path = self.get_drawn_path(
-            new_circles, stroke_width=4,
+            new_circles,
+            stroke_width=4,
         )
         self.add(new_drawn_path)
         self.slow_factor_tracker.set_value(0.1)

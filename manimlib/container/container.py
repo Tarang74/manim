@@ -13,8 +13,10 @@ class Container(object):
 
     def add(self, *items):
         raise Exception(
-            "Container.add is not implemented; it is up to derived classes to implement")
+            "Container.add is not implemented; it is up to derived classes to implement"
+        )
 
     def remove(self, *items):
         raise Exception(
-            "Container.remove is not implemented; it is up to derived classes to implement")
+            "Container.remove is not implemented; it is up to derived classes to implement"
+        )

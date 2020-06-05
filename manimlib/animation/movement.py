@@ -21,10 +21,8 @@ class Homotopy(Animation):
 
     def interpolate_submobject(self, submob, start, alpha):
         submob.points = start.points
-        submob.apply_function(
-            self.function_at_time_t(alpha),
-            **self.apply_function_kwargs
-        )
+        submob.apply_function(self.function_at_time_t(alpha),
+                              **self.apply_function_kwargs)
 
 
 class SmoothedVectorizedHomotopy(Homotopy):
@@ -41,6 +39,7 @@ class ComplexHomotopy(Homotopy):
         def homotopy(x, y, z, t):
             c = complex_homotopy(complex(x, y), t)
             return (c.real, c.imag, z)
+
         Homotopy.__init__(self, homotopy, mobject, **kwargs)
 
 
@@ -58,9 +57,7 @@ class PhaseFlow(Animation):
     def interpolate_mobject(self, alpha):
         if hasattr(self, "last_alpha"):
             dt = self.virtual_time * (alpha - self.last_alpha)
-            self.mobject.apply_function(
-                lambda p: p + dt * self.function(p)
-            )
+            self.mobject.apply_function(lambda p: p + dt * self.function(p))
         self.last_alpha = alpha
 
 

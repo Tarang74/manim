@@ -8,9 +8,7 @@ K_COLOR = BLUE
 
 
 class QuaternionLabel(VGroup):
-    CONFIG = {
-        "decimal_config": {}
-    }
+    CONFIG = {"decimal_config": {}}
 
     def __init__(self, quat, **kwargs):
         VGroup.__init__(self, **kwargs)
@@ -25,9 +23,12 @@ class QuaternionLabel(VGroup):
         )
         self.add(
             decimals[0],
-            decimals[1], TexMobject("i"),
-            decimals[2], TexMobject("j"),
-            decimals[3], TexMobject("k"),
+            decimals[1],
+            TexMobject("i"),
+            decimals[2],
+            TexMobject("j"),
+            decimals[3],
+            TexMobject("k"),
         )
         self.arrange(RIGHT, buff=SMALL_BUFF)
 
@@ -53,13 +54,7 @@ class RandyPrism(Cube):
     def __init__(self, **kwargs):
         Cube.__init__(self, **kwargs)
         self.set_height(1)
-        randy = Randolph(mode="pondering")
-        randy.set_height(0.8)
-        randy.rotate(TAU / 4, RIGHT)
-        randy.shift(0.7 * DOWN)
-        randy.set_shade_in_3d(True, z_index_as_group=True)
-        self.randy = randy
-        self.add(randy)
+
         self.set_height(self.height, stretch=True)
         self.set_width(self.width, stretch=True)
         self.set_depth(self.depth, stretch=True)
@@ -74,9 +69,7 @@ class Gimbal(VGroup):
 
     def __init__(self, alpha=0, beta=0, gamma=0, inner_mob=None, **kwargs):
         VGroup.__init__(self, **kwargs)
-        r1, r2, r3, r4, r5, r6, r7 = np.linspace(
-            self.inner_r, self.outer_r, 7
-        )
+        r1, r2, r3, r4, r5, r6, r7 = np.linspace(self.inner_r, self.outer_r, 7)
         rings = VGroup(
             self.get_ring(r5, r6),
             self.get_ring(r3, r4),
@@ -99,18 +92,16 @@ class Gimbal(VGroup):
 
         if inner_mob is not None:
             corners = [
-                inner_mob.get_corner(v1 + v2)
-                for v1 in [LEFT, RIGHT]
+                inner_mob.get_corner(v1 + v2) for v1 in [LEFT, RIGHT]
                 for v2 in [IN, OUT]
             ]
             lines = VGroup()
             for corner in corners:
                 corner[1] = 0
-                line = Line(
-                    corner, self.inner_r * normalize(corner),
-                    color=WHITE,
-                    stroke_width=1
-                )
+                line = Line(corner,
+                            self.inner_r * normalize(corner),
+                            color=WHITE,
+                            stroke_width=1)
                 lines.add(line)
             lines.set_shade_in_3d(True)
             rings[2].add(lines, inner_mob)
@@ -125,19 +116,13 @@ class Gimbal(VGroup):
         result = VGroup()
         for start_angle in np.arange(0, TAU, angle):
             start_angle += angle / 2
-            sector = AnnularSector(
-                inner_radius=in_r,
-                outer_radius=out_r,
-                angle=angle,
-                start_angle=start_angle
-            )
+            sector = AnnularSector(inner_radius=in_r,
+                                   outer_radius=out_r,
+                                   angle=angle,
+                                   start_angle=start_angle)
             sector.set_fill(LIGHT_GREY, 0.8)
             arcs = VGroup(*[
-                Arc(
-                    angle=angle,
-                    start_angle=start_angle,
-                    radius=r
-                )
+                Arc(angle=angle, start_angle=start_angle, radius=r)
                 for r in [in_r, out_r]
             ])
             arcs.set_stroke(BLACK, 1, opacity=0.5)
@@ -148,6 +133,7 @@ class Gimbal(VGroup):
 
 # Scenes
 
+
 class ButFirst(TeacherStudentsScene):
     def construct(self):
         for student in self.students:
@@ -155,10 +141,9 @@ class ButFirst(TeacherStudentsScene):
 
         self.teacher_says("But first!")
         self.change_all_student_modes("happy")
-        self.play(RemovePiCreatureBubble(
-            self.teacher,
-            target_mode="raise_right_hand"
-        ))
+        self.play(
+            RemovePiCreatureBubble(self.teacher,
+                                   target_mode="raise_right_hand"))
         self.change_student_modes(
             *["pondering"] * 3,
             look_at_arg=self.screen,
@@ -170,29 +155,22 @@ class ButFirst(TeacherStudentsScene):
 class Introduction(QuaternionHistory):
     CONFIG = {
         "names_and_quotes": [
-            (
-                "Oliver Heaviside",
-                """\\Huge ``the quaternion was not only not
-                required, but was a positive evil''"""
-            ),
-            (
-                "Lord Kelvin",
-                """\\Huge ``Quaternions... though beautifully \\\\ ingenious,
-                have been an unmixed evil'' """
-            ),
+            ("Oliver Heaviside", """\\Huge ``the quaternion was not only not
+                required, but was a positive evil''"""),
+            ("Lord Kelvin",
+             """\\Huge ``Quaternions... though beautifully \\\\ ingenious,
+                have been an unmixed evil'' """),
         ]
     }
 
     def construct(self):
         title_word = TextMobject("Quaternions:")
-        title_equation = TexMobject(
-            "i^2 = j^2 = k^2 = ijk = -1",
-            tex_to_color_map={
-                "i": I_COLOR,
-                "j": J_COLOR,
-                "k": K_COLOR,
-            }
-        )
+        title_equation = TexMobject("i^2 = j^2 = k^2 = ijk = -1",
+                                    tex_to_color_map={
+                                        "i": I_COLOR,
+                                        "j": J_COLOR,
+                                        "k": K_COLOR,
+                                    })
         # label = QuaternionLabel([
         #     float(str((TAU * 10**(3 * k)) % 10)[:4])
         #     for k in range(4)
@@ -207,24 +185,19 @@ class Introduction(QuaternionHistory):
         for pair in images_group:
             pair[1].align_to(pair[0], UP)
 
-        self.play(
-            FadeInFromDown(title_word),
-            Write(title_equation)
-        )
+        self.play(FadeInFromDown(title_word), Write(title_equation))
         self.wait()
         for image, name, quote in zip(images, names, quotes):
             self.play(
-                FadeInFrom(image, 3 * DOWN),
-                FadeInFromLarge(name),
-                LaggedStartMap(
-                    FadeIn, VGroup(*it.chain(*quote)),
-                    lag_ratio=0.3,
-                    run_time=2
-                )
-            )
+                FadeInFrom(image, 3 * DOWN), FadeInFromLarge(name),
+                LaggedStartMap(FadeIn,
+                               VGroup(*it.chain(*quote)),
+                               lag_ratio=0.3,
+                               run_time=2))
         self.wait(2)
         self.play(
-            title.shift, 2 * UP,
+            title.shift,
+            2 * UP,
             *[
                 ApplyMethod(mob.shift, FRAME_WIDTH * vect / 2)
                 for pair in images_group
@@ -236,15 +209,11 @@ class Introduction(QuaternionHistory):
 class WhoCares(TeacherStudentsScene):
     def construct(self):
         quotes = Group(*[
-            ImageMobject(
-                "CoderQuaternionResponse_{}".format(d),
-                height=2
-            )
+            ImageMobject("CoderQuaternionResponse_{}".format(d), height=2)
             for d in range(4)
         ])
         logos = Group(*[
-            ImageMobject(name, height=0.5)
-            for name in [
+            ImageMobject(name, height=0.5) for name in [
                 "TwitterLogo",
                 "HackerNewsLogo",
                 "RedditLogo",
@@ -259,17 +228,13 @@ class WhoCares(TeacherStudentsScene):
         quotes.set_height(4)
         quotes.to_corner(UL)
 
-        self.student_says(
-            "Um...who cares?",
-            target_mode="sassy",
-            added_anims=[self.teacher.change, "guilty"]
-        )
+        self.student_says("Um...who cares?",
+                          target_mode="sassy",
+                          added_anims=[self.teacher.change, "guilty"])
         self.change_student_modes("angry", "sassy", "sad")
         self.wait(2)
-        self.play(
-            RemovePiCreatureBubble(self.students[1]),
-            self.teacher.change, "raise_right_hand"
-        )
+        self.play(RemovePiCreatureBubble(self.students[1]),
+                  self.teacher.change, "raise_right_hand")
         # self.play(
         #     LaggedStartMap(
         #         FadeInFromDown, quotes,
@@ -346,15 +311,18 @@ class WhoCares(TeacherStudentsScene):
         t_quote.to_corner(UL)
         self.play(
             self.get_student_changes(*3 * ["pondering"], look_at_arg=quotes),
-            t_quote.set_opacity, 1,
-            t_quote.scale, 2,
-            t_quote.to_corner, UL,
+            t_quote.set_opacity,
+            1,
+            t_quote.scale,
+            2,
+            t_quote.to_corner,
+            UL,
         )
         self.wait(2)
-        self.change_student_modes(
-            "pondering", "happy", "tease",
-            look_at_arg=t_quote
-        )
+        self.change_student_modes("pondering",
+                                  "happy",
+                                  "tease",
+                                  look_at_arg=t_quote)
         self.wait(2)
         self.play(FadeOut(t_quote))
         self.wait(5)
@@ -374,9 +342,12 @@ class ShowSeveralQuaternionRotations(SpecialThreeDScene):
             [1, -1, 1, -1],
             [1, 0, 0, 0],
         ],
-        "start_phi": 70 * DEGREES,
-        "start_theta": -140 * DEGREES,
-        "ambient_rotation_rate": 0.01,
+        "start_phi":
+        70 * DEGREES,
+        "start_theta":
+        -140 * DEGREES,
+        "ambient_rotation_rate":
+        0.01,
     }
 
     def construct(self):
@@ -396,18 +367,16 @@ class ShowSeveralQuaternionRotations(SpecialThreeDScene):
         left_q_label = QuaternionLabel([1, 0, 0, 0])
         right_q_label = QuaternionLabel([1, 0, 0, 0])
         for label in left_q_label, right_q_label:
-            lp, rp = TexMobject("()")
+            lp, rp = TexMobject("()"), TexMobject("()")
             lp.next_to(label, LEFT, SMALL_BUFF)
             rp.next_to(label, RIGHT, SMALL_BUFF)
             label.add(lp, rp)
-        point_label = TexMobject(
-            *"(xi+yj+zk)",
-            tex_to_color_map={
-                "i": I_COLOR,
-                "j": J_COLOR,
-                "k": K_COLOR,
-            }
-        )
+        point_label = TexMobject(*"(xi+yj+zk)",
+                                 tex_to_color_map={
+                                     "i": I_COLOR,
+                                     "j": J_COLOR,
+                                     "k": K_COLOR,
+                                 })
         left_q_label.next_to(point_label, LEFT)
         right_q_label.next_to(point_label, RIGHT)
         group = VGroup(left_q_label, point_label, right_q_label)
@@ -428,15 +397,12 @@ class ShowSeveralQuaternionRotations(SpecialThreeDScene):
         self.add_fixed_in_frame_mobjects(*group)
 
         left_q_label.add_updater(
-            lambda m: m.set_value(self.q_tracker.get_value())
-        )
+            lambda m: m.set_value(self.q_tracker.get_value()))
         left_q_label.add_updater(lambda m: self.add_fixed_in_frame_mobjects(m))
+        right_q_label.add_updater(lambda m: m.set_value(
+            quaternion_conjugate(self.q_tracker.get_value())))
         right_q_label.add_updater(
-            lambda m: m.set_value(quaternion_conjugate(
-                self.q_tracker.get_value()
-            ))
-        )
-        right_q_label.add_updater(lambda m: self.add_fixed_in_frame_mobjects(m))
+            lambda m: self.add_fixed_in_frame_mobjects(m))
 
     def setup_camera_position(self):
         self.set_camera_orientation(
@@ -448,10 +414,7 @@ class ShowSeveralQuaternionRotations(SpecialThreeDScene):
     def add_prism(self):
         prism = self.prism = self.get_prism()
         prism.add_updater(
-            lambda p: p.become(self.get_prism(
-                self.q_tracker.get_value()
-            ))
-        )
+            lambda p: p.become(self.get_prism(self.q_tracker.get_value())))
         self.add(prism)
 
     def add_axes(self):
@@ -497,12 +460,11 @@ class ShowSeveralQuaternionRotations(SpecialThreeDScene):
     def change_q(self, value, run_time=3, added_anims=None, **kwargs):
         if added_anims is None:
             added_anims = []
-        self.play(
-            self.q_tracker.set_value, value,
-            *added_anims,
-            run_time=run_time,
-            **kwargs
-        )
+        self.play(self.q_tracker.set_value,
+                  value,
+                  *added_anims,
+                  run_time=run_time,
+                  **kwargs)
 
 
 class PauseAndPlayOverlay(Scene):
@@ -522,10 +484,9 @@ class PauseAndPlayOverlay(Scene):
 
         self.play(Write(pause))
         self.play(
-            GrowFromPoint(
-                interact, arrow.get_left(),
-                rate_func=squish_rate_func(smooth, 0.3, 1)
-            ),
+            GrowFromPoint(interact,
+                          arrow.get_left(),
+                          rate_func=squish_rate_func(smooth, 0.3, 1)),
             VFadeIn(interact),
             GrowArrow(arrow),
         )
@@ -565,15 +526,13 @@ class RotationMatrix(ShowSeveralQuaternionRotations):
         matrix_mob.set_column_colors(*colors)
 
         columns = matrix_mob.get_columns()
-        column_rects = VGroup(*[
-            SurroundingRectangle(c).match_color(c[0])
-            for c in columns
-        ])
+        column_rects = VGroup(
+            *[SurroundingRectangle(c).match_color(c[0]) for c in columns])
         labels = VGroup(*[
             TextMobject(
-                "Where", tex, "goes",
-                tex_to_color_map={tex: rect.get_color()}
-            ).next_to(rect, DOWN)
+                "Where", tex, "goes", tex_to_color_map={
+                    tex: rect.get_color()
+                }).next_to(rect, DOWN)
             for letter, rect in zip(["\\i", "\\j", "k"], column_rects)
             for tex in ["$\\hat{\\textbf{%s}}$" % (letter)]
         ])
@@ -588,12 +547,8 @@ class RotationMatrix(ShowSeveralQuaternionRotations):
         last_rect = VMobject()
         for label, rect in zip(labels, column_rects):
             self.add_fixed_in_frame_mobjects(rect, label)
-            self.play(
-                FadeIn(label),
-                FadeOut(last_label),
-                ShowCreation(rect),
-                FadeOut(last_rect)
-            )
+            self.play(FadeIn(label), FadeOut(last_label), ShowCreation(rect),
+                      FadeOut(last_rect))
             self.wait()
             last_label = label
             last_rect = rect
@@ -608,7 +563,8 @@ class RotationMatrix(ShowSeveralQuaternionRotations):
             vect = np.zeros(3)
             vect[i] = 1
             arrow = Arrow(
-                prism.get_edge_center(vect), 2 * vect,
+                prism.get_edge_center(vect),
+                2 * vect,
                 preserve_tip_size_when_scaling=False,
                 color=color,
                 buff=0,
@@ -628,8 +584,7 @@ class RotationMatrix(ShowSeveralQuaternionRotations):
 
         def generate_updater(arrow):
             return lambda m: m.move_to(
-                arrow.get_end() + 0.2 * normalize(arrow.get_vector()),
-            )
+                arrow.get_end() + 0.2 * normalize(arrow.get_vector()), )
 
         for arrow, label in zip(self.prism.arrows, labels):
             label.match_color(arrow)
@@ -710,74 +665,63 @@ class EulerAnglesAndGimbal(ShowSeveralQuaternionRotations):
             line = self.get_dotted_line(vect, in_r=in_r)
             angle_label = self.angle_labels[i]
             line.match_color(angle_label)
-            self.play(
-                ShowCreation(line),
-                FadeInFromDown(angle_label)
-            )
-            self.play(
-                tracker.set_value, angle,
-                run_time=3
-            )
+            self.play(ShowCreation(line), FadeInFromDown(angle_label))
+            self.play(tracker.set_value, angle, run_time=3)
             self.play(FadeOut(line))
             self.wait()
         self.wait(3)
         self.play(Write(self.gimbal_lock_label))
-        self.play(
-            alpha_tracker.set_value, 0,
-            beta_tracker.set_value, 0,
-            run_time=2
-        )
-        self.play(
-            alpha_tracker.set_value, 90 * DEGREES,
-            gamma_tracker.set_value, -90 * DEGREES,
-            run_time=3
-        )
-        self.play(
-            FadeOut(self.gimbal_lock_label),
-            *[ApplyMethod(t.set_value, 0) for t in trackers],
-            run_time=3
-        )
-        self.play(
-            alpha_tracker.set_value, 30 * DEGREES,
-            beta_tracker.set_value, 120 * DEGREES,
-            gamma_tracker.set_value, -50 * DEGREES,
-            run_time=3
-        )
-        self.play(
-            alpha_tracker.set_value, 120 * DEGREES,
-            beta_tracker.set_value, -30 * DEGREES,
-            gamma_tracker.set_value, 90 * DEGREES,
-            run_time=4
-        )
-        self.play(
-            beta_tracker.set_value, 150 * DEGREES,
-            run_time=2
-        )
-        self.play(
-            alpha_tracker.set_value, 0,
-            beta_tracker.set_value, 0,
-            gamma_tracker.set_value, 0,
-            run_time=4
-        )
+        self.play(alpha_tracker.set_value,
+                  0,
+                  beta_tracker.set_value,
+                  0,
+                  run_time=2)
+        self.play(alpha_tracker.set_value,
+                  90 * DEGREES,
+                  gamma_tracker.set_value,
+                  -90 * DEGREES,
+                  run_time=3)
+        self.play(FadeOut(self.gimbal_lock_label),
+                  *[ApplyMethod(t.set_value, 0) for t in trackers],
+                  run_time=3)
+        self.play(alpha_tracker.set_value,
+                  30 * DEGREES,
+                  beta_tracker.set_value,
+                  120 * DEGREES,
+                  gamma_tracker.set_value,
+                  -50 * DEGREES,
+                  run_time=3)
+        self.play(alpha_tracker.set_value,
+                  120 * DEGREES,
+                  beta_tracker.set_value,
+                  -30 * DEGREES,
+                  gamma_tracker.set_value,
+                  90 * DEGREES,
+                  run_time=4)
+        self.play(beta_tracker.set_value, 150 * DEGREES, run_time=2)
+        self.play(alpha_tracker.set_value,
+                  0,
+                  beta_tracker.set_value,
+                  0,
+                  gamma_tracker.set_value,
+                  0,
+                  run_time=4)
         self.wait()
 
     #
     def get_gimbal(self):
         self.prism = RandyPrism()
-        return Gimbal(
-            alpha=self.alpha_tracker.get_value(),
-            beta=self.beta_tracker.get_value(),
-            gamma=self.gamma_tracker.get_value(),
-            inner_mob=self.prism
-        )
+        return Gimbal(alpha=self.alpha_tracker.get_value(),
+                      beta=self.beta_tracker.get_value(),
+                      gamma=self.gamma_tracker.get_value(),
+                      inner_mob=self.prism)
 
     def get_dotted_line(self, vect, in_r=0, out_r=10):
         line = VGroup(*it.chain(*[
             DashedLine(
                 in_r * normalize(u * vect),
                 out_r * normalize(u * vect),
-            )
-            for u in [-1, 1]
+            ) for u in [-1, 1]
         ]))
         line.sort(get_norm)
         line.set_shade_in_3d(True)
@@ -788,10 +732,8 @@ class EulerAnglesAndGimbal(ShowSeveralQuaternionRotations):
 
 class InterpolationFail(Scene):
     def construct(self):
-        words = TextMobject(
-            "Sometimes interpolating 3d\\\\"
-            "orientations is tricky..."
-        )
+        words = TextMobject("Sometimes interpolating 3d\\\\"
+                            "orientations is tricky...")
         words.to_edge(UP)
         self.add(words)
 
@@ -825,21 +767,16 @@ class QuaternionInterpolationScematic(Scene):
         q_dots = [Dot(q, color=c) for q, c in zip(qs, colors)]
         q_labels = [
             TexMobject("q_{}".format(i + 1)).next_to(
-                dot, normalize(dot.get_center()), SMALL_BUFF
-            ).match_color(dot)
+                dot, normalize(dot.get_center()), SMALL_BUFF).match_color(dot)
             for i, dot in enumerate(q_dots)
         ]
 
         q1, q2, q3 = qs
-        lines = [
-            DashedLine(q1, q2)
-            for q1, q2 in zip(qs, qs[1:])
-        ]
+        lines = [DashedLine(q1, q2) for q1, q2 in zip(qs, qs[1:])]
         for color, line in zip([GREEN, BLUE], lines):
             line.set_stroke(color, 3)
             line.proj = line.copy().apply_function(
-                lambda p: radius * normalize(p)
-            )
+                lambda p: radius * normalize(p))
         dot = Dot(qs[0], color=WHITE)
 
         self.add(circle)
@@ -848,42 +785,36 @@ class QuaternionInterpolationScematic(Scene):
 
         self.wait(2)
         for line, q in zip(lines, qs[1:]):
-            self.play(
-                ShowCreation(line),
-                ShowCreation(line.proj),
-                dot.move_to, q,
-                run_time=4
-            )
+            self.play(ShowCreation(line),
+                      ShowCreation(line.proj),
+                      dot.move_to,
+                      q,
+                      run_time=4)
             self.wait(2)
 
 
 class RememberComplexNumbers(TeacherStudentsScene):
     def construct(self):
-        complex_number = TexMobject(
-            "\\cos(\\theta) + \\sin(\\theta)i",
-            tex_to_color_map={
-                "\\cos(\\theta)": GREEN,
-                "\\sin(\\theta)": RED
-            }
-        )
+        complex_number = TexMobject("\\cos(\\theta) + \\sin(\\theta)i",
+                                    tex_to_color_map={
+                                        "\\cos(\\theta)": GREEN,
+                                        "\\sin(\\theta)": RED
+                                    })
         complex_number.scale(1.2)
         complex_number.next_to(self.students, UP, MED_LARGE_BUFF)
 
         self.teacher_says(
-            "Remember how \\\\ complex numbers \\\\ compute rotations"
-        )
+            "Remember how \\\\ complex numbers \\\\ compute rotations")
         self.change_all_student_modes("pondering")
         self.wait()
-        self.play(
-            FadeInFromDown(complex_number),
-            self.get_student_changes(
-                "thinking", "confused", "happy",
-                look_at_arg=complex_number.get_center() + UP
-            ),
-            run_time=2
-        )
-        self.change_student_modes(
-        )
+        self.play(FadeInFromDown(complex_number),
+                  self.get_student_changes(
+                      "thinking",
+                      "confused",
+                      "happy",
+                      look_at_arg=complex_number.get_center() + UP),
+                  run_time=2)
+        self.change_student_modes()
         self.wait(5)
 
 
@@ -919,23 +850,15 @@ class ComplexNumberRotation(Scene):
         mystery_label = TexMobject("(?, ?)")
         mystery_label.next_to(rotated_dot, UR, buff=0)
 
-        arc = Arc(
-            start_angle=line.get_angle(),
-            angle=angle,
-            radius=0.75
-        )
+        arc = Arc(start_angle=line.get_angle(), angle=angle, radius=0.75)
         angle_tex = str(int(np.round(angle / DEGREES))) + "^\\circ"
         angle_label = TexMobject(angle_tex)
-        angle_label.next_to(
-            arc.point_from_proportion(0.3),
-            UR, buff=SMALL_BUFF
-        )
+        angle_label.next_to(arc.point_from_proportion(0.3),
+                            UR,
+                            buff=SMALL_BUFF)
 
-        self.play(
-            FadeInFromDown(label),
-            GrowFromCenter(dot),
-            ShowCreation(line)
-        )
+        self.play(FadeInFromDown(label), GrowFromCenter(dot),
+                  ShowCreation(line))
         self.wait()
         self.play(
             ShowCreation(arc),
@@ -947,11 +870,8 @@ class ComplexNumberRotation(Scene):
         self.play(Write(mystery_label))
         self.wait()
 
-        self.rotation_mobs = VGroup(
-            arc, angle_label,
-            rotated_line, rotated_dot,
-            mystery_label
-        )
+        self.rotation_mobs = VGroup(arc, angle_label, rotated_line,
+                                    rotated_dot, mystery_label)
         self.angle_tex = angle_tex
         self.number_label = label
 
@@ -974,26 +894,30 @@ class ComplexNumberRotation(Scene):
 
         cos_tex = "\\cos(" + angle_tex + ")"
         sin_tex = "\\sin(" + angle_tex + ")"
-        label = TexMobject(
-            cos_tex, "+", sin_tex, "i",
-            tex_to_color_map={cos_tex: GREEN, sin_tex: RED}
-        )
+        label = TexMobject(cos_tex,
+                           "+",
+                           sin_tex,
+                           "i",
+                           tex_to_color_map={
+                               cos_tex: GREEN,
+                               sin_tex: RED
+                           })
         label.add_background_rectangle()
         label.scale(0.8)
         label.next_to(plane.coords_to_point(0, 1), UR, SMALL_BUFF)
         arrow = Arrow(label.get_bottom(), z_point)
 
         number_label = self.number_label
-        new_number_label = TexMobject(
-            "4 + 1i", tex_to_color_map={"4": GREEN, "1": RED}
-        )
+        new_number_label = TexMobject("4 + 1i",
+                                      tex_to_color_map={
+                                          "4": GREEN,
+                                          "1": RED
+                                      })
         new_number_label.move_to(number_label, LEFT)
         new_number_label.add_background_rectangle()
 
-        self.play(
-            Write(complex_coordinate_labels, run_time=2),
-            FadeOut(self.rotation_mobs)
-        )
+        self.play(Write(complex_coordinate_labels, run_time=2),
+                  FadeOut(self.rotation_mobs))
         self.play(ShowCreation(unit_circle))
         self.play(
             TransformFromCopy(one_dot, z_dot),
@@ -1010,9 +934,7 @@ class ComplexNumberRotation(Scene):
         self.right_z_label = new_number_label
         self.cos_tex = cos_tex
         self.sin_tex = sin_tex
-        self.unit_z_group = VGroup(
-            unit_circle, z_line, z_dot, label, arrow
-        )
+        self.unit_z_group = VGroup(unit_circle, z_line, z_dot, label, arrow)
 
     def show_product(self):
         plane = self.plane
@@ -1020,10 +942,8 @@ class ComplexNumberRotation(Scene):
         sin_tex = self.sin_tex
         angle = self.angle
 
-        line = Line(
-            FRAME_WIDTH * LEFT / 2 + FRAME_HEIGHT * UP / 2,
-            plane.coords_to_point(-0.5, 1.5)
-        )
+        line = Line(FRAME_WIDTH * LEFT / 2 + FRAME_HEIGHT * UP / 2,
+                    plane.coords_to_point(-0.5, 1.5))
         rect = BackgroundRectangle(line, buff=0)
 
         left_z = self.left_z_label
@@ -1033,40 +953,55 @@ class ComplexNumberRotation(Scene):
 
         lp1, rp1, lp2, rp2 = parens = TexMobject("()()")
         top_line = VGroup(
-            lp1, new_left_z, rp1,
-            lp2, new_right_z, rp2,
+            lp1,
+            new_left_z,
+            rp1,
+            lp2,
+            new_right_z,
+            rp2,
         )
         top_line.arrange(RIGHT, buff=SMALL_BUFF)
         top_line.set_width(rect.get_width() - 1)
         top_line.next_to(rect.get_top(), DOWN, MED_SMALL_BUFF)
 
-        mid_line = TexMobject(
-            "\\big(", "4", cos_tex, "-", "1", sin_tex, "\\big)", "+",
-            "\\big(", "1", cos_tex, "+", "4", sin_tex, "\\big)", "i",
-            tex_to_color_map={
-                cos_tex: GREEN,
-                sin_tex: RED,
-                "4": GREEN,
-                "1": RED,
-            }
-        )
+        mid_line = TexMobject("\\big(",
+                              "4",
+                              cos_tex,
+                              "-",
+                              "1",
+                              sin_tex,
+                              "\\big)",
+                              "+",
+                              "\\big(",
+                              "1",
+                              cos_tex,
+                              "+",
+                              "4",
+                              sin_tex,
+                              "\\big)",
+                              "i",
+                              tex_to_color_map={
+                                  cos_tex: GREEN,
+                                  sin_tex: RED,
+                                  "4": GREEN,
+                                  "1": RED,
+                              })
         mid_line.set_width(rect.get_width() - 0.5)
         mid_line.next_to(top_line, DOWN, MED_LARGE_BUFF)
 
         new_z = np.exp(angle * complex(0, 1)) * complex(4, 1)
         low_line = TexMobject(
             "\\approx",
-            str(np.round(new_z.real, 2)), "+",
-            str(np.round(new_z.imag, 2)), "i",
+            str(np.round(new_z.real, 2)),
+            "+",
+            str(np.round(new_z.imag, 2)),
+            "i",
         )
         low_line.next_to(mid_line, DOWN, MED_LARGE_BUFF)
 
         self.play(FadeIn(rect))
-        self.play(
-            TransformFromCopy(left_z, new_left_z),
-            TransformFromCopy(right_z, new_right_z),
-            Write(parens)
-        )
+        self.play(TransformFromCopy(left_z, new_left_z),
+                  TransformFromCopy(right_z, new_right_z), Write(parens))
         self.wait()
         self.play(FadeInFrom(mid_line, UP))
         self.wait()
@@ -1083,7 +1018,9 @@ class ComplexNumberRotation(Scene):
         result = low_line[1:].copy()
         result.add_background_rectangle()
         self.play(
-            result.move_to, mystery_label, LEFT,
+            result.move_to,
+            mystery_label,
+            LEFT,
             FadeOutAndShiftDown(mystery_label),
         )
         self.wait()
@@ -1140,10 +1077,7 @@ class RuleForQuaternionRotations(EulerAnglesAndGimbal):
         axis_label.match_color(line)
 
         self.add_fixed_orientation_mobjects(axis_label)
-        self.play(
-            ShowCreation(line),
-            Write(axis_label)
-        )
+        self.play(ShowCreation(line), Write(axis_label))
         self.change_q(quat, run_time=2)
         self.change_q([1, 0, 0, 0], run_time=2)
 
@@ -1157,14 +1091,20 @@ class RuleForQuaternionRotations(EulerAnglesAndGimbal):
         vect_mob.set_shade_in_3d(True)
 
         vect_label = TexMobject(
-            "{:.2f}".format(vect[0]), "i",
-            "{:+.2f}".format(vect[1]), "j",
-            "{:+.2f}".format(vect[2]), "k",
+            "{:.2f}".format(vect[0]),
+            "i",
+            "{:+.2f}".format(vect[1]),
+            "j",
+            "{:+.2f}".format(vect[2]),
+            "k",
         )
         magnitude_label = TexMobject(
-            "x", "^2 + ",
-            "y", "^2 + ",
-            "z", "^2 = 1",
+            "x",
+            "^2 + ",
+            "y",
+            "^2 + ",
+            "z",
+            "^2 = 1",
         )
         for label in vect_label, magnitude_label:
             decimals = label[::2]
@@ -1176,11 +1116,8 @@ class RuleForQuaternionRotations(EulerAnglesAndGimbal):
 
         magnitude_label.next_to(vect_label, IN)
 
-        self.play(
-            FadeOut(line),
-            FadeOutAndShiftDown(axis_label),
-            ShowCreation(vect_mob)
-        )
+        self.play(FadeOut(line), FadeOutAndShiftDown(axis_label),
+                  ShowCreation(vect_mob))
         # self.add_fixed_orientation_mobjects(vect_label)
         self.play(FadeInFromDown(vect_label))
         self.wait(3)
@@ -1211,10 +1148,7 @@ class RuleForQuaternionRotations(EulerAnglesAndGimbal):
             FadeInFromDown(full_angle_q[0]),
             LaggedStartMap(FadeInFromDown, full_angle_q[2:]),
         )
-        self.play(
-            GrowFromCenter(brace),
-            Write(q_label)
-        )
+        self.play(GrowFromCenter(brace), Write(q_label))
         self.wait(2)
         self.play(ShowCreation(rect))
         self.play(FadeOut(rect))
@@ -1248,10 +1182,16 @@ class RuleForQuaternionRotations(EulerAnglesAndGimbal):
         sphere = always_redraw(get_sphere)
 
         point_label = TexMobject(
-            "p", "=",
-            "{:.2f}".format(point[0]), "i", "+"
-            "{:.2f}".format(point[1]), "j", "+"
-            "{:.2f}".format(point[2]), "k",
+            "p",
+            "=",
+            "{:.2f}".format(point[0]),
+            "i",
+            "+"
+            "{:.2f}".format(point[1]),
+            "j",
+            "+"
+            "{:.2f}".format(point[2]),
+            "k",
         )
         colors = [PINK, I_COLOR, J_COLOR, K_COLOR]
         for part, color in zip(point_label[::2], colors):
@@ -1270,7 +1210,8 @@ class RuleForQuaternionRotations(EulerAnglesAndGimbal):
         quat = quaternion_from_angle_axis(40 * DEGREES, self.vect)
         r = get_norm(point)
         curved_arrow = Arrow(
-            r * RIGHT, rotate_vector(r * RIGHT, 30 * DEGREES, OUT),
+            r * RIGHT,
+            rotate_vector(r * RIGHT, 30 * DEGREES, OUT),
             buff=0,
             path_arc=60 * DEGREES,
             color=LIGHT_GREY,
@@ -1279,11 +1220,9 @@ class RuleForQuaternionRotations(EulerAnglesAndGimbal):
         curved_arrow.rotate(150 * DEGREES, about_point=ORIGIN)
         curved_arrow.apply_matrix(z_to_vector(self.vect))
         self.add(ghost_sphere, sphere)
-        self.change_q(
-            quat,
-            added_anims=[ShowCreation(curved_arrow)],
-            run_time=3
-        )
+        self.change_q(quat,
+                      added_anims=[ShowCreation(curved_arrow)],
+                      run_time=3)
 
         mystery_label = TexMobject("(?, ?, ?)")
         mystery_label.add_background_rectangle()
@@ -1296,22 +1235,21 @@ class RuleForQuaternionRotations(EulerAnglesAndGimbal):
         self.wait(5)
 
     def add_inverse(self):
-        label = TexMobject(
-            "p", "\\rightarrow",
-            "q", "\\cdot", "p", "\\cdot", "q^{-1}",
-            tex_to_color_map={"p": PINK}
-        )
+        label = TexMobject("p",
+                           "\\rightarrow",
+                           "q",
+                           "\\cdot",
+                           "p",
+                           "\\cdot",
+                           "q^{-1}",
+                           tex_to_color_map={"p": PINK})
         label.to_corner(UR)
         label.shift(2 * LEFT)
         self.add_fixed_in_frame_mobjects(label)
 
         self.play(FadeInFromDown(label))
         self.wait(3)
-        self.change_q(
-            [1, 0, 0, 0],
-            rate_func=there_and_back,
-            run_time=5
-        )
+        self.change_q([1, 0, 0, 0], rate_func=there_and_back, run_time=5)
         self.wait(3)
 
     #
@@ -1339,18 +1277,22 @@ class RuleForQuaternionRotations(EulerAnglesAndGimbal):
 
 class ExpandOutFullProduct(TeacherStudentsScene):
     def construct(self):
-        product = TexMobject(
-            """
+        product = TexMobject("""
             (w_0 + x_0 i + y_0 j + z_0 k)
             (x_1 i + y_1 j + z_1 k)
             (w_0 - x_0 i - y_0 j - z_0 k)
             """,
-            tex_to_color_map={
-                "w_0": W_COLOR, "(": WHITE, ")": WHITE,
-                "x_0": I_COLOR, "y_0": J_COLOR, "z_0": K_COLOR,
-                "x_1": I_COLOR, "y_1": J_COLOR, "z_1": K_COLOR,
-            }
-        )
+                             tex_to_color_map={
+                                 "w_0": W_COLOR,
+                                 "(": WHITE,
+                                 ")": WHITE,
+                                 "x_0": I_COLOR,
+                                 "y_0": J_COLOR,
+                                 "z_0": K_COLOR,
+                                 "x_1": I_COLOR,
+                                 "y_1": J_COLOR,
+                                 "z_1": K_COLOR,
+                             })
         product.set_width(FRAME_WIDTH - 1)
         product.to_edge(UP)
 
@@ -1365,22 +1307,17 @@ class ExpandOutFullProduct(TeacherStudentsScene):
         words = TextMobject("= Rotation of $p$")
         words.next_to(braces, DOWN)
 
-        self.play(
-            self.teacher.change, "raise_right_hand",
-            FadeInFromDown(product)
-        )
+        self.play(self.teacher.change, "raise_right_hand",
+                  FadeInFromDown(product))
         self.play(
             LaggedStartMap(GrowFromCenter, braces),
-            self.get_student_changes(
-                "confused", "horrified", "confused"
-            )
-        )
+            self.get_student_changes("confused", "horrified", "confused"))
         self.wait(2)
         self.play(Write(words))
-        self.change_student_modes(
-            "pondering", "confused", "erm",
-            look_at_arg=words
-        )
+        self.change_student_modes("pondering",
+                                  "confused",
+                                  "erm",
+                                  look_at_arg=words)
         self.wait(5)
 
 
@@ -1401,8 +1338,8 @@ class Link(Scene):
             GrowArrow(arrow),
         )
         for x in range(10):
-            self.play(Transform(
-                arrow, short_arrow,
-                rate_func=there_and_back,
-                run_time=2
-            ))
+            self.play(
+                Transform(arrow,
+                          short_arrow,
+                          rate_func=there_and_back,
+                          run_time=2))

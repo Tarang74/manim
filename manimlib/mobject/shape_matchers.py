@@ -43,16 +43,13 @@ class BackgroundRectangle(SurroundingRectangle):
                        stroke_width=None,
                        fill_color=None,
                        fill_opacity=None,
-                       family=True
-                       ):
+                       family=True):
         # Unchangable style, except for fill_opacity
-        VMobject.set_style_data(
-            self,
-            stroke_color=BLACK,
-            stroke_width=0,
-            fill_color=BLACK,
-            fill_opacity=fill_opacity
-        )
+        VMobject.set_style_data(self,
+                                stroke_color=BLACK,
+                                stroke_width=0,
+                                fill_color=BLACK,
+                                fill_opacity=fill_opacity)
         return self
 
     def get_fill_color(self):
@@ -66,10 +63,11 @@ class Cross(VGroup):
     }
 
     def __init__(self, mobject, **kwargs):
-        VGroup.__init__(self,
-                        Line(UP + LEFT, DOWN + RIGHT),
-                        Line(UP + RIGHT, DOWN + LEFT),
-                        )
+        VGroup.__init__(
+            self,
+            Line(UP + LEFT, DOWN + RIGHT),
+            Line(UP + RIGHT, DOWN + LEFT),
+        )
         self.replace(mobject, stretch=True)
         self.set_stroke(self.stroke_color, self.stroke_width)
 

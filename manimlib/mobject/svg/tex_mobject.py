@@ -11,7 +11,6 @@ from manimlib.utils.config_ops import digest_config
 from manimlib.utils.strings import split_string_list_to_isolate_substrings
 from manimlib.utils.tex_file_writing import tex_to_svg_file
 
-
 TEX_MOB_SCALE_FACTOR = 0.05
 
 
@@ -37,12 +36,10 @@ class SingleStringTexMobject(SVGMobject):
 
     def __init__(self, tex_string, **kwargs):
         digest_config(self, kwargs)
-        assert(isinstance(tex_string, str))
+        assert (isinstance(tex_string, str))
         self.tex_string = tex_string
-        file_name = tex_to_svg_file(
-            self.get_modified_expression(tex_string),
-            self.template_tex_file_body
-        )
+        file_name = tex_to_svg_file(self.get_modified_expression(tex_string),
+                                    self.template_tex_file_body)
         SVGMobject.__init__(self, file_name=file_name, **kwargs)
         if self.height is None:
             self.scale(TEX_MOB_SCALE_FACTOR)
@@ -57,17 +54,19 @@ class SingleStringTexMobject(SVGMobject):
 
     def modify_special_strings(self, tex):
         tex = self.remove_stray_braces(tex)
-        should_add_filler = reduce(op.or_, [
-            # Fraction line needs something to be over
-            tex == "\\over",
-            tex == "\\overline",
-            # Makesure sqrt has overbar
-            tex == "\\sqrt",
-            # Need to add blank subscript or superscript
-            tex.endswith("_"),
-            tex.endswith("^"),
-            tex.endswith("dot"),
-        ])
+        should_add_filler = reduce(
+            op.or_,
+            [
+                # Fraction line needs something to be over
+                tex == "\\over",
+                tex == "\\overline",
+                # Makesure sqrt has overbar
+                tex == "\\sqrt",
+                # Need to add blank subscript or superscript
+                tex.endswith("_"),
+                tex.endswith("^"),
+                tex.endswith("dot"),
+            ])
         if should_add_filler:
             filler = "{\\quad}"
             tex += filler
@@ -85,10 +84,8 @@ class SingleStringTexMobject(SVGMobject):
         # Handle imbalanced \left and \right
         num_lefts, num_rights = [
             len([
-                s for s in tex.split(substr)[1:]
-                if s and s[0] in "(){}[]|.\\"
-            ])
-            for substr in ("\\left", "\\right")
+                s for s in tex.split(substr)[1:] if s and s[0] in "(){}[]|.\\"
+            ]) for substr in ("\\left", "\\right")
         ]
         if num_lefts != num_rights:
             tex = tex.replace("\\left", "\\big")
@@ -108,10 +105,7 @@ class SingleStringTexMobject(SVGMobject):
         """
         Makes TexMobject resiliant to unmatched { at start
         """
-        num_lefts, num_rights = [
-            tex.count(char)
-            for char in "{}"
-        ]
+        num_lefts, num_rights = [tex.count(char) for char in "{}"]
         while num_rights > num_lefts:
             tex = "{" + tex
             num_lefts += 1
@@ -144,9 +138,9 @@ class TexMobject(SingleStringTexMobject):
         digest_config(self, kwargs)
         tex_strings = self.break_up_tex_strings(tex_strings)
         self.tex_strings = tex_strings
-        SingleStringTexMobject.__init__(
-            self, self.arg_separator.join(tex_strings), **kwargs
-        )
+        SingleStringTexMobject.__init__(self,
+                                        self.arg_separator.join(tex_strings),
+                                        **kwargs)
         self.break_up_by_substrings()
         self.set_color_by_tex_to_color_map(self.tex_to_color_map)
 
@@ -154,13 +148,10 @@ class TexMobject(SingleStringTexMobject):
             self.organize_submobjects_left_to_right()
 
     def break_up_tex_strings(self, tex_strings):
-        substrings_to_isolate = op.add(
-            self.substrings_to_isolate,
-            list(self.tex_to_color_map.keys())
-        )
+        substrings_to_isolate = op.add(self.substrings_to_isolate,
+                                       list(self.tex_to_color_map.keys()))
         split_list = split_string_list_to_isolate_substrings(
-            tex_strings, *substrings_to_isolate
-        )
+            tex_strings, *substrings_to_isolate)
         if self.arg_separator == ' ':
             split_list = [str(x).strip() for x in split_list]
         #split_list = list(map(str.strip, split_list))
@@ -189,7 +180,8 @@ class TexMobject(SingleStringTexMobject):
                 last_submob_index = min(curr_index, len(self.submobjects) - 1)
                 sub_tex_mob.move_to(self.submobjects[last_submob_index], RIGHT)
             else:
-                sub_tex_mob.submobjects = self.submobjects[curr_index:new_index]
+                sub_tex_mob.submobjects = self.submobjects[
+                    curr_index:new_index]
             new_submobjects.append(sub_tex_mob)
             curr_index = new_index
         self.submobjects = new_submobjects
@@ -205,7 +197,8 @@ class TexMobject(SingleStringTexMobject):
             else:
                 return tex1 == tex2
 
-        return VGroup(*[m for m in self.submobjects if test(tex, m.get_tex_string())])
+        return VGroup(
+            *[m for m in self.submobjects if test(tex, m.get_tex_string())])
 
     def get_part_by_tex(self, tex, **kwargs):
         all_parts = self.get_parts_by_tex(tex, **kwargs)
@@ -240,9 +233,7 @@ class TexMobject(SingleStringTexMobject):
         return self.index_of_part(part)
 
     def sort_alphabetically(self):
-        self.submobjects.sort(
-            key=lambda m: m.get_tex_string()
-        )
+        self.submobjects.sort(key=lambda m: m.get_tex_string())
 
 
 class TextMobject(TexMobject):
@@ -269,11 +260,7 @@ class BulletedList(TextMobject):
             dot = TexMobject("\\cdot").scale(self.dot_scale_factor)
             dot.next_to(part[0], LEFT, SMALL_BUFF)
             part.add_to_back(dot)
-        self.arrange(
-            DOWN,
-            aligned_edge=LEFT,
-            buff=self.buff
-        )
+        self.arrange(DOWN, aligned_edge=LEFT, buff=self.buff)
 
     def fade_all_but(self, index_or_string, opacity=0.5):
         arg = index_or_string

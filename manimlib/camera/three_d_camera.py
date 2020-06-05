@@ -78,19 +78,14 @@ class ThreeDCamera(Camera):
         return rgbas
 
     def get_stroke_rgbas(self, vmobject, background=False):
-        return self.modified_rgbas(
-            vmobject, vmobject.get_stroke_rgbas(background)
-        )
+        return self.modified_rgbas(vmobject,
+                                   vmobject.get_stroke_rgbas(background))
 
     def get_fill_rgbas(self, vmobject):
-        return self.modified_rgbas(
-            vmobject, vmobject.get_fill_rgbas()
-        )
+        return self.modified_rgbas(vmobject, vmobject.get_fill_rgbas())
 
     def get_mobjects_to_display(self, *args, **kwargs):
-        mobjects = Camera.get_mobjects_to_display(
-            self, *args, **kwargs
-        )
+        mobjects = Camera.get_mobjects_to_display(self, *args, **kwargs)
         rot_matrix = self.get_rotation_matrix()
 
         def z_key(mob):
@@ -98,10 +93,8 @@ class ThreeDCamera(Camera):
                 return np.inf
             # Assign a number to a three dimensional mobjects
             # based on how close it is to the camera
-            return np.dot(
-                mob.get_z_index_reference_point(),
-                rot_matrix.T
-            )[2]
+            return np.dot(mob.get_z_index_reference_point(), rot_matrix.T)[2]
+
         return sorted(mobjects, key=z_key)
 
     def get_phi(self):
@@ -197,10 +190,10 @@ class ThreeDCamera(Camera):
         else:
             return self.project_points(points)
 
-    def add_fixed_orientation_mobjects(
-            self, *mobjects,
-            use_static_center_func=False,
-            center_func=None):
+    def add_fixed_orientation_mobjects(self,
+                                       *mobjects,
+                                       use_static_center_func=False,
+                                       center_func=None):
         # This prevents the computation of mobject.get_center
         # every single time a projetion happens
         def get_static_center_func(mobject):

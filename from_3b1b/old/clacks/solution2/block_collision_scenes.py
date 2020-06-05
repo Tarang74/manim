@@ -29,11 +29,13 @@ class PreviousTwoVideos(BlocksAndWallExample):
         )
         for n, video, block in zip([2, 1], videos, blocks):
             block.fade(1)
-            video.add(SurroundingRectangle(
-                video, buff=0,
-                color=BLUE,
-                stroke_width=3,
-            ))
+            video.add(
+                SurroundingRectangle(
+                    video,
+                    buff=0,
+                    color=BLUE,
+                    stroke_width=3,
+                ))
             video.replace(block)
 
             title = TextMobject("Part {}".format(n))
@@ -68,9 +70,10 @@ class IntroducePreviousTwoVideos(PreviousTwoVideos):
         self.remove(videos)
 
         self.play(FadeInFromLarge(videos[1]))
-        self.play(TransformFromCopy(
-            videos[0].copy().fade(1).shift(2 * RIGHT),
-            videos[0],
-            rate_func=lambda t: rush_into(t, 3),
-        ))
+        self.play(
+            TransformFromCopy(
+                videos[0].copy().fade(1).shift(2 * RIGHT),
+                videos[0],
+                rate_func=lambda t: rush_into(t, 3),
+            ))
         # self.wait()

@@ -30,10 +30,11 @@ class MoveCar(ApplyMethod):
     def begin(self):
         super().begin()
         car = self.mobject
-        distance = get_norm(op.sub(
-            self.target_mobject.get_right(),
-            self.starting_mobject.get_right(),
-        ))
+        distance = get_norm(
+            op.sub(
+                self.target_mobject.get_right(),
+                self.starting_mobject.get_right(),
+            ))
         if not self.moving_forward:
             distance *= -1
         tire_radius = car.get_tires()[0].get_width() / 2
@@ -70,15 +71,10 @@ class Broadcast(LaggedStart):
                 stroke_color=BLACK,
                 stroke_width=0,
             )
-            circle.add_updater(
-                lambda c: c.move_to(focal_point)
-            )
+            circle.add_updater(lambda c: c.move_to(focal_point))
             circle.save_state()
             circle.set_width(self.small_radius * 2)
             circle.set_stroke(self.color, self.start_stroke_width)
             circles.add(circle)
-        animations = [
-            Restore(circle)
-            for circle in circles
-        ]
+        animations = [Restore(circle) for circle in circles]
         super().__init__(*animations, **kwargs)

@@ -11,25 +11,24 @@ class WhyWouldYouCare(TeacherStudentsScene):
         )
         self.wait()
         self.play(
-            RemovePiCreatureBubble(self.students[2]),
-            self.teacher.change, "raise_right_hand",
+            RemovePiCreatureBubble(self.students[2]), self.teacher.change,
+            "raise_right_hand",
             self.get_student_changes(
-                "pondering", "erm", "thinking",
+                "pondering",
+                "erm",
+                "thinking",
                 look_at_arg=self.screen,
-            )
-        )
+            ))
         self.look_at(self.screen)
         self.wait(5)
 
 
 class SolveForWavesNothingElse(TeacherStudentsScene):
     def construct(self):
-        self.student_says(
-            "Sure, we can\\\\solve it for\\\\sums of waves...",
-            target_mode="sassy",
-            student_index=2,
-            added_anims=[self.teacher.change, "guilty"]
-        )
+        self.student_says("Sure, we can\\\\solve it for\\\\sums of waves...",
+                          target_mode="sassy",
+                          student_index=2,
+                          added_anims=[self.teacher.change, "guilty"])
         self.change_student_modes("pondering", "pondering", "sassy")
         self.look_at(self.screen)
         self.wait(4)
@@ -73,7 +72,8 @@ class HangOnThere(TeacherStudentsScene):
         group.arrange(RIGHT)
         group.set_height(4)
         group.next_to(
-            student.get_corner(UL), UP,
+            student.get_corner(UL),
+            UP,
             buff=LARGE_BUFF,
         )
 
@@ -84,14 +84,11 @@ class HangOnThere(TeacherStudentsScene):
         step_graph.set_color(YELLOW)
         wave_graphs = VGroup(*[
             axes2.get_graph(
-                lambda x: (4 / PI) * np.sum([
-                    (u / n) * np.cos(n * PI * x)
-                    for u, n in zip(
-                        it.cycle([1, -1]),
-                        range(1, max_n, 2),
-                    )
-                ]),
-            )
+                lambda x: (4 / PI) * np.sum([(u / n) * np.cos(n * PI * x)
+                                             for u, n in zip(
+                                                 it.cycle([1, -1]),
+                                                 range(1, max_n, 2),
+                                             )]), )
             for max_n in range(3, 103, 2)
         ])
         wave_graphs.set_stroke(width=3)
@@ -108,9 +105,7 @@ class HangOnThere(TeacherStudentsScene):
             target_mode="surprised",
             content_introduction_class=FadeIn,
             student_index=2,
-            added_anims=[
-                self.teacher.change, "guilty"
-            ],
+            added_anims=[self.teacher.change, "guilty"],
             run_time=1,
         )
         self.wait()
@@ -127,7 +122,8 @@ class HangOnThere(TeacherStudentsScene):
         n_first_fades = 4
         for wg in wave_graphs[:n_first_fades]:
             self.play(
-                last_wg.set_stroke, {"width": 0.1},
+                last_wg.set_stroke,
+                {"width": 0.1},
                 FadeIn(wg),
             )
             last_wg = wg
@@ -136,17 +132,16 @@ class HangOnThere(TeacherStudentsScene):
                 *[
                     UpdateFromAlphaFunc(
                         wg,
-                        lambda m, a: m.set_stroke(
-                            width=(3 * there_and_back(a) + 0.1 * a)
-                        ),
-                    )
-                    for wg in wave_graphs[n_first_fades:]
+                        lambda m, a: m.set_stroke(width=(3 * there_and_back(a)
+                                                         + 0.1 * a)),
+                    ) for wg in wave_graphs[n_first_fades:]
                 ],
                 run_time=5,
                 lag_ratio=0.2,
             ),
             ApplyMethod(
-                last_wg.set_stroke, {"width": 0.1},
+                last_wg.set_stroke,
+                {"width": 0.1},
                 run_time=0.25,
             ),
             FadeIn(
@@ -154,28 +149,29 @@ class HangOnThere(TeacherStudentsScene):
                 rate_func=squish_rate_func(smooth, 0.9, 1),
                 run_time=5,
             ),
-            self.teacher.change, "thinking",
+            self.teacher.change,
+            "thinking",
         )
-        self.change_student_modes(
-            "confused", "confused", "angry"
-        )
+        self.change_student_modes("confused", "confused", "angry")
         self.wait(3)
 
 
 class YouSaidThisWasEasier(TeacherStudentsScene):
     def construct(self):
         self.change_all_student_modes(
-            "confused", look_at_arg=self.screen,
+            "confused",
+            look_at_arg=self.screen,
         )
-        self.student_says(
-            "I'm sorry, you said\\\\this was easier?",
-            target_mode="sassy"
-        )
+        self.student_says("I'm sorry, you said\\\\this was easier?",
+                          target_mode="sassy")
         self.play(self.teacher.change, "guilty")
         self.wait(3)
         self.teacher_says(
             "Bear with\\\\me",
-            bubble_kwargs={"height": 3, "width": 3},
+            bubble_kwargs={
+                "height": 3,
+                "width": 3
+            },
         )
         self.look_at(self.screen)
         self.wait(3)
@@ -198,16 +194,20 @@ class LooseWithLanguage(TeacherStudentsScene):
 
         self.teacher_says(
             "Loose with\\\\language",
-            bubble_kwargs={"width": 3, "height": 3},
+            bubble_kwargs={
+                "width": 3,
+                "height": 3
+            },
             run_time=2,
         )
         self.play(
             FadeInFrom(terms[1], DOWN),
             self.get_student_changes(
-                "thinking", "pondering", "erm",
+                "thinking",
+                "pondering",
+                "erm",
                 look_at_arg=terms,
-            )
-        )
+            ))
         self.play(FadeInFromDown(terms[0]))
         self.wait()
         self.play(Swap(*terms))
@@ -221,8 +221,7 @@ class FormulaOutOfContext(TeacherStudentsScene):
             tex_to_color_map={
                 "{n}": YELLOW,
                 "{t}": PINK,
-            }
-        )
+            })
         formula.scale(1.5)
         formula.next_to(self.students, UP, LARGE_BUFF)
 

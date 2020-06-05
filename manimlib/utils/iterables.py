@@ -34,10 +34,7 @@ def all_elements_are_instances(iterable, Class):
 
 
 def adjacent_n_tuples(objects, n):
-    return zip(*[
-        [*objects[k:], *objects[:k]]
-        for k in range(n)
-    ])
+    return zip(*[[*objects[k:], *objects[:k]] for k in range(n)])
 
 
 def adjacent_pairs(objects):
@@ -56,9 +53,8 @@ def batch_by_property(items, property_func):
 
     def add_batch_prop_pair(batch):
         if len(batch) > 0:
-            batch_prop_pairs.append(
-                (batch, property_func(batch[0]))
-            )
+            batch_prop_pairs.append((batch, property_func(batch[0])))
+
     curr_batch = []
     curr_prop = None
     for item in items:
@@ -75,11 +71,11 @@ def batch_by_property(items, property_func):
 
 def tuplify(obj):
     if isinstance(obj, str):
-        return (obj,)
+        return (obj, )
     try:
         return tuple(obj)
     except TypeError:
-        return (obj,)
+        return (obj, )
 
 
 def stretch_array_to_length(nparray, length):
@@ -95,20 +91,16 @@ def stretch_array_to_length(nparray, length):
 def make_even(iterable_1, iterable_2):
     list_1, list_2 = list(iterable_1), list(iterable_2)
     length = max(len(list_1), len(list_2))
-    return (
-        [list_1[(n * len(list_1)) // length] for n in range(length)],
-        [list_2[(n * len(list_2)) // length] for n in range(length)]
-    )
+    return ([list_1[(n * len(list_1)) // length] for n in range(length)],
+            [list_2[(n * len(list_2)) // length] for n in range(length)])
 
 
 def make_even_by_cycling(iterable_1, iterable_2):
     length = max(len(iterable_1), len(iterable_2))
     cycle1 = it.cycle(iterable_1)
     cycle2 = it.cycle(iterable_2)
-    return (
-        [next(cycle1) for x in range(length)],
-        [next(cycle2) for x in range(length)]
-    )
+    return ([next(cycle1)
+             for x in range(length)], [next(cycle2) for x in range(length)])
 
 
 def remove_nones(sequence):

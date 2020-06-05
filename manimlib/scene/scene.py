@@ -28,14 +28,15 @@ class Scene(Container):
         "random_seed": 0,
         "start_at_animation_number": None,
         "end_at_animation_number": None,
-        "leave_progress_bars": False,
+        "leave_progress_bars": True,
     }
 
     def __init__(self, **kwargs):
         Container.__init__(self, **kwargs)
         self.camera = self.camera_class(**self.camera_config)
         self.file_writer = SceneFileWriter(
-            self, **self.file_writer_config,
+            self,
+            **self.file_writer_config,
         )
 
         self.mobjects = []
@@ -117,13 +118,12 @@ class Scene(Container):
     def capture_mobjects_in_camera(self, mobjects, **kwargs):
         self.camera.capture_mobjects(mobjects, **kwargs)
 
-    def update_frame(
-            self,
-            mobjects=None,
-            background=None,
-            include_submobjects=True,
-            ignore_skipping=True,
-            **kwargs):
+    def update_frame(self,
+                     mobjects=None,
+                     background=None,
+                     include_submobjects=True,
+                     ignore_skipping=True,
+                     **kwargs):
         if self.skip_animations and not ignore_skipping:
             return
         if mobjects is None:
@@ -143,6 +143,7 @@ class Scene(Container):
         self.update_frame()
         self.set_camera(Camera(self.get_frame()))
         self.clear()
+
     ###
 
     def update_mobjects(self, dt):
@@ -172,11 +173,9 @@ class Scene(Container):
         families = [m.get_family() for m in mobjects]
 
         def is_top_level(mobject):
-            num_families = sum([
-                (mobject in family)
-                for family in families
-            ])
+            num_families = sum([(mobject in family) for family in families])
             return num_families == 1
+
         return list(filter(is_top_level, mobjects))
 
     def get_mobject_family_members(self):
@@ -198,10 +197,7 @@ class Scene(Container):
         e.g. to add all mobjects defined up to a point,
         call self.add_mobjects_among(locals().values())
         """
-        self.add(*filter(
-            lambda m: isinstance(m, Mobject),
-            values
-        ))
+        self.add(*filter(lambda m: isinstance(m, Mobject), values))
         return self
 
     def remove(self, *mobjects):
@@ -209,7 +205,8 @@ class Scene(Container):
             self.restructure_mobjects(mobjects, list_name, False)
         return self
 
-    def restructure_mobjects(self, to_remove,
+    def restructure_mobjects(self,
+                             to_remove,
                              mobject_list_name="mobjects",
                              extract_families=True):
         """
@@ -237,15 +234,14 @@ class Scene(Container):
                     add_safe_mobjects_from_list(mob.submobjects, intersect)
                 else:
                     new_mobjects.append(mob)
+
         add_safe_mobjects_from_list(mobjects, set(to_remove))
         return new_mobjects
 
     # TODO, remove this, and calls to this
     def add_foreground_mobjects(self, *mobjects):
-        self.foreground_mobjects = list_update(
-            self.foreground_mobjects,
-            mobjects
-        )
+        self.foreground_mobjects = list_update(self.foreground_mobjects,
+                                               mobjects)
         self.add(*mobjects)
         return self
 
@@ -296,17 +292,20 @@ class Scene(Container):
                 return mobjects[i:]
         return []
 
-    def get_time_progression(self, run_time, n_iterations=None, override_skip_animations=False):
+    def get_time_progression(self,
+                             run_time,
+                             n_iterations=None,
+                             override_skip_animations=False):
         if self.skip_animations and not override_skip_animations:
             times = [run_time]
         else:
             step = 1 / self.camera.frame_rate
             times = np.arange(0, run_time, step)
         time_progression = ProgressDisplay(
-            times, total=n_iterations,
+            times,
+            total=n_iterations,
             leave=self.leave_progress_bars,
-            ascii=False if platform.system() != 'Windows' else True
-        )
+            ascii=False if platform.system() != 'Windows' else True)
         return time_progression
 
     def get_run_time(self, animations):
@@ -344,21 +343,21 @@ class Scene(Container):
             if state["curr_method"] is None:
                 return
             mobject = state["curr_method"].__self__
-            if state["last_method"] and state["last_method"].__self__ is mobject:
+            if state["last_method"] and state[
+                    "last_method"].__self__ is mobject:
                 animations.pop()
                 # method should already have target then.
             else:
                 mobject.generate_target()
             #
-            if len(state["method_args"]) > 0 and isinstance(state["method_args"][-1], dict):
+            if len(state["method_args"]) > 0 and isinstance(
+                    state["method_args"][-1], dict):
                 method_kwargs = state["method_args"].pop()
             else:
                 method_kwargs = {}
-            state["curr_method"].__func__(
-                mobject.target,
-                *state["method_args"],
-                **method_kwargs
-            )
+            state["curr_method"].__func__(mobject.target,
+                                          *state["method_args"],
+                                          **method_kwargs)
             animations.append(MoveToTarget(mobject))
             state["last_method"] = state["curr_method"]
             state["curr_method"] = None
@@ -406,6 +405,7 @@ class Scene(Container):
             func(self, *args, **kwargs)
             self.file_writer.end_animation(allow_write)
             self.num_plays += 1
+
         return wrapper
 
     def begin_animations(self, animations):
@@ -456,9 +456,7 @@ class Scene(Container):
         if len(args) == 0:
             warnings.warn("Called Scene.play with no animations")
             return
-        animations = self.compile_play_args_to_animation_list(
-            *args, **kwargs
-        )
+        animations = self.compile_play_args_to_animation_list(*args, **kwargs)
         self.begin_animations(animations)
         self.progress_through_animations(animations)
         self.finish_animations(animations)
@@ -481,23 +479,21 @@ class Scene(Container):
             time_progression = self.get_time_progression(
                 duration,
                 n_iterations=-1,  # So it doesn't show % progress
-                override_skip_animations=True
-            )
-            time_progression.set_description(
-                "Waiting for {}".format(stop_condition.__name__)
-            )
+                override_skip_animations=True)
+            time_progression.set_description("Waiting for {}".format(
+                stop_condition.__name__))
         else:
             time_progression = self.get_time_progression(duration)
-            time_progression.set_description(
-                "Waiting {}".format(self.num_plays)
-            )
+            time_progression.set_description("Waiting {}".format(
+                self.num_plays))
         return time_progression
 
     @handle_play_like_call
     def wait(self, duration=DEFAULT_WAIT_TIME, stop_condition=None):
         self.update_mobjects(dt=0)  # Any problems with this?
         if self.should_update_mobjects():
-            time_progression = self.get_wait_time_progression(duration, stop_condition)
+            time_progression = self.get_wait_time_progression(
+                duration, stop_condition)
             # TODO, be smart about setting a static image
             # the same way Scene.play does
             last_t = 0

@@ -56,9 +56,7 @@ class PiCreature(SVGMobject):
         self.parts_named = False
         try:
             svg_file = os.path.join(
-                PI_CREATURE_DIR,
-                "%s_%s.svg" % (self.file_name_prefix, mode)
-            )
+                PI_CREATURE_DIR, "%s_%s.svg" % (self.file_name_prefix, mode))
             SVGMobject.__init__(self, file_name=svg_file, **kwargs)
         except Exception:
             warnings.warn("No %s design with mode %s" %
@@ -68,7 +66,10 @@ class PiCreature(SVGMobject):
                 FILE_DIR,
                 "PiCreatures_plain.svg",
             )
-            SVGMobject.__init__(self, mode="plain", file_name=svg_file, **kwargs)
+            SVGMobject.__init__(self,
+                                mode="plain",
+                                file_name=svg_file,
+                                **kwargs)
 
         if self.flip_at_start:
             self.flip()
@@ -90,8 +91,7 @@ class PiCreature(SVGMobject):
             self.submobjects[RIGHT_PUPIL_INDEX]
         ])
         self.eyes = VGroup(*[
-            self.submobjects[LEFT_EYE_INDEX],
-            self.submobjects[RIGHT_EYE_INDEX]
+            self.submobjects[LEFT_EYE_INDEX], self.submobjects[RIGHT_EYE_INDEX]
         ])
         self.eye_parts = VGroup(self.eyes, self.pupils)
         self.parts_named = True
@@ -132,9 +132,7 @@ class PiCreature(SVGMobject):
             new_pupil.move_to(pupil)
             pupil.become(new_pupil)
             dot.shift(
-                new_pupil.get_boundary_point(UL) -
-                dot.get_boundary_point(UL)
-            )
+                new_pupil.get_boundary_point(UL) - dot.get_boundary_point(UL))
             pupil.add(dot)
 
     def copy(self):
@@ -148,9 +146,7 @@ class PiCreature(SVGMobject):
         return self
 
     def change_mode(self, mode):
-        new_self = self.__class__(
-            mode=mode,
-        )
+        new_self = self.__class__(mode=mode, )
         new_self.match_style(self)
         new_self.match_height(self)
         if self.is_flipped() != new_self.is_flipped():
@@ -211,9 +207,7 @@ class PiCreature(SVGMobject):
     def blink(self):
         eye_parts = self.eye_parts
         eye_bottom_y = eye_parts.get_bottom()[1]
-        eye_parts.apply_function(
-            lambda p: [p[0], eye_bottom_y, p[2]]
-        )
+        eye_parts.apply_function(lambda p: [p[0], eye_bottom_y, p[2]])
         return self
 
     def to_corner(self, vect=None, **kwargs):
@@ -267,9 +261,7 @@ def get_all_pi_creature_modes():
     suffix = ".svg"
     for file in os.listdir(PI_CREATURE_DIR):
         if file.startswith(prefix) and file.endswith(suffix):
-            result.append(
-                file[len(prefix):-len(suffix)]
-            )
+            result.append(file[len(prefix):-len(suffix)])
     return result
 
 
@@ -313,15 +305,11 @@ class BabyPiCreature(PiCreature):
 
 
 class TauCreature(PiCreature):
-    CONFIG = {
-        "file_name_prefix": "TauCreatures"
-    }
+    CONFIG = {"file_name_prefix": "TauCreatures"}
 
 
 class ThreeLeggedPiCreature(PiCreature):
-    CONFIG = {
-        "file_name_prefix": "ThreeLeggedPiCreatures"
-    }
+    CONFIG = {"file_name_prefix": "ThreeLeggedPiCreatures"}
 
 
 class Eyes(VMobject):
@@ -366,24 +354,17 @@ class Eyes(VMobject):
         return eyes
 
     def change_mode(self, mode, thing_to_look_at=None):
-        new_eyes = self.create_eyes(
-            mode=mode,
-            thing_to_look_at=thing_to_look_at
-        )
+        new_eyes = self.create_eyes(mode=mode,
+                                    thing_to_look_at=thing_to_look_at)
         self.become(new_eyes, copy_submobjects=False)
         return self
 
     def look_at(self, thing_to_look_at):
-        self.change_mode(
-            self.mode,
-            thing_to_look_at=thing_to_look_at
-        )
+        self.change_mode(self.mode, thing_to_look_at=thing_to_look_at)
         return self
 
     def blink(self, **kwargs):  # TODO, change Blink
         bottom_y = self.get_bottom()[1]
         for submob in self:
-            submob.apply_function(
-                lambda p: [p[0], bottom_y, p[2]]
-            )
+            submob.apply_function(lambda p: [p[0], bottom_y, p[2]])
         return self

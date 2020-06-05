@@ -11,13 +11,8 @@ class HoldUpMultivariableChainRule(TeacherStudentsScene):
         morty = self.teacher
 
         self.add(title)
-        self.play(
-            morty.change, "raise_right_hand",
-            FadeInFromDown(screen)
-        )
-        self.change_all_student_modes(
-            "confused", look_at_arg=screen
-        )
+        self.play(morty.change, "raise_right_hand", FadeInFromDown(screen))
+        self.change_all_student_modes("confused", look_at_arg=screen)
         self.look_at(screen)
         self.wait(10)
 
@@ -63,13 +58,9 @@ class ComputationalNetwork(MovingCameraScene):
             formula.box = SurroundingRectangle(formula)
             formula.box.set_color(WHITE)
             formula.group = VGroup(formula, formula.box)
-            formula.set_color_by_tex_to_color_map(
-                self.tex_to_color_map
-            )
+            formula.set_color_by_tex_to_color_map(self.tex_to_color_map)
             formula_groups.add(formula.group)
-        f_formula.box.match_width(
-            g_formula.box, stretch=True, about_edge=LEFT
-        )
+        f_formula.box.match_width(g_formula.box, stretch=True, about_edge=LEFT)
 
         fg_group = VGroup(f_formula.group, g_formula.group)
         fg_group.arrange(DOWN, buff=LARGE_BUFF)
@@ -82,9 +73,7 @@ class ComputationalNetwork(MovingCameraScene):
         fh_line = Line(f_formula.box.get_right(), h_formula.box.get_left())
         gh_line = Line(g_formula.box.get_right(), h_formula.box.get_left())
 
-        graph_edges = VGroup(
-            xf_line, xg_line, fh_line, gh_line
-        )
+        graph_edges = VGroup(xf_line, xg_line, fh_line, gh_line)
 
         self.play(
             Write(x),
@@ -111,12 +100,10 @@ class ComputationalNetwork(MovingCameraScene):
 
         network = VGroup(formula_groups, graph_edges)
 
-        self.set_variables_as_attrs(
-            x, f_formula, g_formula, h_formula,
-            xf_line, xg_line, fh_line, gh_line,
-            formulas, formula_groups,
-            graph_edges, network
-        )
+        self.set_variables_as_attrs(x, f_formula, g_formula, h_formula,
+                                    xf_line, xg_line, fh_line, gh_line,
+                                    formulas, formula_groups, graph_edges,
+                                    network)
 
     def walk_through_parts(self):
         x = self.x
@@ -130,38 +117,30 @@ class ComputationalNetwork(MovingCameraScene):
                 surrounding_rectangle_config={
                     "buff": 0.5 * SMALL_BUFF,
                     "color": mob.get_color()
-                }
-            )
+                })
 
         for formula in f_formula, g_formula:
             self.play(indicate(formula[0]))
-            self.play(ReplacementTransform(
-                x.copy(),
-                formula.get_parts_by_tex("x"),
-                path_arc=PI / 3
-            ))
+            self.play(
+                ReplacementTransform(x.copy(),
+                                     formula.get_parts_by_tex("x"),
+                                     path_arc=PI / 3))
             self.wait()
 
         self.play(indicate(h_formula[0]))
-        self.play(ReplacementTransform(
-            f_formula[0].copy(),
-            h_formula.get_part_by_tex("f"),
-            path_arc=PI / 3
-        ))
-        self.play(ReplacementTransform(
-            g_formula[0].copy(),
-            h_formula.get_part_by_tex("g"),
-            path_arc=PI / 3
-        ))
+        self.play(
+            ReplacementTransform(f_formula[0].copy(),
+                                 h_formula.get_part_by_tex("f"),
+                                 path_arc=PI / 3))
+        self.play(
+            ReplacementTransform(g_formula[0].copy(),
+                                 h_formula.get_part_by_tex("g"),
+                                 path_arc=PI / 3))
         self.wait()
 
     def write_dh_dx_goal(self):
-        deriv = TexMobject(
-            "{dh", "\\over", "dx}", "(", "2", ")"
-        )
-        deriv.set_color_by_tex_to_color_map(
-            self.tex_to_color_map
-        )
+        deriv = TexMobject("{dh", "\\over", "dx}", "(", "2", ")")
+        deriv.set_color_by_tex_to_color_map(self.tex_to_color_map)
         deriv.scale(1.5)
         deriv.move_to(DOWN)
 
@@ -198,9 +177,7 @@ class ComputationalNetwork(MovingCameraScene):
             ReplacementTransform(
                 dh_dx_at_two.get_part_by_tex("2").copy(),
                 two,
-            ),
-            Write(x_val_label[0])
-        )
+            ), Write(x_val_label[0]))
         self.wait()
 
         two_copy1 = two.copy()
@@ -213,27 +190,39 @@ class ComputationalNetwork(MovingCameraScene):
         g_in_h = h_formula.get_part_by_tex("g")
 
         self.play(
-            two_copy1.move_to, x_in_f, DOWN,
-            x_in_f.set_fill, {"opacity": 0},
+            two_copy1.move_to,
+            x_in_f,
+            DOWN,
+            x_in_f.set_fill,
+            {"opacity": 0},
         )
         self.wait()
         self.play(Write(f_val_label))
         self.wait()
         self.play(
-            two_copy2.move_to, x_in_g, DOWN,
-            x_in_g.set_fill, {"opacity": 0},
+            two_copy2.move_to,
+            x_in_g,
+            DOWN,
+            x_in_g.set_fill,
+            {"opacity": 0},
         )
         self.wait()
         self.play(Write(g_val_label))
         self.wait()
 
         self.play(
-            four_copy.move_to, f_in_h, DOWN,
-            f_in_h.set_fill, {"opacity": 0},
+            four_copy.move_to,
+            f_in_h,
+            DOWN,
+            f_in_h.set_fill,
+            {"opacity": 0},
         )
         self.play(
-            one_copy.move_to, g_in_h, DOWN,
-            g_in_h.set_fill, {"opacity": 0},
+            one_copy.move_to,
+            g_in_h,
+            DOWN,
+            g_in_h.set_fill,
+            {"opacity": 0},
         )
         self.wait()
         self.play(Write(h_val_label))
@@ -259,10 +248,7 @@ class ComputationalNetwork(MovingCameraScene):
             numbers_to_show=[0, 2, 4],
             unit_size=0.75,
         )
-        x_line.next_to(
-            x_val, DOWN, LARGE_BUFF,
-            aligned_edge=RIGHT
-        )
+        x_line.next_to(x_val, DOWN, LARGE_BUFF, aligned_edge=RIGHT)
         h_line = NumberLine(
             x_min=0,
             x_max=32,
@@ -273,10 +259,7 @@ class ComputationalNetwork(MovingCameraScene):
             tick_size=0.05,
             unit_size=1.0 / 12,
         )
-        h_line.next_to(
-            h_val, DOWN, LARGE_BUFF,
-            aligned_edge=LEFT
-        )
+        h_line.next_to(h_val, DOWN, LARGE_BUFF, aligned_edge=LEFT)
 
         x_dot = Dot(color=self.x_color)
         x_dot.move_to(x_line.number_to_point(2))
@@ -301,16 +284,21 @@ class ComputationalNetwork(MovingCameraScene):
         self.wait()
         for x in range(2):
             self.play(
-                x_dot.shift, 0.25 * RIGHT,
-                h_dot.shift, 0.35 * RIGHT,
+                x_dot.shift,
+                0.25 * RIGHT,
+                h_dot.shift,
+                0.35 * RIGHT,
                 rate_func=wiggle,
                 run_time=1,
             )
 
         self.set_variables_as_attrs(
-            x_line, h_line,
-            x_dot, h_dot,
-            x_arrow, h_arrow,
+            x_line,
+            h_line,
+            x_dot,
+            h_dot,
+            x_arrow,
+            h_arrow,
         )
 
     def expand_out_h_as_function_of_x(self):
@@ -318,29 +306,29 @@ class ComputationalNetwork(MovingCameraScene):
 
         deriv = self.dh_dx_at_two
 
-        expanded_formula = TexMobject(
-            "h = x^4 \\cos(\\pi x)",
-            tex_to_color_map=self.tex_to_color_map
-        )
+        expanded_formula = TexMobject("h = x^4 \\cos(\\pi x)",
+                                      tex_to_color_map=self.tex_to_color_map)
         expanded_formula.move_to(deriv)
         cross = Cross(expanded_formula)
 
         self.play(
             FadeInFromDown(expanded_formula),
-            deriv.scale, 1.0 / 1.5,
-            deriv.shift, DOWN,
+            deriv.scale,
+            1.0 / 1.5,
+            deriv.shift,
+            DOWN,
         )
         self.wait()
         self.play(ShowCreation(cross))
         self.wait()
         self.play(
             FadeOut(VGroup(expanded_formula, cross)),
-            deriv.shift, UP,
+            deriv.shift,
+            UP,
         )
         for edge in self.graph_edges:
-            self.play(ShowCreationThenDestruction(
-                edge.copy().set_stroke(YELLOW, 6)
-            ))
+            self.play(
+                ShowCreationThenDestruction(edge.copy().set_stroke(YELLOW, 6)))
 
     def show_four_derivatives(self):
         lines = self.graph_edges
@@ -363,10 +351,8 @@ class ComputationalNetwork(MovingCameraScene):
             dh_dg[0][0],
             dh_dg[2][0],
         )
-        partial_term_rects = VGroup(*[
-            SurroundingRectangle(pt, buff=0.05)
-            for pt in partial_terms
-        ])
+        partial_term_rects = VGroup(
+            *[SurroundingRectangle(pt, buff=0.05) for pt in partial_terms])
         partial_term_rects.set_stroke(width=0)
         partial_term_rects.set_fill(TEAL, 0.5)
 
@@ -377,15 +363,11 @@ class ComputationalNetwork(MovingCameraScene):
             self.play(FadeInFromDown(derivative))
             self.wait()
 
-        self.play(
-            LaggedStartMap(FadeIn, partial_term_rects),
-            Animation(derivatives)
-        )
+        self.play(LaggedStartMap(FadeIn, partial_term_rects),
+                  Animation(derivatives))
         self.wait()
-        self.play(
-            LaggedStartMap(FadeOut, partial_term_rects),
-            Animation(derivatives)
-        )
+        self.play(LaggedStartMap(FadeOut, partial_term_rects),
+                  Animation(derivatives))
 
         self.derivatives = derivatives
 
@@ -399,20 +381,20 @@ class ComputationalNetwork(MovingCameraScene):
         frame = self.camera_frame
 
         self.play(
-            frame.shift, 3 * UP,
-            dh_dx.to_edge, UP,
-            dh_dx.shift, 3 * LEFT + 3 * UP,
-            at_two.set_fill, {"opacity": 0},
+            frame.shift,
+            3 * UP,
+            dh_dx.to_edge,
+            UP,
+            dh_dx.shift,
+            3 * LEFT + 3 * UP,
+            at_two.set_fill,
+            {"opacity": 0},
         )
 
         for deriv in derivatives:
             deriv.generate_target()
-        rhs = VGroup(
-            TexMobject("="),
-            df_dx.target, dh_df.target,
-            TexMobject("+"),
-            dg_dx.target, dh_dg.target
-        )
+        rhs = VGroup(TexMobject("="), df_dx.target, dh_df.target,
+                     TexMobject("+"), dg_dx.target, dh_dg.target)
         rhs.arrange(
             RIGHT,
             buff=2 * SMALL_BUFF,
@@ -423,10 +405,7 @@ class ComputationalNetwork(MovingCameraScene):
             alt_y = deriv.target[2].get_center()[1]
             deriv.target.shift((y - alt_y) * UP)
 
-        self.play(
-            Write(rhs[::3]),
-            LaggedStartMap(MoveToTarget, derivatives)
-        )
+        self.play(Write(rhs[::3]), LaggedStartMap(MoveToTarget, derivatives))
         self.wait()
 
         self.chain_rule_derivatives = derivatives
@@ -444,18 +423,13 @@ class ComputationalNetwork(MovingCameraScene):
         del_h2, del_g = dh_dg[1::2]
         terms = VGroup(df, dx1, dg, dx2, del_h1, del_f, del_h2, del_g)
         for term in terms:
-            term.rect = SurroundingRectangle(
-                term,
-                buff=0.5 * SMALL_BUFF,
-                stroke_width=0,
-                fill_color=TEAL,
-                fill_opacity=0.5
-            )
+            term.rect = SurroundingRectangle(term,
+                                             buff=0.5 * SMALL_BUFF,
+                                             stroke_width=0,
+                                             fill_color=TEAL,
+                                             fill_opacity=0.5)
         for derivative in derivatives:
-            derivative.rect = SurroundingRectangle(
-                derivative,
-                color=TEAL
-            )
+            derivative.rect = SurroundingRectangle(derivative, color=TEAL)
 
         del_h_sub_f = TexMobject("f")
         del_h_sub_f.scale(0.5)
@@ -474,16 +448,16 @@ class ComputationalNetwork(MovingCameraScene):
         rect.scale(3)
         rect.set_fill(opacity=0)
 
-        self.play(
-            rect.restore,
-            FadeIn(derivatives[0].rect)
-        )
+        self.play(rect.restore, FadeIn(derivatives[0].rect))
         self.wait()
         self.play(Transform(rect, df.rect))
         self.wait()
         self.play(
-            rect.replace, df_dx, {"stretch": True},
-            rect.scale, 1.1,
+            rect.replace,
+            df_dx,
+            {"stretch": True},
+            rect.scale,
+            1.1,
         )
         self.wait()
         self.play(
@@ -494,17 +468,19 @@ class ComputationalNetwork(MovingCameraScene):
         self.wait()
         self.play(Transform(rect, del_h1.rect))
         self.wait()
-        self.play(ReplacementTransform(
-            del_f[1].copy(), del_h_sub_f,
-            path_arc=PI,
-        ))
-        self.wait()
         self.play(
-            del_h_sub_f.shift, UR,
-            del_h_sub_f.fade, 1,
-            rate_func=running_start,
-            remover=True
-        )
+            ReplacementTransform(
+                del_f[1].copy(),
+                del_h_sub_f,
+                path_arc=PI,
+            ))
+        self.wait()
+        self.play(del_h_sub_f.shift,
+                  UR,
+                  del_h_sub_f.fade,
+                  1,
+                  rate_func=running_start,
+                  remover=True)
         self.wait()
         self.play(
             Transform(rect, del_f.rect),
@@ -518,18 +494,18 @@ class ComputationalNetwork(MovingCameraScene):
             ))
         self.wait()
         self.play(
-            rect.replace, cr_derivatives[1::2], {"stretch": True},
-            rect.scale, 1.1,
+            rect.replace,
+            cr_derivatives[1::2],
+            {"stretch": True},
+            rect.scale,
+            1.1,
             FadeOut(df.rect),
             FadeOut(derivatives[2].rect),
             FadeIn(derivatives[1].rect),
             FadeIn(derivatives[3].rect),
         )
         self.wait()
-        self.play(
-            Transform(rect, dg.rect),
-            FadeOut(derivatives[3].rect)
-        )
+        self.play(Transform(rect, dg.rect), FadeOut(derivatives[3].rect))
         self.wait()
         self.play(Transform(rect, dx2.rect))
         self.wait()
@@ -541,18 +517,14 @@ class ComputationalNetwork(MovingCameraScene):
         self.wait()
         self.play(Transform(rect, del_g.rect))
         self.wait()
-        self.play(
-            rect.replace, cr_derivatives, {"stretch": True},
-            rect.scale, 1.1,
-            FadeOut(derivatives[3].rect)
-        )
+        self.play(rect.replace, cr_derivatives, {"stretch": True}, rect.scale,
+                  1.1, FadeOut(derivatives[3].rect))
         for x in range(3):
             self.play(*[
                 ShowCreationThenDestruction(
                     group,
                     lag_ratio=1,
-                )
-                for group in (top_lines, bottom_lines)
+                ) for group in (top_lines, bottom_lines)
             ])
         self.wait()
         self.play(FadeOut(rect))
@@ -571,46 +543,29 @@ class ComputationalNetwork(MovingCameraScene):
         formulas = self.formulas
         x, f_formula, g_formula, h_formula = formulas
 
-        full_derivative = TexMobject(
-            "=",
-            "(", "2", "x", ")",
-            "(", "2", "f", "g", ")",
-            "+",
-            "(", "-\\sin(", "\\pi", "x", ")", "\\pi", ")",
-            "(", "f", "^2", ")"
-        )
+        full_derivative = TexMobject("=", "(", "2", "x", ")", "(", "2", "f",
+                                     "g", ")", "+", "(", "-\\sin(", "\\pi",
+                                     "x", ")", "\\pi", ")", "(", "f", "^2",
+                                     ")")
         full_derivative.next_to(lhs.target, RIGHT)
-        full_derivative.set_color_by_tex_to_color_map(
-            self.tex_to_color_map
-        )
+        full_derivative.set_color_by_tex_to_color_map(self.tex_to_color_map)
 
         self.play(MoveToTarget(lhs))
         self.play(Write(full_derivative[0]))
 
         # df/dx
-        self.play(
-            f_formula.shift, UP,
-            df_dx.shift, 0.5 * DOWN
-        )
+        self.play(f_formula.shift, UP, df_dx.shift, 0.5 * DOWN)
         self.play(
             ReplacementTransform(
                 f_formula[2:].copy(),
                 full_derivative[2:4],
-            ),
-            FadeIn(full_derivative[1:5:3])
-        )
+            ), FadeIn(full_derivative[1:5:3]))
         self.wait()
-        self.play(
-            f_formula.shift, DOWN,
-            df_dx.shift, 0.5 * UP
-        )
+        self.play(f_formula.shift, DOWN, df_dx.shift, 0.5 * UP)
         self.wait()
 
         # dg/dx
-        self.play(
-            g_formula.shift, 0.75 * UP,
-            dg_dx.shift, 0.5 * DOWN
-        )
+        self.play(g_formula.shift, 0.75 * UP, dg_dx.shift, 0.5 * DOWN)
         self.play(
             ReplacementTransform(
                 g_formula[2:].copy(),
@@ -620,47 +575,33 @@ class ComputationalNetwork(MovingCameraScene):
             Write(full_derivative[10]),
         )
         self.wait()
-        self.play(
-            g_formula.shift, 0.75 * DOWN,
-            dg_dx.shift, 0.5 * UP
-        )
+        self.play(g_formula.shift, 0.75 * DOWN, dg_dx.shift, 0.5 * UP)
         self.wait()
 
         # dh/df
-        self.play(
-            h_formula.shift, UP,
-            dh_df.shift, 0.5 * DOWN
-        )
+        self.play(h_formula.shift, UP, dh_df.shift, 0.5 * DOWN)
         self.wait()
         self.play(
             ReplacementTransform(
                 h_formula[2:].copy(),
                 full_derivative[6:9],
-            ),
-            FadeIn(full_derivative[5:10:4])
-        )
+            ), FadeIn(full_derivative[5:10:4]))
         self.wait()
-        self.play(
-            dh_df.shift, 0.5 * UP
-        )
+        self.play(dh_df.shift, 0.5 * UP)
 
         # dh/dg
         self.play(
-            dh_dg.shift, 0.5 * DOWN,
+            dh_dg.shift,
+            0.5 * DOWN,
         )
         self.wait()
         self.play(
             ReplacementTransform(
                 h_formula[2:].copy(),
                 full_derivative[19:21],
-            ),
-            FadeIn(full_derivative[18:22:3])
-        )
+            ), FadeIn(full_derivative[18:22:3]))
         self.wait()
-        self.play(
-            h_formula.shift, DOWN,
-            dh_dg.shift, 0.5 * UP
-        )
+        self.play(h_formula.shift, DOWN, dh_dg.shift, 0.5 * UP)
         self.wait()
 
         self.full_derivative = full_derivative
@@ -669,20 +610,18 @@ class ComputationalNetwork(MovingCameraScene):
         full_derivative = self.full_derivative
         value_labels = self.value_labels
 
-        rhs = TexMobject(
-            """
+        rhs = TexMobject("""
             =
             (2 \\cdot 2)
             (2 \\cdot 4 \\cdot 1) +
             (-\\sin(\\pi 2)\\pi)(4^2)
             """,
-            tex_to_color_map={
-                "2": self.x_color,
-                "4": self.f_color,
-                "1": self.g_color,
-                "^2": WHITE,
-            }
-        )
+                         tex_to_color_map={
+                             "2": self.x_color,
+                             "4": self.f_color,
+                             "1": self.g_color,
+                             "^2": WHITE,
+                         })
         rhs.next_to(full_derivative, DOWN, aligned_edge=LEFT)
 
         result = TexMobject("=", "32", "+", "0")
@@ -690,11 +629,11 @@ class ComputationalNetwork(MovingCameraScene):
 
         self.play(LaggedStartMap(Write, value_labels))
         self.wait()
-        self.play(ReplacementTransform(
-            full_derivative.copy(), rhs,
-            lag_ratio=0.5,
-            run_time=2
-        ))
+        self.play(
+            ReplacementTransform(full_derivative.copy(),
+                                 rhs,
+                                 lag_ratio=0.5,
+                                 run_time=2))
         self.wait()
         self.play(Write(result))
         self.wait()
@@ -704,10 +643,10 @@ class ComputationalNetwork(MovingCameraScene):
         h_dot = self.h_dot
 
         for x in range(3):
-            self.play(
-                x_dot.shift, 0.25 * RIGHT,
-                h_dot.shift, RIGHT,
-                run_time=2,
-                rate_func=lambda t: wiggle(t, 4)
-            )
+            self.play(x_dot.shift,
+                      0.25 * RIGHT,
+                      h_dot.shift,
+                      RIGHT,
+                      run_time=2,
+                      rate_func=lambda t: wiggle(t, 4))
             self.wait()

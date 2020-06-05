@@ -17,8 +17,7 @@ class FourierSeriesFormula(Scene):
             tex_to_color_map={
                 "{n}": YELLOW,
                 "{t}": PINK,
-            }
-        )
+            })
 
         self.play(Write(formula))
         self.wait()
@@ -49,7 +48,8 @@ class RelationToOtherVideos(Scene):
 
         self.play(
             LaggedStartMap(
-                FadeInFrom, videos,
+                FadeInFrom,
+                videos,
                 lambda m: (m, LEFT),
                 lag_ratio=0.4,
                 run_time=2,
@@ -78,16 +78,11 @@ class RelationToOtherVideos(Scene):
         bubble[:-1].rotate(20 * DEGREES)
         for mob in bubble[:-1]:
             mob.rotate(-20 * DEGREES)
-        bubble.move_to(
-            fourier.get_center(), RIGHT
-        )
+        bubble.move_to(fourier.get_center(), RIGHT)
         bubble.shift(LEFT)
         bubble.to_edge(UP, buff=SMALL_BUFF)
 
-        self.play(
-            MoveToTarget(group),
-            FadeInFrom(fourier, LEFT)
-        )
+        self.play(MoveToTarget(group), FadeInFrom(fourier, LEFT))
         self.play(Write(bubble, run_time=1))
         self.wait()
 
@@ -100,17 +95,24 @@ class RelationToOtherVideos(Scene):
 
         self.play(
             # fourier.scale, 0.8,
-            fourier.match_x, new_brace,
-            fourier.to_edge, UP,
+            fourier.match_x,
+            new_brace,
+            fourier.to_edge,
+            UP,
             MoveToTarget(first_two),
             Transform(brace, new_brace),
-            text.scale, 0.7,
-            text.next_to, new_brace, UP,
+            text.scale,
+            0.7,
+            text.next_to,
+            new_brace,
+            UP,
             FadeOutAndShift(bubble, LEFT),
         )
         self.play(
-            videos[2].scale, 1.7,
-            videos[2].to_corner, UR,
+            videos[2].scale,
+            1.7,
+            videos[2].to_corner,
+            UR,
         )
         self.wait()
 
@@ -123,12 +125,11 @@ class RelationToOtherVideos(Scene):
         )
         for thumbnail in thumbnails:
             thumbnail.set_height(4)
-            thumbnail.add(SurroundingRectangle(
-                thumbnail,
-                color=WHITE,
-                stroke_width=2,
-                buff=0
-            ))
+            thumbnail.add(
+                SurroundingRectangle(thumbnail,
+                                     color=WHITE,
+                                     stroke_width=2,
+                                     buff=0))
         thumbnails.arrange(RIGHT, buff=LARGE_BUFF)
         thumbnails.set_width(FRAME_WIDTH - 1)
         return thumbnails
@@ -168,21 +169,18 @@ class FourierGainsImmortality(Scene):
         immortals.to_edge(RIGHT)
 
         self.add(fourier, name)
-        self.play(LaggedStartMap(
-            FadeIn, immortals,
-            lag_ratio=0.1,
-            run_time=2,
-        ))
         self.play(
-            TransformFromCopy(fourier, immortals.fourier)
-        )
+            LaggedStartMap(
+                FadeIn,
+                immortals,
+                lag_ratio=0.1,
+                run_time=2,
+            ))
+        self.play(TransformFromCopy(fourier, immortals.fourier))
         self.wait()
 
     def get_immortals(self):
-        images = Group(*[
-            ImageMobject(name)
-            for name in self.mathematicians
-        ])
+        images = Group(*[ImageMobject(name) for name in self.mathematicians])
         for image in images:
             image.set_height(1)
         images.arrange_in_grid(n_rows=4)
@@ -239,10 +237,8 @@ class WhichWavesAreAvailable(Scene):
         self.show_cosine_waves()
 
     def setup_little_axes(self):
-        axes_group = VGroup(*[
-            Axes(**self.axes_config)
-            for n in range(self.n_axes)
-        ])
+        axes_group = VGroup(
+            *[Axes(**self.axes_config) for n in range(self.n_axes)])
         axes_group.set_stroke(width=2)
         axes_group.arrange(DOWN, buff=1)
         axes_group.set_height(FRAME_HEIGHT - 1.25)
@@ -266,21 +262,17 @@ class WhichWavesAreAvailable(Scene):
         func_labels = VGroup()
         for k, axes, color in zip(it.count(1), axes_group, colors):
             L = axes.x_max
-            graph = axes.get_graph(
-                lambda x: self.trig_func(x * k * PI / L),
-                color=color
-            )
+            graph = axes.get_graph(lambda x: self.trig_func(x * k * PI / L),
+                                   color=color)
             graph.set_stroke(width=2)
             graphs.add(graph)
 
-            func_label = TexMobject(
-                self.trig_func_tex + "\\left(",
-                str(k),
-                "(\\pi / L)x\\right)",
-                tex_to_color_map={
-                    str(k): color,
-                }
-            )
+            func_label = TexMobject(self.trig_func_tex + "\\left(",
+                                    str(k),
+                                    "(\\pi / L)x\\right)",
+                                    tex_to_color_map={
+                                        str(k): color,
+                                    })
             func_label.scale(0.7)
             func_label.next_to(axes, LEFT)
             func_labels.add(func_label)
@@ -297,23 +289,16 @@ class WhichWavesAreAvailable(Scene):
         words.next_to(axes_group, LEFT)
         words.to_edge(UP)
 
-        self.play(
-            FadeIn(words),
-            LaggedStartMap(
-                ShowCreation, graphs,
-            )
-        )
+        self.play(FadeIn(words), LaggedStartMap(
+            ShowCreation,
+            graphs,
+        ))
         self.play(Write(h_lines))
         self.play(FadeOut(h_lines))
         self.wait()
         self.play(
-            words.next_to, func_labels, LEFT,
-            words.to_edge, UP,
-            LaggedStartMap(
-                FadeInFrom, func_labels,
-                lambda m: (m, RIGHT)
-            )
-        )
+            words.next_to, func_labels, LEFT, words.to_edge, UP,
+            LaggedStartMap(FadeInFrom, func_labels, lambda m: (m, RIGHT)))
         self.wait()
 
 
@@ -335,10 +320,7 @@ class AskQuestionOfGraph(PiCreatureScene):
             target_mode="sassy",
         )
         self.wait(2)
-        self.play(
-            randy.change, "pondering",
-            randy.bubble.get_right()
-        )
+        self.play(randy.change, "pondering", randy.bubble.get_right())
         self.wait(2)
 
 
@@ -363,31 +345,30 @@ class CommentOnFouriersImmortality(FourierGainsImmortality):
             TextMobject("Fourier transform spectroscopy"),
             TexMobject("\\vdots"),
         )
-        fourier_things.arrange(
-            DOWN,
-            aligned_edge=LEFT,
-            buff=MED_LARGE_BUFF
-        )
+        fourier_things.arrange(DOWN, aligned_edge=LEFT, buff=MED_LARGE_BUFF)
         fourier_things.to_corner(UL)
         fourier_things[-1].shift(RIGHT + 0.25 * UP)
 
         self.add(immortals)
         immortals.remove(immortals.fourier)
         self.play(
-            fourier.set_height, 6,
-            fourier.next_to, name, UP,
+            fourier.set_height,
+            6,
+            fourier.next_to,
+            name,
+            UP,
             FadeInFromDown(name),
         )
         self.play(FadeOut(immortals))
         self.wait(2)
         self.play(
             LaggedStartMap(
-                FadeInFrom, fourier_things,
+                FadeInFrom,
+                fourier_things,
                 lambda m: (m, UP),
                 run_time=5,
                 lag_ratio=0.3,
-            )
-        )
+            ))
         self.wait()
 
 
@@ -462,17 +443,11 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
     def show_to_infinity(self):
         dots = self.inf_sum.dots
         arrow = Vector(1.5 * RIGHT)
-        arrow.next_to(
-            dots, DOWN, MED_LARGE_BUFF,
-            aligned_edge=RIGHT
-        )
+        arrow.next_to(dots, DOWN, MED_LARGE_BUFF, aligned_edge=RIGHT)
         words = TextMobject("Sum to $\\infty$")
         words.next_to(arrow, DOWN)
 
-        self.play(
-            FadeInFrom(words, LEFT),
-            GrowArrow(arrow)
-        )
+        self.play(FadeInFrom(words, LEFT), GrowArrow(arrow))
         self.wait()
 
         self.inf_words = VGroup(arrow, words)
@@ -485,10 +460,7 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
 
         rects = VGroup(*[
             SurroundingRectangle(
-                term,
-                color=term[-1].get_color(),
-                stroke_width=2
-            )
+                term, color=term[-1].get_color(), stroke_width=2)
             for term in terms
         ])
         dots_rect = SurroundingRectangle(inf_sum.dots)
@@ -515,22 +487,22 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
             self.add(curr_rect)
             ps.set_stroke(width=3)
             self.play(
-                curr_partial_sum.set_stroke, {"width": 0.5},
+                curr_partial_sum.set_stroke,
+                {"width": 0.5},
                 ReplacementTransform(sg, ps),
             )
             curr_partial_sum = ps
         self.play(
             Transform(curr_rect, dots_rect),
-            curr_partial_sum.set_stroke, {"width": 0.5},
+            curr_partial_sum.set_stroke,
+            {"width": 0.5},
             LaggedStart(
                 *[
                     UpdateFromAlphaFunc(
                         ps,
-                        lambda m, a: m.set_stroke(
-                            width=(3 * there_and_back(a) + 0.5 * a)
-                        ),
-                    )
-                    for ps in partial_sums[4:]
+                        lambda m, a: m.set_stroke(width=(3 * there_and_back(a)
+                                                         + 0.5 * a)),
+                    ) for ps in partial_sums[4:]
                 ],
                 run_time=3,
                 lag_ratio=0.2,
@@ -552,27 +524,20 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
         outline.set_stroke(YELLOW, 1)
         outline.set_fill(opacity=0)
 
-        question = TextMobject(
-            "What$\\dots$\\\\ does this mean?"
-        )
+        question = TextMobject("What$\\dots$\\\\ does this mean?")
         question.scale(0.7)
         question.next_to(inf_words, LEFT)
         randy.next_to(question, DOWN, aligned_edge=RIGHT)
 
         self.play(FadeIn(question))
         self.play(FadeIn(randy))
-        self.play(
-            Blink(randy),
-            ShowCreationThenFadeOut(outline)
-        )
+        self.play(Blink(randy), ShowCreationThenFadeOut(outline))
         self.wait()
         self.play(FadeOut(randy), FadeOut(question))
 
     def show_inf_sum_of_numbers(self):
         inf_sum = self.inf_sum
-        graph_group = VGroup(
-            self.aaa_group, self.partial_sums
-        )
+        graph_group = VGroup(self.aaa_group, self.partial_sums)
 
         number_line = NumberLine(
             x_min=0,
@@ -591,16 +556,10 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
             },
         )
 
-        num_inf_sum = TexMobject(
-            "{1 \\over 1}",
-            "-{1 \\over 3}",
-            "+{1 \\over 5}",
-            "-{1 \\over 7}",
-            "+{1 \\over 9}",
-            "-{1 \\over 11}",
-            "+\\cdots",
-            "= {\\pi \\over 4}"
-        )
+        num_inf_sum = TexMobject("{1 \\over 1}", "-{1 \\over 3}",
+                                 "+{1 \\over 5}", "-{1 \\over 7}",
+                                 "+{1 \\over 9}", "-{1 \\over 11}", "+\\cdots",
+                                 "= {\\pi \\over 4}")
         num_inf_sum.move_to(UP)
 
         self.play(
@@ -608,8 +567,7 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
             FadeInFrom(number_line, UP),
             FadeOut(self.inf_words),
             *[
-                TransformFromCopy(t1[-1:], t2)
-                for t1, t2 in zip(
+                TransformFromCopy(t1[-1:], t2) for t1, t2 in zip(
                     inf_sum.terms,
                     num_inf_sum,
                 )
@@ -618,84 +576,67 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
                 inf_sum.dots,
                 num_inf_sum[-2],
             ),
-            TransformFromCopy(
-                inf_sum.dots,
-                num_inf_sum[-4:-2]
-            ),
-            self.equation.set_opacity, 0.5,
+            TransformFromCopy(inf_sum.dots, num_inf_sum[-4:-2]),
+            self.equation.set_opacity,
+            0.5,
         )
         self.play(Write(num_inf_sum[-1]))
 
         # Show sums
-        terms = [
-            u / n
-            for u, n in zip(
-                it.cycle([1, -1]),
-                range(1, 1001, 2)
-            )
-        ]
+        terms = [u / n for u, n in zip(it.cycle([1, -1]), range(1, 1001, 2))]
         partial_sums = np.cumsum(terms)
         tip = ArrowTip(start_angle=-TAU / 4)
         value_tracker = ValueTracker(1)
         get_value = value_tracker.get_value
-        tip.add_updater(
-            lambda t: t.move_to(
-                number_line.n2p(get_value()),
-                DOWN,
-            )
-        )
+        tip.add_updater(lambda t: t.move_to(
+            number_line.n2p(get_value()),
+            DOWN,
+        ))
         n_braces = 7
-        braces = VGroup(*[
-            Brace(num_inf_sum[:n], DOWN)
-            for n in range(1, n_braces + 1)
-        ])
+        braces = VGroup(
+            *[Brace(num_inf_sum[:n], DOWN) for n in range(1, n_braces + 1)])
         brace = braces[0].copy()
         decimal = DecimalNumber(
-            0, num_decimal_places=6,
+            0,
+            num_decimal_places=6,
         )
         decimal.add_updater(lambda d: d.set_value(get_value()))
         decimal.add_updater(lambda d: d.next_to(tip, UP, SMALL_BUFF))
 
-        term_count = VGroup(
-            Integer(1), TextMobject("terms")
-        )
+        term_count = VGroup(Integer(1), TextMobject("terms"))
         term_count_tracker = ValueTracker(1)
         term_count[0].set_color(YELLOW)
         term_count.add_updater(
-            lambda m: m[0].set_value(term_count_tracker.get_value())
-        )
-        term_count.add_updater(lambda m: m.arrange(
-            RIGHT, aligned_edge=DOWN
-        ))
+            lambda m: m[0].set_value(term_count_tracker.get_value()))
+        term_count.add_updater(lambda m: m.arrange(RIGHT, aligned_edge=DOWN))
         term_count.add_updater(lambda m: m.next_to(brace, DOWN))
 
         pi_fourths_tip = ArrowTip(start_angle=90 * DEGREES)
         pi_fourths_tip.set_color(WHITE)
         pi_fourths_tip.move_to(
-            number_line.n2p(PI / 4), UP,
+            number_line.n2p(PI / 4),
+            UP,
         )
-        pi_fourths_label = TexMobject(
-            "{\\pi \\over 4} ="
-        )
-        pi_fourths_value = DecimalNumber(
-            PI / 4, num_decimal_places=4
-        )
+        pi_fourths_label = TexMobject("{\\pi \\over 4} =")
+        pi_fourths_value = DecimalNumber(PI / 4, num_decimal_places=4)
         pi_fourths_value.scale(0.8)
         pi_fourths_value.next_to(pi_fourths_label, RIGHT, buff=0.2)
         pi_fourths_label.add(pi_fourths_value)
         # pi_fourths_label.scale(0.7)
         pi_fourths_label.next_to(
-            pi_fourths_tip, DOWN, MED_SMALL_BUFF,
+            pi_fourths_tip,
+            DOWN,
+            MED_SMALL_BUFF,
             aligned_edge=LEFT,
         )
 
         self.play(
-            LaggedStartMap(
-                FadeIn, VGroup(
-                    brace, tip, decimal,
-                    term_count,
-                )
-            ),
+            LaggedStartMap(FadeIn, VGroup(
+                brace,
+                tip,
+                decimal,
+                term_count,
+            )),
             FadeIn(pi_fourths_tip),
             FadeIn(pi_fourths_label),
         )
@@ -703,7 +644,8 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
             term_count_tracker.increment_value(1)
             self.play(
                 Transform(brace, new_brace),
-                value_tracker.set_value, ps,
+                value_tracker.set_value,
+                ps,
             )
             self.leave_mark(number_line, ps)
             self.wait()
@@ -728,36 +670,38 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
         self.play(
             UpdateFromAlphaFunc(
                 value_tracker,
-                lambda m, a: m.set_value(
-                    partial_sums[integer_interpolate(
-                        num_moving_values,
-                        len(partial_sums) - 1,
-                        a,
-                    )[0]]
-                ),
+                lambda m, a: m.set_value(partial_sums[integer_interpolate(
+                    num_moving_values,
+                    len(partial_sums) - 1,
+                    a,
+                )[0]]),
             ),
             ShowIncreasingSubsets(new_marks),
-            term_count_tracker.set_value, len(partial_sums),
+            term_count_tracker.set_value,
+            len(partial_sums),
             run_time=10,
             rate_func=smooth,
         )
-        self.play(LaggedStartMap(
-            FadeOut, VGroup(
-                num_inf_sum,
-                brace,
-                decimal,
-                term_count,
-                tip,
-                number_line,
-                new_marks,
-                pi_fourths_tip,
-                pi_fourths_label,
-            ),
-            lag_ratio=0.3,
-        ))
+        self.play(
+            LaggedStartMap(
+                FadeOut,
+                VGroup(
+                    num_inf_sum,
+                    brace,
+                    decimal,
+                    term_count,
+                    tip,
+                    number_line,
+                    new_marks,
+                    pi_fourths_tip,
+                    pi_fourths_label,
+                ),
+                lag_ratio=0.3,
+            ))
         self.play(
             FadeInFromDown(graph_group),
-            self.equation.set_opacity, 1,
+            self.equation.set_opacity,
+            1,
         )
 
     def show_many_inputs_in_parallel(self):
@@ -768,16 +712,11 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
         inputs = np.linspace(0, 1, 21)
         n_iterations = 100
 
-        values = np.array([
-            [
-                (4 / PI) * (u / n) * np.cos(n * PI * x)
-                for x in inputs
-            ]
-            for u, n in zip(
-                it.cycle([1, -1]),
-                range(1, 2 * n_iterations + 1, 2),
-            )
-        ])
+        values = np.array([[(4 / PI) * (u / n) * np.cos(n * PI * x)
+                            for x in inputs] for u, n in zip(
+                                it.cycle([1, -1]),
+                                range(1, 2 * n_iterations + 1, 2),
+                            )])
         p_sums = np.apply_along_axis(np.cumsum, 0, values)
 
         dots = VGroup(*[Dot() for x in inputs])
@@ -790,12 +729,10 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
             outputs = p_sums[n]
             for dot, x, y in zip(dots, inputs, outputs):
                 dot.move_to(axes1.c2p(x, y))
+
         dots.add_updater(update_dots)
 
-        lines = VGroup(*[
-            self.get_dot_line(dot, axes1.x_axis)
-            for dot in dots
-        ])
+        lines = VGroup(*[self.get_dot_line(dot, axes1.x_axis) for dot in dots])
 
         self.remove(*self.inf_words)
         self.play(
@@ -804,7 +741,8 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
             FadeIn(lines),
         )
         self.play(
-            n_tracker.set_value, len(p_sums) - 1,
+            n_tracker.set_value,
+            len(p_sums) - 1,
             run_time=5,
         )
         dots.clear_updaters()
@@ -834,9 +772,7 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
         partial_sums = self.partial_sums
         partial_sums.set_stroke(width=2)
 
-        input_tracker = ValueTracker(
-            x_axis.p2n(dot.get_center())
-        )
+        input_tracker = ValueTracker(x_axis.p2n(dot.get_center()))
         get_input = input_tracker.get_value
 
         input_label = TexMobject("x =", "0.2")
@@ -852,17 +788,12 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
             result.scale(0.7)
             result.next_to(brace, DOWN, SMALL_BUFF)
             result.add_updater(lambda d: d.set_value(
-                (u / n) * np.cos(PI * n * get_input())
-            ))
+                (u / n) * np.cos(PI * n * get_input())))
             return result
 
-        braces = VGroup(*[
-            Brace(term, DOWN)
-            for term in inf_sum.terms
-        ])
+        braces = VGroup(*[Brace(term, DOWN) for term in inf_sum.terms])
         brace_value_labels = VGroup(*[
-            get_brace_value_label(brace, u, n)
-            for brace, u, n in zip(
+            get_brace_value_label(brace, u, n) for brace, u, n in zip(
                 braces,
                 it.cycle([1, -1]),
                 it.count(1, 2),
@@ -873,26 +804,22 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
                 brace_value_labels[:n],
                 color=BLUE,
                 stroke_width=1,
-            )
-            for n in range(1, len(braces) + 1)
+            ) for n in range(1,
+                             len(braces) + 1)
         ])
 
         bv_rect = bv_rects[0].copy()
         partial_sum = partial_sums[0].copy()
 
-        dot.add_updater(
-            lambda d: d.move_to(partial_sum.point_from_proportion(
+        dot.add_updater(lambda d: d.move_to(
+            partial_sum.point_from_proportion(
                 inverse_interpolate(
                     x_axis.x_min,
                     x_axis.x_max,
                     get_input(),
-                )
-            ))
-        )
+                ))))
 
-        n_waves_label = TextMobject(
-            "Sum of", "10", "waves"
-        )
+        n_waves_label = TextMobject("Sum of", "10", "waves")
         n_waves_label.next_to(axes1.c2p(0.5, 1), UR)
         n_tracker = ValueTracker(1)
         n_dec = Integer(1)
@@ -900,30 +827,24 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
         n_dec.move_to(n_waves_label[1])
         n_waves_label[1].set_opacity(0)
         n_waves_label.add(n_dec)
-        n_dec.add_updater(lambda n: n.set_value(
-            n_tracker.get_value()
-        ))
-        n_dec.add_updater(lambda m: m.move_to(
-            n_waves_label[1]
-        ))
+        n_dec.add_updater(lambda n: n.set_value(n_tracker.get_value()))
+        n_dec.add_updater(lambda m: m.move_to(n_waves_label[1]))
 
         self.play(
             FadeInFrom(input_label, LEFT),
-            dot.scale, 1.5,
+            dot.scale,
+            1.5,
         )
         self.wait()
         self.play(
             LaggedStartMap(GrowFromCenter, braces),
-            LaggedStartMap(GrowFromCenter, brace_value_labels),
-            *[
+            LaggedStartMap(GrowFromCenter, brace_value_labels), *[
                 TransformFromCopy(
                     input_label[0][0],
                     term[n][1],
-                )
-                for i, term in enumerate(inf_sum.terms)
+                ) for i, term in enumerate(inf_sum.terms)
                 for n in [2 if i == 0 else 4]
-            ]
-        )
+            ])
         self.wait()
 
         self.add(partial_sum, dot)
@@ -951,14 +872,12 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
             )
             self.wait()
 
-        self.play(
-            FadeOut(bv_rect),
-            get_ps_anim()
-        )
+        self.play(FadeOut(bv_rect), get_ps_anim())
         for x in range(3):
             self.play(get_ps_anim())
         self.play(
-            input_tracker.set_value, 0.7,
+            input_tracker.set_value,
+            0.7,
         )
         for x in range(6):
             self.play(get_ps_anim())
@@ -975,6 +894,7 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
             p = dot.get_center()
             lp = axis.n2p(axis.p2n(p))
             return line_class(lp, p, stroke_width=1)
+
         return always_redraw(get_line)
 
     def leave_mark(self, number_line, value):
@@ -985,30 +905,29 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
 
     def get_infinite_sum(self):
         colors = self.colors
-        inf_sum = TexMobject(
-            "{4 \\over \\pi}", "\\left(",
-            "{\\cos\\left({1}\\pi x\\right) \\over {1}}",
-            "-",
-            "{\\cos\\left({3}\\pi x\\right) \\over {3}}",
-            "+",
-            "{\\cos\\left({5}\\pi x\\right) \\over {5}}",
-            "-",
-            "{\\cos\\left({7}\\pi x\\right) \\over {7}}",
-            "+",
-            "\\cdots",
-            "\\right)",
-            tex_to_color_map={
-                "{1}": colors[0],
-                "{-1 \\over 3}": colors[1],
-                "{3}": colors[1],
-                "{1 \\over 5}": colors[2],
-                "{5}": colors[2],
-                "{-1 \\over 7}": colors[3],
-                "{7}": colors[3],
-                "{1 \\over 9}": colors[4],
-                "{9}": colors[4],
-            }
-        )
+        inf_sum = TexMobject("{4 \\over \\pi}",
+                             "\\left(",
+                             "{\\cos\\left({1}\\pi x\\right) \\over {1}}",
+                             "-",
+                             "{\\cos\\left({3}\\pi x\\right) \\over {3}}",
+                             "+",
+                             "{\\cos\\left({5}\\pi x\\right) \\over {5}}",
+                             "-",
+                             "{\\cos\\left({7}\\pi x\\right) \\over {7}}",
+                             "+",
+                             "\\cdots",
+                             "\\right)",
+                             tex_to_color_map={
+                                 "{1}": colors[0],
+                                 "{-1 \\over 3}": colors[1],
+                                 "{3}": colors[1],
+                                 "{1 \\over 5}": colors[2],
+                                 "{5}": colors[2],
+                                 "{-1 \\over 7}": colors[3],
+                                 "{7}": colors[3],
+                                 "{1 \\over 9}": colors[4],
+                                 "{9}": colors[4],
+                             })
         inf_sum.get_parts_by_tex("-")[0].set_color(colors[1])
         inf_sum.get_parts_by_tex("-")[1].set_color(colors[3])
         inf_sum.get_parts_by_tex("+")[0].set_color(colors[2])
@@ -1020,9 +939,7 @@ class ShowInfiniteSum(FourierSeriesIllustraiton):
             inf_sum[18:24],
         )
         inf_sum.dots = inf_sum.get_part_by_tex("\\cdots")
-        inf_sum.four_over_pi = inf_sum.get_part_by_tex(
-            "{4 \\over \\pi}"
-        )
+        inf_sum.four_over_pi = inf_sum.get_part_by_tex("{4 \\over \\pi}")
 
         return inf_sum
 
@@ -1108,16 +1025,15 @@ class TechnicalNuances(Scene):
         )
         title.add(line)
         self.play(
-            title.to_edge, UP,
+            title.to_edge,
+            UP,
         )
 
         last_question = VMobject()
         for question in questions:
             question.next_to(line, DOWN, MED_LARGE_BUFF)
-            self.play(
-                FadeInFromDown(question),
-                FadeOutAndShift(last_question, UP)
-            )
+            self.play(FadeInFromDown(question),
+                      FadeOutAndShift(last_question, UP))
             self.wait(2)
             last_question = question
 
@@ -1149,7 +1065,8 @@ class SineWaveResidue(Scene):
         wave.next_to(LEFT_SIDE, LEFT, buff=0)
         time = 10
         self.play(
-            wave.shift, time * RIGHT,
+            wave.shift,
+            time * RIGHT,
             run_time=f * time,
             rate_func=linear,
         )
@@ -1157,10 +1074,7 @@ class SineWaveResidue(Scene):
 
 class AskAboutComplexNotVector(Scene):
     def construct(self):
-        c_ex = DecimalNumber(
-            complex(2, 1),
-            num_decimal_places=0
-        )
+        c_ex = DecimalNumber(complex(2, 1), num_decimal_places=0)
         i_part = c_ex[-1]
         v_ex = IntegerMatrix(
             [[2], [1]],
@@ -1191,10 +1105,7 @@ class AskAboutComplexNotVector(Scene):
             FadeIn(vect),
         )
         for q, ex in zip(questions, group):
-            self.play(
-                FadeInFrom(q, LEFT),
-                FadeIn(ex)
-            )
+            self.play(FadeInFrom(q, LEFT), FadeIn(ex))
         self.wait()
         self.play(ShowCreationThenFadeAround(i_part))
         self.wait()
@@ -1210,9 +1121,7 @@ class SwapIntegralAndSum(Scene):
         self.add_general_expression()
 
     def perform_swap(self):
-        light_pink = self.light_pink = interpolate_color(
-            PINK, WHITE, 0.25
-        )
+        light_pink = self.light_pink = interpolate_color(PINK, WHITE, 0.25)
         tex_config = self.tex_config = {
             "tex_to_color_map": {
                 "=": WHITE,
@@ -1229,10 +1138,7 @@ class SwapIntegralAndSum(Scene):
                 "{n}": YELLOW,
             },
         }
-        int_ft = TexMobject(
-            "\\int_0^1 f({t}) {dt}",
-            **tex_config
-        )
+        int_ft = TexMobject("\\int_0^1 f({t}) {dt}", **tex_config)
         int_sum = TexMobject(
             """
             =
@@ -1244,9 +1150,7 @@ class SwapIntegralAndSum(Scene):
             c_{2}e^{{2} \\cdot 2\\pi i {t}} +
             \\cdots
             \\right){dt}
-            """,
-            **tex_config
-        )
+            """, **tex_config)
         sum_int = TexMobject(
             """
             = \\cdots +
@@ -1263,18 +1167,13 @@ class SwapIntegralAndSum(Scene):
             c_{2}e^{{2} \\cdot 2\\pi i {t}}
             {dt} +
             \\cdots
-            """,
-            **tex_config
-        )
+            """, **tex_config)
 
         self.fix_minuses(int_sum)
         self.fix_minuses(sum_int)
 
         group = VGroup(int_ft, int_sum, sum_int)
-        group.arrange(
-            DOWN, buff=MED_LARGE_BUFF,
-            aligned_edge=LEFT
-        )
+        group.arrange(DOWN, buff=MED_LARGE_BUFF, aligned_edge=LEFT)
         group.set_width(FRAME_WIDTH - 1)
         group.to_corner(UL)
         int_ft.align_to(int_sum[1], LEFT)
@@ -1284,27 +1183,21 @@ class SwapIntegralAndSum(Scene):
         sum_int.exp_terms = self.get_exp_terms(sum_int)
         sum_int.int_terms = self.get_integral_terms(sum_int)
 
-        breakdown_label = TextMobject(
-            "Break this down"
-        )
+        breakdown_label = TextMobject("Break this down")
         arrow = Vector(LEFT)
         arrow.next_to(int_ft, RIGHT)
         breakdown_label.next_to(arrow, RIGHT)
 
-        aos_label = TextMobject(
-            "Average of a sum",
-            tex_to_color_map={
-                "Average": light_pink,
-                "sum": YELLOW,
-            }
-        )
-        soa_label = TextMobject(
-            "Sum over averages",
-            tex_to_color_map={
-                "averages": light_pink,
-                "Sum": YELLOW,
-            }
-        )
+        aos_label = TextMobject("Average of a sum",
+                                tex_to_color_map={
+                                    "Average": light_pink,
+                                    "sum": YELLOW,
+                                })
+        soa_label = TextMobject("Sum over averages",
+                                tex_to_color_map={
+                                    "averages": light_pink,
+                                    "Sum": YELLOW,
+                                })
         aos_label.next_to(ORIGIN, RIGHT, buff=2)
         aos_label.to_edge(UP)
         soa_label.move_to(2.5 * DOWN)
@@ -1326,41 +1219,33 @@ class SwapIntegralAndSum(Scene):
         )
         self.wait()
         self.play(
-            FadeOut(breakdown_label),
-            FadeOut(arrow),
+            FadeOut(breakdown_label), FadeOut(arrow),
             FadeIn(int_sum.get_parts_by_tex("=")),
             FadeIn(int_sum.get_parts_by_tex("+")),
             FadeIn(int_sum.get_parts_by_tex("\\cdots")),
             FadeIn(int_sum.get_parts_by_tex("(")),
-            FadeIn(int_sum.get_parts_by_tex(")")),
-            *[
+            FadeIn(int_sum.get_parts_by_tex(")")), *[
                 TransformFromCopy(
                     int_ft.get_part_by_tex(tex),
                     int_sum.get_part_by_tex(tex),
-                )
-                for tex in ["\\int_0^1", "{dt}"]
-            ]
-        )
-        self.play(LaggedStart(*[
-            GrowFromPoint(
-                term,
-                int_ft.get_part_by_tex("{t}").get_center(),
-            )
-            for term in int_sum.exp_terms
-        ]))
-        self.wait()
+                ) for tex in ["\\int_0^1", "{dt}"]
+            ])
         self.play(
-            FadeIn(aos_label),
-            GrowArrow(aos_arrow)
-        )
+            LaggedStart(*[
+                GrowFromPoint(
+                    term,
+                    int_ft.get_part_by_tex("{t}").get_center(),
+                ) for term in int_sum.exp_terms
+            ]))
+        self.wait()
+        self.play(FadeIn(aos_label), GrowArrow(aos_arrow))
         self.play(
             *[
                 TransformFromCopy(
                     int_sum.get_parts_by_tex(tex),
                     sum_int.get_parts_by_tex(tex),
                     run_time=2,
-                )
-                for tex in ["\\cdots", "+"]
+                ) for tex in ["\\cdots", "+"]
             ],
             TransformFromCopy(
                 int_sum.exp_terms,
@@ -1376,17 +1261,13 @@ class SwapIntegralAndSum(Scene):
                     int_sum.get_part_by_tex("\\int_0^1"),
                     part,
                     run_time=2,
-                )
-                for part in sum_int.get_parts_by_tex(
-                    "\\int_0^1"
-                )
-            ],
-            FadeIn(sum_int.get_parts_by_tex("{dt}"))
-        )
+                ) for part in sum_int.get_parts_by_tex("\\int_0^1")
+            ], FadeIn(sum_int.get_parts_by_tex("{dt}")))
         self.wait()
         self.play(
             FadeOut(soa_arrow),
-            soa_label.to_edge, DOWN,
+            soa_label.to_edge,
+            DOWN,
         )
 
         self.int_sum = int_sum
@@ -1401,13 +1282,10 @@ class SwapIntegralAndSum(Scene):
         sum_int = self.sum_int
         int_ft = self.int_ft
 
-        braces = VGroup(*[
-            Brace(term, DOWN, buff=SMALL_BUFF)
-            for term in sum_int.int_terms
-        ])
-        self.play(LaggedStartMap(
-            GrowFromCenter, braces
-        ))
+        braces = VGroup(
+            *
+            [Brace(term, DOWN, buff=SMALL_BUFF) for term in sum_int.int_terms])
+        self.play(LaggedStartMap(GrowFromCenter, braces))
 
         self.show_individual_average(braces[0], -1)
         self.show_individual_average(braces[2], 1)
@@ -1420,10 +1298,7 @@ class SwapIntegralAndSum(Scene):
         c0.generate_target()
         c0.target.next_to(eq, RIGHT)
         c0.target.shift(0.05 * DOWN)
-        self.play(
-            FadeIn(eq),
-            MoveToTarget(c0, run_time=2)
-        )
+        self.play(FadeIn(eq), MoveToTarget(c0, run_time=2))
         self.wait()
 
         self.braces = braces
@@ -1443,9 +1318,7 @@ class SwapIntegralAndSum(Scene):
 
         last_diagram = self.all_average_diagrams[-2]
         last_int = sum_int.int_terms[-1]
-        big_rect = SurroundingRectangle(
-            VGroup(last_int, last_diagram)
-        )
+        big_rect = SurroundingRectangle(VGroup(last_int, last_diagram))
         big_rect.set_stroke(WHITE, 2)
 
         self.play(
@@ -1480,18 +1353,21 @@ class SwapIntegralAndSum(Scene):
         self.play(
             FadeOut(eq_c0),
             Write(something, run_time=1),
-            dt_part.next_to, new_exp, RIGHT, SMALL_BUFF,
-            dt_part.align_to, dt_part, DOWN,
+            dt_part.next_to,
+            new_exp,
+            RIGHT,
+            SMALL_BUFF,
+            dt_part.align_to,
+            dt_part,
+            DOWN,
         )
         self.wait()
         self.play(*[
-            Rotating(
-                diagram[2],
-                radians=n * TAU,
-                about_point=diagram[0].n2p(0),
-                run_time=3,
-                rate_func=lambda t: smooth(t, 1)
-            )
+            Rotating(diagram[2],
+                     radians=n * TAU,
+                     about_point=diagram[0].n2p(0),
+                     run_time=3,
+                     rate_func=lambda t: smooth(t, 1))
             for n, diagram in zip(it.count(-3), diagrams)
         ])
         self.wait()
@@ -1528,13 +1404,14 @@ class SwapIntegralAndSum(Scene):
                 n_str = "{\\cdot" + str(abs(n)) + "}"
             else:
                 n_str = "{" + str(n) + "}"
-            replacement1 = TexMobject(
-                "e^{", n_str, "\\cdot 2\\pi i", "{t}",
-                tex_to_color_map={
-                    "{t}": PINK,
-                    n_str: YELLOW,
-                }
-            )
+            replacement1 = TexMobject("e^{",
+                                      n_str,
+                                      "\\cdot 2\\pi i",
+                                      "{t}",
+                                      tex_to_color_map={
+                                          "{t}": PINK,
+                                          n_str: YELLOW,
+                                      })
             self.fix_minuses(replacement1)
             replacement1[1][0].shift(0.025 * LEFT)
             replacement1.match_height(exp1)
@@ -1571,10 +1448,7 @@ class SwapIntegralAndSum(Scene):
         eq.next_to(int_ft, RIGHT)
         c2.target.next_to(eq, RIGHT)
         c2.target.shift(0.05 * DOWN)
-        self.play(
-            FadeIn(eq),
-            MoveToTarget(c2)
-        )
+        self.play(FadeIn(eq), MoveToTarget(c2))
         self.wait()
 
     def add_general_expression(self):
@@ -1593,11 +1467,7 @@ class SwapIntegralAndSum(Scene):
         group.to_edge(UP, buff=SMALL_BUFF)
         group.to_edge(RIGHT, buff=LARGE_BUFF)
 
-        self.play(
-            FadeOut(self.aos_label),
-            FadeIn(rect),
-            FadeIn(expression)
-        )
+        self.play(FadeOut(self.aos_label), FadeIn(rect), FadeIn(expression))
         self.wait()
 
     #
@@ -1639,11 +1509,8 @@ class SwapIntegralAndSum(Scene):
 
         vector = Arrow(
             plane.n2p(0),
-            plane.n2p(
-                (0.2 + 0.8 * np.random.random()) * np.exp(complex(
-                    0, TAU * np.random.random()
-                ))
-            ),
+            plane.n2p((0.2 + 0.8 * np.random.random()) *
+                      np.exp(complex(0, TAU * np.random.random()))),
             buff=0,
             color=WHITE,
         )
@@ -1655,18 +1522,13 @@ class SwapIntegralAndSum(Scene):
 
         dots = VGroup(*[
             Dot(
-                circle.point_from_proportion(
-                    (n * a) % 1
-                ),
+                circle.point_from_proportion((n * a) % 1),
                 radius=0.04,
                 color=PINK,
                 fill_opacity=0.75,
-            )
-            for a in np.arange(0, 1, 1 / 25)
+            ) for a in np.arange(0, 1, 1 / 25)
         ])
-        dot_center = center_of_mass([
-            d.get_center() for d in dots
-        ])
+        dot_center = center_of_mass([d.get_center() for d in dots])
 
         self.play(
             FadeIn(plane),
@@ -1687,19 +1549,20 @@ class SwapIntegralAndSum(Scene):
             run_time=3,
         )
         dot_copies = dots.copy()
-        self.play(*[
-            ApplyMethod(dot.move_to, dot_center)
-            for dot in dot_copies
-        ])
         self.play(
-            TransformFromCopy(dot_copies[0], result)
-        )
+            *[ApplyMethod(dot.move_to, dot_center) for dot in dot_copies])
+        self.play(TransformFromCopy(dot_copies[0], result))
         self.wait()
 
-        self.all_average_diagrams.add(VGroup(
-            plane, circle, vector,
-            dots, dot_copies, result,
-        ))
+        self.all_average_diagrams.add(
+            VGroup(
+                plane,
+                circle,
+                vector,
+                dots,
+                dot_copies,
+                result,
+            ))
 
     #
     def fix_minuses(self, tex_mob):
@@ -1724,28 +1587,22 @@ class SwapIntegralAndSum(Scene):
         return result
 
     def get_exp_terms(self, tex_mob):
-        return self.get_terms_by_tex_bounds(
-            tex_mob, "c_", "{t}"
-        )
+        return self.get_terms_by_tex_bounds(tex_mob, "c_", "{t}")
 
     def get_integral_terms(self, tex_mob):
-        return self.get_terms_by_tex_bounds(
-            tex_mob, "\\int", "{dt}"
-        )
+        return self.get_terms_by_tex_bounds(tex_mob, "\\int", "{dt}")
 
 
 class FootnoteOnSwappingIntegralAndSum(Scene):
     def construct(self):
-        words = TextMobject(
-            """
+        words = TextMobject("""
             Typically in math, you have to be more\\\\
             careful swapping the order of sums like\\\\
             this when infinities are involved. Again,\\\\
             such questions are what real analysis \\\\
             is built for.
             """,
-            alignment=""
-        )
+                            alignment="")
 
         self.add(words)
         self.wait()
@@ -1753,28 +1610,24 @@ class FootnoteOnSwappingIntegralAndSum(Scene):
 
 class ShowRangeOfCnFormulas(Scene):
     def construct(self):
-        formulas = VGroup(*[
-            self.get_formula(n)
-            for n in [-50, None, -1, 0, 1, None, 50]
-        ])
+        formulas = VGroup(
+            *[self.get_formula(n) for n in [-50, None, -1, 0, 1, None, 50]])
         formulas.scale(0.7)
-        formulas.arrange(
-            DOWN,
-            buff=MED_LARGE_BUFF,
-            aligned_edge=LEFT
-        )
+        formulas.arrange(DOWN, buff=MED_LARGE_BUFF, aligned_edge=LEFT)
         dots = formulas[1::4]
         dots.shift(MED_LARGE_BUFF * RIGHT)
 
         formulas.set_height(FRAME_HEIGHT - 0.5)
         formulas.to_edge(LEFT)
 
-        self.play(LaggedStartMap(
-            FadeInFrom, formulas,
-            lambda m: (m, UP),
-            lag_ratio=0.2,
-            run_time=4,
-        ))
+        self.play(
+            LaggedStartMap(
+                FadeInFrom,
+                formulas,
+                lambda m: (m, UP),
+                lag_ratio=0.2,
+                run_time=4,
+            ))
         self.wait()
 
     def get_formula(self, n):
@@ -1783,26 +1636,24 @@ class ShowRangeOfCnFormulas(Scene):
         light_pink = interpolate_color(PINK, WHITE, 0.25)
         n_str = "{" + str(n) + "}"
         neg_n_str = "{" + str(-n) + "}"
-        expression = TexMobject(
-            "c_" + n_str, "=",
-            "\\int_0^1 f({t})",
-            "e^{", neg_n_str,
-            "\\cdot 2\\pi i {t}}{dt}",
-            tex_to_color_map={
-                "{t}": light_pink,
-                "{dt}": light_pink,
-                n_str: YELLOW,
-                neg_n_str: YELLOW,
-            }
-        )
+        expression = TexMobject("c_" + n_str,
+                                "=",
+                                "\\int_0^1 f({t})",
+                                "e^{",
+                                neg_n_str,
+                                "\\cdot 2\\pi i {t}}{dt}",
+                                tex_to_color_map={
+                                    "{t}": light_pink,
+                                    "{dt}": light_pink,
+                                    n_str: YELLOW,
+                                    neg_n_str: YELLOW,
+                                })
         return expression
 
 
 class DescribeSVG(Scene):
     def construct(self):
-        plane = ComplexPlane(
-            axis_config={"unit_size": 2}
-        )
+        plane = ComplexPlane(axis_config={"unit_size": 2})
         plane.add_coordinates()
         self.add(plane)
 
@@ -1822,9 +1673,8 @@ class DescribeSVG(Scene):
         ft_label.to_corner(UL)
         z_decimal = DecimalNumber(num_decimal_places=3)
         z_decimal.next_to(ft_label, RIGHT)
-        z_decimal.add_updater(lambda m: m.set_value(
-            plane.p2n(dot.get_center())
-        ))
+        z_decimal.add_updater(
+            lambda m: m.set_value(plane.p2n(dot.get_center())))
         z_decimal.set_color(interpolate_color(PINK, WHITE, 0.25))
         rect = BackgroundRectangle(VGroup(ft_label, z_decimal))
 
@@ -1839,12 +1689,12 @@ class DescribeSVG(Scene):
 
         self.add(rect, ft_label, z_decimal)
         self.add(question, brace)
-        self.play(UpdateFromAlphaFunc(
-            dot,
-            lambda d, a: d.move_to(path.point_from_proportion(a)),
-            run_time=5,
-            rate_func=lambda t: 0.3 * there_and_back(t)
-        ))
+        self.play(
+            UpdateFromAlphaFunc(
+                dot,
+                lambda d, a: d.move_to(path.point_from_proportion(a)),
+                run_time=5,
+                rate_func=lambda t: 0.3 * there_and_back(t)))
         self.wait()
         self.play(FadeInFrom(answer, UP))
         self.play(
@@ -1859,9 +1709,7 @@ class DescribeSVG(Scene):
         for part in path_parts.target:
             part.shift(0.2 * part.get_center()[0] * RIGHT)
         path_parts.target.move_to(path_parts)
-        self.play(
-            MoveToTarget(path_parts)
-        )
+        self.play(MoveToTarget(path_parts))
 
         indicators = self.get_bezier_point_indicators(path_parts)
         self.play(ShowCreation(
@@ -1925,7 +1773,9 @@ class NumericalIntegration(Scene):
 
     def add_integral(self):
         integral = TexMobject(
-            "c_{n}", "=", "\\int_0^1 f({t})"
+            "c_{n}",
+            "=",
+            "\\int_0^1 f({t})"
             "e^{-{n} \\cdot 2\\pi i {t}}{dt}",
             **self.tex_config,
         )
@@ -1938,7 +1788,8 @@ class NumericalIntegration(Scene):
             **self.tex_config,
         )
         sum_tex.next_to(
-            integral.get_part_by_tex("="), DOWN,
+            integral.get_part_by_tex("="),
+            DOWN,
             buff=LARGE_BUFF,
             aligned_edge=LEFT,
         )
@@ -1953,20 +1804,14 @@ class NumericalIntegration(Scene):
         for d, dt in zip(decimals, decimal_templates):
             d.replace(dt)
             d.set_color(LIGHT_PINK)
-            d.add_updater(lambda d: d.set_value(
-                t_tracker.get_value()
-            ))
+            d.add_updater(lambda d: d.set_value(t_tracker.get_value()))
             dt.set_opacity(0)
 
         delta_t_brace = Brace(decimal_templates[-1], UP, buff=SMALL_BUFF)
-        delta_t = delta_t_brace.get_tex(
-            "\\Delta t", buff=SMALL_BUFF
-        )
+        delta_t = delta_t_brace.get_tex("\\Delta t", buff=SMALL_BUFF)
         delta_t.set_color(PINK)
 
-        input_line = UnitInterval(
-            unit_size=10,
-        )
+        input_line = UnitInterval(unit_size=10, )
         input_line.next_to(group, DOWN, LARGE_BUFF)
         input_line.add_numbers(0, 0.5, 1)
         dots = VGroup(*[
@@ -1974,8 +1819,7 @@ class NumericalIntegration(Scene):
                 input_line.n2p(t),
                 color=PINK,
                 radius=0.03,
-            ).stretch(2, 1)
-            for t in np.arange(0, 1, 0.01)
+            ).stretch(2, 1) for t in np.arange(0, 1, 0.01)
         ])
 
         self.add(integral)
@@ -1986,7 +1830,8 @@ class NumericalIntegration(Scene):
 
         time = 15
         self.play(
-            t_tracker.set_value, 0.99,
+            t_tracker.set_value,
+            0.99,
             ShowIncreasingSubsets(dots),
             run_time=time,
             rate_func=lambda t: smooth(t, 1),
@@ -2012,17 +1857,13 @@ class StepFunctionIntegral(Scene):
             c_{n} =
             \\int_0^1 \\text{step}({t})
             e^{-{n}\\cdot 2\\pi i {t}} {dt}
-            """,
-            **tex_config
-        )
+            """, **tex_config)
         expansion = TexMobject(
             """
             =
             \\int_0^{0.5} 1 \\cdot e^{-{n}\\cdot 2\\pi i {t}} {dt} +
             \\int_{0.5}^1 -1 \\cdot e^{-{n}\\cdot 2\\pi i {t}} {dt}
-            """,
-            **tex_config
-        )
+            """, **tex_config)
         group = VGroup(cn_expression, expansion)
         group.arrange(RIGHT)
         group.set_width(FRAME_WIDTH - 1)
@@ -2031,7 +1872,8 @@ class StepFunctionIntegral(Scene):
         words1 = TexMobject(
             "\\text{Challenge 1: Show that }"
             "c_{n} = {2 \\over {n} \\pi i}",
-            "\\text{ for odd }", "{n}",
+            "\\text{ for odd }",
+            "{n}",
             "\\text{ and 0 otherwise}",
             **tex_config,
         )
@@ -2101,16 +1943,14 @@ class GeneralChallenge(Scene):
             "\\sum_{n = 1}^{\\infty} \\big("
             "a_{n} \\cos\\left({n} \\cdot 2\\pi {t}\\right) + "
             "b_{n} \\sin\\left({n} \\cdot 2\\pi {t}\\right) \\big)",
-            **tex_config
-        )
+            **tex_config)
         formula1[0][6].set_color(YELLOW)
         words2 = TextMobject("where")
         formula2 = TexMobject(
             "a_{n} = 2\\int_0^1 f({t})\\cos\\left({n} \\cdot 2\\pi {t}\\right) {dt}\\\\"
             # "\\text{ and }"
             "b_{n} = 2\\int_0^1 f({t})\\sin\\left({n} \\cdot 2\\pi {t}\\right) {dt}",
-            **tex_config
-        )
+            **tex_config)
         words3 = TextMobject("How is this the same as what we just did?")
 
         prompt = VGroup(words1, formula1, words2, formula2, words3)
@@ -2126,33 +1966,27 @@ class GeneralChallenge(Scene):
 
 class HintToGeneralChallenge(Scene):
     def construct(self):
-        self.add(FullScreenFadeRectangle(
-            fill_color=DARKER_GREY,
-            fill_opacity=1,
-        ))
+        self.add(
+            FullScreenFadeRectangle(
+                fill_color=DARKER_GREY,
+                fill_opacity=1,
+            ))
         words1 = TextMobject("Hint: Try writing")
-        formula1 = TexMobject(
-            "c_{n} =",
-            "{", "a_{n} \\over 2} +",
-            "{", "b_{n} \\over 2} i",
-            tex_to_color_map={
-                "{n}": YELLOW,
-            }
-        )
+        formula1 = TexMobject("c_{n} =",
+                              "{",
+                              "a_{n} \\over 2} +",
+                              "{",
+                              "b_{n} \\over 2} i",
+                              tex_to_color_map={
+                                  "{n}": YELLOW,
+                              })
         words2 = TextMobject("and")
-        formula2 = TexMobject(
-            "e^{i{x}} =",
-            "\\cos\\left({x}\\right) +",
-            "i\\sin\\left({x}\\right)",
-            tex_to_color_map={
-                "{x}": GREEN
-            }
-        )
+        formula2 = TexMobject("e^{i{x}} =",
+                              "\\cos\\left({x}\\right) +",
+                              "i\\sin\\left({x}\\right)",
+                              tex_to_color_map={"{x}": GREEN})
 
-        all_words = VGroup(
-            words1, formula1,
-            words2, formula2
-        )
+        all_words = VGroup(words1, formula1, words2, formula2)
         all_words.arrange(DOWN, buff=LARGE_BUFF)
 
         self.add(all_words)
@@ -2179,21 +2013,16 @@ class OtherResources(Scene):
             name.scale(1.5)
             name.next_to(thumbnail, UP)
             thumbnail.add(name)
-            self.play(
-                FadeInFromDown(name),
-                GrowFromCenter(thumbnail)
-            )
+            self.play(FadeInFromDown(name), GrowFromCenter(thumbnail))
             self.wait()
 
         url = TextMobject("www.jezzamon.com")
         url.scale(1.5)
         url.move_to(FRAME_WIDTH * RIGHT / 5)
         url.to_edge(UP)
-        self.play(
-            thumbnails.arrange, DOWN, {"buff": LARGE_BUFF},
-            thumbnails.set_height, FRAME_HEIGHT - 2,
-            thumbnails.to_edge, LEFT
-        )
+        self.play(thumbnails.arrange, DOWN, {"buff": LARGE_BUFF},
+                  thumbnails.set_height, FRAME_HEIGHT - 2, thumbnails.to_edge,
+                  LEFT)
         self.play(FadeInFromDown(url))
         self.wait()
 
@@ -2213,25 +2042,19 @@ class ExponentialsMoreBroadly(Scene):
             tex_to_color_map={
                 "{t}": LIGHT_PINK,
                 "{n}": YELLOW
-            }
-        )
+            })
         formula[2][4].set_color(YELLOW)
         formula.scale(1.5)
         formula.to_edge(UP)
         formula.add_background_rectangle_to_submobjects()
 
-        plane = ComplexPlane(
-            axis_config={"unit_size": 2}
-        )
+        plane = ComplexPlane(axis_config={"unit_size": 2})
 
         self.play(FadeInFromDown(formula))
         self.wait()
         self.add(plane, formula)
-        self.play(
-            formula.scale, 0.7,
-            formula.to_corner, UL,
-            ShowCreation(plane)
-        )
+        self.play(formula.scale, 0.7, formula.to_corner, UL,
+                  ShowCreation(plane))
 
         self.formula = formula
         self.plane = plane
@@ -2251,14 +2074,17 @@ class ExponentialsMoreBroadly(Scene):
         dot.add_updater(lambda d: d.move_to(circle.get_end()))
 
         self.play(
-            c_exp.set_opacity, 1,
-            c_exp.scale, 1.5,
-            c_exp.next_to, dot, UR, SMALL_BUFF,
+            c_exp.set_opacity,
+            1,
+            c_exp.scale,
+            1.5,
+            c_exp.next_to,
+            dot,
+            UR,
+            SMALL_BUFF,
             GrowFromCenter(dot),
         )
-        c_exp.add_updater(
-            lambda m: m.next_to(dot, UR, SMALL_BUFF)
-        )
+        c_exp.add_updater(lambda m: m.next_to(dot, UR, SMALL_BUFF))
         self.play(
             ShowCreation(circle),
             run_time=4,
@@ -2303,18 +2129,13 @@ class ExponentialsMoreBroadly(Scene):
         )
         vector_field.sort(get_norm)
 
-        self.play(
-            FadeInFromDown(m_exp),
-            FadeOutAndShift(formula, UP),
-            FadeOut(c_exp)
-        )
+        self.play(FadeInFromDown(m_exp), FadeOutAndShift(formula, UP),
+                  FadeOut(c_exp))
         self.add(vector_field, circle, dot, m_exp)
-        self.play(
-            ShowCreation(
-                vector_field,
-                lag_ratio=0.001,
-            )
-        )
+        self.play(ShowCreation(
+            vector_field,
+            lag_ratio=0.001,
+        ))
         self.play(Rotating(circle, run_time=TAU))
         self.wait()
 
@@ -2468,4 +2289,3 @@ class Part4EndScreen(PatreonEndScreen):
             "Kurt Dicus",
         ],
     }
-

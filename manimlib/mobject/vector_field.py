@@ -21,7 +21,6 @@ from manimlib.utils.simple_functions import sigmoid
 from manimlib.utils.space_ops import get_norm
 # from manimlib.utils.space_ops import normalize
 
-
 DEFAULT_SCALAR_FIELD_COLORS = [BLUE_E, GREEN, YELLOW, RED]
 
 
@@ -48,16 +47,16 @@ def get_colored_background_image(scalar_field_func,
     return Image.fromarray((rgb_array * 255).astype('uint8'))
 
 
-def get_rgb_gradient_function(min_value=0, max_value=1,
-                              colors=[BLUE, RED],
-                              flip_alphas=True,  # Why?
-                              ):
+def get_rgb_gradient_function(
+    min_value=0,
+    max_value=1,
+    colors=[BLUE, RED],
+    flip_alphas=True,  # Why?
+):
     rgbs = np.array(list(map(color_to_rgb, colors)))
 
     def func(values):
-        alphas = inverse_interpolate(
-            min_value, max_value, np.array(values)
-        )
+        alphas = inverse_interpolate(min_value, max_value, np.array(values))
         alphas = np.clip(alphas, 0, 1)
         # if flip_alphas:
         #     alphas = 1 - alphas
@@ -68,40 +67,34 @@ def get_rgb_gradient_function(min_value=0, max_value=1,
         inter_alphas = inter_alphas.repeat(3).reshape((len(indices), 3))
         result = interpolate(rgbs[indices], rgbs[next_indices], inter_alphas)
         return result
+
     return func
 
 
 def get_color_field_image_file(scalar_func,
-                               min_value=0, max_value=2,
-                               colors=DEFAULT_SCALAR_FIELD_COLORS
-                               ):
+                               min_value=0,
+                               max_value=2,
+                               colors=DEFAULT_SCALAR_FIELD_COLORS):
     # try_hash
     np.random.seed(0)
     sample_inputs = 5 * np.random.random(size=(10, 3)) - 10
     sample_outputs = np.apply_along_axis(scalar_func, 1, sample_inputs)
     func_hash = hash(
-        str(min_value) + str(max_value) + str(colors) + str(sample_outputs)
-    )
+        str(min_value) + str(max_value) + str(colors) + str(sample_outputs))
     file_name = "%d.png" % func_hash
     full_path = os.path.join(RASTER_IMAGE_DIR, file_name)
     if not os.path.exists(full_path):
         print("Rendering color field image " + str(func_hash))
-        rgb_gradient_func = get_rgb_gradient_function(
-            min_value=min_value,
-            max_value=max_value,
-            colors=colors
-        )
+        rgb_gradient_func = get_rgb_gradient_function(min_value=min_value,
+                                                      max_value=max_value,
+                                                      colors=colors)
         image = get_colored_background_image(scalar_func, rgb_gradient_func)
         image.save(full_path)
     return full_path
 
 
 def move_along_vector_field(mobject, func):
-    mobject.add_updater(
-        lambda m, dt: m.shift(
-            func(m.get_center()) * dt
-        )
-    )
+    mobject.add_updater(lambda m, dt: m.shift(func(m.get_center()) * dt))
     return mobject
 
 
@@ -118,14 +111,14 @@ def move_submobjects_along_vector_field(mobject, func):
 
 def move_points_along_vector_field(mobject, func):
     def apply_nudge(self, dt):
-        self.mobject.apply_function(
-            lambda p: p + func(p) * dt
-        )
+        self.mobject.apply_function(lambda p: p + func(p) * dt)
+
     mobject.add_updater(apply_nudge)
     return mobject
 
 
 # Mobjects
+
 
 class VectorField(VGroup):
     CONFIG = {
@@ -151,18 +144,11 @@ class VectorField(VGroup):
             self.min_magnitude,
             self.max_magnitude,
             self.colors,
-            flip_alphas=False
-        )
-        x_range = np.arange(
-            self.x_min,
-            self.x_max + self.delta_x,
-            self.delta_x
-        )
-        y_range = np.arange(
-            self.y_min,
-            self.y_max + self.delta_y,
-            self.delta_y
-        )
+            flip_alphas=False)
+        x_range = np.arange(self.x_min, self.x_max + self.delta_x,
+                            self.delta_x)
+        y_range = np.arange(self.y_min, self.y_max + self.delta_y,
+                            self.delta_y)
         for x, y in it.product(x_range, y_range):
             point = x * RIGHT + y * UP
             self.add(self.get_vector(point))
@@ -180,8 +166,7 @@ class VectorField(VGroup):
         vect = Vector(output, **vector_config)
         vect.shift(point)
         fill_color = rgb_to_color(
-            self.rgb_gradient_function(np.array([norm]))[0]
-        )
+            self.rgb_gradient_function(np.array([norm]))[0])
         vect.set_color(fill_color)
         return vect
 
@@ -226,8 +211,7 @@ class StreamLines(VGroup):
         dt = self.dt
 
         start_points = self.get_start_points(
-            **self.start_points_generator_config
-        )
+            **self.start_points_generator_config)
         for point in start_points:
             points = [point]
             for t in np.arange(0, self.virtual_time, dt):
@@ -286,27 +270,21 @@ class StreamLines(VGroup):
 # varying in response to a changing vector field, and still
 # animate the resulting flow
 class ShowPassingFlashWithThinningStrokeWidth(AnimationGroup):
-    CONFIG = {
-        "n_segments": 10,
-        "time_width": 0.1,
-        "remover": True
-    }
+    CONFIG = {"n_segments": 10, "time_width": 0.1, "remover": True}
 
     def __init__(self, vmobject, **kwargs):
         digest_config(self, kwargs)
         max_stroke_width = vmobject.get_stroke_width()
         max_time_width = kwargs.pop("time_width", self.time_width)
-        AnimationGroup.__init__(self, *[
-            ShowPassingFlash(
-                vmobject.deepcopy().set_stroke(width=stroke_width),
-                time_width=time_width,
-                **kwargs
-            )
-            for stroke_width, time_width in zip(
-                np.linspace(0, max_stroke_width, self.n_segments),
-                np.linspace(max_time_width, 0, self.n_segments)
-            )
-        ])
+        AnimationGroup.__init__(
+            self, *[
+                ShowPassingFlash(
+                    vmobject.deepcopy().set_stroke(width=stroke_width),
+                    time_width=time_width,
+                    **kwargs) for stroke_width, time_width in zip(
+                        np.linspace(0, max_stroke_width, self.n_segments),
+                        np.linspace(max_time_width, 0, self.n_segments))
+            ])
 
 
 # TODO, this is untested after turning it from a

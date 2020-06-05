@@ -10,7 +10,6 @@ import manimlib.constants
 
 def start_livestream(to_twitch=False, twitch_key=None):
     class Manim():
-
         def __new__(cls):
             kwargs = {
                 "scene_name": manimlib.constants.LIVE_STREAM_NAME,
@@ -39,10 +38,12 @@ def start_livestream(to_twitch=False, twitch_key=None):
 
     if not to_twitch:
         FNULL = open(os.devnull, 'w')
-        subprocess.Popen(
-            [manimlib.constants.STREAMING_CLIENT, manimlib.constants.STREAMING_URL],
-            stdout=FNULL,
-            stderr=FNULL)
+        subprocess.Popen([
+            manimlib.constants.STREAMING_CLIENT,
+            manimlib.constants.STREAMING_URL
+        ],
+                         stdout=FNULL,
+                         stderr=FNULL)
         sleep(3)
 
     variables = globals().copy()

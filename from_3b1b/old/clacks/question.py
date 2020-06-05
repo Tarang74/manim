@@ -1,6 +1,5 @@
 from manimlib.imports import *
 
-
 OUTPUT_DIRECTORY = "clacks/question"
 
 
@@ -90,7 +89,8 @@ class SlidingBlocks(VGroup):
         self.mass_ratio = self.block2.mass / self.block1.mass
         self.phase_space_point_tracker = self.get_phase_space_point_tracker()
         self.add(
-            self.block1, self.block2,
+            self.block1,
+            self.block2,
             self.phase_space_point_tracker,
         )
         self.add_updater(self.__class__.update_positions)
@@ -112,23 +112,18 @@ class SlidingBlocks(VGroup):
         w2 = block2.get_width()
         s1 = block1.get_left()[0] - self.wall.get_right()[0] - w2
         s2 = block2.get_right()[0] - self.wall.get_right()[0] - w2
-        result = VectorizedPoint([
-            s1 * np.sqrt(block1.mass),
-            s2 * np.sqrt(block2.mass),
-            0
-        ])
+        result = VectorizedPoint(
+            [s1 * np.sqrt(block1.mass), s2 * np.sqrt(block2.mass), 0])
 
         result.velocity = np.array([
             np.sqrt(block1.mass) * block1.velocity,
-            np.sqrt(block2.mass) * block2.velocity,
-            0
+            np.sqrt(block2.mass) * block2.velocity, 0
         ])
         return result
 
     def update_positions(self, dt):
         self.phase_space_point_tracker.shift(
-            self.phase_space_point_tracker.velocity * dt
-        )
+            self.phase_space_point_tracker.velocity * dt)
         self.update_blocks_from_phase_space_point_tracker()
 
     def update_blocks_from_phase_space_point_tracker(self):
@@ -138,10 +133,8 @@ class SlidingBlocks(VGroup):
         theta = np.arctan(np.sqrt(self.mass_ratio))
         ps_point_angle = angle_of_vector(ps_point)
         n_clacks = int(ps_point_angle / theta)
-        reflected_point = rotate_vector(
-            ps_point,
-            -2 * np.ceil(n_clacks / 2) * theta
-        )
+        reflected_point = rotate_vector(ps_point,
+                                        -2 * np.ceil(n_clacks / 2) * theta)
         reflected_point = np.abs(reflected_point)
 
         shadow_wall_x = self.wall.get_right()[0] + block2.get_width()
@@ -149,13 +142,11 @@ class SlidingBlocks(VGroup):
         s1 = reflected_point[0] / np.sqrt(block1.mass)
         s2 = reflected_point[1] / np.sqrt(block2.mass)
         block1.move_to(
-            (shadow_wall_x + s1) * RIGHT +
-            floor_y * UP,
+            (shadow_wall_x + s1) * RIGHT + floor_y * UP,
             DL,
         )
         block2.move_to(
-            (shadow_wall_x + s2) * RIGHT +
-            floor_y * UP,
+            (shadow_wall_x + s2) * RIGHT + floor_y * UP,
             DR,
         )
 
@@ -165,32 +156,22 @@ class SlidingBlocks(VGroup):
         ps_point = self.phase_space_point_tracker.get_location()
         ps_velocity = self.phase_space_point_tracker.velocity
         if ps_velocity[1] != 0:
-            raise Exception(
-                "Haven't implemented anything to gather clack "
-                "data from a start state with block2 moving"
-            )
+            raise Exception("Haven't implemented anything to gather clack "
+                            "data from a start state with block2 moving")
         y = ps_point[1]
         theta = np.arctan(np.sqrt(self.mass_ratio))
 
         clack_data = []
         for k in range(1, int(PI / theta) + 1):
-            clack_ps_point = np.array([
-                y / np.tan(k * theta),
-                y,
-                0
-            ])
+            clack_ps_point = np.array([y / np.tan(k * theta), y, 0])
             time = get_norm(ps_point - clack_ps_point) / get_norm(ps_velocity)
-            reflected_point = rotate_vector(
-                clack_ps_point,
-                -2 * np.ceil((k - 1) / 2) * theta
-            )
+            reflected_point = rotate_vector(clack_ps_point, -2 * np.ceil(
+                (k - 1) / 2) * theta)
             block2 = self.block2
             s2 = reflected_point[1] / np.sqrt(block2.mass)
-            location = np.array([
-                self.wall.get_right()[0] + s2,
-                block2.get_center()[1],
-                0
-            ])
+            location = np.array(
+                [self.wall.get_right()[0] + s2,
+                 block2.get_center()[1], 0])
             if k % 2 == 1:
                 location += block2.get_width() * RIGHT
             clack_data.append((location, time))
@@ -238,9 +219,7 @@ class ClackFlashes(VGroup):
             if flash.start_time < time < flash.end_time:
                 if flash.mobject not in self.submobjects:
                     self.add(flash.mobject)
-                flash.update(
-                    (time - flash.start_time) / flash.run_time
-                )
+                flash.update((time - flash.start_time) / flash.run_time)
             else:
                 if flash.mobject in self.submobjects:
                     self.remove(flash.mobject)
@@ -265,8 +244,8 @@ class Wall(Line):
     def get_ticks(self):
         n_lines = int(self.height / self.tick_spacing)
         lines = VGroup(*[
-            Line(ORIGIN, self.tick_length * UR).shift(n * self.tick_spacing * UP)
-            for n in range(n_lines)
+            Line(ORIGIN, self.tick_length *
+                 UR).shift(n * self.tick_spacing * UP) for n in range(n_lines)
         ])
         lines.set_style(**self.tick_style)
         lines.move_to(self, DR)
@@ -324,7 +303,8 @@ class BlocksAndWallScene(Scene):
         counter_label = TextMobject(self.counter_label)
         counter_mob = Integer(self.n_clacks)
         counter_mob.next_to(
-            counter_label[-1], RIGHT,
+            counter_label[-1],
+            RIGHT,
         )
         counter_mob.align_to(counter_label[-1][-1], DOWN)
         counter_group = VGroup(
@@ -358,11 +338,7 @@ class BlocksAndWallScene(Scene):
     def add_clack_sounds(self, clack_data):
         clack_file = self.collision_sound
         total_time = self.get_time()
-        times = [
-            time
-            for location, time in clack_data
-            if time < total_time
-        ]
+        times = [time for location, time in clack_data if time < total_time]
         last_time = 0
         for time in times:
             d_time = time - last_time
@@ -379,6 +355,7 @@ class BlocksAndWallScene(Scene):
     def tear_down(self):
         if self.include_sound:
             self.add_clack_sounds(self.clack_data)
+
 
 # Animated scenes
 
@@ -402,7 +379,9 @@ class NameIntro(Scene):
         self.play(
             Flash(blue.get_right(), run_time=flash_time),
             ApplyMethod(
-                blue.to_edge, LEFT, {"buff": 0},
+                blue.to_edge,
+                LEFT,
+                {"buff": 0},
                 rate_func=linear,
             ),
         )
@@ -413,14 +392,13 @@ class NameIntro(Scene):
         self.play(
             Flash(blue.get_right(), run_time=flash_time),
             ApplyMethod(
-                brown.to_edge, RIGHT, {"buff": 0},
+                brown.to_edge,
+                RIGHT,
+                {"buff": 0},
                 rate_func=linear,
-            )
-        )
-        self.play(
-            Flash(brown.get_right(), run_time=flash_time),
-            Restore(brown, rate_func=linear)
-        )
+            ))
+        self.play(Flash(brown.get_right(), run_time=flash_time),
+                  Restore(brown, rate_func=linear))
 
 
 class MathAndPhysicsConspiring(Scene):
@@ -448,7 +426,8 @@ class MathAndPhysicsConspiring(Scene):
 
         self.play(
             LaggedStartMap(
-                FadeInFromDown, to_fade,
+                FadeInFromDown,
+                to_fade,
                 lag_ratio=0.7,
                 run_time=3,
             ),
@@ -475,10 +454,7 @@ class MathAndPhysicsConspiring(Scene):
         line.set_color(WHITE)
         one = TexMobject("1").scale(0.5)
         one.next_to(line.point_from_proportion(0.7), UL, 0.5 * SMALL_BUFF)
-        tan_line = Line(
-            line.get_end(),
-            (1.0 / np.cos(theta)) * RIGHT
-        )
+        tan_line = Line(line.get_end(), (1.0 / np.cos(theta)) * RIGHT)
         tan_line.set_color(RED)
         tan_text = TexMobject("\\tan(\\theta)")
         tan_text.rotate(tan_line.get_angle())
@@ -488,10 +464,14 @@ class MathAndPhysicsConspiring(Scene):
         tan_text.shift(0.2 * normalize(line.get_vector()))
 
         result = VGroup(
-            axes, circle,
-            line, one,
-            arc, theta_label,
-            tan_line, tan_text,
+            axes,
+            circle,
+            line,
+            one,
+            arc,
+            theta_label,
+            tan_line,
+            tan_text,
         )
         result.set_height(4)
         return result
@@ -521,8 +501,7 @@ class LightBouncing(MovingCameraScene):
                 (beam_height / np.tan(k * theta)),
                 beam_height,
                 0,
-            ])
-            for k in range(1, int(PI / theta))
+            ]) for k in range(1, int(PI / theta))
         ] + [rotate(start_point, PI, UP)]
         reflected_points = []
         for k, point in enumerate(points):
@@ -561,10 +540,7 @@ class LightBouncing(MovingCameraScene):
                 rate_func=lambda t: smooth(t, 5),
                 time_width=0.05,
             ),
-            UpdateFromFunc(
-                dot,
-                lambda m: m.move_to(beam.points[-1])
-            ),
+            UpdateFromFunc(dot, lambda m: m.move_to(beam.points[-1])),
         )
 
 
@@ -599,16 +575,12 @@ class TwoBlocksLabel(Scene):
     def construct(self):
         label = TextMobject("Two sliding \\\\ blocks")
         label.to_edge(UP)
-        arrows = VGroup(*[
-            Arrow(label.get_bottom(), point)
-            for point in [RIGHT, LEFT]
-        ])
+        arrows = VGroup(
+            *[Arrow(label.get_bottom(), point) for point in [RIGHT, LEFT]])
         arrows.set_color(RED)
-        self.play(
-            Write(label),
-            LaggedStartMap(GrowArrow, arrows, lag_ratio=0.7),
-            run_time=1
-        )
+        self.play(Write(label),
+                  LaggedStartMap(GrowArrow, arrows, lag_ratio=0.7),
+                  run_time=1)
         self.wait()
 
 
@@ -619,10 +591,7 @@ class WallLabel(Scene):
         word = TextMobject("Wall")
         word.rotate(-90 * DEGREES)
         word.next_to(wall, RIGHT, MED_SMALL_BUFF)
-        self.play(
-            Write(word),
-            ShowPassingFlash(wall)
-        )
+        self.play(Write(word), ShowPassingFlash(wall))
         self.wait()
 
 
@@ -634,9 +603,7 @@ class NoFrictionLabel(Scene):
     def construct(self):
         words = TextMobject("Frictionless")
         words.shift(2 * RIGHT)
-        words.add_updater(
-            lambda m, dt: m.shift(dt * LEFT)
-        )
+        words.add_updater(lambda m, dt: m.shift(dt * LEFT))
 
         self.play(VFadeIn(words))
         self.wait(2)
@@ -647,16 +614,12 @@ class Mass1e1WithElasticLabel(BlocksAndWallExampleMass1e1):
     def add_flash_animations(self):
         super().add_flash_animations()
         flashes = self.clack_flashes
-        label = TextMobject(
-            "Purely elastic collisions\\\\"
-            "(no energy lost)"
-        )
+        label = TextMobject("Purely elastic collisions\\\\" "(no energy lost)")
         label.set_color(YELLOW)
         label.move_to(2 * LEFT + 2 * UP)
         self.add(label)
         self.add(*[
-            self.get_arrow(label, flashes, flash)
-            for flash in flashes.flashes
+            self.get_arrow(label, flashes, flash) for flash in flashes.flashes
         ])
 
     def get_arrow(self, label, clack_flashes, flash):
@@ -689,18 +652,15 @@ class Mass1e1WithElasticLabel(BlocksAndWallExampleMass1e1):
 
 class AskAboutSoundlessness(TeacherStudentsScene):
     def construct(self):
-        self.student_says(
-            "No sound,\\\\right?"
-        )
+        self.student_says("No sound,\\\\right?")
         self.play(self.teacher.change, "guilty")
         self.wait(2)
-        self.teacher_says(
-            "Focus on \\\\ collisions",
-            target_mode="speaking",
-            added_anims=[
-                self.get_student_changes("pondering", "confused", "thinking")
-            ]
-        )
+        self.teacher_says("Focus on \\\\ collisions",
+                          target_mode="speaking",
+                          added_anims=[
+                              self.get_student_changes("pondering", "confused",
+                                                       "thinking")
+                          ])
         self.look_at(self.screen)
         self.wait(3)
 
@@ -856,19 +816,19 @@ class DigitsOfPi(Scene):
         pow10 = int(10**nd)
         rounded_pi = int(pow10 * PI) / pow10
         equation = TexMobject(
-            ("\\pi = {:." + str(nd) + "f}...").format(rounded_pi)
-        )
+            ("\\pi = {:." + str(nd) + "f}...").format(rounded_pi))
         equation.set_color(YELLOW)
         pi_creature = Randolph(color=YELLOW)
         pi_creature.match_width(equation[0])
         pi_creature.scale(1.4)
         pi_creature.move_to(equation[0], DOWN)
         self.add(pi_creature, equation[1])
-        self.play(ShowIncreasingSubsets(
-            equation[2:],
-            rate_func=linear,
-            run_time=1,
-        ))
+        self.play(
+            ShowIncreasingSubsets(
+                equation[2:],
+                rate_func=linear,
+                run_time=1,
+            ))
         self.play(Blink(pi_creature))
         self.wait()
 
@@ -883,16 +843,14 @@ class PiComputingAlgorithmsAxes(Scene):
         self.add_methods()
 
     def setup_axes(self):
-        axes = Axes(
-            x_min=0,
-            y_min=0,
-            x_max=9,
-            y_max=5,
-            axis_config={
-                "tick_frequency": 100,
-                "numbers_with_elongated_ticks": [],
-            }
-        )
+        axes = Axes(x_min=0,
+                    y_min=0,
+                    x_max=9,
+                    y_max=5,
+                    axis_config={
+                        "tick_frequency": 100,
+                        "numbers_with_elongated_ticks": [],
+                    })
 
         y_label = TextMobject("Efficiency")
         y_label.rotate(90 * DEGREES)
@@ -929,22 +887,22 @@ class PiComputingAlgorithmsAxes(Scene):
             method.shift_onto_screen()
             algorithms.add(VGroup(method, cross))
 
-        self.play(LaggedStartMap(
-            FadeInFromDown, algorithms,
-            run_time=4,
-            lag_ratio=0.4,
-        ))
+        self.play(
+            LaggedStartMap(
+                FadeInFromDown,
+                algorithms,
+                run_time=4,
+                lag_ratio=0.4,
+            ))
         self.wait()
         self.play(ShowCreationThenFadeAround(algorithms[-1][0]))
 
     def get_machin_like_formula(self):
-        formula = TexMobject(
-            "\\frac{\\pi}{4} = "
-            "12\\arctan\\left(\\frac{1}{49}\\right) + "
-            "32\\arctan\\left(\\frac{1}{57}\\right) - "
-            "5\\arctan\\left(\\frac{1}{239}\\right) + "
-            "12\\arctan\\left(\\frac{1}{110{,}443}\\right)"
-        )
+        formula = TexMobject("\\frac{\\pi}{4} = "
+                             "12\\arctan\\left(\\frac{1}{49}\\right) + "
+                             "32\\arctan\\left(\\frac{1}{57}\\right) - "
+                             "5\\arctan\\left(\\frac{1}{239}\\right) + "
+                             "12\\arctan\\left(\\frac{1}{110{,}443}\\right)")
         formula.scale(0.5)
         return formula
 
@@ -953,8 +911,7 @@ class PiComputingAlgorithmsAxes(Scene):
             "\\frac{2}{\\pi} = "
             "\\frac{\\sqrt{2}}{2} \\cdot"
             "\\frac{\\sqrt{2 + \\sqrt{2}}}{2} \\cdot"
-            "\\frac{\\sqrt{2 + \\sqrt{2 + \\sqrt{2}}}}{2} \\cdots"
-        )
+            "\\frac{\\sqrt{2 + \\sqrt{2 + \\sqrt{2}}}}{2} \\cdots")
         formula.scale(0.5)
         return formula
 
@@ -965,35 +922,32 @@ class PiComputingAlgorithmsAxes(Scene):
         return TextMobject("Monte Carlo").scale(0.75)
 
     def get_basel(self):
-        formula = TexMobject(
-            "\\frac{\\pi^2}{6} = "
-            "\\sum_{n=1}^\\infty \\frac{1}{n^2}"
-        )
+        formula = TexMobject("\\frac{\\pi^2}{6} = "
+                             "\\sum_{n=1}^\\infty \\frac{1}{n^2}")
         formula.scale(0.5)
         return formula
 
     def get_blocks_image(self):
-        scene = BlocksAndWallScene(
-            write_to_movie=False,
-            skip_animations=True,
-            count_clacks=False,
-            floor_y=1,
-            wall_x=0,
-            n_wall_ticks=6,
-            sliding_blocks_config={
-                "block1_config": {
-                    "mass": 1e2,
-                    "velocity": -0.01,
-                    "distance": 3.5
-                },
-                "block2_config": {
-                    "distance": 1,
-                    "velocity": 0,
-                },
-            }
-        )
+        scene = BlocksAndWallScene(write_to_movie=False,
+                                   skip_animations=True,
+                                   count_clacks=False,
+                                   floor_y=1,
+                                   wall_x=0,
+                                   n_wall_ticks=6,
+                                   sliding_blocks_config={
+                                       "block1_config": {
+                                           "mass": 1e2,
+                                           "velocity": -0.01,
+                                           "distance": 3.5
+                                       },
+                                       "block2_config": {
+                                           "distance": 1,
+                                           "velocity": 0,
+                                       },
+                                   })
         group = VGroup(
-            scene.wall, scene.floor,
+            scene.wall,
+            scene.floor,
             scene.blocks.block1,
             scene.blocks.block2,
         )
@@ -1013,38 +967,31 @@ class StepsOfTheAlgorithm(TeacherStudentsScene):
         steps.scale(0.8)
 
         for step in steps:
-            self.play(
-                FadeInFromDown(step[0]),
-                self.teacher.change, "raise_right_hand"
-            )
+            self.play(FadeInFromDown(step[0]), self.teacher.change,
+                      "raise_right_hand")
             self.play(
                 Write(step[1], run_time=2),
                 self.get_student_changes(
                     *["pondering"] * 3,
                     look_at_arg=step,
-                )
-            )
+                ))
             self.wait()
-        self.change_student_modes(
-            "sassy", "erm", "confused",
-            look_at_arg=steps,
-            added_anims=[self.teacher.change, "happy"]
-        )
+        self.change_student_modes("sassy",
+                                  "erm",
+                                  "confused",
+                                  look_at_arg=steps,
+                                  added_anims=[self.teacher.change, "happy"])
         self.wait(3)
 
     def get_steps(self):
         return VGroup(
             TextMobject("Step 1:", "Implement a physics engine"),
             TextMobject(
-                "Step 2:",
-                "Choose the number of digits, $d$,\\\\"
-                "of $\\pi$ that you want to compute"
-            ),
+                "Step 2:", "Choose the number of digits, $d$,\\\\"
+                "of $\\pi$ that you want to compute"),
             TextMobject(
-                "Step 3:",
-                "Set one mass to $100^{d - 1}$,\\\\"
-                "the other to $1$"
-            ),
+                "Step 3:", "Set one mass to $100^{d - 1}$,\\\\"
+                "the other to $1$"),
             TextMobject("Step 4:", "Count collisions"),
         )
 
@@ -1141,39 +1088,33 @@ class CompareToGalacticMass(Scene):
         )
         self.wait()
 
-        self.pi_digits_group = VGroup(
-            digits, brace, counter, digits_word
-        )
+        self.pi_digits_group = VGroup(digits, brace, counter, digits_word)
 
     def show_mass(self):
-        bw_scene = BlocksAndWallExample(
-            write_to_movie=False,
-            skip_animations=True,
-            count_clacks=False,
-            show_flash_animations=False,
-            floor_y=0,
-            wall_x=-2,
-            n_wall_ticks=8,
-            sliding_blocks_config={
-                "block1_config": {
-                    "mass": 1e6,
-                    "velocity": -0.01,
-                    "distance": 4.5,
-                    "label_text": "$100^{(20 - 1)}$ kg",
-                    "fill_color": BLACK,
-                },
-                "block2_config": {
-                    "distance": 1,
-                    "velocity": 0,
-                },
-            }
-        )
+        bw_scene = BlocksAndWallExample(write_to_movie=False,
+                                        skip_animations=True,
+                                        count_clacks=False,
+                                        show_flash_animations=False,
+                                        floor_y=0,
+                                        wall_x=-2,
+                                        n_wall_ticks=8,
+                                        sliding_blocks_config={
+                                            "block1_config": {
+                                                "mass": 1e6,
+                                                "velocity": -0.01,
+                                                "distance": 4.5,
+                                                "label_text":
+                                                "$100^{(20 - 1)}$ kg",
+                                                "fill_color": BLACK,
+                                            },
+                                            "block2_config": {
+                                                "distance": 1,
+                                                "velocity": 0,
+                                            },
+                                        })
         block1 = bw_scene.blocks.block1
         block2 = bw_scene.blocks.block2
-        group = VGroup(
-            bw_scene.wall, bw_scene.floor,
-            block1, block2
-        )
+        group = VGroup(bw_scene.wall, bw_scene.floor, block1, block2)
         group.center()
         group.to_edge(DOWN)
 
@@ -1183,7 +1124,8 @@ class CompareToGalacticMass(Scene):
 
         brace = Brace(block1.label[:-2], UP, buff=SMALL_BUFF)
         number_words = TextMobject(
-            "100", *["billion"] * 4,
+            "100",
+            *["billion"] * 4,
         )
         number_words.next_to(brace, UP, buff=SMALL_BUFF)
         VGroup(brace, number_words).set_color(YELLOW)
@@ -1217,9 +1159,7 @@ class CompareToGalacticMass(Scene):
         black_hole.set_color(BLACK)
         black_hole.set_sheen(0.2, UL)
         black_hole.set_height(1)
-        black_holes = VGroup(*[
-            black_hole.copy() for k in range(10)
-        ])
+        black_holes = VGroup(*[black_hole.copy() for k in range(10)])
         black_holes.arrange_in_grid(5, 2)
         black_holes.to_corner(DR)
         random.shuffle(black_holes.submobjects)
@@ -1236,14 +1176,8 @@ class CompareToGalacticMass(Scene):
         words.next_to(equals, RIGHT)
         self.add(words)
 
-        self.play(
-            Write(equals),
-            Write(words),
-            LaggedStartMap(
-                Restore, black_holes,
-                run_time=3
-            )
-        )
+        self.play(Write(equals), Write(words),
+                  LaggedStartMap(Restore, black_holes, run_time=3))
         self.wait()
 
         self.black_hole_words = VGroup(equals, words)
@@ -1257,15 +1191,10 @@ class CompareToGalacticMass(Scene):
         number.scale(1.5)
         number.to_edge(UP)
 
-        commas = VGroup(*[
-            mob
-            for c, mob in zip(tex_string, number)
-            if c is ","
-        ])
+        commas = VGroup(
+            *[mob for c, mob in zip(tex_string, number) if c is ","])
         dots = VGroup(*[
-            mob
-            for c, mob in zip(digits.get_tex_string(), digits)
-            if c is "."
+            mob for c, mob in zip(digits.get_tex_string(), digits) if c is "."
         ])
 
         self.play(FadeOut(to_fade))
@@ -1273,13 +1202,7 @@ class CompareToGalacticMass(Scene):
             ReplacementTransform(
                 VGroup(*filter(lambda m: m not in dots, digits)),
                 VGroup(*filter(lambda m: m not in commas, number)),
-            ),
-            ReplacementTransform(
-                dots, commas,
-                lag_ratio=0.5,
-                run_time=2
-            )
-        )
+            ), ReplacementTransform(dots, commas, lag_ratio=0.5, run_time=2))
 
         group0 = number[:2].copy()
         group1 = number[3:3 + 9 + 2].copy()
@@ -1308,9 +1231,7 @@ class BlocksAndWallExampleGalacticMass(BlocksAndWallExample):
 
     def setup(self):
         super().setup()
-        words = TextMobject(
-            "Burst of $10^{38}$ clacks per second"
-        )
+        words = TextMobject("Burst of $10^{38}$ clacks per second")
         words.scale(1.5)
         words.to_edge(UP)
         self.add(words)
@@ -1325,7 +1246,8 @@ class RealPhysicsVsThis(Scene):
         this.next_to(physics)
         self.add(physics, this)
         self.play(
-            this.shift, FRAME_WIDTH * RIGHT,
+            this.shift,
+            FRAME_WIDTH * RIGHT,
             rate_func=rush_into,
             run_time=3,
         )
@@ -1335,11 +1257,8 @@ class RealPhysicsVsThis(Scene):
 class CompareAlgorithmToPhysics(PiCreatureScene):
     def construct(self):
         morty = self.pi_creature
-        right_pic = ImageMobject(
-            self.get_image_file_path().replace(
-                str(self), "PiComputingAlgorithmsAxes"
-            )
-        )
+        right_pic = ImageMobject(self.get_image_file_path().replace(
+            str(self), "PiComputingAlgorithmsAxes"))
         right_rect = SurroundingRectangle(right_pic, buff=0, color=WHITE)
         right_pic.add(right_rect)
         right_pic.set_height(3)
@@ -1352,12 +1271,14 @@ class CompareAlgorithmToPhysics(PiCreatureScene):
 
         self.play(
             FadeInFromDown(right_pic),
-            morty.change, "raise_right_hand",
+            morty.change,
+            "raise_right_hand",
         )
         self.wait()
         self.play(
             FadeInFromDown(left_rect),
-            morty.change, "raise_left_hand",
+            morty.change,
+            "raise_left_hand",
         )
         self.wait()
 
@@ -1369,19 +1290,20 @@ class CompareAlgorithmToPhysics(PiCreatureScene):
             # FadeOutAndShift(left_rect, 5 * LEFT),
             FadeOut(left_rect),
             PiCreatureBubbleIntroduction(
-                morty, "This doesn't seem \\\\ like me...",
+                morty,
+                "This doesn't seem \\\\ like me...",
                 bubble_class=ThoughtBubble,
                 bubble_kwargs={"direction": LEFT},
                 target_mode="pondering",
                 look_at_arg=left_rect,
             ),
             LaggedStartMap(
-                FadeInFrom, digits,
+                FadeInFrom,
+                digits,
                 lambda m: (m, LEFT),
                 run_time=5,
                 lag_ratio=0.2,
-            )
-        )
+            ))
         self.blink()
         self.wait()
         self.play(morty.change, "confused", left_rect)
@@ -1395,30 +1317,29 @@ class AskAboutWhy(TeacherStudentsScene):
     def construct(self):
         circle = Circle(radius=2, color=YELLOW)
         circle.next_to(self.teacher, UL)
-        ke_conservation = TexMobject(
-            "\\frac{1}{2}m_1 v_1^2 + "
-            "\\frac{1}{2}m_2 v_2^2 = \\text{const.}"
-        )
+        ke_conservation = TexMobject("\\frac{1}{2}m_1 v_1^2 + "
+                                     "\\frac{1}{2}m_2 v_2^2 = \\text{const.}")
         ke_conservation.move_to(circle)
 
         self.student_says("But why?")
-        self.change_student_modes(
-            "erm", "raise_left_hand", "sassy",
-            added_anims=[self.teacher.change, "happy"]
-        )
+        self.change_student_modes("erm",
+                                  "raise_left_hand",
+                                  "sassy",
+                                  added_anims=[self.teacher.change, "happy"])
         self.wait()
         self.play(
             ShowCreation(circle),
             RemovePiCreatureBubble(self.students[1]),
-            self.teacher.change, "raise_right_hand",
+            self.teacher.change,
+            "raise_right_hand",
         )
-        self.change_all_student_modes(
-            "pondering", look_at_arg=circle
-        )
+        self.change_all_student_modes("pondering", look_at_arg=circle)
         self.wait(2)
         self.play(
             Write(ke_conservation),
-            circle.stretch, 1.5, 0,
+            circle.stretch,
+            1.5,
+            0,
         )
         self.change_all_student_modes("confused")
         self.look_at(circle)
@@ -1462,9 +1383,7 @@ class NextVideo(Scene):
         dots.scale(2)
         dots.move_to(videos)
 
-        mid_words = TextMobject(
-            "Patient\\\\", "problem\\\\", "solving"
-        )
+        mid_words = TextMobject("Patient\\\\", "problem\\\\", "solving")
         mid_words.next_to(dots, DOWN)
         randy = Randolph(height=1)
         randy.next_to(dots, UP, SMALL_BUFF)
@@ -1474,11 +1393,8 @@ class NextVideo(Scene):
         speech_bubble = SpeechBubble(height=2, width=2)
         speech_bubble.pin_to(randy)
         speech_bubble.write("What do \\\\ you think?")
-        friends = VGroup(
-            PiCreature(color=BLUE_E),
-            PiCreature(color=BLUE_C),
-            Mortimer()
-        )
+        friends = VGroup(PiCreature(color=BLUE_E), PiCreature(color=BLUE_C),
+                         Mortimer())
         friends.set_height(1)
         friends.arrange(RIGHT, buff=MED_SMALL_BUFF)
         friends[:2].next_to(randy, LEFT)
@@ -1486,20 +1402,21 @@ class NextVideo(Scene):
 
         self.add(videos[0])
         self.wait()
-        self.play(
-            TransformFromCopy(*videos),
-        )
+        self.play(TransformFromCopy(*videos), )
         self.play(Write(dots))
         self.wait()
         self.play(
             LaggedStartMap(
-                FadeInFrom, mid_words,
+                FadeInFrom,
+                mid_words,
                 lambda m: (m, UP),
                 lag_ratio=0.8,
             ),
-            randy.change, "pondering",
+            randy.change,
+            "pondering",
             VFadeIn(randy),
-            videos.space_out_submobjects, 1.3,
+            videos.space_out_submobjects,
+            1.3,
         )
         self.play(ShowCreation(thought_bubble))
         self.play(Blink(randy))
@@ -1507,18 +1424,21 @@ class NextVideo(Scene):
             Uncreate(thought_bubble),
             ShowCreation(speech_bubble),
             Write(speech_bubble.content),
-            randy.change, "maybe", friends[0].eyes,
+            randy.change,
+            "maybe",
+            friends[0].eyes,
             LaggedStartMap(FadeInFromDown, friends),
-            videos.space_out_submobjects, 1.6,
+            videos.space_out_submobjects,
+            1.6,
         )
         self.play(
             LaggedStartMap(
-                ApplyMethod, friends,
+                ApplyMethod,
+                friends,
                 lambda m: (m.change, "pondering"),
                 run_time=1,
                 lag_ratio=0.7,
-            )
-        )
+            ))
         self.play(Blink(friends[2]))
         self.play(friends[0].change, "confused")
         self.wait()
@@ -1543,7 +1463,8 @@ class EndScreen(Scene):
         video_rect.set_stroke(GREY_BROWN, 0.5)
         date = TextMobject(
             "Solution will be\\\\"
-            "posted", "1/20/19",
+            "posted",
+            "1/20/19",
         )
         date[1].set_color(YELLOW)
         date.set_width(video_rect.get_width() - 2 * MED_SMALL_BUFF)
@@ -1611,22 +1532,16 @@ class Thumbnail(BlocksAndWallExample, MovingCameraScene):
 
     def add_vector(self):
         blocks = self.blocks
-        arrow = self.arrow = Vector(
-            2.5 * LEFT,
-            color=RED,
-            rectangular_stem_width=1.5,
-            tip_length=0.5
-        )
+        arrow = self.arrow = Vector(2.5 * LEFT,
+                                    color=RED,
+                                    rectangular_stem_width=1.5,
+                                    tip_length=0.5)
         arrow.move_to(blocks.block1.get_center(), RIGHT)
-        arrow.add_to_back(
-            arrow.copy().set_stroke(GREY, 5)
-        )
+        arrow.add_to_back(arrow.copy().set_stroke(GREY, 5))
         self.add(arrow)
 
     def add_text(self):
-        question = self.question = TextMobject(
-            "How many\\\\collisions?"
-        )
+        question = self.question = TextMobject("How many\\\\collisions?")
         question.scale(2.5)
         question.to_edge(UP)
         question.set_color(YELLOW)

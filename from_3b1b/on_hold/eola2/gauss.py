@@ -45,12 +45,18 @@ class ShowRowReduction(Scene):
             ],
             # [[1], [2], [3]],
         ],
-        "h_spacing": 2,
-        "extra_h_spacing": 0.5,
-        "v_spacing": 1,
-        "include_separation_lines": True,
-        "changing_row_color": YELLOW,
-        "reference_row_color": BLUE,
+        "h_spacing":
+        2,
+        "extra_h_spacing":
+        0.5,
+        "v_spacing":
+        1,
+        "include_separation_lines":
+        True,
+        "changing_row_color":
+        YELLOW,
+        "reference_row_color":
+        BLUE,
     }
 
     def construct(self):
@@ -67,26 +73,21 @@ class ShowRowReduction(Scene):
         self.wait()
 
     def initialize_terms(self):
-        full_matrix = reduce(
-            lambda m, v: np.append(m, v, axis=1),
-            self.matrices
-        )
+        full_matrix = reduce(lambda m, v: np.append(m, v, axis=1),
+                             self.matrices)
         mobject_matrix = np.vectorize(FractionMobject)(full_matrix)
         rows = self.rows = VGroup(*it.starmap(VGroup, mobject_matrix))
         for i, row in enumerate(rows):
             for j, term in enumerate(row):
-                term.move_to(
-                    i * self.v_spacing * DOWN +
-                    j * self.h_spacing * RIGHT
-                )
+                term.move_to(i * self.v_spacing * DOWN +
+                             j * self.h_spacing * RIGHT)
 
         # Visually seaprate distinct parts
         separation_lines = self.separation_lines = VGroup()
         lengths = [len(m[0]) for m in self.matrices]
         for partial_sum in np.cumsum(lengths)[:-1]:
             VGroup(*mobject_matrix[:, partial_sum:].flatten()).shift(
-                self.extra_h_spacing * RIGHT
-            )
+                self.extra_h_spacing * RIGHT)
             c1 = VGroup(*mobject_matrix[:, partial_sum - 1])
             c2 = VGroup(*mobject_matrix[:, partial_sum])
             line = DashedLine(c1.get_top(), c1.get_bottom())
@@ -127,20 +128,21 @@ class ShowRowReduction(Scene):
 
         scalar_mob = FractionMobject(scale_factor)
         scalar_mob.add_to_back(
-            TexMobject("\\times").next_to(scalar_mob, LEFT, SMALL_BUFF)
-        )
+            TexMobject("\\times").next_to(scalar_mob, LEFT, SMALL_BUFF))
         scalar_mob.scale(0.5)
         scalar_mob.next_to(row[0], DR, SMALL_BUFF)
 
         # Do do, fancier illustrations here
         self.play(
             FadeIn(label),
-            row.set_color, self.changing_row_color,
+            row.set_color,
+            self.changing_row_color,
         )
         self.play(FadeIn(scalar_mob))
         for elem, new_elem in zip(row, new_row):
             self.play(scalar_mob.next_to, elem, DR, SMALL_BUFF)
-            self.play(ReplacementTransform(elem, new_elem, path_arc=30 * DEGREES))
+            self.play(
+                ReplacementTransform(elem, new_elem, path_arc=30 * DEGREES))
         self.play(FadeOut(scalar_mob))
         self.play(new_row.set_color, WHITE)
         self.play(FadeOut(label))
@@ -184,8 +186,10 @@ class ShowRowReduction(Scene):
 
         self.play(
             FadeIn(label),
-            row1.set_color, self.changing_row_color,
-            row2.set_color, self.reference_row_color,
+            row1.set_color,
+            self.changing_row_color,
+            row2.set_color,
+            self.reference_row_color,
         )
         row1.target.next_to(self.rows, UP, buff=2)
         row1.target.align_to(row1, LEFT)
@@ -206,17 +210,16 @@ class ShowRowReduction(Scene):
         self.play(ReplacementTransform(row2.copy(), scaled_row2))
         self.wait()
         for elem, new_elem, s_elem in zip(row1, new_row1, scaled_row2):
-            self.play(
-                FadeOut(elem),
-                FadeIn(new_elem),
-                Transform(s_elem, new_elem.copy().fade(1), remover=True)
-            )
+            self.play(FadeOut(elem), FadeIn(new_elem),
+                      Transform(s_elem, new_elem.copy().fade(1), remover=True))
         self.wait()
         self.play(
             FadeOut(label),
             FadeOut(row2_parens),
             FadeOut(scalar),
-            new_row1.set_color, WHITE,
-            row2.set_color, WHITE,
+            new_row1.set_color,
+            WHITE,
+            row2.set_color,
+            WHITE,
         )
         self.rows.submobjects[row1_index] = new_row1

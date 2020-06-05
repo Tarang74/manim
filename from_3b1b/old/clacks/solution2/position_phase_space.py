@@ -123,7 +123,8 @@ class PositionPhaseSpaceScene(Scene):
 
     def ds_to_point(self, d1, d2):
         return self.axes.coords_to_point(
-            self.d1_to_x(d1), self.d2_to_y(d2),
+            self.d1_to_x(d1),
+            self.d2_to_y(d2),
         )
 
     def point_to_ds(self, point):
@@ -150,6 +151,7 @@ class PositionPhaseSpaceScene(Scene):
             corner = self.get_floor_wall_corner()
             b1.move_to(corner + d1 * RIGHT, DL)
             b2.move_to(corner + d2 * RIGHT, DR)
+
         self.blocks.add_updater(update_blocks)
 
     def time_to_ds(self, time):
@@ -166,11 +168,7 @@ class PositionPhaseSpaceScene(Scene):
         theta = np.arctan(np.sqrt(m2 / m1))
 
         def ds_to_ps_point(d1, d2):
-            return np.array([
-                d1 * np.sqrt(m1),
-                d2 * np.sqrt(m2),
-                0
-            ])
+            return np.array([d1 * np.sqrt(m1), d2 * np.sqrt(m2), 0])
 
         def ps_point_to_ds(point):
             return (
@@ -210,11 +208,7 @@ class PositionPhaseSpaceScene(Scene):
         theta = np.arctan(np.sqrt(m2 / m1))
 
         def ds_to_ps_point(d1, d2):
-            return np.array([
-                d1 * np.sqrt(m1),
-                d2 * np.sqrt(m2),
-                0
-            ])
+            return np.array([d1 * np.sqrt(m1), d2 * np.sqrt(m2), 0])
 
         def ps_point_to_ds(point):
             return (
@@ -229,14 +223,10 @@ class PositionPhaseSpaceScene(Scene):
 
         clack_data = []
         for k in range(1, int(PI / theta) + 1):
-            clack_ps_point = np.array([
-                y / np.tan(k * theta), y, 0
-            ])
+            clack_ps_point = np.array([y / np.tan(k * theta), y, 0])
             time = get_norm(ps_point - clack_ps_point) / ps_speed
-            reflected_point = rotate_vector(
-                clack_ps_point,
-                -2 * np.ceil((k - 1) / 2) * theta
-            )
+            reflected_point = rotate_vector(clack_ps_point, -2 * np.ceil(
+                (k - 1) / 2) * theta)
             d1, d2 = ps_point_to_ds(reflected_point + wedge_corner)
             loc1 = self.get_floor_wall_corner() + h2 * UP / 2 + d2 * RIGHT
             if k % 2 == 0:
@@ -262,16 +252,12 @@ class PositionPhaseSpaceScene(Scene):
             self.add(*self.flash_anims)
         else:
             clack_data = self.get_clack_data()
-            self.clack_times = [
-                time for (time, loc1, loc2) in clack_data
-            ]
+            self.clack_times = [time for (time, loc1, loc2) in clack_data]
             self.block_flashes = ClackFlashes([
-                (loc1, time)
-                for (time, loc1, loc2) in clack_data
+                (loc1, time) for (time, loc1, loc2) in clack_data
             ])
             self.ps_flashes = ClackFlashes([
-                (loc2, time)
-                for (time, loc1, loc2) in clack_data
+                (loc2, time) for (time, loc1, loc2) in clack_data
             ])
             self.flash_anims = [self.block_flashes, self.ps_flashes]
             for anim in self.flash_anims:
@@ -355,11 +341,8 @@ class PositionPhaseSpaceScene(Scene):
             "rate_func": linear,
         }
         kwargs.update(added_kwargs)
-        return ApplyMethod(
-            self.ps_point.move_to,
-            self.ds_to_point(d1, d2),
-            **kwargs
-        )
+        return ApplyMethod(self.ps_point.move_to, self.ds_to_point(d1, d2),
+                           **kwargs)
 
     # Mobject getters
     def get_floor(self):
@@ -394,9 +377,7 @@ class PositionPhaseSpaceScene(Scene):
     def get_axes(self):
         axes = self.axes = Axes(**self.axes_config)
         axes.set_stroke(LIGHT_GREY, 2)
-        axes.shift(
-            self.axes_center - axes.coords_to_point(0, 0)
-        )
+        axes.shift(self.axes_center - axes.coords_to_point(0, 0))
         axes.labels = self.get_axes_labels(axes)
         axes.add(axes.labels)
         axes.added_lines = self.get_added_axes_lines(axes)
@@ -411,13 +392,15 @@ class PositionPhaseSpaceScene(Scene):
             y_mult = np.sqrt(self.block2.mass)
         y_lines = VGroup(*[
             Line(
-                c2p(0, 0), c2p(0, axes.y_max * y_mult + 1),
+                c2p(0, 0),
+                c2p(0, axes.y_max * y_mult + 1),
             ).move_to(c2p(x, 0), DOWN)
             for x in np.arange(0, axes.x_max) * x_mult
         ])
         x_lines = VGroup(*[
             Line(
-                c2p(0, 0), c2p(axes.x_max * x_mult, 0),
+                c2p(0, 0),
+                c2p(axes.x_max * x_mult, 0),
             ).move_to(c2p(0, y), LEFT)
             for y in np.arange(0, axes.y_max) * y_mult
         ])
@@ -434,15 +417,13 @@ class PositionPhaseSpaceScene(Scene):
         y_label = TexMobject("y", "=", "d_2")
         labels = VGroup(x_label, y_label)
         if with_sqrts:
-            additions = map(TexMobject, [
-                "\\sqrt{m_1}", "\\sqrt{m_2}"
-            ])
+            additions = map(TexMobject, ["\\sqrt{m_1}", "\\sqrt{m_2}"])
             for label, addition in zip(labels, additions):
                 addition.move_to(label[2], DL)
-                label[2].next_to(
-                    addition, RIGHT, SMALL_BUFF,
-                    aligned_edge=DOWN
-                )
+                label[2].next_to(addition,
+                                 RIGHT,
+                                 SMALL_BUFF,
+                                 aligned_edge=DOWN)
                 addition[2:].set_color(BLUE)
                 label.submobjects.insert(2, addition)
         x_label.next_to(axes.x_axis.get_right(), DL, MED_SMALL_BUFF)
@@ -453,10 +434,9 @@ class PositionPhaseSpaceScene(Scene):
 
     def get_phase_space_point(self):
         ps_point = self.ps_point = VectorizedPoint()
-        ps_point.move_to(self.ds_to_point(
-            self.block1.distance,
-            self.block2.distance + self.block2.width
-        ))
+        ps_point.move_to(
+            self.ds_to_point(self.block1.distance,
+                             self.block2.distance + self.block2.width))
         self.tie_blocks_to_ps_point()
         return ps_point
 
@@ -467,9 +447,11 @@ class PositionPhaseSpaceScene(Scene):
             y_axis_point = np.array(origin)
             y_axis_point[1] = point[1]
             return DashedLine(
-                y_axis_point, point,
+                y_axis_point,
+                point,
                 **self.ps_x_line_config,
             )
+
         self.x_line = always_redraw(get_x_line)
         return self.x_line
 
@@ -480,9 +462,11 @@ class PositionPhaseSpaceScene(Scene):
             x_axis_point = np.array(origin)
             x_axis_point[0] = point[0]
             return DashedLine(
-                x_axis_point, point,
+                x_axis_point,
+                point,
                 **self.ps_y_line_config,
             )
+
         self.y_line = always_redraw(get_y_line)
         return self.y_line
 
@@ -505,28 +489,34 @@ class PositionPhaseSpaceScene(Scene):
             lhs, rhs = label
             rhs.set_value(get_d())
             rhs.next_to(
-                lhs, RIGHT, SMALL_BUFF,
+                lhs,
+                RIGHT,
+                SMALL_BUFF,
                 aligned_edge=DOWN,
             )
+
         label.add_updater(update_value)
         return label
 
     def get_phase_space_d_label(self, n, get_d, line, vect):
         label = self.get_d_label(n, get_d)
-        label.add_updater(
-            lambda m: m.next_to(line, vect, SMALL_BUFF)
-        )
+        label.add_updater(lambda m: m.next_to(line, vect, SMALL_BUFF))
         return label
 
     def get_phase_space_d1_label(self):
         self.ps_d1_label = self.get_phase_space_d_label(
-            1, self.get_d1, self.x_line, UP,
+            1,
+            self.get_d1,
+            self.x_line,
+            UP,
         )
         return self.ps_d1_label
 
     def get_phase_space_d2_label(self):
         self.ps_d2_label = self.get_phase_space_d_label(
-            2, self.get_d2, self.y_line,
+            2,
+            self.get_d2,
+            self.y_line,
             self.ps_d2_label_vect,
         )
         return self.ps_d2_label
@@ -545,15 +535,11 @@ class PositionPhaseSpaceScene(Scene):
         return brace
 
     def get_d1_brace(self):
-        self.d1_brace = self.get_d_brace(
-            lambda: self.block1.get_corner(UL)
-        )
+        self.d1_brace = self.get_d_brace(lambda: self.block1.get_corner(UL))
         return self.d1_brace
 
     def get_d2_brace(self):
-        self.d2_brace = self.get_d_brace(
-            lambda: self.block2.get_corner(UR)
-        )
+        self.d2_brace = self.get_d_brace(lambda: self.block2.get_corner(UR))
         # self.flip_brace_nip()
         return self.d2_brace
 
@@ -567,21 +553,22 @@ class PositionPhaseSpaceScene(Scene):
 
     def get_brace_d_label(self, n, get_d, brace, vect, buff):
         label = self.get_d_label(n, get_d)
-        label.add_updater(
-            lambda m: m.next_to(brace, vect, buff)
-        )
+        label.add_updater(lambda m: m.next_to(brace, vect, buff))
         return label
 
     def get_d1_label(self):
         self.d1_label = self.get_brace_d_label(
-            1, self.get_d1, self.d1_brace, UP, SMALL_BUFF,
+            1,
+            self.get_d1,
+            self.d1_brace,
+            UP,
+            SMALL_BUFF,
         )
         return self.d1_label
 
     def get_d2_label(self):
-        self.d2_label = self.get_brace_d_label(
-            2, self.get_d2, self.d2_brace, UP, 0
-        )
+        self.d2_label = self.get_brace_d_label(2, self.get_d2, self.d2_brace,
+                                               UP, 0)
         return self.d2_label
 
     def get_d1_eq_d2_line(self):
@@ -597,7 +584,8 @@ class PositionPhaseSpaceScene(Scene):
         label.scale(0.75)
         line = self.d1_eq_d2_line
         point = interpolate(
-            line.get_start(), line.get_end(),
+            line.get_start(),
+            line.get_end(),
             0.7,
         )
         label.next_to(point, DR, SMALL_BUFF)
@@ -625,9 +613,7 @@ class PositionPhaseSpaceScene(Scene):
 
     def get_time_tracker(self, time=0):
         time_tracker = self.time_tracker = ValueTracker(time)
-        time_tracker.add_updater(
-            lambda m, dt: m.increment_value(dt)
-        )
+        time_tracker.add_updater(lambda m, dt: m.increment_value(dt))
         return time_tracker
 
     # Things associated with velocity
@@ -649,6 +635,7 @@ class PositionPhaseSpaceScene(Scene):
             point = self.ps_point.get_location()
             v.set_angle(angle)
             v.shift(point - v.get_start())
+
         vector.add_updater(update_vector)
         self.ps_velocity_vector = vector
         return vector
@@ -656,8 +643,7 @@ class PositionPhaseSpaceScene(Scene):
     def get_block_velocity_vectors(self, ps_vect):
         blocks = self.blocks
         vectors = VGroup(*[
-            Vector(LEFT, **self.block_velocity_vector_config)
-            for x in range(2)
+            Vector(LEFT, **self.block_velocity_vector_config) for x in range(2)
         ])
         # TODO: Put in config
         vectors[0].set_color(GREEN)
@@ -670,6 +656,7 @@ class PositionPhaseSpaceScene(Scene):
                 v.put_start_and_end_on(ORIGIN, coord * RIGHT)
                 start = block.get_edge_center(v.get_vector())
                 v.shift(start)
+
         vectors.add_updater(update_vectors)
 
         self.block_velocity_vectors = vectors
@@ -737,12 +724,13 @@ class IntroducePositionPhaseSpace(PositionPhaseSpaceScene):
         self.play(ps_point.shift, 0.5 * UP)
         self.play(ps_point.shift, 0.5 * DOWN)
         self.wait()
-        self.play(Rotating(
-            ps_point,
-            about_point=ps_point.get_location() + 0.5 * RIGHT,
-            run_time=3,
-            rate_func=smooth,
-        ))
+        self.play(
+            Rotating(
+                ps_point,
+                about_point=ps_point.get_location() + 0.5 * RIGHT,
+                run_time=3,
+                rate_func=smooth,
+            ))
         self.wait()
 
     def show_xy_line(self):
@@ -757,16 +745,10 @@ class IntroducePositionPhaseSpace(PositionPhaseSpaceScene):
             ShowCreation(xy_line),
             Write(xy_label),
         )
-        self.play(
-            ps_point.move_to, self.ds_to_point(d2, d2),
-            run_time=3
-        )
+        self.play(ps_point.move_to, self.ds_to_point(d2, d2), run_time=3)
         self.wait()
         for d in [3, 7]:
-            self.play(
-                ps_point.move_to, self.ds_to_point(d, d),
-                run_time=2
-            )
+            self.play(ps_point.move_to, self.ds_to_point(d, d), run_time=2)
             self.wait()
         self.play(ps_point.restore)
         self.wait()
@@ -845,7 +827,8 @@ class EqualMassCase(PositionPhaseSpaceScene):
     def show_same_mass(self):
         blocks = self.blocks
         self.play(LaggedStartMap(
-            Indicate, blocks,
+            Indicate,
+            blocks,
             lag_ratio=0.8,
             run_time=1,
         ))
@@ -856,13 +839,13 @@ class EqualMassCase(PositionPhaseSpaceScene):
         d1, d2 = self.get_ds()
 
         self.play(FocusOn(ps_dot))
-        self.play(ShowCreationThenFadeOut(
-            Circle(color=RED).replace(ps_dot).scale(2),
-            run_time=1
-        ))
+        self.play(
+            ShowCreationThenFadeOut(Circle(color=RED).replace(ps_dot).scale(2),
+                                    run_time=1))
         self.wait()
         self.play(
-            ps_point.move_to, self.ds_to_point(d1 - 1, d2),
+            ps_point.move_to,
+            self.ds_to_point(d1 - 1, d2),
             rate_func=wiggle,
             run_time=3,
         )
@@ -880,10 +863,7 @@ class EqualMassCase(PositionPhaseSpaceScene):
         block_arrow = Vector(LEFT, color=RED)
         block_arrow.block = block1
         block_arrow.add_updater(
-            lambda m: m.shift(
-                m.block.get_center() - m.get_start()
-            )
-        )
+            lambda m: m.shift(m.block.get_center() - m.get_start()))
         ps_arrow = Vector(LEFT, color=RED)
         ps_arrow.next_to(ps_point, DL, buff=SMALL_BUFF)
 
@@ -893,6 +873,7 @@ class EqualMassCase(PositionPhaseSpaceScene):
         def update_bl_copies(bl_copies):
             for bc, b in zip(bl_copies, block_labels):
                 bc.move_to(b)
+
         block_label_copies.add_updater(update_bl_copies)
 
         trajectory = self.get_continually_building_trajectory()
@@ -908,15 +889,10 @@ class EqualMassCase(PositionPhaseSpaceScene):
         ps_arrow.rotate(90 * DEGREES)
         ps_arrow.next_to(ps_point, DR, SMALL_BUFF)
         self.add_sound(self.clack_sound)
+        self.play(Flash(ps_point), Flash(block1.get_left()),
+                  self.get_ps_point_change_anim(d2, d2 - 1))
         self.play(
-            Flash(ps_point),
-            Flash(block1.get_left()),
-            self.get_ps_point_change_anim(d2, d2 - 1)
-        )
-        self.play(
-            ShowPassingFlash(
-                xy_line.copy().set_stroke(YELLOW, 3)
-            ),
+            ShowPassingFlash(xy_line.copy().set_stroke(YELLOW, 3)),
             Indicate(xy_line_label),
         )
 
@@ -941,11 +917,8 @@ class EqualMassCase(PositionPhaseSpaceScene):
         ps_arrow.rotate(PI)
         ps_arrow.next_to(ps_point, UR, SMALL_BUFF)
         self.add_sound(self.clack_sound)
-        self.play(
-            Flash(self.block2.get_left()),
-            Flash(ps_point),
-            self.get_ps_point_change_anim(d1, w2 + 1)
-        )
+        self.play(Flash(self.block2.get_left()), Flash(ps_point),
+                  self.get_ps_point_change_anim(d1, w2 + 1))
 
         trajectory.suspend_updating()
         self.wait()
@@ -963,11 +936,9 @@ class EqualMassCase(PositionPhaseSpaceScene):
         ps_arrow.rotate(-90 * DEGREES)
         ps_arrow.next_to(ps_point, DR, SMALL_BUFF)
         self.add_sound(self.clack_sound)
-        self.play(
-            Flash(self.block2.get_left()),
-            Flash(ps_point.get_location()),
-            self.get_ps_point_change_anim(d1 + 10, d1)
-        )
+        self.play(Flash(self.block2.get_left()),
+                  Flash(ps_point.get_location()),
+                  self.get_ps_point_change_anim(d1 + 10, d1))
         trajectory.suspend_updating()
 
     def fade_distance_indicators(self):
@@ -981,8 +952,7 @@ class EqualMassCase(PositionPhaseSpaceScene):
                 self.y_line,
                 self.ps_d1_label,
                 self.ps_d2_label,
-            ])
-        )
+            ]))
         trajectory.clear_updaters()
 
     def show_beam_bouncing(self):
@@ -1003,12 +973,11 @@ class EqualMassCase(PositionPhaseSpaceScene):
         trajectory = VMobject()
         trajectory.set_points_as_corners(points)
         flashes = [
-            SpecialShowPassingFlash(
-                trajectory.copy().set_stroke(YELLOW, width=6 - n),
-                time_width=(0.01 * n),
-                max_time_width=0.05,
-                remover=True
-            )
+            SpecialShowPassingFlash(trajectory.copy().set_stroke(YELLOW,
+                                                                 width=6 - n),
+                                    time_width=(0.01 * n),
+                                    max_time_width=0.05,
+                                    remover=True)
             for n in np.arange(0, 6, 0.25)
         ]
         flash_mob = flashes[0].mobject  # Lol
@@ -1035,8 +1004,11 @@ class EqualMassCase(PositionPhaseSpaceScene):
             line.set_sheen(1, LEFT)
             self.play(
                 Write(line.word),
-                line.set_sheen, 1, RIGHT,
-                line.set_stroke, {"width": 2},
+                line.set_sheen,
+                1,
+                RIGHT,
+                line.set_stroke,
+                {"width": 2},
                 run_time=1,
             )
 
@@ -1097,7 +1069,9 @@ class FailedAngleRelation(PositionPhaseSpaceScene):
         arcs = self.get_arcs(trajectory)
         equation = self.get_word_equation()
         equation.next_to(
-            trajectory.points[0], UR, MED_SMALL_BUFF,
+            trajectory.points[0],
+            UR,
+            MED_SMALL_BUFF,
             index_of_submobject_to_align=0,
         )
 
@@ -1110,7 +1084,8 @@ class FailedAngleRelation(PositionPhaseSpaceScene):
 
         arc1, arc2 = arcs
         arc1.arrow = Arrow(
-            equation[0].get_left(), arc1.get_right(),
+            equation[0].get_left(),
+            arc1.get_right(),
             buff=SMALL_BUFF,
             color=WHITE,
             path_arc=0,
@@ -1133,14 +1108,12 @@ class FailedAngleRelation(PositionPhaseSpaceScene):
             )
             self.play(
                 ShowCreation(arc),
-                arc.line.rotate, arc.angle,
+                arc.line.rotate,
+                arc.angle,
                 {"about_point": arc.line.get_start()},
                 UpdateFromAlphaFunc(
-                    arc.line,
-                    lambda m, a: m.set_stroke(
-                        opacity=(there_and_back(a)**0.5)
-                    )
-                ),
+                    arc.line, lambda m, a: m.set_stroke(opacity=(
+                        there_and_back(a)**0.5))),
             )
 
     #
@@ -1152,26 +1125,16 @@ class FailedAngleRelation(PositionPhaseSpaceScene):
             "radius": 0.5,
             "arc_center": p1,
         }
-        arc1 = Arc(
-            start_angle=0,
-            angle=45 * DEGREES,
-            **arc_config
-        )
+        arc1 = Arc(start_angle=0, angle=45 * DEGREES, **arc_config)
         a2_start = angle_of_vector(DL)
         a2_angle = angle_between_vectors((p2 - p1), DL)
-        arc2 = Arc(
-            start_angle=a2_start,
-            angle=a2_angle,
-            **arc_config
-        )
+        arc2 = Arc(start_angle=a2_start, angle=a2_angle, **arc_config)
         return VGroup(arc1, arc2)
 
     def get_word_equation(self):
-        result = VGroup(
-            TextMobject("Angle of incidence"),
-            TexMobject("\\ne").rotate(90 * DEGREES),
-            TextMobject("Angle of reflection")
-        )
+        result = VGroup(TextMobject("Angle of incidence"),
+                        TexMobject("\\ne").rotate(90 * DEGREES),
+                        TextMobject("Angle of reflection"))
         result.arrange(DOWN)
         result.set_stroke(BLACK, 5, background=True)
         return result
@@ -1190,11 +1153,7 @@ class UnscaledPositionPhaseSpaceMass10(FailedAngleRelation):
 
 
 class UnscaledPositionPhaseSpaceMass100(UnscaledPositionPhaseSpaceMass10):
-    CONFIG = {
-        "block1_config": {
-            "mass": 100
-        }
-    }
+    CONFIG = {"block1_config": {"mass": 100}}
 
 
 class RescaleCoordinates(PositionPhaseSpaceScene, MovingCameraScene):
@@ -1202,7 +1161,9 @@ class RescaleCoordinates(PositionPhaseSpaceScene, MovingCameraScene):
         "rescale_coordinates": False,
         "ps_d2_label_vect": LEFT,
         "axes_center": 6 * LEFT + 0.65 * DOWN,
-        "block1_config": {"distance": 7},
+        "block1_config": {
+            "distance": 7
+        },
         "wait_time": 30,
     }
 
@@ -1246,19 +1207,13 @@ class RescaleCoordinates(PositionPhaseSpaceScene, MovingCameraScene):
 
         # Show label
         def show_label(index, block, vect):
-            self.play(
-                ShowCreationThenFadeAround(axes.labels[index])
-            )
+            self.play(ShowCreationThenFadeAround(axes.labels[index]))
             self.play(
                 Transform(
                     axes.labels[index],
-                    VGroup(
-                        *new_axes_labels[index][:2],
-                        new_axes_labels[index][3]
-                    ),
-                ),
-                GrowFromCenter(new_axes_labels[index][2])
-            )
+                    VGroup(*new_axes_labels[index][:2],
+                           new_axes_labels[index][3]),
+                ), GrowFromCenter(new_axes_labels[index][2]))
             group = VGroup(
                 new_axes_labels[index][2][-2:].copy(),
                 TexMobject("="),
@@ -1271,11 +1226,10 @@ class RescaleCoordinates(PositionPhaseSpaceScene, MovingCameraScene):
             group[1].move_to(group.target[1])
             group.target[2].set_fill(WHITE)
             group.target[2].set_stroke(width=0, background=True)
-            self.play(MoveToTarget(
-                group,
-                rate_func=there_and_back_with_pause,
-                run_time=3
-            ))
+            self.play(
+                MoveToTarget(group,
+                             rate_func=there_and_back_with_pause,
+                             run_time=3))
             self.remove(group)
             self.wait()
 
@@ -1285,10 +1239,13 @@ class RescaleCoordinates(PositionPhaseSpaceScene, MovingCameraScene):
         blocks.suspend_updating()
         self.play(
             ApplyMethod(
-                to_stretch.stretch, np.sqrt(m1), 0,
+                to_stretch.stretch,
+                np.sqrt(m1),
+                0,
                 {"about_point": axes.coords_to_point(0, 0)},
             ),
-            self.d1_eq_d2_label.shift, 6 * RIGHT,
+            self.d1_eq_d2_label.shift,
+            6 * RIGHT,
             run_time=2,
         )
         self.rescale_coordinates = True
@@ -1298,11 +1255,13 @@ class RescaleCoordinates(PositionPhaseSpaceScene, MovingCameraScene):
         # Show wiggle
         d1, d2 = self.get_ds()
         for new_d1 in [d1 - 2, d1]:
-            self.play(self.get_ps_point_change_anim(
-                new_d1, d2,
-                rate_func=smooth,
-                run_time=2,
-            ))
+            self.play(
+                self.get_ps_point_change_anim(
+                    new_d1,
+                    d2,
+                    rate_func=smooth,
+                    run_time=2,
+                ))
         self.wait()
 
         # Change y-coord
@@ -1328,20 +1287,17 @@ class RescaleCoordinates(PositionPhaseSpaceScene, MovingCameraScene):
 
         self.play(Restore(randy))
         self.play(
-            PiCreatureSays(
-                randy, "Hideous!",
-                bubble_kwargs={"height": 1.5, "width": 2},
-                target_mode="angry",
-                look_at_arg=axes.labels[0]
-            )
-        )
+            PiCreatureSays(randy,
+                           "Hideous!",
+                           bubble_kwargs={
+                               "height": 1.5,
+                               "width": 2
+                           },
+                           target_mode="angry",
+                           look_at_arg=axes.labels[0]))
         self.play(randy.look_at, axes.labels[1])
         self.play(Blink(randy))
-        self.play(
-            RemovePiCreatureBubble(
-                randy, target_mode="confused"
-            )
-        )
+        self.play(RemovePiCreatureBubble(randy, target_mode="confused"))
         self.play(Blink(randy))
         self.play(randy.look_at, axes.labels[0])
         self.wait()
@@ -1357,7 +1313,8 @@ class RescaleCoordinates(PositionPhaseSpaceScene, MovingCameraScene):
         self.begin_sliding()
         self.add(rect)
         self.play(
-            frame.scale, 1.5,
+            frame.scale,
+            1.5,
             {"about_point": frame.get_bottom() + UP},
             run_time=2,
         )
@@ -1394,7 +1351,9 @@ class RescaleCoordinatesMass64(RescaleCoordinatesMass16):
             "mass": 64,
             "distance": 6,
         },
-        "block2_config": {"distance": 3},
+        "block2_config": {
+            "distance": 3
+        },
     }
 
 
@@ -1405,7 +1364,9 @@ class RescaleCoordinatesMass100(RescaleCoordinatesMass16):
             "distance": 6,
             "velocity": 0.5,
         },
-        "block2_config": {"distance": 2},
+        "block2_config": {
+            "distance": 2
+        },
         "wait_time": 25,
     }
 
@@ -1469,13 +1430,14 @@ class IntroduceVelocityVector(PositionPhaseSpaceScene, MovingCameraScene):
         block_vectors = self.get_block_velocity_vectors(ps_vect)
 
         self.play(LaggedStartMap(GrowArrow, block_vectors))
-        self.play(Rotating(
-            ps_vect,
-            angle=TAU,
-            about_point=ps_vect.get_start(),
-            run_time=5,
-            rate_func=smooth,
-        ))
+        self.play(
+            Rotating(
+                ps_vect,
+                angle=TAU,
+                about_point=ps_vect.get_start(),
+                run_time=5,
+                rate_func=smooth,
+            ))
         self.wait()
         self.slide_until(lambda: self.get_d2() < 2.5)
 
@@ -1484,12 +1446,10 @@ class IntroduceVelocityVector(PositionPhaseSpaceScene, MovingCameraScene):
             self.wait(3)
             return
         ps_vect = self.ps_velocity_vector
-        new_vect = Arrow(
-            ps_vect.get_start(),
-            ps_vect.get_end(),
-            buff=0,
-            **self.new_vect_config
-        )
+        new_vect = Arrow(ps_vect.get_start(),
+                         ps_vect.get_end(),
+                         buff=0,
+                         **self.new_vect_config)
         new_vect.match_style(ps_vect)
 
         camera_frame = self.camera_frame
@@ -1497,7 +1457,9 @@ class IntroduceVelocityVector(PositionPhaseSpaceScene, MovingCameraScene):
         point = self.ps_point.get_location()
         point += MED_SMALL_BUFF * DOWN
         self.play(
-            camera_frame.scale, 0.25, {"about_point": point},
+            camera_frame.scale,
+            0.25,
+            {"about_point": point},
             Transform(ps_vect, new_vect),
             run_time=2,
         )
@@ -1513,16 +1475,8 @@ class IntroduceVelocityVector(PositionPhaseSpaceScene, MovingCameraScene):
         ul_corner[0] = end[0]
         dr_corner[1] = end[1]
 
-        x_vect = Arrow(
-            start, ul_corner,
-            buff=0,
-            **self.new_vect_config
-        )
-        y_vect = Arrow(
-            start, dr_corner,
-            buff=0,
-            **self.new_vect_config
-        )
+        x_vect = Arrow(start, ul_corner, buff=0, **self.new_vect_config)
+        y_vect = Arrow(start, dr_corner, buff=0, **self.new_vect_config)
         x_vect.set_fill(GREEN, opacity=0.75)
         y_vect.set_fill(RED, opacity=0.75)
         vects = VGroup(x_vect, y_vect)
@@ -1534,8 +1488,7 @@ class IntroduceVelocityVector(PositionPhaseSpaceScene, MovingCameraScene):
                 vect.get_end(),
                 dash_length=0.01,
                 color=vect.get_color(),
-            )
-            for vect in (x_vect, y_vect)
+            ) for vect in (x_vect, y_vect)
         ]
         self.projection_lines = VGroup(x_line, y_line)
 
@@ -1587,11 +1540,9 @@ class IntroduceVelocityVector(PositionPhaseSpaceScene, MovingCameraScene):
             self.wait(2)
             return
         labels = self.derivative_labels
-        self.play(
-            Restore(self.camera_frame),
-            ApplyFunction(self.grow_labels, labels),
-            run_time=2
-        )
+        self.play(Restore(self.camera_frame),
+                  ApplyFunction(self.grow_labels, labels),
+                  run_time=2)
 
     def relate_x_dot_y_dot_to_v1_v2(self):
         derivative_labels = self.derivative_labels.copy()
@@ -1604,7 +1555,8 @@ class IntroduceVelocityVector(PositionPhaseSpaceScene, MovingCameraScene):
         x_eq = x_label[1]
         dx_eq = TexMobject("=")
         dx_eq.next_to(
-            x_eq, DOWN,
+            x_eq,
+            DOWN,
             buff=LARGE_BUFF,
             aligned_edge=RIGHT,
         )
@@ -1623,7 +1575,8 @@ class IntroduceVelocityVector(PositionPhaseSpaceScene, MovingCameraScene):
         self.play(TransformFromCopy(x_eq, dx_eq))
         self.wait()
         self.play(
-            VGroup(block1, m_part).shift, SMALL_BUFF * UP,
+            VGroup(block1, m_part).shift,
+            SMALL_BUFF * UP,
             rate_func=wiggle,
         )
         self.wait()
@@ -1643,12 +1596,12 @@ class IntroduceVelocityVector(PositionPhaseSpaceScene, MovingCameraScene):
         self.play(alt_v1.next_to, block_vectors[0], UP, SMALL_BUFF)
         self.play(
             Rotate(
-                block_vectors[0], 10 * DEGREES,
+                block_vectors[0],
+                10 * DEGREES,
                 about_point=block_vectors[0].get_start(),
                 rate_func=wiggle,
                 run_time=1,
-            )
-        )
+            ))
         self.play(FadeOut(alt_v1))
         block_vectors.resume_updating()
         self.wait()
@@ -1692,52 +1645,41 @@ class IntroduceVelocityVector(PositionPhaseSpaceScene, MovingCameraScene):
 
         ps_vect = self.ps_velocity_vector
         big_ps_vect = Arrow(
-            ps_vect.get_start(), ps_vect.get_end(),
+            ps_vect.get_start(),
+            ps_vect.get_end(),
             buff=0,
         )
         big_ps_vect.match_style(ps_vect)
         big_ps_vect.scale(1.5)
         magnitude_bars = TexMobject("||", "||")
-        magnitude_bars.match_height(
-            big_ps_vect, stretch=True
-        )
+        magnitude_bars.match_height(big_ps_vect, stretch=True)
         rhs_scale_val = 0.8
-        rhs = TexMobject(
-            "=\\sqrt{"
-            "\\left( dx/dt \\right)^2 + "
-            "\\left( dy/dt \\right)^2"
-            "}"
-        )
+        rhs = TexMobject("=\\sqrt{"
+                         "\\left( dx/dt \\right)^2 + "
+                         "\\left( dy/dt \\right)^2"
+                         "}")
         rhs.scale(rhs_scale_val)
-        group = VGroup(
-            magnitude_bars[0], big_ps_vect,
-            magnitude_bars[1], rhs
-        )
+        group = VGroup(magnitude_bars[0], big_ps_vect, magnitude_bars[1], rhs)
         group.arrange(RIGHT)
         group.next_to(corner_rect.get_corner(UL), DR)
 
-        new_rhs = TexMobject(
-            "=", "\\sqrt", "{m_1(v_1)^2 + m_2(v_2)^2}",
-            tex_to_color_map={
-                "m_1": BLUE,
-                "m_2": BLUE,
-                "v_1": GREEN,
-                "v_2": RED,
-            }
-        )
+        new_rhs = TexMobject("=",
+                             "\\sqrt",
+                             "{m_1(v_1)^2 + m_2(v_2)^2}",
+                             tex_to_color_map={
+                                 "m_1": BLUE,
+                                 "m_2": BLUE,
+                                 "v_1": GREEN,
+                                 "v_2": RED,
+                             })
         new_rhs.scale(rhs_scale_val)
         new_rhs.next_to(rhs, DOWN, aligned_edge=LEFT)
 
-        final_rhs = TexMobject(
-            "=", "\\sqrt{2(\\text{Kinetic energy})}"
-        )
+        final_rhs = TexMobject("=", "\\sqrt{2(\\text{Kinetic energy})}")
         final_rhs.scale(rhs_scale_val)
         final_rhs.next_to(new_rhs, DOWN, aligned_edge=LEFT)
 
-        self.play(
-            FadeIn(corner_rect),
-            TransformFromCopy(ps_vect, big_ps_vect)
-        )
+        self.play(FadeIn(corner_rect), TransformFromCopy(ps_vect, big_ps_vect))
         self.play(Write(magnitude_bars), Write(rhs[0]))
         self.wait()
         self.play(Write(rhs[1:]))
@@ -1831,14 +1773,10 @@ class ShowMomentumConservation(IntroduceVelocityVector):
         self.xy_group = VGroup(xy_line, xy_label)
 
         self.play(
-            ShowPassingFlash(
-                line.copy().set_stroke(YELLOW, 4)
-            ),
+            ShowPassingFlash(line.copy().set_stroke(YELLOW, 4)),
             Write(label),
         )
-        self.play(
-            TransformFromCopy(line, xy_line, run_time=2)
-        )
+        self.play(TransformFromCopy(line, xy_line, run_time=2))
         self.play(Write(xy_label))
         self.wait()
 
@@ -1870,10 +1808,10 @@ class ShowMomentumConservation(IntroduceVelocityVector):
         self.play(LaggedStartMap(MoveToTarget, eqs, lag_ratio=0.7))
         self.play(*[
             Transform(
-                eq, new_eq,
+                eq,
+                new_eq,
                 path_arc=-90 * DEGREES,
-            )
-            for eq, new_eq in zip(eqs, new_eqs)
+            ) for eq, new_eq in zip(eqs, new_eqs)
         ])
         self.wait()
 
@@ -1900,17 +1838,18 @@ class ShowMomentumConservation(IntroduceVelocityVector):
         group.to_edge(UP, buff=MED_SMALL_BUFF)
         group.to_edge(RIGHT, buff=3)
 
-        self.play(
-            MoveToTarget(y_eq),
-            MoveToTarget(x_eq, path_arc=90 * DEGREES),
-            GrowFromCenter(equals)
-        )
+        self.play(MoveToTarget(y_eq), MoveToTarget(x_eq,
+                                                   path_arc=90 * DEGREES),
+                  GrowFromCenter(equals))
         self.wait()
 
         # Simplify
         final_eq = TexMobject(
-            "y", "=",
-            "{\\sqrt{m_2}", "\\over", "\\sqrt{m_1}}",
+            "y",
+            "=",
+            "{\\sqrt{m_2}",
+            "\\over",
+            "\\sqrt{m_1}}",
             "x",
         )
         for part in final_eq.get_parts_by_tex("sqrt"):
@@ -1919,21 +1858,18 @@ class ShowMomentumConservation(IntroduceVelocityVector):
 
         final_eq.next_to(group, DOWN)
         final_eq.shift(0.4 * UP)
-        movers = VGroup(
-            y_eq[0], equals.submobjects[0],
-            y_eq[2], y_eq[1], x_eq[2],
-            x_eq[0]
-        ).copy()
+        movers = VGroup(y_eq[0], equals.submobjects[0], y_eq[2], y_eq[1],
+                        x_eq[2], x_eq[0]).copy()
         for mover, part in zip(movers, final_eq):
             mover.target = part
         self.play(
-            LaggedStartMap(
-                MoveToTarget, movers,
-                path_arc=30 * DEGREES,
-                lag_ratio=0.9
-            ),
+            LaggedStartMap(MoveToTarget,
+                           movers,
+                           path_arc=30 * DEGREES,
+                           lag_ratio=0.9),
             VGroup(x_eq, equals, y_eq).scale,
-            0.7, {"about_edge": UP},
+            0.7,
+            {"about_edge": UP},
         )
         self.remove(movers)
         self.add(final_eq)
@@ -1953,7 +1889,9 @@ class ShowMomentumConservation(IntroduceVelocityVector):
         randy.next_to(final_eq, LEFT, MED_SMALL_BUFF)
         randy.align_to(self.d2_eq_w2_line, DOWN)
         bubble = ThoughtBubble(
-            height=1.3, width=1.3, direction=RIGHT,
+            height=1.3,
+            width=1.3,
+            direction=RIGHT,
         )
         bubble.pin_to(randy)
         slope.target.scale(0.5)
@@ -1963,19 +1901,19 @@ class ShowMomentumConservation(IntroduceVelocityVector):
         randy.change("plane")
         randy.fade(1)
 
-        self.play(
-            Restore(randy),
-            Write(bubble),
-            MoveToTarget(slope)
-        )
+        self.play(Restore(randy), Write(bubble), MoveToTarget(slope))
         self.play(Blink(randy))
 
         self.thinking_on_slope_group = VGroup(
-            randy, bubble, slope,
+            randy,
+            bubble,
+            slope,
         )
 
         self.to_fade = VGroup(
-            eqs, equals, final_eq,
+            eqs,
+            equals,
+            final_eq,
             self.thinking_on_slope_group,
             self.xy_group,
         )
@@ -1984,8 +1922,7 @@ class ShowMomentumConservation(IntroduceVelocityVector):
         self.begin_sliding()
         self.play(FadeOut(self.to_fade))
         self.wait_until(
-            lambda: abs(self.ps_velocity_vector.get_vector()[1]) > 0.01
-        )
+            lambda: abs(self.ps_velocity_vector.get_vector()[1]) > 0.01)
         self.end_sliding()
         self.wait(3 + 3 / 60)  # Final cut reasons
 
@@ -2002,16 +1939,8 @@ class ShowMomentumConservation(IntroduceVelocityVector):
             # This is dumb and shouldn't be needed
             ps_vect.rotate(last_angle, about_point=ps_vect.get_start())
             target = ps_vect.copy()
-            target.rotate(
-                angle,
-                about_point=ps_vect.get_start()
-            )
-            self.play(
-                Transform(
-                    ps_vect, target,
-                    path_arc=angle
-                ),
-            )
+            target.rotate(angle, about_point=ps_vect.get_start())
+            self.play(Transform(ps_vect, target, path_arc=angle), )
         ps_vect.resume_updating()
 
         self.whats_next_question = question
@@ -2025,10 +1954,7 @@ class ShowMomentumConservation(IntroduceVelocityVector):
             outline = part.copy()
             outline.set_fill(opacity=0)
             outline.set_stroke(YELLOW, 3)
-            self.play(ShowPassingFlash(
-                outline,
-                run_time=1.5
-            ))
+            self.play(ShowPassingFlash(outline, run_time=1.5))
             self.wait(0.5)
 
         # Dot product
@@ -2065,9 +1991,7 @@ class ShowMomentumConservation(IntroduceVelocityVector):
         d_array.scale(0.75)
         d_array.add_updater(lambda m: m.next_to(
             ps_vect.get_end(),
-            np.sign(ps_vect.get_vector()[0]) * RIGHT,
-            SMALL_BUFF
-        ))
+            np.sign(ps_vect.get_vector()[0]) * RIGHT, SMALL_BUFF))
 
         self.play(TransformFromCopy(original_d_array, d_array))
         self.wait()
@@ -2086,9 +2010,7 @@ class ShowMomentumConservation(IntroduceVelocityVector):
 
         sqrty_m_array = original_sqrty_m_array.deepcopy()
         sqrty_m_array.scale(0.75)
-        sqrty_m_array.next_to(
-            sqrty_m_vector.get_end(), UP, SMALL_BUFF
-        )
+        sqrty_m_array.next_to(sqrty_m_vector.get_end(), UP, SMALL_BUFF)
 
         rise = DashedLine(
             sqrty_m_vector.get_end(),
@@ -2112,7 +2034,8 @@ class ShowMomentumConservation(IntroduceVelocityVector):
 
         self.play(GrowArrow(sqrty_m_vector))
         self.play(TransformFromCopy(
-            original_sqrty_m_array, sqrty_m_array,
+            original_sqrty_m_array,
+            sqrty_m_array,
         ))
         self.play(FadeIn(randy_group))
         self.play(
@@ -2133,26 +2056,26 @@ class ShowMomentumConservation(IntroduceVelocityVector):
         self.wait()
         self.play(FadeOut(randy_group))
         self.play(FadeOut(VGroup(
-            rise, run, rise_label, run_label,
+            rise,
+            run,
+            rise_label,
+            run_label,
         )))
 
         # move to ps_point
         point = self.ps_point.get_location()
         sqrty_m_vector.generate_target()
-        sqrty_m_vector.target.shift(
-            point - sqrty_m_vector.get_start()
-        )
+        sqrty_m_vector.target.shift(point - sqrty_m_vector.get_start())
         sqrty_m_array.generate_target()
         sqrty_m_array.target.next_to(
             sqrty_m_vector.target.get_end(),
-            RIGHT, SMALL_BUFF,
+            RIGHT,
+            SMALL_BUFF,
         )
         sqrty_m_array.target.shift(SMALL_BUFF * UP)
-        self.play(
-            MoveToTarget(sqrty_m_vector),
-            MoveToTarget(sqrty_m_array),
-            run_time=2
-        )
+        self.play(MoveToTarget(sqrty_m_vector),
+                  MoveToTarget(sqrty_m_array),
+                  run_time=2)
 
         self.sqrty_m_vector = sqrty_m_vector
         self.sqrty_m_array = sqrty_m_array
@@ -2235,22 +2158,15 @@ class ShowMomentumConservation(IntroduceVelocityVector):
         arc1.set_color(BLUE)
 
         line_pair = VGroup(*[
-            Line(point, point + LEFT).rotate(
-                angle, about_point=point
-            )
+            Line(point, point + LEFT).rotate(angle, about_point=point)
             for angle in [0, theta]
         ])
         line_pair.set_stroke(width=0)
 
         ps_vect.suspend_updating()
-        self.play(
-            ShowCreation(arc1),
-            FadeIn(ghost_ps_vect)
-        )
+        self.play(ShowCreation(arc1), FadeIn(ghost_ps_vect))
         self.wait()
-        self.play(
-            Rotate(ps_vect, 2 * theta, about_point=point)
-        )
+        self.play(Rotate(ps_vect, 2 * theta, about_point=point))
         self.begin_sliding()
         ps_vect.resume_updating()
         self.play(GrowFromPoint(arc2, point))
@@ -2260,10 +2176,8 @@ class ShowMomentumConservation(IntroduceVelocityVector):
             TransformFromCopy(arc1, arc3, path_arc=-PI),
             Rotate(line_pair, -PI, about_point=point),
             UpdateFromAlphaFunc(
-                line_pair, lambda m, a: m.set_stroke(
-                    width=there_and_back(a)**0.5
-                )
-            ),
+                line_pair,
+                lambda m, a: m.set_stroke(width=there_and_back(a)**0.5)),
         )
         # Show light beam along trajectory
         self.show_trajectory_beam_bounce()
@@ -2271,14 +2185,10 @@ class ShowMomentumConservation(IntroduceVelocityVector):
 
         # TODO: Add labels for angles?
 
-        self.play(FadeOut(VGroup(
-            self.ps_vect_circle, ghost_ps_vect, arc1
-        )))
+        self.play(FadeOut(VGroup(self.ps_vect_circle, ghost_ps_vect, arc1)))
 
     def show_horizontal_bounce(self):
-        self.slide_until(
-            lambda: self.ps_velocity_vector.get_vector()[1] > 0
-        )
+        self.slide_until(lambda: self.ps_velocity_vector.get_vector()[1] > 0)
         point = self.ps_point.get_location()
         theta = self.theta
         arc1 = Arc(
@@ -2293,7 +2203,8 @@ class ShowMomentumConservation(IntroduceVelocityVector):
 
         self.slide(0.5)
         self.play(LaggedStartMap(
-            FadeInFromLarge, arcs,
+            FadeInFromLarge,
+            arcs,
             lag_ratio=0.75,
         ))
         self.show_trajectory_beam_bounce()
@@ -2309,29 +2220,33 @@ class ShowMomentumConservation(IntroduceVelocityVector):
         beam.clear_updaters()
         beam.set_stroke(YELLOW, 3)
         for x in range(n_times):
-            self.play(ShowPassingFlash(
-                beam,
-                run_time=2,
-                rate_func=bezier([0, 0, 1, 1])
-            ))
+            self.play(
+                ShowPassingFlash(beam,
+                                 run_time=2,
+                                 rate_func=bezier([0, 0, 1, 1])))
 
     def get_momentum_equation(self):
-        equation = TexMobject(
-            "m_1", "v_1", "+", "m_2", "v_2",
-            "=", "\\text{const.}",
-            tex_to_color_map={
-                "m_1": BLUE,
-                "m_2": BLUE,
-                "v_1": RED,
-                "v_2": RED,
-            }
-        )
+        equation = TexMobject("m_1",
+                              "v_1",
+                              "+",
+                              "m_2",
+                              "v_2",
+                              "=",
+                              "\\text{const.}",
+                              tex_to_color_map={
+                                  "m_1": BLUE,
+                                  "m_2": BLUE,
+                                  "v_1": RED,
+                                  "v_2": RED,
+                              })
         equation.to_edge(UP, buff=MED_SMALL_BUFF)
         return equation
 
     def get_dot_product(self,
-                        m1="\\sqrt{m_1}", m2="\\sqrt{m_2}",
-                        d1="dx/dt", d2="dy/dt"):
+                        m1="\\sqrt{m_1}",
+                        m2="\\sqrt{m_2}",
+                        d1="dx/dt",
+                        d2="dy/dt"):
         sqrty_m = Matrix([[m1], [m2]])
         deriv_array = Matrix([[d1], [d2]])
         for entry in sqrty_m.get_entries():
@@ -2343,9 +2258,7 @@ class ShowMomentumConservation(IntroduceVelocityVector):
             matrix.set_height(1.25)
         dot = TexMobject("\\cdot")
         rhs = TexMobject("= \\text{const.}")
-        dot_product = VGroup(
-            sqrty_m, dot, deriv_array, rhs
-        )
+        dot_product = VGroup(sqrty_m, dot, deriv_array, rhs)
         dot_product.arrange(RIGHT, buff=SMALL_BUFF)
         return dot_product
 
